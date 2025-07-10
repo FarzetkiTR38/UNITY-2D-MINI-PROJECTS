@@ -16,8 +16,7 @@ Klasik "Tuğla Kırma" (Breakout) türünde 2D bir arcade oyunudur. Oyuncu, topu
 
 🎮 **Oynanış Özellikleri:**  
 - 🎯 Top ile tuğlaları kırarak puan toplama  
-- 🧲 Farklı güçlendirme ve zorluk seviyeleri  
-- ⏱️ Seviye geçişleri ve skor takibi  
+- 🧲 Puan veya can kazandıran obje şansı  
 - 🎮 Basit ama bağımlılık yapan mekanikler
 
 📸 **Görseller:**  
