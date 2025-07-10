@@ -5,7 +5,7 @@ Bu repo, geliştirdiğim Unity oyun projelerini içerir. Her projenin detayları
 
 📂 Proje Listesi
 ## 1. [BrickBreak]
-<p>📌 Kısa Açıklama: 2D bir Tuğla Kırma oyunudur. </p>
+<p>📌 Kısa Açıklama: Klasik "Tuğla Kırma" (Breakout) türünde 2D bir arcade oyunudur. Oyuncu, topu paletle sektirerek ekrandaki tüm tuğlaları kırmayı amaçlar. </p>
 <p>🔧 Kullanılan Teknolojiler: Unity 6, C#, Aseprite</p>
 <p>🎮 Oynanış Özellikleri:</p>
 
