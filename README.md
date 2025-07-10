@@ -4,7 +4,7 @@ Bu repo, geliştirdiğim Unity oyun projelerini içerir. Her projenin detayları
 
 
 📂 Proje Listesi
-1. [BrickBreak]
+#1. [BrickBreak]
 📌 Kısa Açıklama: (Örn: "2D bir Tuğla Kırma oyunudur.")
 🔧 Kullanılan Teknolojiler: Unity 6, C#, Aseprite
 🎮 Oynanış Özellikleri:
