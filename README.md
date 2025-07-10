@@ -15,7 +15,7 @@ Bu repo, geliştirdiğim Unity oyun projelerini içerir. Her projenin detayları
 
 📸 Görseller:
 
-<div align="center"> <img src="Screenshots/proje1_1.png" width="400"> <img src="Screenshots/proje1_2.gif" width="400"> </div>
+<!- <div align="center"> <img src="Screenshots/proje1_1.png" width="400"> <img src="Screenshots/proje1_2.gif" width="400"> </div>  ->
 
 ▶️ Oynanış Videosu: 
 
