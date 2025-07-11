@@ -86,11 +86,8 @@ public class PlayerController : MonoBehaviour
     void HareketEttirFNC()
     {
         float h = Input.GetAxis("Horizontal");
-        // a - d tuşlarına basınca -1 ile 1 arasında değerler verir
-        // print(h); değerleri görebilmek içindi.
 
         float hiz = h * hareketHizi;
-
 
         rb.linearVelocity = new Vector2(hiz, rb.linearVelocity.y);
     }
