@@ -56,7 +56,5 @@ Klasik bir 2D platform oyunudur. Oyuncu, engelleri aşarak, düşmanlardan kaça
 [Oynanış Videosunu İzle](https://youtu.be/...)   daha sonra yüklenecektir.
 
 📂 **Proje Dizini:**  
-[2D Platformer Oyun Dosyalarına Git](./2DPlatformer)
+[2D Platformer Oyun Dosyalarına Git](.https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/F2DPlatformGame)
 
-📝 **Detaylı Dokümantasyon:**  
-Her sahnede yer alan temel mekanikler, karakter hareketi script’leri ve trigger yapıları için açıklamalar proje içinde `README.md` dosyasında yer almaktadır.
