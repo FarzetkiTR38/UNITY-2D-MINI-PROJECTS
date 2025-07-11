@@ -30,3 +30,19 @@ Klasik "Tuğla Kırma" (Breakout) türünde 2D bir arcade oyunudur. Oyuncu, topu
 [BrickBreak Oyun Dosyalarına Git](./BrickBreak)
 
 📝 **Detaylı Dokümantasyon:**
+
+### 2. 🕹️ 2D Platformer
+
+Klasik bir 2D platform oyunu. Oyuncu zıplayarak ve koşarak bölümleri tamamlamaya çalışır.
+
+- **Unity Sürümü:** 2022.x
+- **Özellikler:**
+  - Çift zıplama (double jump)
+  - Basit düşmanlar
+  - Checkpoint ve seviye sonu
+  - Toplama objeleri (coin, yıldız vs.)
+- **Kontroller:**
+  - A/D veya ←/→ ile hareket
+  - Space ile zıplama
+
+> 📂 [Proje klasörü](./2DPlatformer)
