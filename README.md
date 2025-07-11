@@ -21,6 +21,7 @@ Klasik "Tuğla Kırma" (Breakout) türünde 2D bir arcade oyunudur. Oyuncu, topu
 
 📸 **Görseller:**  
 ![Ekran Görüntüsü 1](gorseller/screenshot1.png)  daha sonra yüklenecektir.
+
 ![Ekran Görüntüsü 2](gorseller/screenshot2.png)  daha sonra yüklenecektir.
 
 ▶️ **Oynanış Videosu:**  
