@@ -49,6 +49,7 @@ Klasik bir 2D platform oyunudur. Oyuncu, engelleri aşarak, düşmanlardan kaça
 
 📸 **Görseller:**  
 ![Ekran Görüntüsü 1](gorseller/platformer1.png)  daha sonra yüklenecektir.
+
 ![Ekran Görüntüsü 2](gorseller/platformer2.png)  daha sonra yüklenecektir.
 
 ▶️ **Oynanış Videosu:**  
