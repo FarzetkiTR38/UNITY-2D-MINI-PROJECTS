@@ -29,20 +29,33 @@ Klasik "Tuğla Kırma" (Breakout) türünde 2D bir arcade oyunudur. Oyuncu, topu
 📂 **Proje Dizini:**  
 [BrickBreak Oyun Dosyalarına Git](./BrickBreak)
 
-📝 **Detaylı Dokümantasyon:**
+---
 
-### 2. 🕹️ 2D Platformer
+### 2. 🕹️ 2D Platformer  
+📌 **Kısa Açıklama:**  
+Klasik bir 2D platform oyunudur. Oyuncu, engelleri aşarak, düşmanlardan kaçarak ve objeleri toplayarak bölümü tamamlamaya çalışır.
 
-Klasik bir 2D platform oyunu. Oyuncu zıplayarak ve koşarak bölümleri tamamlamaya çalışır.
+🔧 **Kullanılan Teknolojiler:**  
+- Unity 6  
+- C#  
+- Aseprite (Karakter ve çevre tasarımları için)
 
-- **Unity Sürümü:** 2022.x
-- **Özellikler:**
-  - Çift zıplama (double jump)
-  - Basit düşmanlar
-  - Checkpoint ve seviye sonu
-  - Toplama objeleri (coin, yıldız vs.)
-- **Kontroller:**
-  - A/D veya ←/→ ile hareket
-  - Space ile zıplama
+🎮 **Oynanış Özellikleri:**  
+- 🦘 Çift zıplama (double jump)  
+- 🧟 Basit düşmanlar ve ölüm mekanikleri  
+- ⭐ Toplanabilir objeler (coin, yıldız vb.)  
+- ⛳ Checkpoint sistemi  
+- 🎮 Akıcı kontroller ve sade UI
 
-> 📂 [Proje klasörü](./2DPlatformer)
+📸 **Görseller:**  
+![Ekran Görüntüsü 1](gorseller/platformer1.png)  
+![Ekran Görüntüsü 2](gorseller/platformer2.png)
+
+▶️ **Oynanış Videosu:**  
+[Oynanış Videosunu İzle](https://youtu.be/...)
+
+📂 **Proje Dizini:**  
+[2D Platformer Oyun Dosyalarına Git](./2DPlatformer)
+
+📝 **Detaylı Dokümantasyon:**  
+Her sahnede yer alan temel mekanikler, karakter hareketi script’leri ve trigger yapıları için açıklamalar proje içinde `README.md` dosyasında yer almaktadır.
