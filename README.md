@@ -28,7 +28,7 @@ Klasik "Tuğla Kırma" (Breakout) türünde 2D bir arcade oyunudur. Oyuncu, topu
 [Oynanış Videosunu İzle](https://youtu.be/...)   daha sonra yüklenecektir.
 
 📂 **Proje Dizini:**  
-[BrickBreak Oyun Dosyalarına Git](./BrickBreak)
+[BrickBreak Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FBrickBreak)
 
 ---
 
