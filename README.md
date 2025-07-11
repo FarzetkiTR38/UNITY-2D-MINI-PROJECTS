@@ -42,9 +42,8 @@ Klasik bir 2D platform oyunudur. Oyuncu, engelleri aşarak, düşmanlardan kaça
 
 🎮 **Oynanış Özellikleri:**  
 - 🦘 Çift zıplama (double jump)  
-- 🧟 Basit düşmanlar ve ölüm mekanikleri  
-- ⭐ Toplanabilir objeler (coin, yıldız vb.)  
-- ⛳ Checkpoint sistemi  
+- 🧟 Basit/Zorlu düşmanlar ve ölüm mekanikleri  
+- ⭐ Toplanabilir objeler (mücevher, can meyvesi vb.)  
 - 🎮 Akıcı kontroller ve sade UI
 
 📸 **Görseller:**  
