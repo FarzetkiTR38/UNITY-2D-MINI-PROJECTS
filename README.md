@@ -72,10 +72,10 @@ Klasik "Pong" oyunundan esinlenerek geliştirilmiş 2D bir masa tenisi oyunudur.
 
 🎮 **Oynanış Özellikleri:**
 
-- 🎮 İki oyunculu veya tek oyunculu (AI'ya karşı) oynanabilir  
-- 🧠 Basit AI hareket algoritması (top takibi)  
-- 🕹️ Skor sistemi ve oyun resetleme  
-- 🔄 Sonsuz döngülü maç yapısı (ilk 5 puanı alan kazanır gibi opsiyonel kurallar eklenebilir)
+- 🎮 İki oyunculu veya tek oyunculu oynanabilir  
+- 🕹️ Skor sistemi ve oyun resetleme
+- 💥 Top ile raket temasında hız artışı (giderek zorlaşan oyun)
+- 🔄 Sonsuz döngülü maç yapısı
 
 📸 **Görseller:**  
 ![Ekran Görüntüsü 1](gorseller/platformer1.png)  daha sonra yüklenecektir.
