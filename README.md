@@ -75,6 +75,7 @@ Klasik "Pong" oyunundan esinlenerek geliştirilmiş 2D bir masa tenisi oyunudur.
 - 🎮 İki oyunculu veya tek oyunculu oynanabilir  
 - 🕹️ Skor sistemi ve oyun resetleme
 - 💥 Top ile raket temasında hız artışı (giderek zorlaşan oyun)
+- 🛑 Duvar çarpışmalarında sekme fiziği (açılara göre yön değişimi)
 - 🔄 Sonsuz döngülü maç yapısı
 
 📸 **Görseller:**  
