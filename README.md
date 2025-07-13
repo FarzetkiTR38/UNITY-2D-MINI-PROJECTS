@@ -84,7 +84,7 @@ Klasik "Pong" oyunundan esinlenerek geliştirilmiş 2D bir masa tenisi oyunudur.
 ![Ekran Görüntüsü 2](gorseller/platformer2.png)  daha sonra yüklenecektir.
 
 ▶️ **Oynanış Videosu:**  
-Oynanış Videosunu İzle daha sonra yüklenecektir.
+[Oynanış Videosunu İzle](https://youtu.be/...)   daha sonra yüklenecektir.
 
 📂 **Proje Dizini:**  
 [Ping Pong Oyun Dosyalarına Git](#) <!-- Buraya GitHub klasör linkini eklemeyi unutma -->
