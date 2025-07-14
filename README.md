@@ -60,6 +60,36 @@ Klasik bir 2D platform oyunudur. Oyuncu, engelleri aşarak, düşmanlardan kaça
 
 ---
 
-### 3. Ping Ponk 
+### 3. 🏓 Ping Pong  
+📌 **Kısa Açıklama:**  
+Klasik "Pong" oyunundan esinlenerek geliştirilmiş 2D bir masa tenisi oyunudur. İki oyunculu oynanabilir veya bir taraf yapay zekâ tarafından kontrol edilebilir. Amaç, topu rakibin sahasına geçirerek puan toplamaktır.
 
-.
+🔧 **Kullanılan Teknolojiler:**
+
+- Unity 6  
+- C#  
+- Aseprite (Görseller için basit sprite tasarımları)
+
+🎮 **Oynanış Özellikleri:**
+
+- 🎮 İki oyunculu veya tek oyunculu oynanabilir  
+- 🕹️ Skor sistemi ve oyun resetleme
+- 💥 Top ile raket temasında hız artışı (giderek zorlaşan oyun)
+- 🛑 Duvar çarpışmalarında sekme fiziği (açılara göre yön değişimi)
+- 🔄 Sonsuz döngülü maç yapısı
+
+📸 **Görseller:**  
+![Ekran Görüntüsü 1](gorseller/platformer1.png)  daha sonra yüklenecektir.
+
+![Ekran Görüntüsü 2](gorseller/platformer2.png)  daha sonra yüklenecektir.
+
+▶️ **Oynanış Videosu:**  
+[Oynanış Videosunu İzle](https://youtu.be/...)   daha sonra yüklenecektir.
+
+📂 **Proje Dizini:**  
+[Ping Pong Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FPingPonk)
+
+
+
+<!--  -->
+

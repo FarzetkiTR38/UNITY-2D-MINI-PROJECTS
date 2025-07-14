@@ -6,3 +6,7 @@
 *.mp3 filter=lfs diff=lfs merge=lfs -text
 *.dll filter=lfs diff=lfs merge=lfs -text
 *.exe filter=lfs diff=lfs merge=lfs -text
+
+# Shader dosyalarını istatistik dışı tut
+*.shader linguist-detectable=false
+*.cginc linguist-detectable=false
