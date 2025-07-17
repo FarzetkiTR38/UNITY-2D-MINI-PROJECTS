@@ -120,15 +120,6 @@ Flappy Bird tarzında, oyuncunun zıplayarak engellerden kaçtığı 2D bir arca
 
 ---
 
-### 5. Idle Clicker  
-📌 **Kısa Açıklama:** 
-
-
-🔧 **Kullanılan Teknolojiler:**
-
-- Unity 6  
-- C#  
-- Aseprite (Görseller için basit sprite tasarımları)
 
 
 <!--  -->
