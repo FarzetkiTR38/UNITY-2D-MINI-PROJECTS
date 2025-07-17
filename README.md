@@ -94,6 +94,8 @@ Klasik "Pong" oyunundan esinlenerek geliştirilmiş 2D bir masa tenisi oyunudur.
 ### 4. Flappy Bird  
 
 🔧 **Kullanılan Teknolojiler:**
+📌 **Kısa Açıklama:**  
+
 
 - Unity 6  
 - C#  
@@ -103,6 +105,7 @@ Klasik "Pong" oyunundan esinlenerek geliştirilmiş 2D bir masa tenisi oyunudur.
 ---
 
 ### 5. Idle Clicker  
+📌 **Kısa Açıklama:**  
 
 🔧 **Kullanılan Teknolojiler:**
 
