@@ -90,7 +90,7 @@ Klasik "Pong" oyunundan esinlenerek geliştirilmiş 2D bir masa tenisi oyunudur.
 [Ping Pong Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FPingPonk)
 
 
-### 5. FIdleClicker  
+### 5. Idle Clicker  
 
 
 <!--  -->
