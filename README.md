@@ -120,7 +120,59 @@ Flappy Bird tarzında, oyuncunun zıplayarak engellerden kaçtığı 2D bir arca
 
 ---
 
+### 5. 💸 Idle Clicker  
+📌 **Kısa Açıklama:**  
+Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, stratejiye dayalı bir 2D idle/clicker oyunudur. Oyun, gelişmiş sistemleriyle derinlikli bir ilerleme deneyimi sunar.
 
+🔧 **Kullanılan Teknolojiler:**  
+- Unity 6  
+- C#  
+- Aseprite (Piksel sanatları, UI tasarımları)  
+- TextMeshPro (UI yazıları için)
+
+🎮 **Oynanış Özellikleri:**  
+- 👆 **Tıklayarak Para Kazanma:** Her tıklamada gelir elde edilir.  
+- ⏱️ **Saniyelik Otomatik Gelir:** İşçiler sayesinde pasif para kazanımı.  
+- 🧪 **İksir Sistemi:**  
+  - 💰 2x Para  
+  - 💎 2x Elmas  
+  - ⚡ 2x Click Gücü  
+  - ⏳ Süreli etkiler ve geri sayım gösterimi  
+- 🧑‍🏭 **İşçi Sistemi:**  
+  - İlk işçi parayla alınır  
+  - Sonraki işçiler katlanarak pahalanır  
+  - Her biri saniyelik kazancı artırır  
+- 🔁 **Rebirth Sistemi:**  
+  - Oyunu sıfırlayıp elmas kazanma  
+  - Elmaslarla kalıcı güçlendirmeler yapılabilir  
+- 🏪 **Mağaza Sistemi:**  
+  - Elmasla iksir satın alma  
+  - Geçici ve kalıcı eşyalar  
+- 📈 **İstatistikler Paneli:**  
+  - Toplam tıklama sayısı  
+  - Kazanılan toplam para  
+  - Toplam rebirth sayısı  
+- 🎨 **Gelişmiş Grafikler ve UI:**  
+  - Minimalist ve okunabilir UI tasarımı  
+  - Her sistem için ayrı menü ekranı  
+  - Renkli ve tematik ikonlar  
+- 🎚️ **Dinamik Sistem Yönetimi:**  
+  - Sistemi yöneten tek bir `SistemKodu.cs`  
+  - UI güncellemeleri, bool kontrolleri, timer sistemleri merkezi yönetimde  
+  - Performansa ve okunabilirliğe uygun şekilde optimize edilebilir
+
+📸 **Görseller:**  
+![Ekran Görüntüsü 1](gorseller/platformer1.png)  daha sonra yüklenecektir.
+
+![Ekran Görüntüsü 2](gorseller/platformer2.png)  daha sonra yüklenecektir.
+
+▶️ **Oynanış Videosu:**  
+[Oynanış Videosunu İzle](https://youtu.be/...)   daha sonra yüklenecektir.
+
+📂 **Proje Dizini:**  
+[Ping Pong Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FFlappyBird)
+
+---
 
 <!--  -->
 
