@@ -136,7 +136,7 @@ Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, 
 - 🧪 **İksir Sistemi:**  
   - 💰 2x Para  
   - 💎 2x Elmas  
-  - ⚡ 2x Click Gücü  
+  - ⚡ 2x Rebirth
   - ⏳ Süreli etkiler ve geri sayım gösterimi  
 - 🧑‍🏭 **İşçi Sistemi:**  
   - İlk işçi parayla alınır  
@@ -144,20 +144,22 @@ Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, 
   - Her biri saniyelik kazancı artırır  
 - 🔁 **Rebirth Sistemi:**  
   - Oyunu sıfırlayıp elmas kazanma  
-  - Elmaslarla kalıcı güçlendirmeler yapılabilir  
+  - Elmaslarla kalıcı güçlendirmeler yapılabilir
+  - Daha hızlı kasılmayı sağlayan iksirler alınabilir
 - 🏪 **Mağaza Sistemi:**  
   - Elmasla iksir satın alma  
   - Geçici ve kalıcı eşyalar  
 - 📈 **İstatistikler Paneli:**  
   - Toplam tıklama sayısı  
   - Kazanılan toplam para  
-  - Toplam rebirth sayısı  
+  - Toplam rebirth sayısı
+  - Oynama süresi 
 - 🎨 **Gelişmiş Grafikler ve UI:**  
   - Minimalist ve okunabilir UI tasarımı  
   - Her sistem için ayrı menü ekranı  
-  - Renkli ve tematik ikonlar  
+  - Renkli ve tematik ikonlar 
 - 🎚️ **Dinamik Sistem Yönetimi:**  
-  - Sistemi yöneten tek bir `SistemKodu.cs`  
+  - Sistemi yöneten tek bir `SistemKod.cs`  
   - UI güncellemeleri, bool kontrolleri, timer sistemleri merkezi yönetimde  
   - Performansa ve okunabilirliğe uygun şekilde optimize edilebilir
 
