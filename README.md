@@ -91,16 +91,32 @@ Klasik "Pong" oyunundan esinlenerek geliştirilmiş 2D bir masa tenisi oyunudur.
 
 ---
 
-### 4. Flappy Bird  
-
-🔧 **Kullanılan Teknolojiler:**
+### 4. 🐦 FlappyBird  
 📌 **Kısa Açıklama:**  
+Flappy Bird tarzında, oyuncunun zıplayarak engellerden kaçtığı 2D bir arcade oyunudur. Amaç, mümkün olduğunca uzun süre hayatta kalmak ve yüksek skor elde etmektir.
 
-
+🔧 **Kullanılan Teknolojiler:**  
 - Unity 6  
 - C#  
-- Aseprite (Görseller için basit sprite tasarımları)
+- Aseprite (Piksel sanatları için)
 
+🎮 **Oynanış Özellikleri:**  
+- 🕹️ Tıklama ile kuşun yukarı zıplaması  
+- 🚧 Sonsuz olarak üretilen boru engeller  
+- 📈 Anlık skor takibi ve en yüksek skor kaydı  
+- ☁️ Arka plan paralaks efekti ile hareketli görünüm  
+- 🎮 Basit kontroller, zorlayıcı oynanış
+
+📸 **Görseller:**  
+![Ekran Görüntüsü 1](gorseller/platformer1.png)  daha sonra yüklenecektir.
+
+![Ekran Görüntüsü 2](gorseller/platformer2.png)  daha sonra yüklenecektir.
+
+▶️ **Oynanış Videosu:**  
+[Oynanış Videosunu İzle](https://youtu.be/...)   daha sonra yüklenecektir.
+
+📂 **Proje Dizini:**  
+[Ping Pong Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FFlappyBird)
 
 ---
 
