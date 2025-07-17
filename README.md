@@ -105,7 +105,8 @@ Klasik "Pong" oyunundan esinlenerek geliştirilmiş 2D bir masa tenisi oyunudur.
 ---
 
 ### 5. Idle Clicker  
-📌 **Kısa Açıklama:**  
+📌 **Kısa Açıklama:** 
+
 
 🔧 **Kullanılan Teknolojiler:**
 
