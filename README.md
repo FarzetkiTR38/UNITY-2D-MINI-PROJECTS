@@ -179,3 +179,6 @@ Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, 
 
 <!--  -->
 
+todolist:
+
+
