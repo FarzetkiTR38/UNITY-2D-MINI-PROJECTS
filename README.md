@@ -131,7 +131,8 @@ Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, 
 - TextMeshPro (UI yazıları için)
 
 🎮 **Oynanış Özellikleri:**  
-- 👆 **Tıklayarak Para Kazanma:** Her tıklamada gelir elde edilir.  
+- 👆 **Tıklayarak Para Kazanma:** Her tıklamada gelir elde edilir.
+- ⭐ **Şansa Bağlı Olarak Çoklu Tıklama:** Düşük şanslar ile çoklu tıklama yapılabilir .  
 - ⏱️ **Saniyelik Otomatik Gelir:** İşçiler sayesinde pasif para kazanımı.  
 - 🧪 **İksir Sistemi:**  
   - 💰 2x Para  
