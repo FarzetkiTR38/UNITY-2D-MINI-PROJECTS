@@ -158,7 +158,7 @@ Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, 
   - Oynama süresi
 - 🛠️ **Ayarlar Paneli:**  
   - Özelleştirilebilir MainScreen  
-  - İstenilen UI & GUI görünümünü kapatma
+  - İstenilen UI & GUI & STATS görünümünü kapatma
 - 🎨 **Gelişmiş Grafikler ve UI:**  
   - Minimalist ve okunabilir UI tasarımı  
   - Her sistem için ayrı menü ekranı  
@@ -178,7 +178,7 @@ Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, 
 [Oynanış Videosunu İzle](https://youtu.be/...)   daha sonra yüklenecektir.
 
 📂 **Proje Dizini:**  
-[Ping Pong Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FFlappyBird)
+[Ping Pong Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FarzetkiClicker)
 
 ---
 
