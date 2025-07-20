@@ -163,6 +163,7 @@ Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, 
   - Sistemi yöneten tek bir `SistemKod.cs`  
   - UI güncellemeleri, bool kontrolleri, timer sistemleri merkezi yönetimde  
   - Performansa ve okunabilirliğe uygun şekilde optimize edilebilir
+  - (açıkçası okunabilir olsa da pek optimize değil chatgpt 4/10 verdi optimizasyonuma :D )
 
 📸 **Görseller:**  
 ![Ekran Görüntüsü 1](gorseller/platformer1.png)  daha sonra yüklenecektir.
