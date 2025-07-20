@@ -159,7 +159,6 @@ Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, 
 - 🛠️ **Ayarlar Paneli:**  
   - Özelleştirilebilir MainScreen  
   - İstenilen UI & GUI görünümünü kapatma
-
 - 🎨 **Gelişmiş Grafikler ve UI:**  
   - Minimalist ve okunabilir UI tasarımı  
   - Her sistem için ayrı menü ekranı  
