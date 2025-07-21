@@ -31,10 +31,7 @@ public class SistemKodu : MonoBehaviour
     private bool teknolojimerkezibool = false;
     private bool uzaymadencisibool = false;
 
-
-
-
-
+    
 
     private float para;
 
@@ -799,6 +796,7 @@ public class SistemKodu : MonoBehaviour
     // ---------------------------------------------------------------------------------------------------- //
     // POTION 
 
+    [Header("Potion Objeleri")]
     private float elmasIksiri;
     public TMP_Text elmasIksiriText;
 
@@ -1016,7 +1014,7 @@ public class SistemKodu : MonoBehaviour
 
             // orjinalTiklamaPara da bir sorun oluştu galiba yukarısı yanlıştı emin olunca silerim başka bir hatayla karşılaşırsam düzeltirim.
 
-            saniyeBasinaPara = orijinalSaniyePara; 
+            saniyeBasinaPara = orijinalSaniyePara;
             tiklamaBasinaPara = orijinalTiklamaPara;
 
             saniyeBasinaPara = orijinalSaniyePara * 2;
@@ -1069,7 +1067,7 @@ public class SistemKodu : MonoBehaviour
         SonrakiTiklamaBasinaPara.text = (TiklamaBasinaPara * 2).ToString("0") + " TL / CLICK";
 
         YukseltmeParasi.text = yukseltmeyeGerekenPara + " TL";
-        
+
 
     }
 
@@ -1104,7 +1102,7 @@ public class SistemKodu : MonoBehaviour
 
             Para -= yukseltmeyeGerekenPara;
 
-            yukseltmeyeGerekenPara *= 2.5f;
+            yukseltmeyeGerekenPara *= 2f;
         }
         else if (yukseltmeYapildiMi && para >= yukseltmeyeGerekenPara)
         {
@@ -1119,8 +1117,8 @@ public class SistemKodu : MonoBehaviour
             tiklamaBasinaPara *= 2;
 
             Para -= yukseltmeyeGerekenPara;
-            
-            yukseltmeyeGerekenPara *= 2.5f;
+
+            yukseltmeyeGerekenPara *= 2f;
         }
 
     }
@@ -1140,7 +1138,7 @@ public class SistemKodu : MonoBehaviour
     private float playTimeDAKIKA;
     private float playTimeSANIYE;
     private float playTimeSAAT;
-    
+
     public TextMeshProUGUI ToplamTiklamaSayisi;
     public TextMeshProUGUI ToplamKazanilanPara;
     public TextMeshProUGUI ToplamKazanilanElmas;
@@ -1152,7 +1150,7 @@ public class SistemKodu : MonoBehaviour
 
         ToplamTiklamaSayisi.text = "TotalClickAmount: " + totalClickAmount.ToString("0") + "";
         ToplamKazanilanPara.text = "TotalEarnedMoney: " + totalEarnedMoney.ToString("0") + " TL";
-        ToplamKazanilanElmas.text = "TotalEarnedDiamond" + totalEarnedDiamond.ToString("0");
+        ToplamKazanilanElmas.text = "TotalEarnedDiamond: " + totalEarnedDiamond.ToString("0");
         ToplamYapilanRebirth.text = "TotalRebirthAmount: " + rebirth.ToString("0");
 
         playTime += Time.deltaTime;
@@ -1176,7 +1174,7 @@ public class SistemKodu : MonoBehaviour
         {
             // uğraşmak istemedim zor değil yukarıdaki gibi extra olarak playTimeGUN değişkeni oluşturulup yapılacak.
         }
-            
+
     }
 
 
@@ -1184,7 +1182,86 @@ public class SistemKodu : MonoBehaviour
 
     // --------------------------------------------------------------------------------------------- //
 
+    [Header("Effect")]
+    public RectTransform canvasRectTransform;
+    public GameObject floatingTextPrefab;
+    public float moveSpeed = 50f;
+    public float lifetime = 1f;
 
+    float minX = -700f;
+    float maxX = 500f;
+    float minY = -400f;
+    float maxY = 400f;
+
+    float deadZoneMinX = -300f;
+    float deadZoneMaxX = 50f;
+
+    float randomX;
+    float randomY;
+
+    public void ParaKazanEffect()
+    {
+
+        GameObject gameObject = Instantiate(floatingTextPrefab, canvasRectTransform);
+        RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
+        TMP_Text effectText = gameObject.GetComponent<TMP_Text>();
+
+        effectText.text = "+" + TiklamaBasinaPara.ToString("F0");
+
+        if (LuckyClickChange < 10)
+        {
+            effectText.text = "+" + (TiklamaBasinaPara * 5).ToString("F0");
+        }
+
+
+        int safety = 0;
+        do
+        {
+            randomX = Random.Range(minX, maxX);
+            safety++;
+            if (safety > 10) break;
+        }
+        while (randomX > deadZoneMinX && randomX < deadZoneMaxX);
+
+        randomY = Random.Range(minY, maxY);
+
+        rectTransform.anchoredPosition = new Vector2(randomX, randomY);
+        rectTransform.anchoredPosition = new Vector2(randomX, randomY);
+
+
+
+        StartCoroutine(FloatingEffect(gameObject, rectTransform));
+    }
+
+    System.Collections.IEnumerator FloatingEffect(GameObject gameObject, RectTransform rectTransform)
+    {
+        float time = 0f;
+
+        while (time < lifetime)
+        {
+            rectTransform.anchoredPosition -= new Vector2(0, moveSpeed * Time.deltaTime);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        Destroy(gameObject);
+    }
+
+    // --------------------------------------------------------------------------------------------- //
+
+    private void MoneyConvertFNC()
+    {
+        if (para > 1000)
+        {
+            paraText.text = (para / 1000).ToString("F1") + " K";
+        }
+        else if (para > 1000000)
+        {
+            paraText.text = (para / 1000000).ToString("F1") + " M";
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------- //
 
     void Start()
     {
@@ -1218,7 +1295,7 @@ public class SistemKodu : MonoBehaviour
 
         FixUI();
 
-         Stats();
+        Stats();
 
         // test süreci için eklendi
         /*        if (Input.GetButtonDown("Jump"))
@@ -1227,7 +1304,11 @@ public class SistemKodu : MonoBehaviour
                 }
         */
 
+        MoneyConvertFNC();
+
 
     }
+
+
     
 }
