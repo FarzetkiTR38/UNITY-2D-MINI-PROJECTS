@@ -152,13 +152,17 @@ Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, 
   - Geçici ve kalıcı eşyalar  
 - 📈 **İstatistikler Paneli:**  
   - Toplam tıklama sayısı  
-  - Kazanılan toplam para  
+  - Kazanılan toplam para
+  - Kazanılan toplam elmas    
   - Toplam rebirth sayısı
-  - Oynama süresi 
+  - Oynama süresi
+- 🛠️ **Ayarlar Paneli:**  
+  - Özelleştirilebilir MainScreen  
+  - İstenilen UI & GUI & STATS görünümünü kapatma
 - 🎨 **Gelişmiş Grafikler ve UI:**  
   - Minimalist ve okunabilir UI tasarımı  
   - Her sistem için ayrı menü ekranı  
-  - Renkli ve tematik ikonlar 
+  - Renkli ve tematik ikonlar  
 - 🎚️ **Dinamik Sistem Yönetimi:**  
   - Sistemi yöneten tek bir `SistemKod.cs`  
   - UI güncellemeleri, bool kontrolleri, timer sistemleri merkezi yönetimde  
@@ -174,7 +178,7 @@ Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, 
 [Oynanış Videosunu İzle](https://youtu.be/...)   daha sonra yüklenecektir.
 
 📂 **Proje Dizini:**  
-[Ping Pong Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FFlappyBird)
+[Ping Pong Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FarzetkiClicker)
 
 ---
 
