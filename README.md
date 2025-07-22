@@ -124,6 +124,37 @@ Flappy Bird tarzında, oyuncunun zıplayarak engellerden kaçtığı 2D bir arca
 📌 **Kısa Açıklama:**  
 Bu proje, Unity ile geliştirilmiş, gerçek zamanlı online çok oyunculu bir **Agar.io** klonudur. Oyuncular hücrelerini büyütmek için küçük besinleri ve diğer oyuncuları yutarak hayatta kalmaya çalışır. Photon Fusion kullanılarak düşük gecikmeli, akıcı bir oyun deneyimi sunar.
 
+🔧 **Kullanılan Teknolojiler:**  
+- Unity 6  
+- C#  
+- Photon Fusion (Multiplayer Networking)  
+- Aseprite (Piksel grafik ve ikonlar)
+
+🎮 **Oynanış Özellikleri:**  
+- 🎮 **Gerçek Zamanlı Multiplayer:**  
+  - Photon Fusion ile anlık oyuncu senkronizasyonu  
+  - Delay azaltımı ve lag telafisi  
+
+- 🧫 **Yem Toplama:**  
+  - Harita üzerinde rastgele çıkan yemleri toplayarak büyü  
+  - Renkli partikül efektleri  
+
+- 🧍‍♂️ **Oyuncu Yeme Sistemi:**  
+  - Küçük hücreler, daha büyükler tarafından yenebilir  
+  - Collision-based büyüme sistemi  
+
+- 🚀 **Hız Mekaniği:**  
+  - Hücre büyüdükçe hız azalır  
+  - Küçük hücreler daha hızlı hareket eder  
+
+- 💾 **Nickname & Skor Sistemi:**  
+  - Oyuncu isimleri ve canlı skor listesi  
+  - Ölüm sonrası istatistik ekranı  
+
+- 🌐 **Basit Matchmaking:**  
+  - Odaya hızlı bağlanma  
+  - Aynı sunucuda birden fazla oyun oturumu  
+
 ---
 
 ### 6. 💸 Idle Clicker  
