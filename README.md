@@ -120,7 +120,13 @@ Flappy Bird tarzında, oyuncunun zıplayarak engellerden kaçtığı 2D bir arca
 
 ---
 
-### 5. 💸 Idle Clicker  
+### 5. 🧫 Agar.io Clone - Online Multiplayer Game
+📌 **Kısa Açıklama:**  
+Bu proje, Unity ile geliştirilmiş, gerçek zamanlı online çok oyunculu bir **Agar.io** klonudur. Oyuncular hücrelerini büyütmek için küçük besinleri ve diğer oyuncuları yutarak hayatta kalmaya çalışır. Photon Fusion kullanılarak düşük gecikmeli, akıcı bir oyun deneyimi sunar.
+
+---
+
+### 6. 💸 Idle Clicker  
 📌 **Kısa Açıklama:**  
 Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, stratejiye dayalı bir 2D idle/clicker oyunudur. Oyun, gelişmiş sistemleriyle derinlikli bir ilerleme deneyimi sunar.
 
