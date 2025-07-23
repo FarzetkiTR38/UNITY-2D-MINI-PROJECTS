@@ -5,6 +5,14 @@ public class Movement : MonoBehaviour
     public Camera cam;
     public float speed = 3f;
 
+    void Start()
+    {
+        if (cam == null)
+        {
+            cam = Camera.main;
+        }
+    }
+
     void Update()
     {
         Vector3 input = Input.mousePosition;
