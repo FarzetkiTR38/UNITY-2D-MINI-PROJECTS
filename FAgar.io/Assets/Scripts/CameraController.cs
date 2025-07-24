@@ -8,7 +8,6 @@ public class CameraController : MonoBehaviour
     public float scalespeed;
     public Camera cam;
 
-
     void Update()
     {
 
@@ -18,7 +17,8 @@ public class CameraController : MonoBehaviour
 
         transform.position = positionLerp;
 
-        cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, 4 * target.localScale.x, scalespeed * Time.deltaTime);
+        cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, 4 * target.localScale.x, scalespeed * Time.deltaTime / 25);
+        //cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, 4 * target.localScale.x, scalespeed * Time.deltaTime);
 
     }
 }

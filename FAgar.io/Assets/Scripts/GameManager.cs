@@ -1,5 +1,6 @@
 using UnityEngine;
 using Photon.Pun;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,11 +18,6 @@ public class GameManager : MonoBehaviour
 
     public Vector2 xRange;
     public Vector2 yRange;
-
-    void Awake()
-    {
-        instance = this;
-    }
 
     void Start()
     {
@@ -53,5 +49,23 @@ public class GameManager : MonoBehaviour
         _player.GetComponent<SizeManager>().enabled = true;
         _player.GetComponent<Movement>().enabled = true;
     }
+
+
+
+    public TMP_Text massText;
+    public TMP_Text scoreText;
+
+    SizeManager sizeManager;
+
+    private void Awake()
+    {
+
+        instance = this;
+
+        sizeManager = Object.FindAnyObjectByType<SizeManager>();
+    }
+
+
+
 
 }
