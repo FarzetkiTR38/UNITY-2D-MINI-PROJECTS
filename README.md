@@ -153,7 +153,17 @@ Bu proje, Unity ile geliştirilmiş, gerçek zamanlı online çok oyunculu bir *
 
 - 🌐 **Basit Matchmaking:**  
   - Odaya hızlı bağlanma  
-  - Aynı sunucuda birden fazla oyun oturumu  
+  - Aynı sunucuda birden fazla oyun oturumu
+
+📸 **Görseller:**  
+![Ekran Görüntüsü 1](gorseller/match3_1.png) — yüklenecek  
+![Ekran Görüntüsü 2](gorseller/match3_2.png) — yüklenecek  
+
+▶️ **Oynanış Videosu:**  
+[Oynanış Videosunu İzle](https://youtu.be/...) — yüklenecek
+
+📂 **Proje Dizini:**  
+[Match-3 Oyun Dosyalarına Git](https://github.com/KULLANICI_ADIN/UnityMatch3Game)
 
 ---
 
@@ -204,11 +214,11 @@ Aynı türden en az üç mücevheri yatay veya dikey olarak eşleştirerek patla
 - 🌎 Online skor panosu  
 
 📸 **Görseller:**  
-![Ekran Görüntüsü 1](gorseller/match3_1.png) — yüklenecek  
-![Ekran Görüntüsü 2](gorseller/match3_2.png) — yüklenecek  
+![Ekran Görüntüsü 1](gorseller/match3_1.png) — daha sonra yüklenecektir. 
+![Ekran Görüntüsü 2](gorseller/match3_2.png) — daha sonra yüklenecektir.  
 
 ▶️ **Oynanış Videosu:**  
-[Oynanış Videosunu İzle](https://youtu.be/...) — yüklenecek
+[Oynanış Videosunu İzle](https://youtu.be/...) — daha sonra yüklenecektir.
 
 📂 **Proje Dizini:**  
 [Match-3 Oyun Dosyalarına Git](https://github.com/KULLANICI_ADIN/UnityMatch3Game)
