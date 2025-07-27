@@ -153,11 +153,80 @@ Bu proje, Unity ile geliştirilmiş, gerçek zamanlı online çok oyunculu bir *
 
 - 🌐 **Basit Matchmaking:**  
   - Odaya hızlı bağlanma  
-  - Aynı sunucuda birden fazla oyun oturumu  
+  - Aynı sunucuda birden fazla oyun oturumu
+
+📸 **Görseller:**  
+![Ekran Görüntüsü 1](gorseller/match3_1.png) — yüklenecek  
+![Ekran Görüntüsü 2](gorseller/match3_2.png) — yüklenecek  
+
+▶️ **Oynanış Videosu:**  
+[Oynanış Videosunu İzle](https://youtu.be/...) — yüklenecek
+
+📂 **Proje Dizini:**  
+[Match-3 Oyun Dosyalarına Git](https://github.com/KULLANICI_ADIN/UnityMatch3Game)
 
 ---
 
-### 6. 💸 Idle Clicker  
+### 6. 💎 Match-3 Mücevher Oyunu  
+📌 **Kısa Açıklama:**  
+Aynı türden en az üç mücevheri yatay veya dikey olarak eşleştirerek patlatma mantığına dayalı bir Match-3 bulmaca oyunudur. Basit, şık ve temel bir mantık üzerine kuruludur.
+
+🔧 **Kullanılan Teknolojiler:**  
+- Unity 6  
+- C#  
+- TextMeshPro (UI yazıları için)  
+- Aseprite (Sprite ve ikonlar)  
+
+🎮 **Oynanış Özellikleri:**  
+- 🟦 **Grid Sistemi:** Sabit genişlikte ve yükseklikte 2D grid düzeni  
+- 🔄 **Mücevher Takası:** Komşu iki mücevherin tıklanarak yer değiştirmesi  
+- 💥 **Eşleşme Kontrolü:**  
+  - Yatay ve dikeyde 3+ aynı türde mücevher varsa yok edilir  
+  - Yeni mücevherler yukarıdan düşer, boşluklar doldurulur  
+  - Zincirleme (cascade) eşleşme kontrolü  
+- 🧠 **Basit Oyun Mantığı:**  
+  - Tıklama ile hareket  
+  - Geçersiz hamlelerde geri alma  
+  - Eşleşme yoksa hamle iptali  
+- 🧾 **Skor Sistemi:**  
+  - Her eşleşme puan kazandırır  
+  - Daha fazla mücevher eşleşirse bonus puan  
+- 🖱️ **Tıklama Algılama:**  
+  - Grid üzerinde tıklanarak mücevher seçimi  
+  - Seçili mücevherin komşusu ile yer değiştirme  
+- 🖼️ **UI & Görsel Öğeler:**  
+  - Renkli ve tematik mücevher ikonları  
+  - Skor sayacı ve geri al butonu  
+  - Oyunu yeniden başlatma seçeneği  
+
+📁 **Kod Dosyaları:**  
+- `Board.cs`: Grid oluşturma ve mücevherleri yerleştirme  
+- `Gem.cs`: Mücevher nesnesi ve tıklama işlemleri  
+- `MatchChecker.cs`: Eşleşmeleri kontrol etme ve yok etme  
+- `GemData.cs`: ScriptableObject ile mücevher türleri ve prefab yönetimi  
+- `GameManager.cs`: Skor, UI ve oyun akışı kontrolü  
+
+📈 **Geliştirilebilir Özellikler:**  
+- 🎯 Görev sistemi (örneğin: "5 mavi taş eşleştir")  
+- 🔥 Özel mücevherler (bomba, çizgisel patlatıcı)  
+- ⏱️ Süreli mod veya hamle sınırlı mod  
+- 🧩 Farklı seviyeler ve ilerleme sistemi  
+- 🌎 Online skor panosu  
+
+📸 **Görseller:**  
+![Ekran Görüntüsü 1](gorseller/match3_1.png) — daha sonra yüklenecektir. 
+![Ekran Görüntüsü 2](gorseller/match3_2.png) — daha sonra yüklenecektir.  
+
+▶️ **Oynanış Videosu:**  
+[Oynanış Videosunu İzle](https://youtu.be/...) — daha sonra yüklenecektir.
+
+📂 **Proje Dizini:**  
+[Match-3 Oyun Dosyalarına Git](https://github.com/KULLANICI_ADIN/UnityMatch3Game)
+
+---
+
+
+### 7. 💸 Idle Clicker  
 📌 **Kısa Açıklama:**  
 Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, stratejiye dayalı bir 2D idle/clicker oyunudur. Oyun, gelişmiş sistemleriyle derinlikli bir ilerleme deneyimi sunar.
 
