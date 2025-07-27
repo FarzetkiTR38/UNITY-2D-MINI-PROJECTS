@@ -55,11 +55,23 @@ public class Board : MonoBehaviour
 
     void MucevherOlustur(Vector2Int pos, Mucevher olusacakMucevher)
     {
-        GameObject yeniMucevher = Instantiate(olusacakMucevher.prefab, new Vector3(pos.x, pos.y, 0f), Quaternion.identity);
-        yeniMucevher.transform.parent = this.transform;
-        yeniMucevher.name = "Mucevher - " + pos.x + ", " + pos.y;
+        GameObject YeniMucevher = Instantiate(olusacakMucevher.prefab, new Vector3(pos.x, pos.y, 0f), Quaternion.identity);
+        YeniMucevher.transform.parent = this.transform;
+        YeniMucevher.name = "Mucevher - " + pos.x + ", " + pos.y;
 
-        tumMucevherler[pos.x, pos.y] = yeniMucevher;
+        tumMucevherler[pos.x, pos.y] = YeniMucevher;
+
+        // önce component'e eriş
+        YeniMucevher mucevherScript = YeniMucevher.GetComponent<YeniMucevher>();
+
+        // null kontrolü ile birlikte güvenli kullanım
+        if (mucevherScript != null)
+        {
+            mucevherScript.MucevheriDuzenle(pos, this);
+        }
     }
+
+
+
 
 }
