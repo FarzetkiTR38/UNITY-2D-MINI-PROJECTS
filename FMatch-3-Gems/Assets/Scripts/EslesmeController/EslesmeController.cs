@@ -17,71 +17,80 @@ public class EslesmeController : MonoBehaviour
 
     public void EslemeleriBulFNC()
     {
-
         BulunanMucevherlerListe.Clear();
 
         for (int x = 0; x < board.width; x++)
         {
             for (int y = 0; y < board.height; y++)
             {
-                YeniMucevher gecerliMucevher = board.tumMucevherler[x, y].GetComponent<YeniMucevher>();
+                
+                GameObject gecerliObj = board.tumMucevherler[x, y];
+                if (gecerliObj == null) continue;
 
-                if (gecerliMucevher != null)
+                YeniMucevher gecerliMucevher = gecerliObj.GetComponent<YeniMucevher>();
+                if (gecerliMucevher == null) continue;
+
+                // X ekseni eşleşme
+                if (x > 0 && x < board.width - 1)
                 {
-                    // x ekseni eşleşme kontrolü
-                    if (x > 0 && x < board.width - 1)
+                    GameObject solObj = board.tumMucevherler[x - 1, y];
+                    GameObject sagObj = board.tumMucevherler[x + 1, y];
+
+                    if (solObj != null && sagObj != null)
                     {
-                        YeniMucevher solMucevher = board.tumMucevherler[x - 1, y].GetComponent<YeniMucevher>();
-                        YeniMucevher sagMucevher = board.tumMucevherler[x + 1, y].GetComponent<YeniMucevher>();
+                        YeniMucevher solMucevher = solObj.GetComponent<YeniMucevher>();
+                        YeniMucevher sagMucevher = sagObj.GetComponent<YeniMucevher>();
 
-                        if (solMucevher != null && sagMucevher != null)
+                        if (solMucevher != null && sagMucevher != null &&
+                            solMucevher.tipi == gecerliMucevher.tipi &&
+                            sagMucevher.tipi == gecerliMucevher.tipi)
                         {
-                            if (solMucevher.tipi == gecerliMucevher.tipi && sagMucevher.tipi == gecerliMucevher.tipi)
-                            {
-                                gecerliMucevher.eslesdiMi = true;
-                                solMucevher.eslesdiMi = true;
-                                sagMucevher.eslesdiMi = true;
+                            gecerliMucevher.eslesdiMi = true;
+                            solMucevher.eslesdiMi = true;
+                            sagMucevher.eslesdiMi = true;
 
-                                BulunanMucevherlerListe.Add(gecerliMucevher);
-                                BulunanMucevherlerListe.Add(solMucevher);
-                                BulunanMucevherlerListe.Add(sagMucevher);
-                            }
+                            BulunanMucevherlerListe.Add(gecerliMucevher);
+                            BulunanMucevherlerListe.Add(solMucevher);
+                            BulunanMucevherlerListe.Add(sagMucevher);
                         }
                     }
-
-                    // y ekseni eşleşme kontrolü
-                    if (y > 0 && y < board.height - 1)
-                    {
-                        YeniMucevher altMucevher = board.tumMucevherler[x, y - 1].GetComponent<YeniMucevher>();
-                        YeniMucevher ustMucevher = board.tumMucevherler[x, y + 1].GetComponent<YeniMucevher>();
-
-                        if (altMucevher != null && ustMucevher != null)
-                        {
-                            if (altMucevher.tipi == gecerliMucevher.tipi && ustMucevher.tipi == gecerliMucevher.tipi)
-                            {
-                                gecerliMucevher.eslesdiMi = true;
-                                altMucevher.eslesdiMi = true;
-                                ustMucevher.eslesdiMi = true;
-
-                                BulunanMucevherlerListe.Add(gecerliMucevher);
-                                BulunanMucevherlerListe.Add(altMucevher);
-                                BulunanMucevherlerListe.Add(ustMucevher);
-                            }
-                        }
-                    }
-
                 }
 
+                // Y ekseni eşleşme
+                if (y > 0 && y < board.height - 1)
+                {
+                    GameObject altObj = board.tumMucevherler[x, y - 1];
+                    GameObject ustObj = board.tumMucevherler[x, y + 1];
 
+                    if (altObj != null && ustObj != null)
+                    {
+                        YeniMucevher altMucevher = altObj.GetComponent<YeniMucevher>();
+                        YeniMucevher ustMucevher = ustObj.GetComponent<YeniMucevher>();
+
+                        if (altMucevher != null && ustMucevher != null &&
+                            altMucevher.tipi == gecerliMucevher.tipi &&
+                            ustMucevher.tipi == gecerliMucevher.tipi)
+                        {
+                            gecerliMucevher.eslesdiMi = true;
+                            altMucevher.eslesdiMi = true;
+                            ustMucevher.eslesdiMi = true;
+
+                            BulunanMucevherlerListe.Add(gecerliMucevher);
+                            BulunanMucevherlerListe.Add(altMucevher);
+                            BulunanMucevherlerListe.Add(ustMucevher);
+                        }
+                    }
+                }
             }
         }
-        // listede aynı elemandan 2 tane olmaması için gereken kod:
+
+        // Tekrar edenleri temizle
         if (BulunanMucevherlerListe.Count > 0)
         {
             BulunanMucevherlerListe = BulunanMucevherlerListe.Distinct().ToList();
         }
-
     }
+
 
 
 }

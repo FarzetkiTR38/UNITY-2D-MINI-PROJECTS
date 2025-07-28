@@ -8,6 +8,7 @@ public class Mucevher
     public string ad;
     public Sprite ikon;
     public GameObject prefab; // sahneye Instantiate edilecek obje
+    internal bool eslesdiMi;
 }
 
 public class Board : MonoBehaviour
@@ -62,11 +63,11 @@ public class Board : MonoBehaviour
                 int rastgeleMucevher = Random.Range(0, mucevherler.Length);
 
                 int kontrolSayaci = 0;
+
                 while (EslesmeVarMiFNC(new Vector2Int(x, y), mucevherler[rastgeleMucevher]) && kontrolSayaci < 100)
                 {
                     rastgeleMucevher = Random.Range(0, mucevherler.Length);
-                    kontrolSayaci++; 
-                    print(kontrolSayaci);
+                    kontrolSayaci++;
                 }
 
                 MucevherOlustur(new Vector2Int(x, y), mucevherler[rastgeleMucevher]);
@@ -83,10 +84,10 @@ public class Board : MonoBehaviour
 
         tumMucevherler[pos.x, pos.y] = YeniMucevher;
 
-        // önce component'e eriş
+        // önce component'e erişiyoz
         YeniMucevher mucevherScript = YeniMucevher.GetComponent<YeniMucevher>();
 
-        // null kontrolü ile birlikte güvenli kullanım
+        // null kontrolü daha güvenli yapıyormuş bla bla
         if (mucevherScript != null)
         {
             mucevherScript.MucevheriDuzenle(pos, this);
@@ -128,7 +129,31 @@ public class Board : MonoBehaviour
         return false;
     }
 
+    // tumMucevherler[pos.x, pos.y].GetComponent<YeniMucevher>().eslesdiMi  
+    // bu şekilde erişiyoruz lazım olursa
+    void EslesenMucevheriYokEt(Vector2Int pos)
+    {
 
+        if (tumMucevherler[pos.x, pos.y] != null)
+        {
+            if (tumMucevherler[pos.x, pos.y].GetComponent<YeniMucevher>().eslesdiMi)
+            {
+                Destroy(tumMucevherler[pos.x, pos.y]);
+                tumMucevherler[pos.x, pos.y] = null;
+            }
+        }
+    }
+
+    public void TumEslesenMucevherleriYokEt()
+    {
+        for (int i = 0; i < eslesmeController.BulunanMucevherlerListe.Count; i++)
+        {
+            if (eslesmeController.BulunanMucevherlerListe[i] != null)
+            {
+                EslesenMucevheriYokEt(eslesmeController.BulunanMucevherlerListe[i].posIndex);
+            }
+        }
+    }
 
 
 

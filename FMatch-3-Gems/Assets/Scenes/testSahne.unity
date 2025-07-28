@@ -289,22 +289,23 @@ MonoBehaviour:
   width: 7
   tilePrefab: {fileID: 2871628704778011871, guid: 2e2874b34c2893842961c96481f85760, type: 3}
   mucevherler:
-  - ad: mucevher1
+  - ad: mavi
     ikon: {fileID: 21300000, guid: d44aa4c41c58a3e408deb140bde01c84, type: 3}
     prefab: {fileID: 3679149887358459814, guid: 1be1b886e666d3d4bb62da7aeb6b9cf1, type: 3}
-  - ad: mucevher2
+  - ad: pembe
     ikon: {fileID: 21300000, guid: 08867cdd75ae3c1428ee1587f4af3448, type: 3}
     prefab: {fileID: 8938035782943723340, guid: 47cc83b8f207ae549a5139858ab0783c, type: 3}
-  - ad: mucevher3
+  - ad: sari
     ikon: {fileID: 21300000, guid: 02ebe099d2bfcb64a848fcc792904aef, type: 3}
     prefab: {fileID: 1930917890400889928, guid: 3a292f84172576646a584472b27bbd02, type: 3}
-  - ad: mucevher4
+  - ad: acikyesil
     ikon: {fileID: 21300000, guid: eb6bef6aac0b5ad40b9a72f3f55b75d1, type: 3}
     prefab: {fileID: 5319941623484861837, guid: 6bf2c3f09431b5d4daea065d1bbb3123, type: 3}
-  - ad: mucevher5
+  - ad: kapaliyesil
     ikon: {fileID: 21300000, guid: e7e03cc4c8d45f54caafcaebda8f6ca7, type: 3}
     prefab: {fileID: 3481396181467755867, guid: 53068180dc536d8439aef23f7a221937, type: 3}
   mucevherHiz: 10
+  eslesmeController: {fileID: 0}
 --- !u!4 &646208230
 Transform:
   m_ObjectHideFlags: 0
@@ -349,7 +350,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecbe84c144ea77b478f72e554b63277e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BulunanMucevherlerListe: []
+  BulunanMucevherlerListe:
+  - {fileID: 0}
 --- !u!4 &1782127092
 Transform:
   m_ObjectHideFlags: 0

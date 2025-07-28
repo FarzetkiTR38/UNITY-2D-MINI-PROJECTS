@@ -113,6 +113,10 @@ public class YeniMucevher : MonoBehaviour
                 board.tumMucevherler[digerMucevher.posIndex.x, digerMucevher.posIndex.y] = digerMucevher.gameObject;
 
             }
+            else
+            {
+                board.TumEslesenMucevherleriYokEt();
+            }
         }
     }
 
