@@ -153,8 +153,42 @@ public class Board : MonoBehaviour
                 EslesenMucevheriYokEt(eslesmeController.BulunanMucevherlerListe[i].posIndex);
             }
         }
+
+        StartCoroutine(AltBosluklariDoldurRouitine());
     }
 
+    IEnumerator AltBosluklariDoldurRouitine()
+    {
+        yield return new WaitForSeconds(0.3f);
+
+        int boslukSayac = 0;
+        
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+
+                if (tumMucevherler[x, y] == null)
+                {
+                    boslukSayac++;
+                }
+                else if (boslukSayac > 0)
+                {
+                    tumMucevherler[x, y].GetComponent<YeniMucevher>().posIndex.y -= boslukSayac;
+                    tumMucevherler[x, y - boslukSayac] = tumMucevherler[x, y];
+                    tumMucevherler[x, y] = null;
+                }
+
+            }
+
+            boslukSayac = 0;
+        }
+
+
+
+    }
+    // tumMucevherler[x, y].GetComponent<YeniMucevher>().posIndex.y -= boslukSayac;
 
 
 }
