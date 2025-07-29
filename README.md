@@ -12,7 +12,7 @@ Klasik "Tuğla Kırma" (Breakout) türünde 2D bir arcade oyunudur. Oyuncu, topu
 🔧 **Kullanılan Teknolojiler:**  
 - Unity 6  
 - C#  
-- Aseprite (Piksel sanatları için)
+- Aseprite (Piksel tasarım için)
 
 🎮 **Oynanış Özellikleri:**  
 - 🎯 Top ile tuğlaları kırarak puan toplama  
@@ -98,7 +98,7 @@ Flappy Bird tarzında, oyuncunun zıplayarak engellerden kaçtığı 2D bir arca
 🔧 **Kullanılan Teknolojiler:**  
 - Unity 6  
 - C#  
-- Aseprite (Piksel sanatları için)
+- Aseprite (Piksel tasarım için)
 
 🎮 **Oynanış Özellikleri:**  
 - 🕹️ Tıklama ile kuşun yukarı zıplaması  
