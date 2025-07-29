@@ -154,15 +154,15 @@ public class Board : MonoBehaviour
             }
         }
 
-        StartCoroutine(AltBosluklariDoldurRouitine());
+        StartCoroutine(AltaKaydirRouitine());
     }
 
-    IEnumerator AltBosluklariDoldurRouitine()
+    IEnumerator AltaKaydirRouitine()
     {
         yield return new WaitForSeconds(0.3f);
 
         int boslukSayac = 0;
-        
+
 
         for (int x = 0; x < width; x++)
         {
@@ -185,10 +185,73 @@ public class Board : MonoBehaviour
             boslukSayac = 0;
         }
 
+        StartCoroutine(BoardYenidenDoldurRouitine());
+
 
 
     }
     // tumMucevherler[x, y].GetComponent<YeniMucevher>().posIndex.y -= boslukSayac;
+
+    IEnumerator BoardYenidenDoldurRouitine()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        UstBosluklariDoldurFNC();
+
+        yield return new WaitForSeconds(0.5f);
+
+        eslesmeController.EslemeleriBulFNC();
+
+        if (eslesmeController.BulunanMucevherlerListe.Count > 0)
+        {
+            yield return new WaitForSeconds(0.5f);
+
+            TumEslesenMucevherleriYokEt();
+        }
+    }
+
+    void UstBosluklariDoldurFNC()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (tumMucevherler[x, y] == null)
+                {
+                    int rastgeleMucevher = Random.Range(0, mucevherler.Length);
+
+                    MucevherOlustur(new Vector2Int(x, y), mucevherler[rastgeleMucevher]);
+                }
+
+
+            }
+        }
+
+        YanlisYerlestirmeleriKontrolEt();
+    }
+
+    void YanlisYerlestirmeleriKontrolEt()
+    {
+        List<YeniMucevher> bulunanMucevherlerList = new List<YeniMucevher>();
+
+    bulunanMucevherlerList.AddRange(FindObjectsByType<YeniMucevher>(FindObjectsSortMode.None));
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (bulunanMucevherlerList.Contains(tumMucevherler[x, y].GetComponent<YeniMucevher>()))
+                {
+                    bulunanMucevherlerList.Remove(tumMucevherler[x, y].GetComponent<YeniMucevher>());
+                }
+            }
+        }
+
+        foreach (YeniMucevher mucevher in bulunanMucevherlerList)
+        {
+            Destroy(mucevher.gameObject);
+        }
+    }
 
 
 }
