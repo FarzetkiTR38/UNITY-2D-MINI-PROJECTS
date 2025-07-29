@@ -27,6 +27,10 @@ public class Board : MonoBehaviour
 
     public EslesmeController eslesmeController;
 
+    public enum BoardDurum {bekliyor, hareketEdiyor}
+
+    public BoardDurum gecerliDurum = BoardDurum.hareketEdiyor;
+
     void Awake()
     {
         eslesmeController = Object.FindAnyObjectByType<EslesmeController>();
@@ -40,11 +44,13 @@ public class Board : MonoBehaviour
         DuzenleFNC();
 
     }
-
-    void Update()
-    {
-        eslesmeController.EslemeleriBulFNC();
-    }
+    /*
+        void Update()
+        {
+            eslesmeController.EslemeleriBulFNC();
+        }
+    */
+    // gerek yok zaten fonksiyonların içinde çalıştırıyoruz.
 
     void DuzenleFNC()
     {
@@ -138,6 +144,8 @@ public class Board : MonoBehaviour
         {
             if (tumMucevherler[pos.x, pos.y].GetComponent<YeniMucevher>().eslesdiMi)
             {
+
+                Instantiate(tumMucevherler[pos.x, pos.y].GetComponent<YeniMucevher>().mucevherEffect, new Vector2(pos.x, pos.y), Quaternion.identity);
                 Destroy(tumMucevherler[pos.x, pos.y]);
                 tumMucevherler[pos.x, pos.y] = null;
             }
@@ -207,6 +215,11 @@ public class Board : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
 
             TumEslesenMucevherleriYokEt();
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.5f);
+            gecerliDurum = BoardDurum.hareketEdiyor;
         }
     }
 

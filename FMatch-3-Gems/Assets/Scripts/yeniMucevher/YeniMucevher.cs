@@ -22,6 +22,8 @@ public class YeniMucevher : MonoBehaviour
 
     Vector2Int ilkPos;
 
+    public GameObject mucevherEffect;
+
     public void MucevheriDuzenle(Vector2Int pos, Board theBoard)
     {
         posIndex = pos;
@@ -36,15 +38,23 @@ public class YeniMucevher : MonoBehaviour
         if (mouseBasildi && Input.GetMouseButtonUp(0))
         {
             mouseBasildi = false;
-            sonBasilanPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            HesaplaAngleFNC();
+
+            if (board.gecerliDurum == Board.BoardDurum.hareketEdiyor)
+            {
+                sonBasilanPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                HesaplaAngleFNC();
+            }
         }
     }
 
     private void OnMouseDown()
     {
-        birinciBasilanPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mouseBasildi = true;
+        if (board.gecerliDurum == Board.BoardDurum.hareketEdiyor)
+        {
+            birinciBasilanPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mouseBasildi = true;
+        }
+
     }
 
     void HesaplaAngleFNC()
@@ -98,6 +108,9 @@ public class YeniMucevher : MonoBehaviour
 
     public IEnumerator HareketiKontrolEtRouitne()
     {
+
+        board.gecerliDurum = Board.BoardDurum.bekliyor;
+
         yield return new WaitForSeconds(0.3f);
 
         board.eslesmeController.EslemeleriBulFNC();
@@ -112,6 +125,9 @@ public class YeniMucevher : MonoBehaviour
                 board.tumMucevherler[posIndex.x, posIndex.y] = this.gameObject;
                 board.tumMucevherler[digerMucevher.posIndex.x, digerMucevher.posIndex.y] = digerMucevher.gameObject;
 
+                yield return new WaitForSeconds(0.5f);
+
+                board.gecerliDurum = Board.BoardDurum.hareketEdiyor;
             }
             else
             {
