@@ -15,7 +15,7 @@ public class YeniMucevher : MonoBehaviour
 
     YeniMucevher digerMucevher;
 
-    public enum MucevherTipi { mavi, pembe, sari, acikyesil, kapaliyesil };
+    public enum MucevherTipi { mavi, pembe, sari, acikyesil, kapaliyesil, bomba };
 
     public MucevherTipi tipi;
     public bool eslesdiMi;
@@ -23,6 +23,8 @@ public class YeniMucevher : MonoBehaviour
     Vector2Int ilkPos;
 
     public GameObject mucevherEffect;
+
+    public int bombaHacmi;
 
     public void MucevheriDuzenle(Vector2Int pos, Board theBoard)
     {

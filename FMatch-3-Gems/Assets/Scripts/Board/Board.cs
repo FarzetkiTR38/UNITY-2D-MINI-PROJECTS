@@ -31,6 +31,9 @@ public class Board : MonoBehaviour
 
     public BoardDurum gecerliDurum = BoardDurum.hareketEdiyor;
 
+    public Mucevher bomba;
+    public float bombaCikmaSansi = 2f;
+
     void Awake()
     {
         eslesmeController = Object.FindAnyObjectByType<EslesmeController>();
@@ -84,6 +87,11 @@ public class Board : MonoBehaviour
 
     void MucevherOlustur(Vector2Int pos, Mucevher olusacakMucevher)
     {
+        if (Random.Range(0f, 100f) < bombaCikmaSansi)
+        {
+            olusacakMucevher = bomba;
+        }
+
         GameObject YeniMucevher = Instantiate(olusacakMucevher.prefab, new Vector3(pos.x, pos.y, 0f), Quaternion.identity);
         YeniMucevher.transform.parent = this.transform;
         YeniMucevher.name = "Mucevher - " + pos.x + ", " + pos.y;
