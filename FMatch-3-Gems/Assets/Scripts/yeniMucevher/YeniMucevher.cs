@@ -26,6 +26,8 @@ public class YeniMucevher : MonoBehaviour
 
     public int bombaHacmi;
 
+    public int scoreDegeri;
+
     public void MucevheriDuzenle(Vector2Int pos, Board theBoard)
     {
         posIndex = pos;
@@ -41,7 +43,7 @@ public class YeniMucevher : MonoBehaviour
         {
             mouseBasildi = false;
 
-            if (board.gecerliDurum == Board.BoardDurum.hareketEdiyor)
+            if (board.gecerliDurum == Board.BoardDurum.hareketEdiyor && !UIManager.instance.turBittiMi)
             {
                 sonBasilanPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 HesaplaAngleFNC();
@@ -51,7 +53,7 @@ public class YeniMucevher : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (board.gecerliDurum == Board.BoardDurum.hareketEdiyor)
+        if (board.gecerliDurum == Board.BoardDurum.hareketEdiyor && !UIManager.instance.turBittiMi)
         {
             birinciBasilanPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mouseBasildi = true;
