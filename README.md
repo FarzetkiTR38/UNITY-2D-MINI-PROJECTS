@@ -20,12 +20,12 @@ Klasik "Tuğla Kırma" (Breakout) türünde 2D bir arcade oyunudur. Oyuncu, topu
 - 🎮 Basit ama bağımlılık yapan mekanikler
 
 📸 **Görseller:**  
-![Ekran Görüntüsü 1](gorseller/screenshot1.png)  daha sonra yüklenecektir.
+![Ekran Görüntüsü 1](gorseller/screenshot1.png) — daha sonra yüklenecektir.
 
-![Ekran Görüntüsü 2](gorseller/screenshot2.png)  daha sonra yüklenecektir.
+![Ekran Görüntüsü 2](gorseller/screenshot2.png) — daha sonra yüklenecektir.
 
 ▶️ **Oynanış Videosu:**  
-[Oynanış Videosunu İzle](https://youtu.be/...)   daha sonra yüklenecektir.
+[Oynanış Videosunu İzle](https://youtu.be/...) — daha sonra yüklenecektir.
 
 📂 **Proje Dizini:**  
 [BrickBreak Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FBrickBreak)
@@ -48,12 +48,12 @@ Klasik bir 2D platform oyunudur. Oyuncu, engelleri aşarak, düşmanlardan kaça
 - 🎮 Akıcı kontroller ve sade UI
 
 📸 **Görseller:**  
-![Ekran Görüntüsü 1](gorseller/platformer1.png)  daha sonra yüklenecektir.
+![Ekran Görüntüsü 1](gorseller/platformer1.png) — daha sonra yüklenecektir.
 
-![Ekran Görüntüsü 2](gorseller/platformer2.png)  daha sonra yüklenecektir.
+![Ekran Görüntüsü 2](gorseller/platformer2.png) — daha sonra yüklenecektir.
 
 ▶️ **Oynanış Videosu:**  
-[Oynanış Videosunu İzle](https://youtu.be/...)   daha sonra yüklenecektir.
+[Oynanış Videosunu İzle](https://youtu.be/...) — daha sonra yüklenecektir.
 
 📂 **Proje Dizini:**  
 [2D Platformer Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/F2DPlatformGame)
@@ -79,12 +79,12 @@ Klasik "Pong" oyunundan esinlenerek geliştirilmiş 2D bir masa tenisi oyunudur.
 - 🔄 Sonsuz döngülü maç yapısı
 
 📸 **Görseller:**  
-![Ekran Görüntüsü 1](gorseller/platformer1.png)  daha sonra yüklenecektir.
+![Ekran Görüntüsü 1](gorseller/platformer1.png) — daha sonra yüklenecektir.
 
-![Ekran Görüntüsü 2](gorseller/platformer2.png)  daha sonra yüklenecektir.
+![Ekran Görüntüsü 2](gorseller/platformer2.png) — daha sonra yüklenecektir.
 
 ▶️ **Oynanış Videosu:**  
-[Oynanış Videosunu İzle](https://youtu.be/...)   daha sonra yüklenecektir.
+[Oynanış Videosunu İzle](https://youtu.be/...) — daha sonra yüklenecektir.
 
 📂 **Proje Dizini:**  
 [Ping Pong Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FPingPonk)
@@ -108,12 +108,12 @@ Flappy Bird tarzında, oyuncunun zıplayarak engellerden kaçtığı 2D bir arca
 - 🎮 Basit kontroller, zorlayıcı oynanış
 
 📸 **Görseller:**  
-![Ekran Görüntüsü 1](gorseller/platformer1.png)  daha sonra yüklenecektir.
+![Ekran Görüntüsü 1](gorseller/platformer1.png) — daha sonra yüklenecektir.
 
-![Ekran Görüntüsü 2](gorseller/platformer2.png)  daha sonra yüklenecektir.
+![Ekran Görüntüsü 2](gorseller/platformer2.png) — daha sonra yüklenecektir.
 
 ▶️ **Oynanış Videosu:**  
-[Oynanış Videosunu İzle](https://youtu.be/...)   daha sonra yüklenecektir.
+[Oynanış Videosunu İzle](https://youtu.be/...) — daha sonra yüklenecektir.
 
 📂 **Proje Dizini:**  
 [Ping Pong Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FFlappyBird)
@@ -200,7 +200,7 @@ Aynı türden en az üç mücevheri yatay veya dikey olarak eşleştirerek patla
   - Oyunu yeniden başlatma seçeneği  
 
 📈 **Geliştirilebilir Özellikler:**  
-- 🎯 Görev sistemi (örneğin: "5 mavi taş eşleştir")  
+- 🎯 Görev sistemi (örneğin: "5 mavi mücevheri eşleştir")  
 - 🔥 Özel mücevherler (bomba, çizgisel patlatıcı)  
 - ⏱️ Süreli mod veya hamle sınırlı mod  
 - 🧩 Farklı seviyeler ve ilerleme sistemi  
@@ -269,12 +269,12 @@ Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, 
   - (açıkçası okunabilir olsa da pek optimize değil chatgpt 4/10 verdi optimizasyonuma :D )
 
 📸 **Görseller:**  
-![Ekran Görüntüsü 1](gorseller/platformer1.png)  daha sonra yüklenecektir.
+![Ekran Görüntüsü 1](gorseller/platformer1.png) — daha sonra yüklenecektir.
 
-![Ekran Görüntüsü 2](gorseller/platformer2.png)  daha sonra yüklenecektir.
+![Ekran Görüntüsü 2](gorseller/platformer2.png) — daha sonra yüklenecektir.
 
 ▶️ **Oynanış Videosu:**  
-[Oynanış Videosunu İzle](https://youtu.be/...)   daha sonra yüklenecektir.
+[Oynanış Videosunu İzle](https://youtu.be/...) — daha sonra yüklenecektir.
 
 📂 **Proje Dizini:**  
 [Ping Pong Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FarzetkiClicker)
