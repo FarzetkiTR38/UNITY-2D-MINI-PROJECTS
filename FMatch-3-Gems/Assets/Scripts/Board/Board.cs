@@ -60,7 +60,7 @@ public class Board : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.K))
         {
-            //BoardKaristirFNC();
+            BoardKaristirFNC();
         }
     }
     void DuzenleFNC()
@@ -161,6 +161,16 @@ public class Board : MonoBehaviour
             if (tumMucevherler[pos.x, pos.y].GetComponent<YeniMucevher>().eslesdiMi)
             {
 
+
+                if (tumMucevherler[pos.x, pos.y].GetComponent<YeniMucevher>().tipi == YeniMucevher.MucevherTipi.bomba)
+                {
+                    SoundManager.instance.PatlamaSesiCikar();
+                }
+                else
+                {
+                    SoundManager.instance.MucevherSesiCikar();
+                }
+
                 Instantiate(tumMucevherler[pos.x, pos.y].GetComponent<YeniMucevher>().mucevherEffect, new Vector2(pos.x, pos.y), Quaternion.identity);
                 Destroy(tumMucevherler[pos.x, pos.y]);
                 tumMucevherler[pos.x, pos.y] = null;
@@ -180,6 +190,7 @@ public class Board : MonoBehaviour
         }
 
         StartCoroutine(AltaKaydirRouitine());
+
     }
 
     IEnumerator AltaKaydirRouitine()
@@ -284,67 +295,122 @@ public class Board : MonoBehaviour
     }
 
 
-/*
+    /*
+        public void BoardKaristirFNC()
+        {
+            if (gecerliDurum != BoardDurum.bekliyor)
+            {
+                gecerliDurum = BoardDurum.bekliyor;
+            }   
+            List<GameObject> sahnedekiMucevherlerList = new List<GameObject>();
+
+            // Sahnedeki tüm mücevherleri topla
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    GameObject obj = tumMucevherler[x, y];
+                    if (obj != null)
+                    {
+                        sahnedekiMucevherlerList.Add(obj);
+                        tumMucevherler[x, y] = null;
+                    }
+                }
+            }
+
+            // Listeyi karıştır ve yerleştir
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (sahnedekiMucevherlerList.Count == 0)
+                        break;
+
+                    int kullanilacakIndex = Random.Range(0, sahnedekiMucevherlerList.Count);
+                    GameObject secilenObj = sahnedekiMucevherlerList[kullanilacakIndex];
+                    YeniMucevher secilenMucevherScript = secilenObj.GetComponent<YeniMucevher>();
+
+                    int kontrolSayac = 0;
+
+                    Mucevher mucevherTipi = mucevherler.FirstOrDefault(m => m.ad == secilenMucevherScript.tipi.ToString());
+
+                    while (EslesmeVarMiFNC(new Vector2Int(x, y), mucevherTipi) && kontrolSayac < 100 && sahnedekiMucevherlerList.Count > 0)
+                    {
+                        kullanilacakIndex = Random.Range(0, sahnedekiMucevherlerList.Count);
+                        secilenObj = sahnedekiMucevherlerList[kullanilacakIndex];
+                        secilenMucevherScript = secilenObj.GetComponent<YeniMucevher>();
+                        kontrolSayac++;
+                    }
+
+                    // Yerleştir
+                    if (secilenMucevherScript != null)
+                    {
+                        secilenMucevherScript.MucevheriDuzenle(new Vector2Int(x, y), this);
+                        tumMucevherler[x, y] = secilenObj;
+                    }
+
+                    sahnedekiMucevherlerList.RemoveAt(kullanilacakIndex);
+                }
+            }
+
+            StartCoroutine(AltaKaydirRouitine());
+        }
+
+    */
+
+
+    // yapay zekadan yardım alarak Fonksiyonu düzelttirdim, çalışıyordu fakat hatalara yol açıyordu.  
     public void BoardKaristirFNC()
     {
         if (gecerliDurum != BoardDurum.bekliyor)
         {
             gecerliDurum = BoardDurum.bekliyor;
-        }   
+        }
+
         List<GameObject> sahnedekiMucevherlerList = new List<GameObject>();
 
-        // Sahnedeki tüm mücevherleri topla
+        // Tüm mücevherleri topla ve tahtadan çıkar
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                GameObject obj = tumMucevherler[x, y];
-                if (obj != null)
+                if (tumMucevherler[x, y] != null)
                 {
-                    sahnedekiMucevherlerList.Add(obj);
+                    sahnedekiMucevherlerList.Add(tumMucevherler[x, y]);
                     tumMucevherler[x, y] = null;
                 }
             }
         }
 
-        // Listeyi karıştır ve yerleştir
+        // Listeyi karıştır
+        for (int i = 0; i < sahnedekiMucevherlerList.Count; i++)
+        {
+            GameObject temp = sahnedekiMucevherlerList[i];
+            int randomIndex = Random.Range(i, sahnedekiMucevherlerList.Count);
+            sahnedekiMucevherlerList[i] = sahnedekiMucevherlerList[randomIndex];
+            sahnedekiMucevherlerList[randomIndex] = temp;
+        }
+
+        // Karıştırılan mücevherleri yeniden yerleştir
+        int index = 0;
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                if (sahnedekiMucevherlerList.Count == 0)
-                    break;
-
-                int kullanilacakIndex = Random.Range(0, sahnedekiMucevherlerList.Count);
-                GameObject secilenObj = sahnedekiMucevherlerList[kullanilacakIndex];
-                YeniMucevher secilenMucevherScript = secilenObj.GetComponent<YeniMucevher>();
-
-                int kontrolSayac = 0;
-
-                Mucevher mucevherTipi = mucevherler.FirstOrDefault(m => m.ad == secilenMucevherScript.tipi.ToString());
-
-                while (EslesmeVarMiFNC(new Vector2Int(x, y), mucevherTipi) && kontrolSayac < 100 && sahnedekiMucevherlerList.Count > 0)
+                if (index < sahnedekiMucevherlerList.Count)
                 {
-                    kullanilacakIndex = Random.Range(0, sahnedekiMucevherlerList.Count);
-                    secilenObj = sahnedekiMucevherlerList[kullanilacakIndex];
-                    secilenMucevherScript = secilenObj.GetComponent<YeniMucevher>();
-                    kontrolSayac++;
+                    GameObject obj = sahnedekiMucevherlerList[index];
+                    YeniMucevher mucevher = obj.GetComponent<YeniMucevher>();
+                    mucevher.MucevheriDuzenle(new Vector2Int(x, y), this);
+                    tumMucevherler[x, y] = obj;
+                    index++;
                 }
-
-                // Yerleştir
-                if (secilenMucevherScript != null)
-                {
-                    secilenMucevherScript.MucevheriDuzenle(new Vector2Int(x, y), this);
-                    tumMucevherler[x, y] = secilenObj;
-                }
-
-                sahnedekiMucevherlerList.RemoveAt(kullanilacakIndex);
             }
         }
 
+        // Sonrasında eşleşme kontrolü yapılır ve varsa temizlenir
         StartCoroutine(AltaKaydirRouitine());
     }
 
-*/
 
 }

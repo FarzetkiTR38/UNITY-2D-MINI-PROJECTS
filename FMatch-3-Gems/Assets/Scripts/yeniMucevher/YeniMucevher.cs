@@ -115,6 +115,7 @@ public class YeniMucevher : MonoBehaviour
 
         board.gecerliDurum = Board.BoardDurum.bekliyor;
 
+
         yield return new WaitForSeconds(0.3f);
 
         board.eslesmeController.EslemeleriBulFNC();
@@ -132,9 +133,11 @@ public class YeniMucevher : MonoBehaviour
                 yield return new WaitForSeconds(0.5f);
 
                 board.gecerliDurum = Board.BoardDurum.hareketEdiyor;
+                
             }
             else
             {
+                UIManager.instance.HamleYap();
                 board.TumEslesenMucevherleriYokEt();
             }
         }
