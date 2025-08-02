@@ -281,6 +281,55 @@ Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, 
 
 ---
 
+### 8. 🌈 Color Switch  
+📌 **Kısa Açıklama:**  
+"Color Switch" tarzında geliştirilmiş bu refleks oyunu, oyuncunun yalnızca kendi rengiyle eşleşen engellerden geçmesini hedefler. Renkli, hızlı tempolu ve refleks odaklı bir oyun deneyimi sunar.
+
+🔧 **Kullanılan Teknolojiler:**  
+- Unity 6  
+- C#  
+- Aseprite (Renkli objeler ve UI ikonları)  
+- TextMeshPro (UI yazıları için)
+
+🎮 **Oynanış Özellikleri:**  
+- 🌈 **Renk Uyumu:**  
+  - Top yalnızca kendi rengindeki engellerden geçebilir  
+  - Engeller rastgele döner ve hareket eder  
+- 🕹️ **Tek Dokunuşla Zıplama:**  
+  - Ekrana dokunarak topu yukarı zıplat  
+  - Yerçekimi ve zıplama kuvveti ile fiziksel kontrol  
+- 🔄 **Renk Değişimi:**  
+  - Bazı noktalarda topun rengi değişir  
+  - Yeni renge uyumlu engellerden geçilmesi gerekir  
+- 🧱 **Engel Çeşitliliği:**  
+  - Dönen çemberler, hareketli çizgiler, çapraz engeller  
+  - Her biri farklı renk segmentlerinden oluşur  
+- 🧾 **Skor Sistemi:**  
+  - Her geçilen engel için +1 puan  
+  - En yüksek skor kaydı tutulur  
+- 🎨 **Görsel & UI:**  
+  - Canlı neon renkler  
+  - Dinamik arka plan geçişleri  
+  - Minimal ama estetik UI tasarımı
+
+📈 **Geliştirilebilir Özellikler:**  
+- 🏁 Seviye bazlı ilerleme  
+- ⏱️ Zamanlı mod  
+- 💥 Özel güçler (yavaşlatma, görünmezlik vb.)  
+- 🔊 Müzik senkronizasyonlu engel geçişleri  
+
+📸 **Görseller:**  
+![Ekran Görüntüsü 1](gorseller/colorswitch1.png) — daha sonra yüklenecektir.  
+![Ekran Görüntüsü 2](gorseller/colorswitch2.png) — daha sonra yüklenecektir.
+
+▶️ **Oynanış Videosu:**  
+[Oynanış Videosunu İzle](https://youtu.be/...) — daha sonra yüklenecektir.
+
+📂 **Proje Dizini:**  
+[Color Switch Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FColorSwitch)
+
+---
+
 <!--  -->
 
 
