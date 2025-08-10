@@ -163,7 +163,7 @@ Bu proje, Unity ile geliştirilmiş, gerçek zamanlı online çok oyunculu bir *
 [Oynanış Videosunu İzle](https://youtu.be/...) — yüklenecek
 
 📂 **Proje Dizini:**  
-[Match-3 Oyun Dosyalarına Git]([https://github.com/KULLANICI_ADIN/UnityMatch3Game](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FAgar.io)
+[Match-3 Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FAgar.io)
 
 ---
 
@@ -214,7 +214,7 @@ Aynı türden en az üç mücevheri yatay veya dikey olarak eşleştirerek patla
 [Oynanış Videosunu İzle](https://youtu.be/...) — daha sonra yüklenecektir.
 
 📂 **Proje Dizini:**  
-[Match-3 Oyun Dosyalarına Git]([https://github.com/KULLANICI_ADIN/UnityMatch3Game](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FMatch-3-Gems)
+[Match-3 Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FMatch-3-Gems)
 
 ---
 
