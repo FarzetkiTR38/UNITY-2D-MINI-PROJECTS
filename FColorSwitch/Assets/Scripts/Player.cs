@@ -29,11 +29,12 @@ public class Player : MonoBehaviour {
 
 	void OnTriggerEnter2D (Collider2D other)
 	{
-		if (other.tag == "ColorChanger")
-		{
-			SetRandomColor();
-			Destroy(other.gameObject);
-			return;
+        if (other.tag == "ColorChanger")
+        {
+            SetRandomColor();
+            Destroy(other.gameObject);
+            return;
+            // .
 		}
 
 		if (other.tag != currentColor)
