@@ -330,7 +330,7 @@ Oyuncunun tıklayarak ve zamanla otomatik gelir elde ederek para biriktirdiği, 
 
 ---
 
-### 2. 🐍 Pixel Snake  
+### 9. 🐍 Pixel Snake  
 📌 **Kısa Açıklama:**  
 Klasik "Yılan" oyununu piksel tarzında modern bir dokunuşla yeniden tasarladım. Oyuncu, yılanı kontrol ederek ekrandaki yiyecekleri toplar ve büyümeye çalışır. Yılan kendi vücuduna çarparsa oyun biter.
 
