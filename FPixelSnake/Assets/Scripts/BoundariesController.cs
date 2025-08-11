@@ -39,6 +39,10 @@ public class BoundariesController : MonoBehaviour
         }
     */
 
+    // bir int değer oluşturacağım ve bu değeri 1 2 3 4 olarak değiştireceğim eğer değer 1 ise 2. koşul çalışmayacak eğer 3 ise 4. koşul çalışmayacak:
+    // mantık şu şekilde: yılan ters yönde gidemez eğer yönümüz 1 ise yani sol ise 2. koşul yani sağa gitme çalışmamalı:
+     
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("LeftBoundaries") || other.CompareTag("Snake"))
