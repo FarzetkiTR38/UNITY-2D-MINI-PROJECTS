@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -36,6 +37,25 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public string mainSahneAdi;
+    public void yesButton()
+    {
+        gameOverCanvas.SetActive(false);
+        SceneManager.LoadScene(mainSahneAdi);
+
+    }
+
+    public void noButton()
+    {
+        Application.Quit();
+    }
+
+    [SerializeField]
+    GameObject gameOverCanvas;
+    public void GameOverScreen()
+    {
+        gameOverCanvas.SetActive(true);
+    }
 
 
 

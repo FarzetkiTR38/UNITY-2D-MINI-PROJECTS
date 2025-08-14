@@ -8,8 +8,14 @@ public class SnakeController : MonoBehaviour
 
     [SerializeField] Transform SnakeHead;
 
+    [SerializeField] Transform Snake;
+
     Rigidbody2D rb;
     int yon = 0; // 1=Up, 2=Down, 3=Left, 4=Right
+
+    [SerializeField]
+    private Sprite SnakeLeft, SnakeRight, SnakeUp, SnakeDown;
+    
 
     List<Transform> tailParts = new List<Transform>();
     List<Vector3> positions = new List<Vector3>();
@@ -37,6 +43,8 @@ public class SnakeController : MonoBehaviour
             SnakeHead.rotation = Quaternion.Euler(0, 0, 90);
             SnakeHead.position = rb.position + new Vector2(0f, 0.55f);
 
+
+            GetComponent<SpriteRenderer>().sprite = SnakeUp;
         }
         else if (Input.GetKey(KeyCode.S) && yon != 1)
         {
@@ -44,6 +52,8 @@ public class SnakeController : MonoBehaviour
             yon = 2;
             SnakeHead.rotation = Quaternion.Euler(0, 0, -90);
             SnakeHead.position = rb.position + new Vector2(0f, -0.55f);
+
+            GetComponent<SpriteRenderer>().sprite = SnakeDown;
         }
         else if (Input.GetKey(KeyCode.A) && yon != 4)
         {
@@ -51,6 +61,8 @@ public class SnakeController : MonoBehaviour
             yon = 3;
             SnakeHead.rotation = Quaternion.Euler(0, 0, 180);
             SnakeHead.position = rb.position + new Vector2(-0.55f, 0f);
+
+            GetComponent<SpriteRenderer>().sprite = SnakeLeft;
         }
         else if (Input.GetKey(KeyCode.D) && yon != 3)
         {
@@ -59,7 +71,11 @@ public class SnakeController : MonoBehaviour
 
             SnakeHead.rotation = Quaternion.Euler(0, 0, 0);
             SnakeHead.position = rb.position + new Vector2(0.55f, 0f);
+
+            GetComponent<SpriteRenderer>().sprite = SnakeRight;
         }
+        
+
     }
     
 
