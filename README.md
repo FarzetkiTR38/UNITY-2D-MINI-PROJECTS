@@ -358,6 +358,54 @@ Klasik "Yılan" oyununu piksel tarzında modern bir dokunuşla yeniden tasarlad�
 
 ---
 
+### 10. 🏰 Tower Defense  
+📌 **Kısa Açıklama:**  
+Klasik **Tower Defense** mantığına sahip bu oyunda, oyuncu harita üzerinde stratejik noktalara kuleler yerleştirerek gelen düşman dalgalarını durdurmaya çalışır. Amaç, düşmanların bitiş noktasına ulaşmasını engelleyerek mümkün olduğunca uzun süre hayatta kalmaktır.
+
+🔧 **Kullanılan Teknolojiler:**  
+- Unity 6  
+- C#  
+- Aseprite (Sprite ve çevre tasarımları için)  
+- TextMeshPro (UI yazıları için)
+
+🎮 **Oynanış Özellikleri:**  
+- 🏹 **Kule Yerleştirme:**  
+  - Oyuncu belirli alanlara kuleler yerleştirebilir  
+  - Her kulenin farklı saldırı gücü ve menzili vardır  
+- ⚔️ **Düşman Dalgaları:**  
+  - Zamanla zorluk artan düşman akınları  
+  - Düşmanların hız ve can değerleri dalgalara göre değişir  
+- 💰 **Ekonomi Sistemi:**  
+  - Her öldürülen düşman altın kazandırır  
+  - Altın ile yeni kuleler yapılabilir veya mevcut kuleler geliştirilebilir  
+- ⬆️ **Kule Geliştirme:**  
+  - Kuleler seviye atladıkça daha güçlü ve hızlı saldırır  
+- ❤️ **Can Sistemi:**  
+  - Düşmanlar bitiş noktasına ulaşırsa oyuncunun canı azalır  
+  - Can sıfırlandığında oyun biter  
+- 📊 **Skor & Dalga Takibi:**  
+  - Kaçıncı dalgada olunduğu gösterilir  
+  - Toplam öldürülen düşman sayısı ve skor kaydedilir  
+
+📈 **Geliştirilebilir Özellikler:**  
+- 🔥 Özel kule tipleri (buz kulesi, topçu, elektrik kulesi vb.)  
+- 🌎 Farklı haritalar ve seviyeler  
+- 🕹️ Sonsuz dalga modu  
+- 🎨 Daha gelişmiş UI ve animasyon efektleri  
+
+📸 **Görseller:**  
+![Ekran Görüntüsü 1](gorseller/towerdefense1.png) — daha sonra yüklenecektir.  
+![Ekran Görüntüsü 2](gorseller/towerdefense2.png) — daha sonra yüklenecektir.  
+
+▶️ **Oynanış Videosu:**  
+[Oynanış Videosunu İzle](https://youtu.be/...) — daha sonra yüklenecektir.
+
+📂 **Proje Dizini:**  
+[Tower Defense Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FTowerDefense)
+
+---
+
+
 <!--  -->
 
 
