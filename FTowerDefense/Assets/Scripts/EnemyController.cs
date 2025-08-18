@@ -13,6 +13,10 @@ public class EnemyController : MonoBehaviour
 
     private Transform target;
     private int pathIndex = 0;
+
+    float baseSpeed;
+
+
     void Start()
     {
         target = LevelManager.instance.path[pathIndex];
@@ -45,5 +49,15 @@ public class EnemyController : MonoBehaviour
         Vector2 direction = (target.position - transform.position).normalized;
         // .normalized, bir vektörün yönünü koruyarak uzunluğunu (magnitude) 1’e eşitleyen bir işlemdir.
         rb.linearVelocity = direction * moveSpeed;
+    }
+
+    public void UpdateSpeed(float newSpeed)
+    {
+        moveSpeed = newSpeed;
+    }
+
+    public void ResetSpeed()
+    {
+        moveSpeed = baseSpeed;
     }
 }

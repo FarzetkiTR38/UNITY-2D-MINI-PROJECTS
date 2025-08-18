@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2760860783438326108}
   - component: {fileID: 6229377149580548259}
   m_Layer: 7
-  m_Name: Turret
+  m_Name: Sniper Turret
   m_TagString: Turret
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52,9 +52,9 @@ MonoBehaviour:
     m_Bits: 64
   bulletPrefab: {fileID: 2108595611238831902, guid: af9e599d3fe4b714abd63270d15523dc, type: 3}
   firingPoint: {fileID: 410996603533750851}
-  targetingRange: 2
+  targetingRange: 5
   rotationSpeed: 1000
-  bps: 1
+  bps: 1.5
 --- !u!1 &3366870518284048016
 GameObject:
   m_ObjectHideFlags: 0
@@ -132,7 +132,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 2277204698151690033, guid: 68674293ac1c46447848632a43b6771d, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.42075467, g: 0.5169125, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
