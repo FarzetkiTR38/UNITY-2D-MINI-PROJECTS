@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2760860783438326108}
   - component: {fileID: 6229377149580548259}
   m_Layer: 7
-  m_Name: Turret
+  m_Name: DoubleGun Turret
   m_TagString: Turret
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,8 +27,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.01, y: 0.98, z: 1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.59, y: 0.59, z: 0.59}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3598399207140911518}
   - {fileID: 6155833600979239208}
@@ -160,8 +160,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.25872833, y: 0.20088658, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 6155833600979239208}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -209,7 +209,7 @@ SpriteRenderer:
   m_SortingLayerID: -887241285
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 2277204698151690033, guid: 68674293ac1c46447848632a43b6771d, type: 3}
+  m_Sprite: {fileID: -6004020780358727209, guid: e941eb3cc012d3545af72897dc2975f7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -336,6 +336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21166473fc7a71349be1088ddf113be0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mouse_over: 0
 --- !u!1 &4846128844322845672
 GameObject:
   m_ObjectHideFlags: 0
@@ -673,7 +674,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3598399207140911518
 Transform:
   m_ObjectHideFlags: 0
