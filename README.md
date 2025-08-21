@@ -371,24 +371,30 @@ Klasik **Tower Defense** mantığına sahip bu oyunda, oyuncu harita üzerinde s
 🎮 **Oynanış Özellikleri:**  
 - 🏹 **Kule Yerleştirme:**  
   - Oyuncu belirli alanlara kuleler yerleştirebilir  
-  - Her kulenin farklı saldırı gücü ve menzili vardır  
+  - Her kulenin farklı saldırı gücü ve menzili vardır
+  - Özel yeteneğe sahip özel kuleler
 - ⚔️ **Düşman Dalgaları:**  
   - Zamanla zorluk artan düşman akınları  
-  - Düşmanların hız ve can değerleri dalgalara göre değişir  
+  - Düşmanların hız ve can değerleri dalgalara göre değişir
+  - Belirli dalgalarda ortaya çıkan özel BOSS'lar  
 - 💰 **Ekonomi Sistemi:**  
-  - Her öldürülen düşman altın kazandırır  
+  - Her öldürülen düşman altın kazandırır
+  - Her dalga bitiminde altın kazanılır
   - Altın ile yeni kuleler yapılabilir veya mevcut kuleler geliştirilebilir  
 - ⬆️ **Kule Geliştirme:**  
-  - Kuleler seviye atladıkça daha güçlü ve hızlı saldırır  
+  - Kuleler seviye atladıkça daha güçlü ve hızlı saldırır
+  - Belirli oranlarda reach & attack speed & damage artışı kazanılır.
 - ❤️ **Can Sistemi:**  
-  - Düşmanlar bitiş noktasına ulaşırsa oyuncunun canı azalır  
+  - Düşmanlar bitiş noktasına ulaşırsa oyuncunun canı azalır
+  - BOSS bitiş noktasına ulaşırsa tüm can biter.
   - Can sıfırlandığında oyun biter  
 - 📊 **Skor & Dalga Takibi:**  
   - Kaçıncı dalgada olunduğu gösterilir  
-  - Toplam öldürülen düşman sayısı ve skor kaydedilir  
+  - Verilen total damage & oynama süresi gösterilir
+  - Toplam öldürülen düşman sayısı ve skor kaydedilir 
 
 📈 **Geliştirilebilir Özellikler:**  
-- 🔥 Özel kule tipleri (buz kulesi, topçu, elektrik kulesi vb.)  
+- 🔥 Özel kule tipleri (buz kulesi, topçu, Tank kulesi vb.)  
 - 🌎 Farklı haritalar ve seviyeler  
 - 🕹️ Sonsuz dalga modu  
 - 🎨 Daha gelişmiş UI ve animasyon efektleri  
