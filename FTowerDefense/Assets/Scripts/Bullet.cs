@@ -39,6 +39,8 @@ public class Bullet : MonoBehaviour
     void OnCollisionEnter2D(Collision2D other)
     {
         other.gameObject.GetComponent<Health>().TakeDamage(bulletDamage);
+        LevelManager.instance.totalDamage += bulletDamage * 100; // canı 2 ise 200 damage ile ölmüş gibi gösterelim 2 çok az :D
+        // 5 canı olan tanka da 500 damage atınca ölüyor vs.
         Destroy(gameObject); 
     }
 

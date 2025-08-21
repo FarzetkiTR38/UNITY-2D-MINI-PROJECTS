@@ -28,10 +28,12 @@ public class EnemySpawner : MonoBehaviour
 
     int currentWave = 1;
     float timeSinceLastSpawn;
-    int enemiesAlive;
+    public int enemiesAlive;
     int enemiesLeftToSpawn;
     float eps; // enimies per second
     bool isSpawning = false;
+
+    public int totalKilledEnemy;
 
 
     // events
@@ -70,12 +72,15 @@ public class EnemySpawner : MonoBehaviour
         if (enemiesAlive == 0 && enemiesLeftToSpawn == 0)
         {
             EndWave();
+            LevelManager.instance.WaveUp();
+            LevelManager.instance.WorldChecker();
         }
     }
 
     void EnemyDestoryed()
     {
         enemiesAlive--;
+        totalKilledEnemy++;
     }
 
     IEnumerator StartWave()

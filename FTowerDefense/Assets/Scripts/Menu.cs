@@ -27,7 +27,7 @@ public class Menu : MonoBehaviour
 
     public void SetSelected()
     {
-        //,
+        // bunu niye eklemişiz awk boş bu
     }
 
 }
