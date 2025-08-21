@@ -16,6 +16,8 @@ public class Menu : MonoBehaviour
     {
         isMenuOpen = !isMenuOpen;
         anim.SetBool("MenuOpen", isMenuOpen);
+        //print("isMenuOpen" + isMenuOpen);
+
     }
 
     void OnGUI()
