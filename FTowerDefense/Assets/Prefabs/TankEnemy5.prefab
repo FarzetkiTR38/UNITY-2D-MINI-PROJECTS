@@ -14,33 +14,28 @@ GameObject:
   - component: {fileID: 7397005802807959234}
   - component: {fileID: 1969088241983628903}
   - component: {fileID: -1932809982736161019}
-  - component: {fileID: 4864706254156705452}
   m_Layer: 6
-  m_Name: Enemy
+  m_Name: TankEnemy5
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &8984619715686759316
-RectTransform:
+--- !u!4 &8984619715686759316
+Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2112180052194051439}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -1, y: 7, z: 0}
   m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1, y: 7}
-  m_SizeDelta: {x: 1, y: 1}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!212 &113447724033223546
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -85,7 +80,7 @@ SpriteRenderer:
   m_SortingLayerID: 1318778439
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: 2077641821037371291, guid: 6beb38d4d6796d546b856b655fb9aaac, type: 3}
+  m_Sprite: {fileID: -222667870317282139, guid: 44ad2f8f2e2d18c49bf20db1446f749d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -145,7 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 1969088241983628903}
-  moveSpeed: 2
+  moveSpeed: 1
 --- !u!50 &1969088241983628903
 Rigidbody2D:
   serializedVersion: 5
@@ -185,13 +180,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b0075fb349725e4c82df218c1c2e3f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitPoints: 2
-  currencyWorth: 50
---- !u!222 &4864706254156705452
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2112180052194051439}
-  m_CullTransparentMesh: 1
+  hitPoints: 5
+  currencyWorth: 100

@@ -33,6 +33,7 @@ public class EnemyController : MonoBehaviour
             {
                 EnemySpawner.onEnemyDestroy.Invoke();
                 Destroy(gameObject);
+                LevelManager.instance.HealthDecrease(1);
                 return;
             }
             else

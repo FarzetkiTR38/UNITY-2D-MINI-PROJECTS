@@ -13,6 +13,8 @@ public class LevelManager : MonoBehaviour
     public int world;
     public int wave;
 
+    public int health;
+
     public int totalDamage;
 
     void Awake()
@@ -25,6 +27,8 @@ public class LevelManager : MonoBehaviour
         currency = 1000;
         world = 1;
         wave = 1;
+        health = 10;
+
     }
 
     public void IncreaseCurrency(int amount)
@@ -61,5 +65,15 @@ public class LevelManager : MonoBehaviour
             return false;
         }
 
-    }   
+    }
+
+    public void HealthIncrease(int amount)
+    {
+        health += amount;
+    }
+
+    public void HealthDecrease(int amount)
+    {
+        health -= amount;
+    }
 }

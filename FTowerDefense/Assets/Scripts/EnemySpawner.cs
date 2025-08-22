@@ -107,17 +107,38 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnEnemy()
     {
-        float index = Random.Range(0, enemyPrefabs.Length);
-        if (index > .8f)
-        {
-            GameObject prefabToSpawn = enemyPrefabs[1];
-            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
-        }
-        else
+        int index = Random.Range(0, enemyPrefabs.Length + 3);
+        if (index <= 3)
         {
             GameObject prefabToSpawn = enemyPrefabs[0];
             Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
         }
+        else if (index <= 4)
+        {
+            GameObject prefabToSpawn = enemyPrefabs[1];
+            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
+        }
+        else if (index <= 5)
+        {
+            GameObject prefabToSpawn = enemyPrefabs[2];
+            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
+        }
+        else if (index <= 6)
+        {
+            GameObject prefabToSpawn = enemyPrefabs[3];
+            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
+        }
+        else if (index <= 7)
+        {
+            GameObject prefabToSpawn = enemyPrefabs[4];
+            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
+        }
+        else if (index <= 8)
+        {
+            GameObject prefabToSpawn = enemyPrefabs[5];
+            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
+        }
+        
 
 
     }
