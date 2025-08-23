@@ -107,38 +107,88 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnEnemy()
     {
-        int index = Random.Range(0, enemyPrefabs.Length + 3);
+        int index = Random.Range(0, enemyPrefabs.Length);
 
         // 3 oranda ilk enemy, 1 oranda da diğer enemyler doğacak
 
-        if (index <= 3)
+        if (index <= 0)
         {
             GameObject prefabToSpawn = enemyPrefabs[0];
             Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
         }
-        else if (index <= 4)
+        else if (index <= 1)
         {
             GameObject prefabToSpawn = enemyPrefabs[1];
             Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
         }
-        else if (index <= 5)
+        else if (index <= 2)
         {
             GameObject prefabToSpawn = enemyPrefabs[2];
             Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
         }
-        else if (index <= 6)
+        else if (index <= 3)
         {
             GameObject prefabToSpawn = enemyPrefabs[3];
             Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
         }
-        else if (index <= 7)
+        else if (index <= 4)
         {
             GameObject prefabToSpawn = enemyPrefabs[4];
             Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
         }
-        else if (index <= 8)
+        else if (index <= 5)
         {
             GameObject prefabToSpawn = enemyPrefabs[5];
+            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
+        }
+        else if (index <= 6)
+        {
+            GameObject prefabToSpawn = enemyPrefabs[6];
+            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
+        }
+        else if (index <= 7)
+        {
+            GameObject prefabToSpawn = enemyPrefabs[7];
+            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
+        }
+        else if (index <= 8)
+        {
+            GameObject prefabToSpawn = enemyPrefabs[8];
+            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
+        }
+        else if (index <= 9)
+        {
+            GameObject prefabToSpawn = enemyPrefabs[9];
+            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
+        }
+        else if (index <= 10)
+        {
+            GameObject prefabToSpawn = enemyPrefabs[10];
+            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
+        }
+        else if (index <= 11)
+        {
+            GameObject prefabToSpawn = enemyPrefabs[11];
+            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
+        }
+        else if (index <= 12)
+        {
+            GameObject prefabToSpawn = enemyPrefabs[12];
+            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
+        }
+        else if (index <= 13)
+        {
+            GameObject prefabToSpawn = enemyPrefabs[13];
+            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
+        }
+        else if (index <= 14)
+        {
+            GameObject prefabToSpawn = enemyPrefabs[14];
+            Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
+        }
+        else if (index <= 15)
+        {
+            GameObject prefabToSpawn = enemyPrefabs[15];
             Instantiate(prefabToSpawn, LevelManager.instance.startPoint.position, Quaternion.identity);
         }
         

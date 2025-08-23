@@ -149,6 +149,11 @@ public class UIElements : MonoBehaviour
         Time.timeScale = 3f;
     }
 
+    public void TimeSpeed20XFORDEV()
+    {
+        Time.timeScale = 20f;
+    }
+
 
 
 

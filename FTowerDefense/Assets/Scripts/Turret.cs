@@ -38,7 +38,7 @@ public class Turret : MonoBehaviour
     [SerializeField]
     float bps = 1f; // bps -> bullet per second
 
-    int baseUpgradeCost = 100;
+    public int baseUpgradeCost = 100;
 
     float bpsBase;
     float targetingRangeBase;

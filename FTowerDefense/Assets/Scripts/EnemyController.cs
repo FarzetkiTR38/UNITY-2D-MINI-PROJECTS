@@ -16,6 +16,13 @@ public class EnemyController : MonoBehaviour
 
     float baseSpeed;
 
+    EnemySpawner enemySpawner;
+
+    void Awake()
+    {
+        enemySpawner = Object.FindAnyObjectByType<EnemySpawner>();
+    }
+
 
     void Start()
     {
@@ -34,6 +41,7 @@ public class EnemyController : MonoBehaviour
                 EnemySpawner.onEnemyDestroy.Invoke();
                 Destroy(gameObject);
                 LevelManager.instance.HealthDecrease(1);
+                enemySpawner.totalKilledEnemy--;
                 ScenesManager.instance.GameOverChecker(); // canı her hasar aldığında kontrol ediyor, eğer 0 a eşit olursa gameoverscene açılacak.
 
                 return;
@@ -54,9 +62,9 @@ public class EnemyController : MonoBehaviour
         rb.linearVelocity = direction * moveSpeed;
     }
 
-    public void UpdateSpeed(float newSpeed)
+    public void UpdateSpeed(float hizinAzalacagiOran)
     {
-        moveSpeed = newSpeed;
+        moveSpeed /= hizinAzalacagiOran;
     }
 
     public void ResetSpeed()

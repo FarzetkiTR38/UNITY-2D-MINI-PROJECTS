@@ -48,7 +48,7 @@ public class SlowmoTower : MonoBehaviour
                 RaycastHit2D hit = hits[i];
 
                 EnemyController em = hit.transform.GetComponent<EnemyController>();
-                em.UpdateSpeed(.5f);
+                em.UpdateSpeed(2f); // hizinAzalacagiOran 2 ise /2 den hızı yarıya düşer
 
                 StartCoroutine(ResetEnemySpeed(em));
             }

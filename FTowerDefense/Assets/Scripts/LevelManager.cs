@@ -17,6 +17,8 @@ public class LevelManager : MonoBehaviour
 
     public int totalDamage;
 
+    public int earnedCurrency;
+
     void Awake()
     {
         instance = this;
@@ -34,11 +36,13 @@ public class LevelManager : MonoBehaviour
     public void IncreaseCurrency(int amount)
     {
         currency += amount;
+        earnedCurrency += amount;
     }
 
     public void WaveUp()
     {
         wave++;
+        GoldDigger.instance.FinishedWave();
     }
 
     public void WorldChecker()

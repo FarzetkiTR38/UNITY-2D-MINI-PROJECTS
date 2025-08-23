@@ -16,7 +16,14 @@ public class ScenesManager : MonoBehaviour
     // ! bir daha dosyanın adını SceneManager yapmayacağım.. SceneManager.LoadScene yapınca scripte bakıyormuş... Öğrenmiş olduk :d
 
     [SerializeField]
-    string gameSceneName, gameOverSceneName, mainMenuSceneName;
+    string gameSceneName, mainMenuSceneName;
+
+    [SerializeField]
+    GameObject GameOverCanvas;
+
+    [SerializeField]
+    GameObject CreditsText;
+    bool creditsBool = false;
 
 
 
@@ -26,18 +33,30 @@ public class ScenesManager : MonoBehaviour
         {
             Time.timeScale = 0f; // zamanı durduruyoruz
 
-            SceneManager.LoadScene(gameOverSceneName);
+            GameOverCanvas.SetActive(true);
         }
     }
 
     public void StartGame()
     {
         SceneManager.LoadScene(gameSceneName);
+
+        Time.timeScale = 1f; // zamanı tekrar normalde çeviriyoruz
+
+        GameOverCanvas.SetActive(false);
     }
 
     public void QuitGame()
     {
         Application.Quit();
+    }
+
+    public void ShowCredits()
+    {
+
+        CreditsText.SetActive(!creditsBool);
+
+        creditsBool = !creditsBool;
     }
 
 
