@@ -34,6 +34,8 @@ public class EnemyController : MonoBehaviour
                 EnemySpawner.onEnemyDestroy.Invoke();
                 Destroy(gameObject);
                 LevelManager.instance.HealthDecrease(1);
+                ScenesManager.instance.GameOverChecker(); // canı her hasar aldığında kontrol ediyor, eğer 0 a eşit olursa gameoverscene açılacak.
+
                 return;
             }
             else

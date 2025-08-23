@@ -11060,6 +11060,7 @@ GameObject:
   - component: {fileID: 396969459}
   - component: {fileID: 396969460}
   - component: {fileID: 396969461}
+  - component: {fileID: 396969462}
   m_Layer: 0
   m_Name: LevelManager
   m_TagString: Untagged
@@ -11219,6 +11220,21 @@ MonoBehaviour:
   bosKalp: {fileID: 8267738221348175584, guid: e6671d2e3cb05b443aa297adb1cf4434, type: 3}
   yarimKalp: {fileID: -686305973953769315, guid: 35a7b13088cd1084f98e2642aef71468, type: 3}
   time: 0
+--- !u!114 &396969462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 396969455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2df967ed6109ccd43b481324b6de2196, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameSceneName: GameScene
+  gameOverSceneName: GameOverScene
+  mainMenuSceneName: MenuScene
 --- !u!1001 &398592213
 PrefabInstance:
   m_ObjectHideFlags: 0
