@@ -108,6 +108,9 @@ public class EnemySpawner : MonoBehaviour
     void SpawnEnemy()
     {
         int index = Random.Range(0, enemyPrefabs.Length + 3);
+
+        // 3 oranda ilk enemy, 1 oranda da diğer enemyler doğacak
+
         if (index <= 3)
         {
             GameObject prefabToSpawn = enemyPrefabs[0];

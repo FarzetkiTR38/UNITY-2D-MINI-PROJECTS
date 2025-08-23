@@ -46,7 +46,7 @@ public class Turret : MonoBehaviour
     Transform target;
     float timeUntilFire;
 
-    int level = 1;
+    public int level = 1;
 
     void Start()
     {
@@ -138,8 +138,14 @@ public class Turret : MonoBehaviour
 
     public void Upgrade()
     {
-        if (baseUpgradeCost > LevelManager.instance.currency)
+        if (CalculateCost() > LevelManager.instance.currency)
         {
+            print("Yükseltme yapabilmek için gereken para: " + CalculateCost() + ", siz de bulunan para: " + LevelManager.instance.currency + ", yani " + (CalculateCost() - LevelManager.instance.currency) + " paraya ihtiyacın var.");
+            return;
+        }
+        else if (level == 10)
+        {
+            print("Max levele (10) ulaştınız!");
             return;
         }
         else

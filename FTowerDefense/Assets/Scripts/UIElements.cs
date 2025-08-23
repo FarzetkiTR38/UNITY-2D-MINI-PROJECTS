@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class UIElements : MonoBehaviour
 {
@@ -41,7 +42,7 @@ public class UIElements : MonoBehaviour
         UI_Element_Time.text = "Time: " + time.ToString("F2"); // fixleyeceğim dk saniye diye ayrılacak..
         UI_Element_KilledEnemy.text = "KilledEnemy: " + enemySpawner.totalKilledEnemy.ToString();
     }
-    
+
     public void SaglikDurumunuGuncelle()
     {
 
@@ -131,6 +132,21 @@ public class UIElements : MonoBehaviour
                 break;
 
         }
+    }
+
+    public void TimeSpeed1X() // default şekilde 1x olacak isteğe bağlı olarak 2x 3x hıza geçilebilecek.
+    {
+        Time.timeScale = 1f;
+    }
+
+    public void TimeSpeed2X()
+    {
+        Time.timeScale = 2f;
+    }
+
+    public void TimeSpeed3X()
+    {
+        Time.timeScale = 3f;
     }
 
 

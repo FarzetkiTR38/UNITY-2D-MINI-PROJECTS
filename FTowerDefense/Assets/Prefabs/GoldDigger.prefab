@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2760860783438326108}
   - component: {fileID: 6229377149580548259}
+  - component: {fileID: 6568478372791513691}
   m_Layer: 7
   m_Name: GoldDigger
   m_TagString: Turret
@@ -58,6 +59,19 @@ MonoBehaviour:
   targetingRange: 2
   rotationSpeed: 1000
   bps: 1
+  level: 1
+--- !u!114 &6568478372791513691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 323617452697759131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0301ebb74eb86284dbbf85dc22018a29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &591860123731564592
 GameObject:
   m_ObjectHideFlags: 0
@@ -207,7 +221,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -887241285
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -4248738649604073067, guid: 183ba4613420b3e4daf4716101ce7321, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
