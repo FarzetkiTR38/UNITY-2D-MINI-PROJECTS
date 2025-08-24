@@ -28,6 +28,7 @@ public class Turret : MonoBehaviour
 
 
 
+
     // nitelikler
     [SerializeField]
     float targetingRange = 2f;
@@ -39,6 +40,8 @@ public class Turret : MonoBehaviour
     float bps = 1f; // bps -> bullet per second
 
     public int baseUpgradeCost = 100;
+
+    public int totalSpentMoney;
 
     float bpsBase;
     float targetingRangeBase;
@@ -54,6 +57,9 @@ public class Turret : MonoBehaviour
         targetingRangeBase = targetingRange;
 
         upgradeButton.onClick.AddListener(Upgrade);
+
+        totalSpentMoney = baseUpgradeCost;
+        print("totalSpentMoney:" + totalSpentMoney);
     }
 
     void Update()
@@ -151,6 +157,8 @@ public class Turret : MonoBehaviour
         else
         {
             LevelManager.instance.SpendCurrency(CalculateCost());
+            totalSpentMoney += CalculateCost();
+            print("totalSpentMoney:" + totalSpentMoney);
 
             level++;
 
@@ -180,4 +188,17 @@ public class Turret : MonoBehaviour
     {
         return targetingRangeBase * Mathf.Pow(level, 0.4f);
     }
+
+    public void SellTurret()
+    {
+
+        CloseUpgradeUI();
+
+        Destroy(gameObject);
+        LevelManager.instance.currency += totalSpentMoney / 2;
+        totalSpentMoney = 0;
+
+    }
+    
+    
 }

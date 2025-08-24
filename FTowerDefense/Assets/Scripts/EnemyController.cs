@@ -14,9 +14,12 @@ public class EnemyController : MonoBehaviour
     private Transform target;
     private int pathIndex = 0;
 
-    float baseSpeed;
+    public float baseSpeed;
 
     EnemySpawner enemySpawner;
+
+    [SerializeField]
+    GameObject EnemyDestoryEffect;
 
     void Awake()
     {
@@ -27,6 +30,8 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         target = LevelManager.instance.path[pathIndex];
+
+        baseSpeed = moveSpeed;
     }
 
     void Update()
@@ -43,6 +48,8 @@ public class EnemyController : MonoBehaviour
                 LevelManager.instance.HealthDecrease(1);
                 enemySpawner.totalKilledEnemy--;
                 ScenesManager.instance.GameOverChecker(); // canı her hasar aldığında kontrol ediyor, eğer 0 a eşit olursa gameoverscene açılacak.
+
+                Instantiate(EnemyDestoryEffect, transform.position, transform.rotation);
 
                 return;
             }
@@ -66,9 +73,25 @@ public class EnemyController : MonoBehaviour
     {
         moveSpeed /= hizinAzalacagiOran;
     }
+    
+    bool isSlowed = false; 
+    
+
+    public void SpeedChange(float newSpd)
+    {
+        print("SpeedChange FNC çalıştı");
+        if (!isSlowed)
+        {
+            moveSpeed = newSpd;
+            isSlowed = true;
+        }
+
+    }
 
     public void ResetSpeed()
     {
+        print("ResetSpeed FNC çalıştı");
         moveSpeed = baseSpeed;
+        isSlowed = false;
     }
 }

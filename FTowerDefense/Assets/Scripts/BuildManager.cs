@@ -13,6 +13,8 @@ public class BuildManager : MonoBehaviour
     [SerializeField]
     Tower[] towers;
 
+    public Transform parentObj;
+
     int selectedTower = 0;
 
 
@@ -24,6 +26,7 @@ public class BuildManager : MonoBehaviour
     public Tower GetSelectedTower()
     {
         return towers[selectedTower];
+        
     }
 
     public void SetSelectedTower(int _selectedTower)

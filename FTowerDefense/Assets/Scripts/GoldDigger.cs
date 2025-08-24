@@ -6,6 +6,7 @@ public class GoldDigger : MonoBehaviour
     public static GoldDigger instance;
 
     Turret turret;
+    Plot plot;
 
     void Awake()
     {
@@ -14,15 +15,20 @@ public class GoldDigger : MonoBehaviour
 
 
         turret = Object.FindAnyObjectByType<Turret>();
+        plot = Object.FindAnyObjectByType<Plot>();
     }
-
-
 
 
 
     public void FinishedWave()
     {
-        LevelManager.instance.currency += 200 * turret.level;
+        if (plot.CheckForGoldDigger())
+        {
+            LevelManager.instance.currency += 400 * turret.level;  
+        }
+        
+
+
     }
 
 

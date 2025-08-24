@@ -16,10 +16,28 @@ public class Plot : MonoBehaviour
     public Turret turret;
     Color startColor;
 
+    public Transform parentObject;
+
     void Start()
     {
         startColor = sr.color;
+
+
+
+        // parentGO adında bir gameobject oluşturup TowersParent adlı empty'i atıyoruz sonrasında onu da parentObject'e atıyor
+        // aşağıda da oluşturulan turretleri bu empty objenin altında yani child child olarak instance ediyoruz yoksa inspector panelinde çok yer kaplıyordu.
+        GameObject parentGO = GameObject.Find("TowersParent");
+        if (parentGO != null)
+        {
+            parentObject = parentGO.transform;
+        }
+        else
+        {
+            Debug.LogWarning("TowersParent objesi sahnede bulunamadı!");
+        }
     }
+
+
     void OnMouseEnter()
     {
         sr.color = hoverColor;
@@ -46,6 +64,8 @@ public class Plot : MonoBehaviour
 
         Tower towerToBuild = BuildManager.instance.GetSelectedTower();
 
+
+
         if (towerToBuild.cost > LevelManager.instance.currency)
         {
             print("Bu kuleyi satın almak için yeterli paraya sahip değilsin!");
@@ -54,11 +74,42 @@ public class Plot : MonoBehaviour
 
         LevelManager.instance.SpendCurrency(towerToBuild.cost);
 
-        towerObj = Instantiate(towerToBuild.prefab, transform.position, Quaternion.identity);
+        towerObj = Instantiate(towerToBuild.prefab, transform.position, Quaternion.identity, parentObject);
+
 
         turret = towerObj.GetComponent<Turret>();
 
 
+    }
+    
+    public bool hasGoldDigger = false;
+
+    public bool CheckForGoldDigger()
+    {
+        hasGoldDigger = false; 
+
+        foreach (Transform child in parentObject)
+        {
+            if (child.name == "GoldDigger(Clone)")
+            {
+                hasGoldDigger = true;
+                break; 
+            }
+        }
+
+        // FOR DEBUG
+        /* 
+        if (hasGoldDigger)
+        {
+            Debug.Log("GoldDigger bulundu!");
+        }
+        else
+        {
+            Debug.Log("GoldDigger yok!");
+        }
+        */
+
+        return hasGoldDigger;
     }
 
 
