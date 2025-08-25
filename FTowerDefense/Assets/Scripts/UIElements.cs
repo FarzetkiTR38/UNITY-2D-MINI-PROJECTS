@@ -10,10 +10,22 @@ public class UIElements : MonoBehaviour
     TextMeshProUGUI UI_Element_World, UI_Element_Wave, UI_Element_Enemy, UI_Element_Damage, UI_Element_Time, UI_Element_KilledEnemy;
 
     [SerializeField]
+    Image musicMuteImg, EffectSoundsMuteImg;
+
+    [SerializeField]
     Image UI_Element_HealthImg1, UI_Element_HealthImg2, UI_Element_HealthImg3, UI_Element_HealthImg4, UI_Element_HealthImg5;
 
     [SerializeField]
     Sprite doluKalp, bosKalp, yarimKalp;
+
+    [SerializeField]
+    Sprite soundOnImg, soundOffImg;
+
+    [SerializeField]
+    GameObject MusicObject, EffectSoundsObject;
+
+    public bool musicMute = true;
+    public bool EffectSoundsMute = true;
 
 
     public float time;
@@ -30,7 +42,9 @@ public class UIElements : MonoBehaviour
         time += Time.deltaTime;
         FixUI();
         SaglikDurumunuGuncelle(); // bunu aslında update içinde her an kontrol ettirmek saçma
-        // sadece can azaldığında tetikletmeliyiz ama mini projede çok da fark etmez (heralde).
+                                  // sadece can azaldığında tetikletmeliyiz ama mini projede çok da fark etmez (heralde).
+
+        SoundUIFix();
     }
 
     public void FixUI()
@@ -41,6 +55,41 @@ public class UIElements : MonoBehaviour
         UI_Element_Damage.text = "Damage: " + LevelManager.instance.totalDamage.ToString();
         UI_Element_Time.text = "Time: " + time.ToString("F2"); // fixleyeceğim dk saniye diye ayrılacak..
         UI_Element_KilledEnemy.text = "KilledEnemy: " + enemySpawner.totalKilledEnemy.ToString();
+    }
+
+    public void ToggleMusicMute()
+    {
+        musicMute = !musicMute;
+        //MusicObject.SetActive(musicMute);
+
+        PlayListController.instance.audioSource.mute = !musicMute;
+    }
+
+    public void ToggleEffectSoundsMute()
+    {
+        EffectSoundsMute = !EffectSoundsMute;
+        EffectSoundsObject.SetActive(EffectSoundsMute);
+    }
+
+    public void SoundUIFix()
+    {
+        if (musicMute)
+        {
+            musicMuteImg.sprite = soundOnImg;
+        }
+        else
+        {
+            musicMuteImg.sprite = soundOffImg;
+        }
+
+        if (EffectSoundsMute)
+        {
+            EffectSoundsMuteImg.sprite = soundOnImg;
+        }
+        else
+        {
+            EffectSoundsMuteImg.sprite = soundOffImg;
+        }
     }
 
     public void SaglikDurumunuGuncelle()

@@ -18,8 +18,6 @@ public class EnemyController : MonoBehaviour
 
     EnemySpawner enemySpawner;
 
-    [SerializeField]
-    GameObject EnemyDestoryEffect;
 
     void Awake()
     {
@@ -48,15 +46,18 @@ public class EnemyController : MonoBehaviour
                 LevelManager.instance.HealthDecrease(1);
                 enemySpawner.totalKilledEnemy--;
                 ScenesManager.instance.GameOverChecker(); // canı her hasar aldığında kontrol ediyor, eğer 0 a eşit olursa gameoverscene açılacak.
+                
 
-                Instantiate(EnemyDestoryEffect, transform.position, transform.rotation);
 
                 return;
             }
             else
             {
                 target = LevelManager.instance.path[pathIndex];
+                
             }
+
+            
         }
 
 

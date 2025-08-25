@@ -134,12 +134,14 @@ public class Turret : MonoBehaviour
     public void OpenUpgradeUI()
     {
         upgradeUI.SetActive(true);
+        SesController.instance.SesEffectiCikar(2);
     }
 
     public void CloseUpgradeUI()
     {
         upgradeUI.SetActive(false);
         UIManager.instance.SetHoveringState(false);
+        SesController.instance.SesEffectiCikar(2);
     }
 
     public void Upgrade()
@@ -197,8 +199,11 @@ public class Turret : MonoBehaviour
         Destroy(gameObject);
         LevelManager.instance.currency += totalSpentMoney / 2;
         totalSpentMoney = 0;
+        SesController.instance.SesEffectiCikar(4);
 
     }
+
+    
     
     
 }

@@ -78,6 +78,7 @@ public class Plot : MonoBehaviour
 
 
         turret = towerObj.GetComponent<Turret>();
+        SesController.instance.KarisikSesEffectiCikar(1);
 
 
     }
