@@ -8,13 +8,14 @@ public class EnemySpawner : MonoBehaviour
     public float timeToSpawn;
     private float spawnCounter;
 
+    public Transform minSpawn, maxSpawn;
 
     void Start()
     {
         spawnCounter = timeToSpawn;
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
         spawnCounter -= Time.deltaTime;
