@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 4103147477911129802}
   - component: {fileID: 6097567790409155059}
   - component: {fileID: 8036500771327469947}
+  - component: {fileID: -6779564283918271924}
   m_Layer: 0
   m_Name: Enemy - GreenBee
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -132,6 +133,19 @@ MonoBehaviour:
   animationSpeed: 1
   minSize: 0.9
   maxSize: 1.1
+--- !u!114 &-6779564283918271924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3602664695997278059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfa598ec5f59c1c4aabeae74f91b28be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHP: 20
 --- !u!1 &8345610771856407383
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,25 +1,36 @@
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem; // yeni movement & input sistem için gerekli kütüphane
 
 public class PlayerController : MonoBehaviour
 {   
-
-    public GameInput gameInput;
+    [Header("Movement")]
 
     [SerializeField]
     float moveSpeed = 5f;
+    Vector2 inputVector ;
+    
+    
+    [Header("Jump")]
+    [SerializeField] float groundDistance = .2f;
+    [SerializeField] float jumpForce = 15f;
+    [SerializeField] bool isGrounded;
 
-    Rigidbody2D rb;
+    [SerializeField] bool canJumpDouble;
+    [SerializeField] Transform groundPos;
+    [SerializeField] private LayerMask groundLayer;
 
-    public Animator anim;
 
-    public float jumpForce = 15f;
+    GameInput gameInput;
+    private Rigidbody2D rb;
+
+    private Animator anim;
 
     
     void Start()
     {
-        
+
     }
 
     private void Awake() 
@@ -35,11 +46,34 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
 
+        CheckGround();
+        MoveFNC();
+        FlipFNC();
+        JumpFNC();
+        UpdateAnimation();
 
-        Vector2 inputVector = gameInput.GetMovementValue();
+    }
+
+    private void MoveFNC()
+    {
+        inputVector = gameInput.GetMovementValue();
 
         rb.linearVelocity = new Vector2(inputVector.x * moveSpeed, rb.linearVelocity.y);
 
+    }
+
+    private void CheckGround()
+    {
+        isGrounded = Physics2D.Raycast(groundPos.position, Vector2.down, groundDistance, groundLayer);
+
+        if (isGrounded)
+        {
+            canJumpDouble = true;
+        }
+    }
+
+    private void FlipFNC()
+    {
         if(inputVector.x > 0.01f)
         {
             transform.rotation = Quaternion.Euler(0, 0, 0);
@@ -47,15 +81,39 @@ public class PlayerController : MonoBehaviour
         {
             transform.rotation = Quaternion.Euler(0, 180, 0);    
         }
+    }
 
+
+    private void JumpFNC()
+    {
         if (gameInput.IsJumpPressed())
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            if (isGrounded)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            
+            }
+            else if (canJumpDouble)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+                canJumpDouble = false;
+            }
         }
-
-        anim.SetFloat("xVelocity", Mathf.Abs(rb.linearVelocity.x));
-
-
     }
+
+    private void UpdateAnimation()
+    {
+        anim.SetFloat("xVelocity", Mathf.Abs(rb.linearVelocity.x));
+        anim.SetBool("isGrounded", isGrounded);
+        anim.SetFloat("yVelocity", rb.linearVelocity.y);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(groundPos.position, groundPos.position + Vector3.down * groundDistance);
+    }
+
+
 
 }
