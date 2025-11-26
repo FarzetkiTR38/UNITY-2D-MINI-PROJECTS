@@ -12,6 +12,12 @@ public class EnemyHealthController : MonoBehaviour
     public int maxHP = 30;
     private int currentHP;
 
+    public GameObject xpOrbPrefab;
+    public int xpAmount = 5;
+    // buradaki mimari biraz kötü ama işe yarar:
+    // xporb da zaten xpvalue var ama buradaki xpamount'u oraya atıyoruz 
+    // bu sayede farklı enemylerde farklı xp vermesini sağlayabilcez
+
     private void Start()
     {
         currentHP = maxHP;
@@ -25,10 +31,25 @@ public class EnemyHealthController : MonoBehaviour
             Die();
     }
 
+
+
     void Die()
     {
+        // XP orb düşür
+        if (xpOrbPrefab != null)
+        {
+            GameObject orb = Instantiate(xpOrbPrefab, transform.position, Quaternion.identity);
+
+            XPOrb xp = orb.GetComponent<XPOrb>();
+            if (xp != null)
+            {
+                xp.xpValue = xpAmount;
+            }
+        }
+
         Destroy(gameObject);
     }
+
 
 
 
