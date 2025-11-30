@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,6 +10,16 @@ public class GameInput : MonoBehaviour
     {
         playerInput = new InputSystem_Actions();
 
+        
+    }
+
+    private void OnDisable() 
+    {
+        playerInput.Player.Disable();
+    }
+
+    private void OnEnable() 
+    {
         playerInput.Player.Enable();
     }
 

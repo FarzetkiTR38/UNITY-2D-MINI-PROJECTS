@@ -1,3 +1,5 @@
+using System.Collections;
+using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -27,24 +29,27 @@ public class PlayerController : MonoBehaviour
 
     private Animator anim;
 
+    bool canMove;
+
     
     void Start()
     {
-
+        isGrounded = true;
+        
+        RespawnPlayer(false);
     }
 
     private void Awake() 
     {
-
         rb = GetComponent<Rigidbody2D>();
         gameInput = GetComponent<GameInput>();
-
         anim = GetComponentInChildren<Animator>();
-    
     }
     
     void Update()
     {
+
+        if(!canMove) return;
 
         CheckGround();
         MoveFNC();
@@ -53,6 +58,7 @@ public class PlayerController : MonoBehaviour
         UpdateAnimation();
 
     }
+    
 
     private void MoveFNC()
     {
@@ -114,6 +120,26 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawLine(groundPos.position, groundPos.position + Vector3.down * groundDistance);
     }
 
+    public void Die()
+    {
+        Destroy(gameObject);
+    }
+
+    public void RespawnPlayer(bool isFinished)
+    {
+        if (isFinished)
+        {
+            rb.gravityScale = 5f;
+            canMove = true;
+        }
+        else
+        {
+            rb.gravityScale = 0f;
+            canMove = false;
+        }
+    }
+
+    
 
 
 }
