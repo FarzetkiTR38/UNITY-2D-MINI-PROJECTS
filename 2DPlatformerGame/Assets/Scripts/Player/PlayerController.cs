@@ -24,12 +24,24 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
 
 
+    [Header("Knock Settings")]
+    [SerializeField] float knockTime = .5f;
+    [SerializeField] Vector2 knockForce = new Vector2(5f,5f);
+    bool isKnocking = false;
+
+    [Header("Trampoline Settings")]
+    [SerializeField] float bounceLockTime = .2f;
+
+
+
     GameInput gameInput;
     private Rigidbody2D rb;
 
     private Animator anim;
 
-    bool canMove;
+    public bool canMove;
+
+    public Transform canvas;
 
     
     void Start()
@@ -62,6 +74,8 @@ public class PlayerController : MonoBehaviour
 
     private void MoveFNC()
     {
+        if(isKnocking) return;
+        
         inputVector = gameInput.GetMovementValue();
 
         rb.linearVelocity = new Vector2(inputVector.x * moveSpeed, rb.linearVelocity.y);
@@ -87,11 +101,16 @@ public class PlayerController : MonoBehaviour
         {
             transform.rotation = Quaternion.Euler(0, 180, 0);    
         }
+
+        canvas.rotation = Quaternion.Euler(9,0,0);
     }
 
 
     private void JumpFNC()
     {
+
+        if(isKnocking) return;
+
         if (gameInput.IsJumpPressed())
         {
             if (isGrounded)
@@ -137,6 +156,58 @@ public class PlayerController : MonoBehaviour
             rb.gravityScale = 0f;
             canMove = false;
         }
+    }
+
+    int faceDirection;
+
+    public IEnumerator KnockRoutine()
+    {
+
+        isKnocking = true;
+
+        if(transform.right.x >= 0)
+        {
+            faceDirection = 1;
+        } 
+        else if(transform.right.x < 0)
+        {
+            faceDirection = -1;
+        }
+        
+        if(anim != null)
+        anim.SetBool("isKnocking", true);
+
+        rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+
+        
+
+        rb.linearVelocity = new Vector2(faceDirection * knockForce.x * -1, knockForce.y);
+
+
+        yield return new WaitForSeconds(knockTime);
+
+        if(anim != null)
+        anim.SetBool("isKnocking", false);
+
+        isKnocking = false;
+    }
+
+    public void TrampolineJump(Vector2 JumpVector)
+    {
+        if(isKnocking) return;
+
+        StartCoroutine(BounceLockRoutine());
+
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
+        rb.AddForce(JumpVector, ForceMode2D.Impulse);
+        
+    }
+
+    IEnumerator BounceLockRoutine()
+    {
+        canMove = false;
+        yield return new WaitForSeconds(bounceLockTime);
+        canMove = true;
     }
 
     
