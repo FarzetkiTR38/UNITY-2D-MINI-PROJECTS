@@ -25,7 +25,6 @@ public class PlayerHealthController : MonoBehaviour
         healthSlider.value = currentHealth;
     }
 
-    
     void Update()
     {
         
@@ -41,5 +40,14 @@ public class PlayerHealthController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void UpgradeHealth(int level)
+    {
+        maxHealth = 100 + level * 20;
+        currentHealth = maxHealth;
+
+        healthSlider.maxValue = maxHealth;
+        healthSlider.value = currentHealth;
     }
 }

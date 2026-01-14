@@ -30,8 +30,7 @@ public class XPOrb : MonoBehaviour
 
         float distance = Vector2.Distance(transform.position, player.position);
 
-        // Manyetik çekim alanına girdiyse çekmeye başla
-        if (distance <= attractRadius)
+        if (distance <= XPOrbGlobalSettings.instance.currentMagnetRadius)
         {
             isAttracted = true;
         }

@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerSwordSkill : MonoBehaviour
@@ -8,33 +7,21 @@ public class PlayerSwordSkill : MonoBehaviour
 
     private GameObject activeSword;
 
-    private bool swordBool = false;
-
     public void ActivateSword()
     {
         if (activeSword != null) return;
 
         activeSword = Instantiate(swordPrefab, swordAnchor);
-        activeSword.transform.localPosition = Vector3.zero;
+        activeSword.transform.localPosition = Vector3.right * 1.5f;
     }
 
-    void Update()
+    public void Upgrade(int level)
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1) && !swordBool)
-        {
+        if (activeSword == null)
             ActivateSword();
-            swordBool = true;
-        }
-        else if(Input.GetKeyDown(KeyCode.Alpha1) && swordBool)
-        {
-            DeactivateSword();
-            swordBool = false;
-        }
-    }
 
-    public void DeactivateSword()
-    {
-        if (activeSword != null)
-            Destroy(activeSword);
+        OrbitMovement orbit = activeSword.GetComponent<OrbitMovement>();
+        orbit.rotationSpeed = 180f + level * 60f;
+        orbit.radius = 1.5f + level * 0.2f;
     }
 }

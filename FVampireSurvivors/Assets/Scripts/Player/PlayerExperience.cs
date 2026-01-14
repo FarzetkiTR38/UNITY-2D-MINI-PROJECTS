@@ -3,50 +3,41 @@ using UnityEngine.UI;
 
 public class PlayerExperience : MonoBehaviour
 {
-    [Header("XP Values")]
     public int level = 1;
     public int currentXP = 0;
-    public int xpToNextLevel = 50;   // ilk level için gereken XP
+    public int xpToNextLevel = 50;
 
-    [Header("UI References")]
-    public Slider xpBar;             // XP barı (istersen boş bırakabilirsin)
-    public GameObject levelUpPanel;  // LevelUp UI paneli (başta inactive olmalı)
+    public Slider xpBar;
+    public GameObject levelUpPanel;
 
     void Start()
     {
         UpdateXPBar();
     }
 
-    // XP Orb çağıracak bunu
     public void AddXP(int amount)
     {
         currentXP += amount;
         UpdateXPBar();
 
         if (currentXP >= xpToNextLevel)
-        {
             LevelUp();
-        }
     }
 
     void LevelUp()
     {
         level++;
         currentXP -= xpToNextLevel;
-
-        // Bir sonraki level için XP artır (istersen çarpanla da yaparsın)
         xpToNextLevel = Mathf.RoundToInt(xpToNextLevel * 1.25f);
 
         UpdateXPBar();
 
-        // Oyun durdur
         Time.timeScale = 0f;
+        levelUpPanel.SetActive(true);
 
-        // LevelUp UI panelini aç
-        if (levelUpPanel != null)
-            levelUpPanel.SetActive(true);
-
-        Debug.Log("LEVEL UP! Yeni seviye: " + level);
+        SkillSelectionUI.instance.ShowSkills(
+            PlayerSkillManager.instance.GetRandomSkills(3)
+        );
     }
 
     void UpdateXPBar()

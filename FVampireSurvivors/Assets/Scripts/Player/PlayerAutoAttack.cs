@@ -2,26 +2,28 @@ using UnityEngine;
 
 public class PlayerAutoAttack : MonoBehaviour
 {
-    public float attackRate = 1f;         // saniyede 1 atış
-    public float attackRange = 10f;       // hedef arama mesafesi
-    public Transform attackPoint;         // projectile çıkış noktası
-    public GameObject projectilePrefab;   // fırlatılan mermi
+    public float attackRate = 1f;
+    public float attackRange = 10f;
+
+    private int baseDamage = 10;
+
+    private int bonusDamage = 0;
+    public Transform attackPoint;
+    public GameObject projectilePrefab;
+
     private float attackTimer = 0f;
 
-    private void Update()
+    void Update()
     {
         attackTimer += Time.deltaTime;
 
-        // Attack süresi dolmadıysa çık
         if (attackTimer < 1f / attackRate)
             return;
 
-        // Hedef bul
         Transform target = GetNearestEnemy();
         if (target == null)
             return;
 
-        // Atak yap
         Attack(target);
         attackTimer = 0f;
     }
@@ -32,11 +34,10 @@ public class PlayerAutoAttack : MonoBehaviour
 
         Transform nearest = null;
         float minDist = Mathf.Infinity;
-        Vector3 currentPos = transform.position;
 
         foreach (GameObject enemy in enemies)
         {
-            float dist = Vector3.Distance(currentPos, enemy.transform.position);
+            float dist = Vector3.Distance(transform.position, enemy.transform.position);
             if (dist < minDist && dist <= attackRange)
             {
                 minDist = dist;
@@ -50,12 +51,20 @@ public class PlayerAutoAttack : MonoBehaviour
     void Attack(Transform target)
     {
         GameObject proj = Instantiate(projectilePrefab, attackPoint.position, Quaternion.identity);
+        proj.GetComponent<Projectile>().SetTarget(target);
+        proj.GetComponent<Projectile>().SetDamage(baseDamage + bonusDamage);
 
-        // Projectile scriptine hedefi gönder
-        Projectile p = proj.GetComponent<Projectile>();
-        if (p != null)
-        {
-            p.SetTarget(target);
-        }
+        
+    }
+
+    // 🔥 SKILL LEVEL UPGRADE
+    public void Upgrade(int level)
+    {
+        attackRate = 1f + (level * 0.35f);
+    }
+
+    public void UpgradeDamage(int level)
+    {
+        bonusDamage = level * 5;
     }
 }
