@@ -48,4 +48,19 @@ public class PlayerExperience : MonoBehaviour
             xpBar.value = currentXP;
         }
     }
+
+    public int getLevel()
+    {
+        return level;
+    }
+
+    public int getcurrentXP()
+    {
+        return currentXP;
+    }
+
+    public int getxpToNextLevel()
+    {
+        return xpToNextLevel;
+    }
 }
