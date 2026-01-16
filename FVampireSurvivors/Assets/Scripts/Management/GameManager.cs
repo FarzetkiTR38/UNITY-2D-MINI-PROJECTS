@@ -1,6 +1,7 @@
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -26,6 +27,13 @@ public class GameManager : MonoBehaviour
         levelUpPercent = ((float)currentXP / (float)xpToNextLevel * 100);
         level = player.GetComponent<PlayerExperience>().getLevel();   
         levelText.text = " Level " + level.ToString() + " (" + "%"+ levelUpPercent.ToString("0") + ")";
+        
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            player.GetComponent<PlayerExperience>().LevelUp();
+        } 
+        // test için
+    
     }
 
 

@@ -24,7 +24,7 @@ public class PlayerExperience : MonoBehaviour
             LevelUp();
     }
 
-    void LevelUp()
+    public void LevelUp()
     {
         level++;
         currentXP -= xpToNextLevel;
