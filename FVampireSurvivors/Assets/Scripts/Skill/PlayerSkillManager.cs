@@ -6,8 +6,12 @@ public class PlayerSkillManager : MonoBehaviour
 {
     public static PlayerSkillManager instance;
 
-    [Header("All skills (set in Inspector)")]
-    public List<SkillData> allSkills = new List<SkillData>();
+    [Header("Skill Database (ScriptableObject)")]
+    [SerializeField] private SkillDatabaseSO skillDatabase;
+
+    // Runtime'da kullanılacak klonlanmış skill listesi
+    // (Orijinal SO'yu değiştirmemek için)
+    private List<SkillData> allSkills = new List<SkillData>();
 
     // HUD ve diğer UI'lar dinlesin diye event
     public event Action SkillsChanged;
@@ -29,6 +33,15 @@ public class PlayerSkillManager : MonoBehaviour
 
     void InitializeSkills()
     {
+        // ScriptableObject'ten skill'leri klonla
+        if (skillDatabase == null)
+        {
+            Debug.LogError("[PlayerSkillManager] SkillDatabase atanmamış!");
+            return;
+        }
+
+        allSkills = skillDatabase.CloneSkills();
+
         // tüm skill runtime unlock order reset
         foreach (var s in allSkills)
             s.unlockOrder = int.MaxValue;
@@ -39,12 +52,8 @@ public class PlayerSkillManager : MonoBehaviour
             if (skill.skillType == SkillType.Fireball)
             {
                 skill.isUnlocked = true;
-
-                // Eğer inspector’da 0 verdin diye burada +1 mantığı karışmasın:
-                // Fireball'u net olarak 1 yapıyoruz.
                 skill.currentLevel = 1;
 
-                // unlockOrder ver
                 if (skill.unlockOrder == int.MaxValue)
                     skill.unlockOrder = _unlockCounter++;
             }
