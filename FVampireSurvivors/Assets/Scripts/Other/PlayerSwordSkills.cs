@@ -1,27 +1,113 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerSwordSkill : MonoBehaviour
 {
+    [Header("Sword Settings")]
     public Transform swordAnchor;
     public GameObject swordPrefab;
 
-    private GameObject activeSword;
+    [Header("Upgrade Settings")]
+    [Tooltip("Base rotation speed at level 1")]
+    public float baseRotationSpeed = 180f;
+    [Tooltip("Rotation speed increase per level")]
+    public float rotationSpeedPerLevel = 40f;
 
-    public void ActivateSword()
-    {
-        if (activeSword != null) return;
+    [Tooltip("Base orbit radius")]
+    public float baseRadius = 1.5f;
+    [Tooltip("Radius increase per level")]
+    public float radiusPerLevel = 0.1f;
 
-        activeSword = Instantiate(swordPrefab, swordAnchor);
-        activeSword.transform.localPosition = Vector3.right * 1.5f;
-    }
+    // Active swords list
+    private List<GameObject> activeSwords = new List<GameObject>();
+    private int currentLevel = 0;
 
+    /// <summary>
+    /// Upgrade the sword skill to the specified level.
+    /// Level determines the number of swords (1 sword per level).
+    /// </summary>
     public void Upgrade(int level)
     {
-        if (activeSword == null)
-            ActivateSword();
+        currentLevel = level;
 
-        OrbitMovement orbit = activeSword.GetComponent<OrbitMovement>();
-        orbit.rotationSpeed = 180f + level * 60f;
-        orbit.radius = 1.5f + level * 0.2f;
+        // Calculate how many swords we need
+        int targetSwordCount = level;
+
+        // Add new swords if needed
+        while (activeSwords.Count < targetSwordCount)
+        {
+            SpawnSword();
+        }
+
+        // IMPORTANT: Redistribute ALL swords evenly after adding new one
+        RedistributeSwords();
+        UpdateSwordStats();
+    }
+
+    void SpawnSword()
+    {
+        if (swordAnchor == null || swordPrefab == null) return;
+
+        GameObject sword = Instantiate(swordPrefab, swordAnchor);
+        activeSwords.Add(sword);
+    }
+
+    /// <summary>
+    /// Redistributes ALL swords evenly around the player.
+    /// First sword stays at 0°, others distributed at 360/n intervals.
+    /// </summary>
+    void RedistributeSwords()
+    {
+        int swordCount = activeSwords.Count;
+        if (swordCount == 0) return;
+
+        // Calculate angle step: 360 / sword count
+        float angleStep = 360f / swordCount;
+        float currentRadius = baseRadius + (currentLevel - 1) * radiusPerLevel;
+
+        for (int i = 0; i < swordCount; i++)
+        {
+            if (activeSwords[i] == null) continue;
+
+            // First sword at 0°, then evenly distributed
+            // 1 sword:  0°
+            // 2 swords: 0°, 180°
+            // 3 swords: 0°, 120°, 240°
+            // 4 swords: 0°, 90°, 180°, 270°
+            // 5 swords: 0°, 72°, 144°, 216°, 288°
+            float angle = i * angleStep;
+
+            // Update OrbitMovement component with new angle
+            OrbitMovement orbit = activeSwords[i].GetComponent<OrbitMovement>();
+            if (orbit != null)
+            {
+                orbit.radius = currentRadius;
+                orbit.SetInitialAngle(angle);
+            }
+        }
+    }
+
+    void UpdateSwordStats()
+    {
+        float currentRotationSpeed = baseRotationSpeed + (currentLevel - 1) * rotationSpeedPerLevel;
+
+        foreach (var sword in activeSwords)
+        {
+            if (sword == null) continue;
+
+            OrbitMovement orbit = sword.GetComponent<OrbitMovement>();
+            if (orbit != null)
+            {
+                orbit.rotationSpeed = currentRotationSpeed;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Returns the current sword count
+    /// </summary>
+    public int GetSwordCount()
+    {
+        return activeSwords.Count;
     }
 }
