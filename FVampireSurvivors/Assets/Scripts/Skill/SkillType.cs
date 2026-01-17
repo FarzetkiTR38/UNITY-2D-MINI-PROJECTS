@@ -41,8 +41,6 @@ public enum SkillType
     MaxHealth,
     Magnet,
     Damage,
-    
-    // New Passives
     AttackSpeed,
     ProjectileCount,
     AreaSize,
