@@ -10,19 +10,33 @@ public class PlayerSkillManager : MonoBehaviour
     [SerializeField] private SkillDatabaseSO skillDatabase;
 
     // Runtime'da kullanılacak klonlanmış skill listesi
-    // (Orijinal SO'yu değiştirmemek için)
     private List<SkillData> allSkills = new List<SkillData>();
 
-    // HUD ve diğer UI'lar dinlesin diye event
     public event Action SkillsChanged;
 
     private int _unlockCounter = 0;
 
-    // Active skill önceliği (önce bunlar gösterilecek)
+    // Active skill'ler (silahlar)
     private static readonly HashSet<SkillType> ActiveSkills = new HashSet<SkillType>
     {
         SkillType.Fireball,
-        SkillType.Sword
+        SkillType.Sword,
+        SkillType.HomingMissiles,
+        SkillType.IceShards,
+        SkillType.PiercingArrows,
+        SkillType.FanOfDaggers,
+        SkillType.Whirlwind,
+        SkillType.AuraDamage,
+        SkillType.ShockwavePulse,
+        SkillType.ChainLightning,
+        SkillType.Boomerang,
+        SkillType.SpinningScythes,
+        SkillType.ConeAttack,
+        SkillType.MeteorShower,
+        SkillType.ExplodingProjectiles,
+        SkillType.LaserBeam,
+        SkillType.Turret,
+        SkillType.BlackHole
     };
 
     private void Awake()
@@ -33,7 +47,6 @@ public class PlayerSkillManager : MonoBehaviour
 
     void InitializeSkills()
     {
-        // ScriptableObject'ten skill'leri klonla
         if (skillDatabase == null)
         {
             Debug.LogError("[PlayerSkillManager] SkillDatabase atanmamış!");
@@ -42,18 +55,16 @@ public class PlayerSkillManager : MonoBehaviour
 
         allSkills = skillDatabase.CloneSkills();
 
-        // tüm skill runtime unlock order reset
         foreach (var s in allSkills)
             s.unlockOrder = int.MaxValue;
 
-        // Fireball başlangıç açık (Level 1)
+        // Fireball başlangıç açık
         foreach (var skill in allSkills)
         {
             if (skill.skillType == SkillType.Fireball)
             {
                 skill.isUnlocked = true;
                 skill.currentLevel = 1;
-
                 if (skill.unlockOrder == int.MaxValue)
                     skill.unlockOrder = _unlockCounter++;
             }
@@ -64,9 +75,7 @@ public class PlayerSkillManager : MonoBehaviour
             }
         }
 
-        // Başlangıç effect uygulansın (Fireball Level 1)
         ApplyAllUnlockedEffects();
-
         SkillsChanged?.Invoke();
     }
 
@@ -83,10 +92,8 @@ public class PlayerSkillManager : MonoBehaviour
     {
         SkillData skill = allSkills.Find(s => s.skillType == type);
         if (skill == null) return;
-
         if (skill.currentLevel >= skill.maxLevel) return;
 
-        // İlk defa açılıyorsa unlockOrder ata
         if (!skill.isUnlocked)
         {
             skill.isUnlocked = true;
@@ -94,51 +101,107 @@ public class PlayerSkillManager : MonoBehaviour
                 skill.unlockOrder = _unlockCounter++;
         }
 
-        // Level arttır
         skill.currentLevel++;
-
         ApplySkillEffect(skill);
-
         SkillsChanged?.Invoke();
     }
 
     void ApplySkillEffect(SkillData skill)
     {
+        // Check if it's an active skill - use PlayerSkillsController
+        if (IsActiveSkill(skill.skillType))
+        {
+            PlayerSkillsController.instance?.UpgradeSkill(skill.skillType, skill.currentLevel);
+            return;
+        }
+
+        // Handle passive and other skills
         switch (skill.skillType)
         {
-            case SkillType.Fireball:
-                FindAnyObjectByType<PlayerAutoAttack>().Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.Sword:
-                FindAnyObjectByType<PlayerSwordSkill>().Upgrade(skill.currentLevel);
-                break;
-
+            // ==================
+            // PASSIVE SKILLS
+            // ==================
             case SkillType.MoveSpeed:
-                FindAnyObjectByType<PlayerController>().UpgradeSpeed(skill.currentLevel);
+                FindAnyObjectByType<PlayerController>()?.UpgradeSpeed(skill.currentLevel);
                 break;
 
             case SkillType.MaxHealth:
-                FindAnyObjectByType<PlayerHealthController>().UpgradeHealth(skill.currentLevel);
+                FindAnyObjectByType<PlayerHealthController>()?.UpgradeHealth(skill.currentLevel);
                 break;
 
             case SkillType.Magnet:
-                XPOrbGlobalSettings.instance.UpgradeMagnet(skill.currentLevel);
+                XPOrbGlobalSettings.instance?.UpgradeMagnet(skill.currentLevel);
                 break;
 
             case SkillType.Damage:
-                FindAnyObjectByType<PlayerAutoAttack>().UpgradeDamage(skill.currentLevel);
+                PassiveStats.instance?.UpgradeDamage(skill.currentLevel);
+                break;
+
+            case SkillType.AttackSpeed:
+                PassiveStats.instance?.UpgradeAttackSpeed(skill.currentLevel);
+                break;
+
+            case SkillType.ProjectileCount:
+                PassiveStats.instance?.UpgradeProjectileCount(skill.currentLevel);
+                break;
+
+            case SkillType.AreaSize:
+                PassiveStats.instance?.UpgradeAreaSize(skill.currentLevel);
+                break;
+
+            case SkillType.XPGain:
+                PassiveStats.instance?.UpgradeXPGain(skill.currentLevel);
+                break;
+
+            case SkillType.CriticalChance:
+                PassiveStats.instance?.UpgradeCriticalChance(skill.currentLevel);
+                break;
+
+            case SkillType.CriticalDamage:
+                PassiveStats.instance?.UpgradeCriticalDamage(skill.currentLevel);
+                break;
+
+            case SkillType.Lifesteal:
+                PassiveStats.instance?.UpgradeLifesteal(skill.currentLevel);
+                break;
+
+            case SkillType.HealthRegen:
+                PassiveStats.instance?.UpgradeHealthRegen(skill.currentLevel);
+                break;
+
+            case SkillType.Armor:
+                PassiveStats.instance?.UpgradeArmor(skill.currentLevel);
+                break;
+
+            // ==================
+            // COMBINED/EVOLVED SKILLS
+            // ==================
+            case SkillType.BeastMode:
+            case SkillType.BladeStorm:
+            case SkillType.VampiricField:
+            case SkillType.FrozenWorld:
+            case SkillType.MeteorFire:
+            case SkillType.GreedyOverlord:
+            case SkillType.ImmortalForm:
+                Debug.Log($"Evolved skill {skill.skillType} activated!");
                 break;
         }
     }
 
-    // LevelUp panelinde 3 random seçim için (max level olanlar çıkmaz)
+    bool IsActiveSkill(SkillType type)
+    {
+        return ActiveSkills.Contains(type);
+    }
+
     public List<SkillData> GetRandomSkills(int count)
     {
         List<SkillData> pool = new List<SkillData>();
 
         foreach (var skill in allSkills)
         {
+            // Don't show evolved skills in random pool (they unlock via combination)
+            if (IsEvolvedSkill(skill.skillType)) continue;
+            
             if (skill.currentLevel < skill.maxLevel)
                 pool.Add(skill);
         }
@@ -155,7 +218,17 @@ public class PlayerSkillManager : MonoBehaviour
         return result;
     }
 
-    // HUD için: Açık olanları "aktif önce, sonra pasif" + açılma sırası
+    bool IsEvolvedSkill(SkillType type)
+    {
+        return type == SkillType.BeastMode ||
+               type == SkillType.BladeStorm ||
+               type == SkillType.VampiricField ||
+               type == SkillType.FrozenWorld ||
+               type == SkillType.MeteorFire ||
+               type == SkillType.GreedyOverlord ||
+               type == SkillType.ImmortalForm;
+    }
+
     public List<SkillData> GetOrderedUnlockedSkills()
     {
         List<SkillData> unlocked = new List<SkillData>();
@@ -171,18 +244,34 @@ public class PlayerSkillManager : MonoBehaviour
             bool aActive = ActiveSkills.Contains(a.skillType);
             bool bActive = ActiveSkills.Contains(b.skillType);
 
-            // aktifler önce
             if (aActive != bActive)
                 return aActive ? -1 : 1;
 
-            // aynı gruptaysa unlockOrder’a göre
             int cmp = a.unlockOrder.CompareTo(b.unlockOrder);
             if (cmp != 0) return cmp;
 
-            // fallback (stabil)
             return a.skillType.CompareTo(b.skillType);
         });
 
         return unlocked;
+    }
+
+    /// <summary>
+    /// Check if a skill is at max level
+    /// </summary>
+    public bool IsSkillMaxLevel(SkillType type)
+    {
+        SkillData skill = allSkills.Find(s => s.skillType == type);
+        if (skill == null) return false;
+        return skill.currentLevel >= skill.maxLevel;
+    }
+
+    /// <summary>
+    /// Get current level of a skill
+    /// </summary>
+    public int GetSkillLevel(SkillType type)
+    {
+        SkillData skill = allSkills.Find(s => s.skillType == type);
+        return skill?.currentLevel ?? 0;
     }
 }
