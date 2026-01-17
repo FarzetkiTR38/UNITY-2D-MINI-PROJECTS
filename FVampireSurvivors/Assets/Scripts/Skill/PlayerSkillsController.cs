@@ -1,0 +1,229 @@
+using UnityEngine;
+
+/// <summary>
+/// Single controller that manages ALL player skills.
+/// Only this component needs to be added to Player.
+/// All skill logic is handled internally.
+/// </summary>
+public class PlayerSkillsController : MonoBehaviour
+{
+    public static PlayerSkillsController instance;
+
+    [Header("Projectile Prefabs")]
+    public GameObject fireballPrefab;
+    public GameObject missilePrefab;
+    public GameObject iceShardPrefab;
+    public GameObject arrowPrefab;
+    public GameObject daggerPrefab;
+    public GameObject boomerangPrefab;
+    public GameObject meteorPrefab;
+    public GameObject explodingBulletPrefab;
+    public GameObject turretProjectilePrefab;
+
+    [Header("Melee/Orbit Prefabs")]
+    public GameObject swordPrefab;
+    public GameObject scythePrefab;
+
+    [Header("Structure Prefabs")]
+    public GameObject turretPrefab;
+
+    [Header("Effect Prefabs (Optional)")]
+    public GameObject whirlwindEffectPrefab;
+    public GameObject auraEffectPrefab;
+    public GameObject shockwaveEffectPrefab;
+    public GameObject lightningEffectPrefab;
+    public GameObject blackHoleEffectPrefab;
+    public GameObject flameEffectPrefab;
+
+    [Header("References")]
+    public Transform firePoint;
+    public Transform swordAnchor;
+    public Transform scytheAnchor;
+    public LineRenderer laserLineRenderer;
+
+    // Internal skill instances
+    private PlayerAutoAttack fireball;
+    private PlayerSwordSkill sword;
+    private HomingMissiles homingMissiles;
+    private IceShards iceShards;
+    private PiercingArrows piercingArrows;
+    private FanOfDaggers fanOfDaggers;
+    private Whirlwind whirlwind;
+    private AuraDamage auraDamage;
+    private ShockwavePulse shockwavePulse;
+    private ChainLightning chainLightning;
+    private BoomerangWeapon boomerang;
+    private SpinningScythes spinningScythes;
+    private ConeAttack coneAttack;
+    private MeteorShower meteorShower;
+    private ExplodingProjectiles explodingProjectiles;
+    private LaserBeam laserBeam;
+    private Turret turret;
+    private BlackHole blackHole;
+
+    private void Awake()
+    {
+        instance = this;
+        InitializeAllSkills();
+    }
+
+    void InitializeAllSkills()
+    {
+        // Create fire point if not assigned
+        if (firePoint == null)
+        {
+            GameObject fp = new GameObject("FirePoint");
+            fp.transform.SetParent(transform);
+            fp.transform.localPosition = Vector3.zero;
+            firePoint = fp.transform;
+        }
+
+        // Create sword anchor if not assigned
+        if (swordAnchor == null)
+        {
+            GameObject sa = new GameObject("SwordAnchor");
+            sa.transform.SetParent(transform);
+            sa.transform.localPosition = Vector3.zero;
+            swordAnchor = sa.transform;
+        }
+
+        // Create scythe anchor if not assigned
+        if (scytheAnchor == null)
+        {
+            GameObject sca = new GameObject("ScytheAnchor");
+            sca.transform.SetParent(transform);
+            sca.transform.localPosition = Vector3.zero;
+            scytheAnchor = sca.transform;
+        }
+
+        // Initialize all skill components
+        fireball = gameObject.AddComponent<PlayerAutoAttack>();
+        fireball.attackPoint = firePoint;
+        fireball.projectilePrefab = fireballPrefab;
+
+        sword = gameObject.AddComponent<PlayerSwordSkill>();
+        sword.swordAnchor = swordAnchor;
+        sword.swordPrefab = swordPrefab;
+
+        homingMissiles = gameObject.AddComponent<HomingMissiles>();
+        homingMissiles.firePoint = firePoint;
+        homingMissiles.missilePrefab = missilePrefab;
+
+        iceShards = gameObject.AddComponent<IceShards>();
+        iceShards.firePoint = firePoint;
+        iceShards.shardPrefab = iceShardPrefab;
+
+        piercingArrows = gameObject.AddComponent<PiercingArrows>();
+        piercingArrows.firePoint = firePoint;
+        piercingArrows.arrowPrefab = arrowPrefab;
+
+        fanOfDaggers = gameObject.AddComponent<FanOfDaggers>();
+        fanOfDaggers.firePoint = firePoint;
+        fanOfDaggers.daggerPrefab = daggerPrefab;
+
+        whirlwind = gameObject.AddComponent<Whirlwind>();
+        whirlwind.whirlwindEffectPrefab = whirlwindEffectPrefab;
+
+        auraDamage = gameObject.AddComponent<AuraDamage>();
+        auraDamage.auraEffectPrefab = auraEffectPrefab;
+
+        shockwavePulse = gameObject.AddComponent<ShockwavePulse>();
+        shockwavePulse.shockwaveEffectPrefab = shockwaveEffectPrefab;
+
+        chainLightning = gameObject.AddComponent<ChainLightning>();
+        chainLightning.lightningEffectPrefab = lightningEffectPrefab;
+
+        boomerang = gameObject.AddComponent<BoomerangWeapon>();
+        boomerang.throwPoint = firePoint;
+        boomerang.boomerangPrefab = boomerangPrefab;
+
+        spinningScythes = gameObject.AddComponent<SpinningScythes>();
+        spinningScythes.scytheAnchor = scytheAnchor;
+        spinningScythes.scythePrefab = scythePrefab;
+
+        coneAttack = gameObject.AddComponent<ConeAttack>();
+        coneAttack.flameEffectPrefab = flameEffectPrefab;
+
+        meteorShower = gameObject.AddComponent<MeteorShower>();
+        meteorShower.meteorPrefab = meteorPrefab;
+
+        explodingProjectiles = gameObject.AddComponent<ExplodingProjectiles>();
+        explodingProjectiles.firePoint = firePoint;
+        explodingProjectiles.projectilePrefab = explodingBulletPrefab;
+
+        laserBeam = gameObject.AddComponent<LaserBeam>();
+        laserBeam.laserLine = laserLineRenderer;
+
+        turret = gameObject.AddComponent<Turret>();
+        turret.turretPrefab = turretPrefab;
+        turret.projectilePrefab = turretProjectilePrefab;
+
+        blackHole = gameObject.AddComponent<BlackHole>();
+        blackHole.blackHoleEffectPrefab = blackHoleEffectPrefab;
+    }
+
+    // ==================
+    // UPGRADE METHODS (Called by PlayerSkillManager)
+    // ==================
+
+    public void UpgradeSkill(SkillType type, int level)
+    {
+        switch (type)
+        {
+            case SkillType.Fireball:
+                fireball?.Upgrade(level);
+                break;
+            case SkillType.Sword:
+                sword?.Upgrade(level);
+                break;
+            case SkillType.HomingMissiles:
+                homingMissiles?.Upgrade(level);
+                break;
+            case SkillType.IceShards:
+                iceShards?.Upgrade(level);
+                break;
+            case SkillType.PiercingArrows:
+                piercingArrows?.Upgrade(level);
+                break;
+            case SkillType.FanOfDaggers:
+                fanOfDaggers?.Upgrade(level);
+                break;
+            case SkillType.Whirlwind:
+                whirlwind?.Upgrade(level);
+                break;
+            case SkillType.AuraDamage:
+                auraDamage?.Upgrade(level);
+                break;
+            case SkillType.ShockwavePulse:
+                shockwavePulse?.Upgrade(level);
+                break;
+            case SkillType.ChainLightning:
+                chainLightning?.Upgrade(level);
+                break;
+            case SkillType.Boomerang:
+                boomerang?.Upgrade(level);
+                break;
+            case SkillType.SpinningScythes:
+                spinningScythes?.Upgrade(level);
+                break;
+            case SkillType.ConeAttack:
+                coneAttack?.Upgrade(level);
+                break;
+            case SkillType.MeteorShower:
+                meteorShower?.Upgrade(level);
+                break;
+            case SkillType.ExplodingProjectiles:
+                explodingProjectiles?.Upgrade(level);
+                break;
+            case SkillType.LaserBeam:
+                laserBeam?.Upgrade(level);
+                break;
+            case SkillType.Turret:
+                turret?.Upgrade(level);
+                break;
+            case SkillType.BlackHole:
+                blackHole?.Upgrade(level);
+                break;
+        }
+    }
+}

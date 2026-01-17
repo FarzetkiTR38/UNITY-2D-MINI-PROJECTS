@@ -108,88 +108,18 @@ public class PlayerSkillManager : MonoBehaviour
 
     void ApplySkillEffect(SkillData skill)
     {
+        // Check if it's an active skill - use PlayerSkillsController
+        if (IsActiveSkill(skill.skillType))
+        {
+            PlayerSkillsController.instance?.UpgradeSkill(skill.skillType, skill.currentLevel);
+            return;
+        }
+
+        // Handle passive and other skills
         switch (skill.skillType)
         {
             // ==================
-            // EXISTING ACTIVE SKILLS
-            // ==================
-            case SkillType.Fireball:
-                FindAnyObjectByType<PlayerAutoAttack>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.Sword:
-                FindAnyObjectByType<PlayerSwordSkill>()?.Upgrade(skill.currentLevel);
-                break;
-
-            // ==================
-            // NEW ACTIVE SKILLS
-            // ==================
-            case SkillType.HomingMissiles:
-                FindAnyObjectByType<HomingMissiles>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.IceShards:
-                FindAnyObjectByType<IceShards>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.PiercingArrows:
-                FindAnyObjectByType<PiercingArrows>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.FanOfDaggers:
-                FindAnyObjectByType<FanOfDaggers>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.Whirlwind:
-                FindAnyObjectByType<Whirlwind>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.AuraDamage:
-                FindAnyObjectByType<AuraDamage>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.ShockwavePulse:
-                FindAnyObjectByType<ShockwavePulse>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.ChainLightning:
-                FindAnyObjectByType<ChainLightning>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.Boomerang:
-                FindAnyObjectByType<BoomerangWeapon>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.SpinningScythes:
-                FindAnyObjectByType<SpinningScythes>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.ConeAttack:
-                FindAnyObjectByType<ConeAttack>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.MeteorShower:
-                FindAnyObjectByType<MeteorShower>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.ExplodingProjectiles:
-                FindAnyObjectByType<ExplodingProjectiles>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.LaserBeam:
-                FindAnyObjectByType<LaserBeam>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.Turret:
-                FindAnyObjectByType<Turret>()?.Upgrade(skill.currentLevel);
-                break;
-
-            case SkillType.BlackHole:
-                FindAnyObjectByType<BlackHole>()?.Upgrade(skill.currentLevel);
-                break;
-
-            // ==================
-            // EXISTING PASSIVE SKILLS
+            // PASSIVE SKILLS
             // ==================
             case SkillType.MoveSpeed:
                 FindAnyObjectByType<PlayerController>()?.UpgradeSpeed(skill.currentLevel);
@@ -207,9 +137,6 @@ public class PlayerSkillManager : MonoBehaviour
                 PassiveStats.instance?.UpgradeDamage(skill.currentLevel);
                 break;
 
-            // ==================
-            // NEW PASSIVE SKILLS
-            // ==================
             case SkillType.AttackSpeed:
                 PassiveStats.instance?.UpgradeAttackSpeed(skill.currentLevel);
                 break;
@@ -247,7 +174,7 @@ public class PlayerSkillManager : MonoBehaviour
                 break;
 
             // ==================
-            // COMBINED/EVOLVED SKILLS (placeholders)
+            // COMBINED/EVOLVED SKILLS
             // ==================
             case SkillType.BeastMode:
             case SkillType.BladeStorm:
@@ -256,10 +183,14 @@ public class PlayerSkillManager : MonoBehaviour
             case SkillType.MeteorFire:
             case SkillType.GreedyOverlord:
             case SkillType.ImmortalForm:
-                // TODO: Implement evolved skill effects
                 Debug.Log($"Evolved skill {skill.skillType} activated!");
                 break;
         }
+    }
+
+    bool IsActiveSkill(SkillType type)
+    {
+        return ActiveSkills.Contains(type);
     }
 
     public List<SkillData> GetRandomSkills(int count)
