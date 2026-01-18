@@ -12,7 +12,7 @@ public class Whirlwind : MonoBehaviour
     [Header("Stats")]
     public float baseDamageInterval = 0.3f; // Damage every X seconds
     public int baseDamage = 5;
-    public float baseRadius = 2f;
+    public float baseRadius = 1.5f;
 
     private int currentLevel = 0;
     private float damageTimer = 0f;
@@ -40,7 +40,7 @@ public class Whirlwind : MonoBehaviour
         // Update effect scale based on radius
         if (activeEffect != null)
         {
-            float scale = GetRadius() / baseRadius;
+            float scale = GetRadius();
             activeEffect.transform.localScale = Vector3.one * scale;
         }
 
@@ -80,7 +80,8 @@ public class Whirlwind : MonoBehaviour
 
     float GetRadius()
     {
-        float radius = baseRadius + (currentLevel * 0.5f);
+        // Level 1: 1.5, Level 2: 1.75, Level 3: 2.0, Level 4: 2.25, Level 5: 2.5
+        float radius = baseRadius + ((currentLevel - 1) * 0.25f);
         return PassiveStats.instance != null 
             ? PassiveStats.instance.GetScaledArea(radius) 
             : radius;

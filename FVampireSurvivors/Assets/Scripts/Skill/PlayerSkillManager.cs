@@ -99,7 +99,7 @@ public class PlayerSkillManager : MonoBehaviour
 
         ApplyAllUnlockedEffects();
         SkillsChanged?.Invoke();
-        
+
     }
 
     void ApplyAllUnlockedEffects()
@@ -129,7 +129,7 @@ public class PlayerSkillManager : MonoBehaviour
         SkillsChanged?.Invoke();
     }
 
-    void ApplySkillEffect(SkillData skill)
+    public void ApplySkillEffect(SkillData skill)
     {
         // Active skill - use PlayerSkillsController
         if (IsActiveSkill(skill.skillType))

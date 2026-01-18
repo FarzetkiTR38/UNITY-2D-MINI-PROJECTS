@@ -15,6 +15,13 @@ public class Projectile : MonoBehaviour
     [Tooltip("Maximum travel distance before auto-destroy")]
     public float maxDistance = 15f;
 
+    [Header("Rotation Settings")]
+    [Tooltip("Enable rotation to face movement direction")]
+    public bool rotateToFaceDirection = true;
+
+    [Tooltip("Sprite's default facing angle (e.g. 45 if sprite faces top-right, 0 if faces right, 90 if faces up)")]
+    public float spriteDefaultAngle = 45f;
+
     private Vector3 moveDirection;
     private float lifetime = 0f;
     private Vector3 startPosition;
@@ -56,6 +63,7 @@ public class Projectile : MonoBehaviour
         {
             moveDirection = (t.position - transform.position).normalized;
             hasDirection = true;
+            RotateToDirection();
         }
     }
 
@@ -66,6 +74,26 @@ public class Projectile : MonoBehaviour
     {
         moveDirection = dir.normalized;
         hasDirection = true;
+        RotateToDirection();
+    }
+
+    /// <summary>
+    /// Rotate sprite to face movement direction
+    /// </summary>
+    void RotateToDirection()
+    {
+        if (!rotateToFaceDirection) return;
+        if (moveDirection == Vector3.zero) return;
+
+        // Calculate angle from direction vector
+        // Atan2 returns angle where: right=0, up=90, left=180, down=-90
+        float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
+
+        // Subtract sprite's default angle to compensate
+        // If sprite faces top-right (45°), we subtract 45° so it aligns correctly
+        angle -= spriteDefaultAngle;
+
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
     private void Update()
@@ -105,7 +133,6 @@ public class Projectile : MonoBehaviour
         if (hp != null)
         {
             hp.TakeDamage(damage);
-            Debug.Log($"[Projectile] Hit {other.name} for {damage} damage!");
 
             // Apply lifesteal
             if (PassiveStats.instance != null)

@@ -33,27 +33,28 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.HomingMissiles, 1);
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.Whirlwind, 1);
         } 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.HomingMissiles, 2);
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.Whirlwind, 2);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.HomingMissiles, 3);
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.Whirlwind, 3);
+            
         } 
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.HomingMissiles, 4);
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.Whirlwind, 4);
         } 
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.HomingMissiles, 5);
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.Whirlwind, 5);
         }  
         if (Input.GetKeyDown(KeyCode.X))
         {
