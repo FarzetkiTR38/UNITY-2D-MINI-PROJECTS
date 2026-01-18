@@ -28,11 +28,43 @@ public class GameManager : MonoBehaviour
         level = player.GetComponent<PlayerExperience>().getLevel();   
         levelText.text = " Level " + level.ToString() + " (" + "%"+ levelUpPercent.ToString("0") + ")";
         
+
+        // TEST //
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.HomingMissiles, 1);
+        } 
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.HomingMissiles, 2);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.HomingMissiles, 3);
+        } 
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.HomingMissiles, 4);
+        } 
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.HomingMissiles, 5);
+        }  
         if (Input.GetKeyDown(KeyCode.X))
         {
+            
             player.GetComponent<PlayerExperience>().LevelUp();
-        } 
-        // test için
+        }  
+        // TEST //
+
+
+                
+    
     
     }
 

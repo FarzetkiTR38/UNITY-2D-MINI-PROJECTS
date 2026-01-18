@@ -99,6 +99,7 @@ public class PlayerSkillManager : MonoBehaviour
 
         ApplyAllUnlockedEffects();
         SkillsChanged?.Invoke();
+        
     }
 
     void ApplyAllUnlockedEffects()

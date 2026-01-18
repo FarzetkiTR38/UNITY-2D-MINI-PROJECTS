@@ -67,6 +67,16 @@ public class PlayerSkillsController : MonoBehaviour
         InitializeAllSkills();
     }
 
+    private void Start()
+    {
+        // Fireball starts at level 1
+        // This is called after PlayerSkillManager.Awake() sets Fireball to level 1
+        if (fireball != null)
+        {
+            fireball.Upgrade(1);
+        }
+    }
+
     void InitializeAllSkills()
     {
         // Create fire point if not assigned

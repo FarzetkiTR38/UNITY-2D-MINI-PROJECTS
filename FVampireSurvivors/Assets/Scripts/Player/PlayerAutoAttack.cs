@@ -1,9 +1,10 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerAutoAttack : MonoBehaviour
 {
     [Header("Attack Settings")]
-    public float attackRate = 1f;
+    public float attackCooldown = 2f;  // Time between bursts
     public float attackRange = 10f;
     public Transform attackPoint;
     public GameObject projectilePrefab;
@@ -12,35 +13,51 @@ public class PlayerAutoAttack : MonoBehaviour
     [SerializeField] private int baseDamage = 10;
     private int bonusDamage = 0;
 
-    [Header("Multi-Shot Settings")]
-    [Tooltip("Number of projectiles to fire (increases with level)")]
+    [Header("Burst Fire Settings")]
+    [Tooltip("Number of projectiles per burst (set by skill level)")]
     private int projectileCount = 1;
 
-    [Tooltip("Spawn offset distance from attack point")]
-    public float spawnOffsetDistance = 0.5f;
+    [Tooltip("Delay between each projectile in burst")]
+    public float delayBetweenShots = 0.05f;
 
-    [Tooltip("Total spread angle in degrees for spawn positions")]
-    public float spreadAngle = 45f;
+    [Tooltip("Spawn offset distance from attack point")]
+    public float spawnOffsetDistance = 0.3f;
+
+    [Tooltip("Total spread angle in degrees")]
+    public float spreadAngle = 30f;
 
     [Tooltip("Attack rate increase per level")]
-    public float attackRatePerLevel = 0.25f;
+    public float attackRatePerLevel = 0.15f;
 
-    private float attackTimer = 0f;
-    private int currentLevel = 1;
+    private float cooldownTimer = 0f;
+    private int currentLevel = 0;
+    private bool isFiring = false;
 
     void Update()
     {
-        attackTimer += Time.deltaTime;
+        // Don't attack if level is 0 (skill not unlocked)
+        if (currentLevel <= 0) return;
+        if (isFiring) return; // Don't start new burst while firing
 
-        if (attackTimer < 1f / attackRate)
+        cooldownTimer += Time.deltaTime;
+
+        // Apply attack speed from PassiveStats
+        float effectiveCooldown = attackCooldown;
+        if (PassiveStats.instance != null)
+        {
+            effectiveCooldown /= PassiveStats.instance.attackSpeedMultiplier;
+        }
+
+        if (cooldownTimer < effectiveCooldown)
             return;
 
         Transform target = GetNearestEnemy();
         if (target == null)
             return;
 
-        Attack(target);
-        attackTimer = 0f;
+        // Start burst fire
+        StartCoroutine(BurstFire(target));
+        cooldownTimer = 0f;
     }
 
     Transform GetNearestEnemy()
@@ -63,67 +80,102 @@ public class PlayerAutoAttack : MonoBehaviour
         return nearest;
     }
 
-    void Attack(Transform target)
+    /// <summary>
+    /// Fire projectiles one by one with delay
+    /// </summary>
+    IEnumerator BurstFire(Transform target)
     {
-        if (projectileCount == 1)
+        isFiring = true;
+
+        int effectiveCount = projectileCount;
+
+        if (effectiveCount <= 1)
         {
-            // Single projectile - spawn at attack point, home to target
+            // Single projectile
             FireProjectile(target, Vector3.zero);
         }
         else
         {
-            // Multiple projectiles - spawn at offset positions, all home to same target
-            float angleStep = spreadAngle / (projectileCount - 1);
-            float startAngle = -spreadAngle / 2f;
+            // Multiple projectiles with delay between each
+            float halfSpread = spreadAngle / 2f;
+            float angleStep = spreadAngle / (effectiveCount - 1);
 
-            for (int i = 0; i < projectileCount; i++)
+            for (int i = 0; i < effectiveCount; i++)
             {
-                float offsetAngle = startAngle + (angleStep * i);
-                
-                // Calculate spawn offset position
-                float radians = offsetAngle * Mathf.Deg2Rad;
-                Vector3 spawnOffset = new Vector3(
-                    Mathf.Cos(radians) * spawnOffsetDistance,
-                    Mathf.Sin(radians) * spawnOffsetDistance,
-                    0f
-                );
-                
-                FireProjectile(target, spawnOffset);
+                // Recalculate target direction each shot (in case player moved)
+                Transform currentTarget = target;
+                if (currentTarget == null)
+                {
+                    currentTarget = GetNearestEnemy();
+                }
+
+                float offsetAngle = -halfSpread + (angleStep * i);
+
+                // Calculate spawn offset perpendicular to target direction
+                Vector3 spawnOffset = Vector3.zero;
+                if (currentTarget != null)
+                {
+                    Vector3 toTarget = (currentTarget.position - transform.position).normalized;
+                    Vector3 perpendicular = new Vector3(-toTarget.y, toTarget.x, 0f);
+                    float radians = offsetAngle * Mathf.Deg2Rad;
+                    spawnOffset = perpendicular * (Mathf.Sin(radians) * spawnOffsetDistance);
+                }
+
+                FireProjectile(currentTarget, spawnOffset);
+
+                // Wait between shots (except after last one)
+                if (i < effectiveCount - 1)
+                {
+                    yield return new WaitForSeconds(delayBetweenShots);
+                }
             }
         }
+
+        isFiring = false;
     }
 
     void FireProjectile(Transform target, Vector3 spawnOffset)
     {
         if (projectilePrefab == null || attackPoint == null) return;
+        if (target == null) return; // No target, skip this shot
 
         // Spawn at attack point + offset
         Vector3 spawnPos = attackPoint.position + spawnOffset;
-        
+
         GameObject proj = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
-        
+
         Projectile projectileComponent = proj.GetComponent<Projectile>();
         if (projectileComponent != null)
         {
-            // All projectiles home to the same target
+            // Set direction towards target (projectile goes straight)
             projectileComponent.SetTarget(target);
-            projectileComponent.SetDamage(baseDamage + bonusDamage);
+
+            // Calculate damage with PassiveStats
+            int finalDamage = baseDamage + bonusDamage;
+            if (PassiveStats.instance != null)
+            {
+                finalDamage = PassiveStats.instance.CalculateDamage(finalDamage);
+            }
+            projectileComponent.SetDamage(finalDamage);
         }
     }
 
     /// <summary>
     /// Upgrade the fireball skill.
-    /// Level determines projectile count and attack rate.
+    /// Level determines projectile count per burst.
     /// </summary>
     public void Upgrade(int level)
     {
         currentLevel = level;
-        projectileCount = level; // 1 projectile per level
-        attackRate = 1f + (level - 1) * attackRatePerLevel;
+        projectileCount = level; // Level 1 = 1 projectile, Level 2 = 2, etc.
+        
+        // Reduce cooldown slightly with level
+        attackCooldown = 2f - (level - 1) * attackRatePerLevel;
+        attackCooldown = Mathf.Max(attackCooldown, 0.5f); // Minimum 0.5s cooldown
     }
 
     /// <summary>
-    /// Upgrade damage bonus
+    /// Upgrade damage bonus (from passive skill)
     /// </summary>
     public void UpgradeDamage(int level)
     {
