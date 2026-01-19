@@ -22,7 +22,7 @@ public class PlayerSkillsController : MonoBehaviour
 
     [Header("Melee/Orbit Prefabs")]
     public GameObject swordPrefab;
-    public GameObject scythePrefab;
+    public GameObject shurikenPrefab;
 
     [Header("Structure Prefabs")]
     public GameObject turretPrefab;
@@ -38,7 +38,7 @@ public class PlayerSkillsController : MonoBehaviour
     [Header("References")]
     public Transform firePoint;
     public Transform swordAnchor;
-    public Transform scytheAnchor;
+    public Transform shurikenAnchor;
     public LineRenderer laserLineRenderer;
 
     // Internal skill instances
@@ -53,7 +53,7 @@ public class PlayerSkillsController : MonoBehaviour
     private ShockwavePulse shockwavePulse;
     private ChainLightning chainLightning;
     private BoomerangWeapon boomerang;
-    private SpinningScythes spinningScythes;
+    private SpinningShuriken spinningShuriken;
     private ConeAttack coneAttack;
     private MeteorShower meteorShower;
     private ExplodingProjectiles explodingProjectiles;
@@ -97,13 +97,13 @@ public class PlayerSkillsController : MonoBehaviour
             swordAnchor = sa.transform;
         }
 
-        // Create scythe anchor if not assigned
-        if (scytheAnchor == null)
+        // Create shuriken anchor if not assigned
+        if (shurikenAnchor == null)
         {
-            GameObject sca = new GameObject("ScytheAnchor");
-            sca.transform.SetParent(transform);
-            sca.transform.localPosition = Vector3.zero;
-            scytheAnchor = sca.transform;
+            GameObject sha = new GameObject("ShurikenAnchor");
+            sha.transform.SetParent(transform);
+            sha.transform.localPosition = Vector3.zero;
+            shurikenAnchor = sha.transform;
         }
 
         // Initialize all skill components
@@ -147,9 +147,9 @@ public class PlayerSkillsController : MonoBehaviour
         boomerang.throwPoint = firePoint;
         boomerang.boomerangPrefab = boomerangPrefab;
 
-        spinningScythes = gameObject.AddComponent<SpinningScythes>();
-        spinningScythes.scytheAnchor = scytheAnchor;
-        spinningScythes.scythePrefab = scythePrefab;
+        spinningShuriken = gameObject.AddComponent<SpinningShuriken>();
+        spinningShuriken.shurikenAnchor = shurikenAnchor;
+        spinningShuriken.shurikenPrefab = shurikenPrefab;
 
         coneAttack = gameObject.AddComponent<ConeAttack>();
         coneAttack.flameEffectPrefab = flameEffectPrefab;
@@ -213,8 +213,8 @@ public class PlayerSkillsController : MonoBehaviour
             case SkillType.Boomerang:
                 boomerang?.Upgrade(level);
                 break;
-            case SkillType.SpinningScythes:
-                spinningScythes?.Upgrade(level);
+            case SkillType.SpinningShuriken:
+                spinningShuriken?.Upgrade(level);
                 break;
             case SkillType.ConeAttack:
                 coneAttack?.Upgrade(level);
@@ -236,4 +236,11 @@ public class PlayerSkillsController : MonoBehaviour
                 break;
         }
     }
+
+    // ==================
+    // PUBLIC GETTERS for external access
+    // ==================
+
+    public PlayerAutoAttack GetFireball() => fireball;
+    public ConeAttack GetConeAttack() => coneAttack;
 }

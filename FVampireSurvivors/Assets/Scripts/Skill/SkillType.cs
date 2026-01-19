@@ -22,7 +22,7 @@ public enum SkillType
     // Batch 3 - Special Mechanics
     ChainLightning,
     Boomerang,
-    SpinningScythes,
+    SpinningShuriken,
     ConeAttack,
     
     // Batch 4 - Advanced

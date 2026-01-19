@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class PlayerAutoAttack : MonoBehaviour
 {
+    [Header("Attack Mode")]
+    [Tooltip("true = auto-target nearest enemy, false = shoot towards mouse")]
+    public bool useAutoAttack = true;
+
     [Header("Attack Settings")]
     public float attackCooldown = 2f;  // Time between bursts
     public float attackRange = 10f;
@@ -51,12 +55,23 @@ public class PlayerAutoAttack : MonoBehaviour
         if (cooldownTimer < effectiveCooldown)
             return;
 
-        Transform target = GetNearestEnemy();
-        if (target == null)
-            return;
+        if (useAutoAttack)
+        {
+            // Auto mode: target nearest enemy
+            Transform target = GetNearestEnemy();
+            if (target == null)
+                return;
 
-        // Start burst fire
-        StartCoroutine(BurstFire(target));
+            StartCoroutine(BurstFire(target.position));
+        }
+        else
+        {
+            // Manual mode: shoot towards mouse position
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePos.z = 0f;
+            StartCoroutine(BurstFire(mousePos));
+        }
+
         cooldownTimer = 0f;
     }
 
@@ -83,7 +98,7 @@ public class PlayerAutoAttack : MonoBehaviour
     /// <summary>
     /// Fire projectiles one by one with delay
     /// </summary>
-    IEnumerator BurstFire(Transform target)
+    IEnumerator BurstFire(Vector3 targetPosition)
     {
         isFiring = true;
 
@@ -92,7 +107,7 @@ public class PlayerAutoAttack : MonoBehaviour
         if (effectiveCount <= 1)
         {
             // Single projectile
-            FireProjectile(target, Vector3.zero);
+            FireProjectile(targetPosition, Vector3.zero);
         }
         else
         {
@@ -102,26 +117,30 @@ public class PlayerAutoAttack : MonoBehaviour
 
             for (int i = 0; i < effectiveCount; i++)
             {
-                // Recalculate target direction each shot (in case player moved)
-                Transform currentTarget = target;
-                if (currentTarget == null)
+                // Recalculate target position each shot
+                Vector3 currentTargetPos = targetPosition;
+                if (useAutoAttack)
                 {
-                    currentTarget = GetNearestEnemy();
+                    Transform nearestEnemy = GetNearestEnemy();
+                    if (nearestEnemy != null)
+                        currentTargetPos = nearestEnemy.position;
+                }
+                else
+                {
+                    // Update mouse position
+                    currentTargetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    currentTargetPos.z = 0f;
                 }
 
                 float offsetAngle = -halfSpread + (angleStep * i);
 
                 // Calculate spawn offset perpendicular to target direction
-                Vector3 spawnOffset = Vector3.zero;
-                if (currentTarget != null)
-                {
-                    Vector3 toTarget = (currentTarget.position - transform.position).normalized;
-                    Vector3 perpendicular = new Vector3(-toTarget.y, toTarget.x, 0f);
-                    float radians = offsetAngle * Mathf.Deg2Rad;
-                    spawnOffset = perpendicular * (Mathf.Sin(radians) * spawnOffsetDistance);
-                }
+                Vector3 toTarget = (currentTargetPos - transform.position).normalized;
+                Vector3 perpendicular = new Vector3(-toTarget.y, toTarget.x, 0f);
+                float radians = offsetAngle * Mathf.Deg2Rad;
+                Vector3 spawnOffset = perpendicular * (Mathf.Sin(radians) * spawnOffsetDistance);
 
-                FireProjectile(currentTarget, spawnOffset);
+                FireProjectile(currentTargetPos, spawnOffset);
 
                 // Wait between shots (except after last one)
                 if (i < effectiveCount - 1)
@@ -134,10 +153,9 @@ public class PlayerAutoAttack : MonoBehaviour
         isFiring = false;
     }
 
-    void FireProjectile(Transform target, Vector3 spawnOffset)
+    void FireProjectile(Vector3 targetPosition, Vector3 spawnOffset)
     {
         if (projectilePrefab == null || attackPoint == null) return;
-        if (target == null) return; // No target, skip this shot
 
         // Spawn at attack point + offset
         Vector3 spawnPos = attackPoint.position + spawnOffset;
@@ -147,8 +165,9 @@ public class PlayerAutoAttack : MonoBehaviour
         Projectile projectileComponent = proj.GetComponent<Projectile>();
         if (projectileComponent != null)
         {
-            // Set direction towards target (projectile goes straight)
-            projectileComponent.SetTarget(target);
+            // Set direction towards target position
+            Vector3 direction = (targetPosition - spawnPos).normalized;
+            projectileComponent.SetDirection(direction);
 
             // Calculate damage with PassiveStats
             int finalDamage = baseDamage + bonusDamage;
@@ -188,5 +207,13 @@ public class PlayerAutoAttack : MonoBehaviour
     public int GetProjectileCount()
     {
         return projectileCount;
+    }
+
+    /// <summary>
+    /// Toggle auto attack mode
+    /// </summary>
+    public void SetAutoAttack(bool enabled)
+    {
+        useAutoAttack = enabled;
     }
 }

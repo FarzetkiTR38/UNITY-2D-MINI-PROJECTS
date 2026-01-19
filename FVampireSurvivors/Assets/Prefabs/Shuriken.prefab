@@ -9,11 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7662958392653207891}
-  - component: {fileID: 2616387461919094355}
+  - component: {fileID: 7046536305424649536}
   - component: {fileID: 7415506288685260257}
   - component: {fileID: 7559264175083195990}
   m_Layer: 0
-  m_Name: Scythe
+  m_Name: Shuriken
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34,7 +34,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2616387461919094355
+--- !u!114 &7046536305424649536
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43,9 +43,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6657530301278550266}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50835a1d888ec094b9d419e3ee923998, type: 3}
+  m_Script: {fileID: 11500000, guid: b9e49c3d5c0841849ac70a63653a1d4f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScytheDamage
+  m_EditorClassIdentifier: Assembly-CSharp::ShurikenDamage
   damage: 10
   hitInterval: 0.3
 --- !u!61 &7415506288685260257
@@ -86,7 +86,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 3.03, y: 3.59}
+    oldSize: {x: 4.28, y: 4.28}
     newSize: {x: 10.24, y: 10.24}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -141,7 +141,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -7796988974200456413, guid: b9b5d32a68463754fa712bde829e2dc2, type: 3}
+  m_Sprite: {fileID: 181365941574530401, guid: 89463817f3156c64e94a7c2fda2dc6cc, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

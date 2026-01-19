@@ -34,7 +34,7 @@ public class PlayerSkillManager : MonoBehaviour
         SkillType.ShockwavePulse,
         SkillType.ChainLightning,
         SkillType.Boomerang,
-        SkillType.SpinningScythes,
+        SkillType.SpinningShuriken,
         SkillType.ConeAttack,
         SkillType.MeteorShower,
         SkillType.ExplodingProjectiles,
