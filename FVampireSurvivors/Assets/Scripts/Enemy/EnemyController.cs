@@ -16,6 +16,10 @@ public class EnemyController : MonoBehaviour
     private float slowMultiplier = 1f;
     private float slowTimer = 0f;
 
+    // Knockback effect
+    private Vector2 knockbackVelocity;
+    private float knockbackTimer = 0f;
+
     void Start()
     {
         target = FindAnyObjectByType<PlayerController>().transform;
@@ -32,6 +36,17 @@ public class EnemyController : MonoBehaviour
             {
                 slowMultiplier = 1f; // Reset speed
             }
+        }
+
+        // Handle knockback timer
+        if (knockbackTimer > 0f)
+        {
+            knockbackTimer -= Time.deltaTime;
+            // During knockback, use knockback velocity
+            theRB.linearVelocity = knockbackVelocity;
+            // Decay knockback
+            knockbackVelocity = Vector2.Lerp(knockbackVelocity, Vector2.zero, Time.deltaTime * 5f);
+            return; // Don't move towards player during knockback
         }
 
         // Move towards player
@@ -62,5 +77,17 @@ public class EnemyController : MonoBehaviour
     {
         slowMultiplier = 1f - slowPercent;
         slowTimer = duration;
+    }
+
+    /// <summary>
+    /// Apply knockback effect to push enemy away
+    /// </summary>
+    /// <param name="direction">Direction to push (normalized)</param>
+    /// <param name="force">Knockback force</param>
+    /// <param name="duration">How long the knockback lasts</param>
+    public void ApplyKnockback(Vector2 direction, float force, float duration = 0.2f)
+    {
+        knockbackVelocity = direction.normalized * force;
+        knockbackTimer = duration;
     }
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// Shockwave Pulse - Periodically releases a damaging wave in all directions
-/// Level increases: damage, radius, wave count
+/// Level increases: damage, radius
 /// </summary>
 public class ShockwavePulse : MonoBehaviour
 {
@@ -12,15 +12,41 @@ public class ShockwavePulse : MonoBehaviour
     [Header("Stats")]
     public float basePulseInterval = 2f;
     public int baseDamage = 20;
-    public float baseRadius = 4f;
-    public float waveSpeed = 8f;
+    public float baseRadius = 1.5f;
+
+    [Header("Knockback")]
+    public float knockbackForce = 8f;
+    public float knockbackDuration = 0.25f;
 
     private int currentLevel = 0;
     private float pulseTimer = 0f;
+    private GameObject activeEffect;
 
     void Update()
     {
-        if (currentLevel <= 0) return;
+        if (currentLevel <= 0)
+        {
+            if (activeEffect != null)
+            {
+                Destroy(activeEffect);
+                activeEffect = null;
+            }
+            return;
+        }
+
+        // Spawn visual effect if not exists
+        if (activeEffect == null && shockwaveEffectPrefab != null)
+        {
+            activeEffect = Instantiate(shockwaveEffectPrefab, transform);
+            activeEffect.transform.localPosition = Vector3.zero;
+        }
+
+        // Update effect scale based on radius
+        if (activeEffect != null)
+        {
+            float scale = GetRadius();
+            activeEffect.transform.localScale = Vector3.one * scale;
+        }
 
         float interval = PassiveStats.instance != null 
             ? PassiveStats.instance.GetAttackInterval(basePulseInterval) 
@@ -36,13 +62,6 @@ public class ShockwavePulse : MonoBehaviour
 
     void ReleaseShockwave()
     {
-        // Spawn visual effect
-        if (shockwaveEffectPrefab != null)
-        {
-            GameObject effect = Instantiate(shockwaveEffectPrefab, transform.position, Quaternion.identity);
-            Destroy(effect, 1f); // Destroy after animation
-        }
-
         // Deal damage in radius
         float radius = GetRadius();
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
@@ -61,19 +80,20 @@ public class ShockwavePulse : MonoBehaviour
                     PassiveStats.instance.ApplyLifesteal(damage);
             }
 
-            // Knockback effect
-            Rigidbody2D rb = hit.GetComponent<Rigidbody2D>();
-            if (rb != null)
+            // Apply knockback via EnemyController
+            EnemyController enemy = hit.GetComponent<EnemyController>();
+            if (enemy != null)
             {
                 Vector2 knockbackDir = (hit.transform.position - transform.position).normalized;
-                rb.AddForce(knockbackDir * 5f, ForceMode2D.Impulse);
+                enemy.ApplyKnockback(knockbackDir, knockbackForce, knockbackDuration);
             }
         }
     }
 
     float GetRadius()
     {
-        float radius = baseRadius + (currentLevel * 1f);
+        // Level 1: 1.5, Level 2: 1.75, Level 3: 2.0, Level 4: 2.25, Level 5: 2.5
+        float radius = baseRadius + ((currentLevel - 1) * 0.25f);
         return PassiveStats.instance != null 
             ? PassiveStats.instance.GetScaledArea(radius) 
             : radius;

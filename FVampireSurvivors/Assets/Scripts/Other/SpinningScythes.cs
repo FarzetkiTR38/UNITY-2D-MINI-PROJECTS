@@ -56,7 +56,7 @@ public class SpinningScythes : MonoBehaviour
             );
 
             activeScythes[i].transform.position = transform.position + pos;
-            activeScythes[i].transform.rotation = Quaternion.Euler(0, 0, angle + 90f);
+            activeScythes[i].transform.rotation = Quaternion.Euler(0, 0, angle + 45f);
         }
     }
 

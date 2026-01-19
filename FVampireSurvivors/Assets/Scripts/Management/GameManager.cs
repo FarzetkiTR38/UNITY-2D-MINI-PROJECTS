@@ -33,28 +33,28 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.Whirlwind, 1);
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.SpinningScythes, 1);
         } 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.Whirlwind, 2);
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.SpinningScythes, 2);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.Whirlwind, 3);
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.SpinningScythes, 3);
             
         } 
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.Whirlwind, 4);
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.SpinningScythes, 4);
         } 
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.Whirlwind, 5);
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.SpinningScythes, 5);
         }  
         if (Input.GetKeyDown(KeyCode.X))
         {
