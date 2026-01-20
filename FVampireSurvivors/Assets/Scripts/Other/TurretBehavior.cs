@@ -15,8 +15,17 @@ public class TurretBehavior : MonoBehaviour
 
     void Update()
     {
-        fireTimer += Time.deltaTime;
+        // Always rotate towards nearest enemy
+        Transform target = GetNearestEnemy();
+        if (target != null)
+        {
+            Vector3 dir = (target.position - transform.position).normalized;
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+            transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        }
 
+        // Fire timer
+        fireTimer += Time.deltaTime;
         if (fireTimer >= 1f / fireRate)
         {
             TryFire();
@@ -30,6 +39,11 @@ public class TurretBehavior : MonoBehaviour
         if (target == null) return;
 
         if (projectilePrefab == null) return;
+
+        // Rotate turret to face target (sprite faces UP, so subtract 90)
+        Vector3 dir = (target.position - transform.position).normalized;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
 
         GameObject proj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
         

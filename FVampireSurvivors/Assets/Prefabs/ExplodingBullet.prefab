@@ -27,14 +27,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3444763253709196202}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.38268343, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8115614725392870722}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
 --- !u!114 &4828417386360968534
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50,8 +50,11 @@ MonoBehaviour:
   speed: 8
   damage: 10
   explosionRadius: 1.5
-  maxLifetime: 5
+  maxDistance: 15
   explosionEffectPrefab: {fileID: 0}
+  spriteDefaultAngle: 45
+  explosionColor: {r: 1, g: 0.3, b: 0, a: 0.4}
+  explosionVisualDuration: 0.3
 --- !u!50 &863797038631874988
 Rigidbody2D:
   serializedVersion: 5

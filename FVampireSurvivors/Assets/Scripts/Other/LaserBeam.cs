@@ -13,10 +13,11 @@ public class LaserBeam : MonoBehaviour
     [Header("Stats")]
     public float baseDamageInterval = 0.1f;
     public int baseDamage = 3;
-    public float baseWidth = 0.3f;
+    public float baseWidth = 0.2f;
 
     [Header("Direction")]
-    public bool useMouseDirection = false;
+    [Tooltip("true = auto-target nearest enemy, false = mouse direction")]
+    public bool useAutoAttack = true;
     private Vector3 aimDirection = Vector3.right;
 
     private int currentLevel = 0;
@@ -39,19 +40,24 @@ public class LaserBeam : MonoBehaviour
         }
 
         // Update aim direction
-        if (useMouseDirection)
+        if (useAutoAttack)
         {
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            aimDirection = (mousePos - transform.position).normalized;
-            aimDirection.z = 0;
-        }
-        else
-        {
-            // Use nearest enemy direction
+            // Auto mode: target nearest enemy
             Transform target = GetNearestEnemy();
             if (target != null)
             {
                 aimDirection = (target.position - transform.position).normalized;
+            }
+        }
+        else
+        {
+            // Manual mode: mouse direction
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePos.z = 0f;
+            Vector3 dir = mousePos - transform.position;
+            if (dir.sqrMagnitude > 0.01f)
+            {
+                aimDirection = dir.normalized;
             }
         }
 
@@ -135,7 +141,8 @@ public class LaserBeam : MonoBehaviour
 
     float GetWidth()
     {
-        float width = baseWidth + (currentLevel * 0.2f);
+        // Level 1: 0.2, Level 2: 0.3, Level 3: 0.4, Level 4: 0.5, Level 5: 0.6
+        float width = baseWidth + ((currentLevel - 1) * 0.1f);
         return PassiveStats.instance != null 
             ? PassiveStats.instance.GetScaledArea(width) 
             : width;

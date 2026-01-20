@@ -6,6 +6,10 @@ using UnityEngine;
 /// </summary>
 public class ExplodingProjectiles : MonoBehaviour
 {
+    [Header("Attack Mode")]
+    [Tooltip("true = auto-target nearest enemy, false = shoot towards mouse")]
+    public bool useAutoAttack = true;
+
     [Header("Projectile Settings")]
     public GameObject projectilePrefab;
     public Transform firePoint;
@@ -15,7 +19,7 @@ public class ExplodingProjectiles : MonoBehaviour
     public int baseDamage = 10;
     public float projectileSpeed = 8f;
     public float attackRange = 10f;
-    public float baseExplosionRadius = 1.5f;
+    public float baseExplosionRadius = 1f;
 
     private int currentLevel = 0;
     private float fireTimer = 0f;
@@ -38,15 +42,29 @@ public class ExplodingProjectiles : MonoBehaviour
 
     void FireProjectile()
     {
-        Transform target = GetNearestEnemy();
-        if (target == null) return;
+        Vector3 direction;
+
+        if (useAutoAttack)
+        {
+            // Auto mode: target nearest enemy
+            Transform target = GetNearestEnemy();
+            if (target == null) return;
+            direction = (target.position - firePoint.position).normalized;
+        }
+        else
+        {
+            // Manual mode: shoot towards mouse
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePos.z = 0f;
+            direction = (mousePos - firePoint.position).normalized;
+        }
 
         GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
         
         ExplodingProjectile exploding = proj.GetComponent<ExplodingProjectile>();
         if (exploding != null)
         {
-            exploding.SetTarget(target);
+            exploding.SetDirection(direction);
             exploding.damage = GetDamage();
             exploding.explosionRadius = GetExplosionRadius();
             exploding.speed = projectileSpeed;
@@ -74,7 +92,8 @@ public class ExplodingProjectiles : MonoBehaviour
 
     float GetExplosionRadius()
     {
-        float radius = baseExplosionRadius + (currentLevel * 0.3f);
+        // Level 1: 1, Level 2: 1.25, Level 3: 1.5, Level 4: 1.75, Level 5: 2
+        float radius = baseExplosionRadius + ((currentLevel - 1) * 0.25f);
         return PassiveStats.instance != null 
             ? PassiveStats.instance.GetScaledArea(radius) 
             : radius;

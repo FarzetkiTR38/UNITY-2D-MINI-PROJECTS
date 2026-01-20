@@ -243,4 +243,6 @@ public class PlayerSkillsController : MonoBehaviour
 
     public PlayerAutoAttack GetFireball() => fireball;
     public ConeAttack GetConeAttack() => coneAttack;
+    public ExplodingProjectiles GetExplodingProjectiles() => explodingProjectiles;
+    public LaserBeam GetLaserBeam() => laserBeam;
 }

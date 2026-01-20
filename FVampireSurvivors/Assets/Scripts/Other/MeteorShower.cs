@@ -10,13 +10,22 @@ public class MeteorShower : MonoBehaviour
     public GameObject meteorPrefab;
 
     [Header("Stats")]
-    public float baseMeteorInterval = 1.5f;
+    public float baseMeteorInterval = 2.5f;
     public int baseDamage = 25;
-    public float impactRadius = 1.5f;
-    public float spawnRadius = 8f; // Random spawn area around player
+    public float baseImpactRadius = 1.5f;
+
+    [Header("Spawn Settings")]
+    [Tooltip("Minimum height above camera to spawn meteors")]
+    public float minSpawnHeight = 6f; // ~540px in world units (depends on camera size)
 
     private int currentLevel = 0;
     private float meteorTimer = 0f;
+    private Camera mainCamera;
+
+    void Start()
+    {
+        mainCamera = Camera.main;
+    }
 
     void Update()
     {
@@ -40,12 +49,11 @@ public class MeteorShower : MonoBehaviour
 
         for (int i = 0; i < meteorCount; i++)
         {
-            // Random position around player
-            Vector2 randomOffset = Random.insideUnitCircle * spawnRadius;
-            Vector3 targetPos = transform.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
+            // Get random position WITHIN camera view
+            Vector3 targetPos = GetRandomPositionInCamera();
 
-            // Spawn meteor above target
-            Vector3 spawnPos = targetPos + Vector3.up * 10f;
+            // Spawn meteor ABOVE camera (outside view)
+            Vector3 spawnPos = GetSpawnPositionAboveCamera(targetPos);
 
             if (meteorPrefab != null)
             {
@@ -63,6 +71,43 @@ public class MeteorShower : MonoBehaviour
                 DealImpactDamage(targetPos);
             }
         }
+    }
+
+    /// <summary>
+    /// Get random position within camera bounds
+    /// </summary>
+    Vector3 GetRandomPositionInCamera()
+    {
+        if (mainCamera == null) mainCamera = Camera.main;
+
+        // Get camera bounds in world space
+        float camHeight = mainCamera.orthographicSize * 2f;
+        float camWidth = camHeight * mainCamera.aspect;
+
+        // Random position within camera view (with small margin)
+        float margin = 0.5f;
+        float randomX = Random.Range(-camWidth / 2f + margin, camWidth / 2f - margin);
+        float randomY = Random.Range(-camHeight / 2f + margin, camHeight / 2f - margin);
+
+        // Add camera position (camera follows player)
+        Vector3 camPos = mainCamera.transform.position;
+        return new Vector3(camPos.x + randomX, camPos.y + randomY, 0f);
+    }
+
+    /// <summary>
+    /// Get spawn position above camera
+    /// </summary>
+    Vector3 GetSpawnPositionAboveCamera(Vector3 targetPos)
+    {
+        if (mainCamera == null) mainCamera = Camera.main;
+
+        // Camera top edge in world space
+        float cameraTop = mainCamera.transform.position.y + mainCamera.orthographicSize;
+
+        // Spawn at least minSpawnHeight above camera top
+        float spawnY = cameraTop + minSpawnHeight;
+
+        return new Vector3(targetPos.x, spawnY, 0f);
     }
 
     void DealImpactDamage(Vector3 position)
@@ -96,7 +141,8 @@ public class MeteorShower : MonoBehaviour
 
     float GetImpactRadius()
     {
-        float radius = impactRadius + (currentLevel * 0.3f);
+        // Level 1: 1.5, Level 2: 1.75, Level 3: 2.0, Level 4: 2.25, Level 5: 2.5
+        float radius = baseImpactRadius + ((currentLevel - 1) * 0.25f);
         return PassiveStats.instance != null 
             ? PassiveStats.instance.GetScaledArea(radius) 
             : radius;

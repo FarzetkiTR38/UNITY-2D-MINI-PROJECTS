@@ -71,11 +71,6 @@ public class AutoAttackSettings : MonoBehaviour
             if (fireball != null)
             {
                 fireball.useAutoAttack = isAutoAttackEnabled;
-                Debug.Log($"[AutoAttackSettings] Fireball useAutoAttack = {isAutoAttackEnabled}");
-            }
-            else
-            {
-                Debug.LogWarning("[AutoAttackSettings] Fireball not found!");
             }
 
             // Update Cone Attack (Flame Breath)
@@ -83,12 +78,23 @@ public class AutoAttackSettings : MonoBehaviour
             if (coneAttack != null)
             {
                 coneAttack.useMouseDirection = !isAutoAttackEnabled;
-                Debug.Log($"[AutoAttackSettings] ConeAttack useMouseDirection = {!isAutoAttackEnabled}");
             }
-        }
-        else
-        {
-            Debug.LogWarning("[AutoAttackSettings] PlayerSkillsController.instance is null!");
+
+            // Update Exploding Projectiles
+            ExplodingProjectiles exploding = PlayerSkillsController.instance.GetExplodingProjectiles();
+            if (exploding != null)
+            {
+                exploding.useAutoAttack = isAutoAttackEnabled;
+            }
+
+            // Update Laser Beam
+            LaserBeam laser = PlayerSkillsController.instance.GetLaserBeam();
+            if (laser != null)
+            {
+                laser.useAutoAttack = isAutoAttackEnabled;
+            }
+
+            Debug.Log($"[AutoAttackSettings] All skills set to: {(isAutoAttackEnabled ? "AUTO" : "MOUSE")}");
         }
     }
 

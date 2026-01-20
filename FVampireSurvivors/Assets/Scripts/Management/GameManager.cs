@@ -63,28 +63,28 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.ConeAttack, 1);
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.BlackHole, 1);
         } 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.ConeAttack, 2);
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.BlackHole, 2);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.ConeAttack, 3);
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.BlackHole, 3);
             
         } 
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.ConeAttack, 4);
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.BlackHole, 4);
         } 
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.ConeAttack, 5);
+            PlayerSkillsController.instance?.UpgradeSkill(SkillType.BlackHole, 5);
         }  
         if (Input.GetKeyDown(KeyCode.X))
         {
