@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
     }
 
     public void UpgradeSpeed(int level)
-    {
-        moveSpeed = 5f + level * 0.75f;
+    {   
+        moveSpeed = moveSpeed + level * 0.75f;
     }
 }

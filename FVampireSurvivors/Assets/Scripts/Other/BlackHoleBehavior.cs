@@ -22,8 +22,51 @@ public class BlackHoleBehavior : MonoBehaviour
         this.radius = radius;
         this.pullForce = pullForce;
 
-        // Scale visual effect
-        transform.localScale = Vector3.one * (radius / 3f);
+        // Scale visual effect (1.5x bigger than before)
+        transform.localScale = Vector3.one * (radius / 3f) * 1.5f;
+
+        // Create radius indicator
+        CreateRadiusIndicator();
+    }
+
+    void CreateRadiusIndicator()
+    {
+        GameObject indicator = new GameObject("RadiusIndicator");
+        indicator.transform.SetParent(transform);
+        indicator.transform.localPosition = Vector3.zero;
+
+        SpriteRenderer sr = indicator.AddComponent<SpriteRenderer>();
+        sr.sprite = CreateCircleSprite();
+        sr.color = new Color(0.6f, 0.1f, 0.9f, 0.3f); // Purple, semi-transparent
+        sr.sortingOrder = -1; // Behind other objects
+
+        // Scale to match ACTUAL damage radius (not affected by 1.5x prefab scale)
+        float spriteSize = 1f;
+        indicator.transform.localScale = Vector3.one * (radius * 2f / spriteSize) / transform.localScale.x;
+    }
+
+    Sprite CreateCircleSprite()
+    {
+        int size = 64;
+        Texture2D texture = new Texture2D(size, size);
+        
+        float center = size / 2f;
+        float radius = size / 2f - 1f;
+
+        for (int x = 0; x < size; x++)
+        {
+            for (int y = 0; y < size; y++)
+            {
+                float dist = Vector2.Distance(new Vector2(x, y), new Vector2(center, center));
+                if (dist <= radius)
+                    texture.SetPixel(x, y, Color.white);
+                else
+                    texture.SetPixel(x, y, new Color(0, 0, 0, 0));
+            }
+        }
+
+        texture.Apply();
+        return Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
     }
 
     void Update()

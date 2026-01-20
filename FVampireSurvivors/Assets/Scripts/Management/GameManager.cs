@@ -62,36 +62,31 @@ public class GameManager : MonoBehaviour
         // TEST //
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.BlackHole, 1);
+            PassiveStats.instance?.UpgradeDamage(1);
         } 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.BlackHole, 2);
+            PassiveStats.instance?.UpgradeDamage(2);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.BlackHole, 3);
-            
+            PassiveStats.instance?.UpgradeDamage(3);
         } 
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.BlackHole, 4);
+            PassiveStats.instance?.UpgradeDamage(4);
         } 
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
-            
-            PlayerSkillsController.instance?.UpgradeSkill(SkillType.BlackHole, 5);
+            PassiveStats.instance?.UpgradeDamage(5);
         }  
         if (Input.GetKeyDown(KeyCode.X))
         {
-            
             player.GetComponent<PlayerExperience>().LevelUp();
         }  
         // TEST //
+
+        // PlayerSkillsController.instance?.UpgradeSkill(SkillType.MoveSpeed, 5);
     }
 
 

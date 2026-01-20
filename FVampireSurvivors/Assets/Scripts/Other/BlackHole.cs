@@ -103,12 +103,14 @@ public class BlackHole : MonoBehaviour
 
     float GetDuration()
     {
-        return baseDuration + (currentLevel * 0.5f);
+        // Level 1: 3, Level 2: 3.125, Level 3: 3.25, Level 4: 3.375, Level 5: 3.5
+        return 3f + ((currentLevel - 1) * 0.125f);
     }
 
     float GetRadius()
     {
-        float radius = baseRadius + (currentLevel * 0.5f);
+        // Level 1: 2, Level 2: 2.5, Level 3: 3, Level 4: 3.5, Level 5: 4
+        float radius = 2f + ((currentLevel - 1) * 0.5f);
         return PassiveStats.instance != null 
             ? PassiveStats.instance.GetScaledArea(radius) 
             : radius;
