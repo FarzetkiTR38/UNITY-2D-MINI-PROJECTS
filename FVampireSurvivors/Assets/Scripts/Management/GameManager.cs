@@ -62,23 +62,23 @@ public class GameManager : MonoBehaviour
         // TEST //
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            PassiveStats.instance?.UpgradeDamage(1);
+            PassiveStats.instance?.UpgradeArmor(1);
         } 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            PassiveStats.instance?.UpgradeDamage(2);
+            PassiveStats.instance?.UpgradeArmor(2);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            PassiveStats.instance?.UpgradeDamage(3);
+            PassiveStats.instance?.UpgradeArmor(3);
         } 
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            PassiveStats.instance?.UpgradeDamage(4);
+            PassiveStats.instance?.UpgradeArmor(4);
         } 
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
-            PassiveStats.instance?.UpgradeDamage(5);
+            PassiveStats.instance?.UpgradeArmor(5);
         }  
         if (Input.GetKeyDown(KeyCode.X))
         {

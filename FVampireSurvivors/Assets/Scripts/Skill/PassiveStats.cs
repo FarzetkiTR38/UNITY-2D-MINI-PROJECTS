@@ -80,6 +80,7 @@ public class PassiveStats : MonoBehaviour
         // Each level adds 5 damage and 10% multiplier
         bonusDamage = level * 5;
         damageMultiplier = 1f + (level * 0.1f);
+        Debug.Log($"[PassiveStats] UpgradeDamage Level {level}: bonusDamage={bonusDamage}, multiplier={damageMultiplier}");
     }
 
     public void UpgradeCriticalChance(int level)
@@ -128,11 +129,20 @@ public class PassiveStats : MonoBehaviour
     public int CalculateDamage(int baseDamage)
     {
         float damage = (baseDamage + bonusDamage) * damageMultiplier;
+        float preCritDamage = damage;
 
         // Check for critical hit
-        if (Random.value < criticalChance)
+        float roll = Random.value;
+        bool isCrit = roll < criticalChance;
+        
+        if (isCrit)
         {
             damage *= criticalDamageMultiplier;
+            Debug.Log($"<color=yellow>💥 CRITICAL HIT!</color> Chance: {criticalChance * 100:F1}%, Roll: {roll * 100:F1}%, Damage: {preCritDamage:F0} → {damage:F0} (x{criticalDamageMultiplier:F2})");
+        }
+        else
+        {
+            Debug.Log($"Normal Hit - Chance: {criticalChance * 100:F1}%, Roll: {roll * 100:F1}%, Damage: {damage:F0}");
         }
 
         return Mathf.RoundToInt(damage);
@@ -176,9 +186,6 @@ public class PassiveStats : MonoBehaviour
         return baseCount + bonusProjectileCount;
     }
 
-    /// <summary>
-    /// Get scaled area/radius
-    /// </summary>
     public float GetScaledArea(float baseArea)
     {
         return baseArea * areaSizeMultiplier;

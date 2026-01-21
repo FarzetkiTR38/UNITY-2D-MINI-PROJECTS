@@ -64,6 +64,13 @@ public class PlayerSkillsController : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        
+        // Ensure PassiveStats exists
+        if (GetComponent<PassiveStats>() == null)
+        {
+            gameObject.AddComponent<PassiveStats>();
+        }
+        
         InitializeAllSkills();
     }
 

@@ -47,7 +47,13 @@ public class XPOrb : MonoBehaviour
             // Player'a yeterince yaklaştıysa XP ver ve orb'u yok et
             if (distance < 0.2f)
             {
-                player.GetComponent<PlayerExperience>().AddXP(xpValue);
+                // Apply XP bonus from PassiveStats
+                int finalXP = xpValue;
+                if (PassiveStats.instance != null)
+                {
+                    finalXP = PassiveStats.instance.CalculateXP(xpValue);
+                }
+                player.GetComponent<PlayerExperience>().AddXP(finalXP);
                 Destroy(gameObject);
             }
         }

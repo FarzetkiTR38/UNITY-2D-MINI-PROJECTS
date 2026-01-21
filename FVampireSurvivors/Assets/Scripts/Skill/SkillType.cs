@@ -3,29 +3,20 @@ public enum SkillType
     // ==================
     // ACTIVE SKILLS (Weapons)
     // ==================
-    
-    // Existing
+
     Fireball,
     Sword,
-    
-    // Batch 1 - Projectiles
     HomingMissiles,
     IceShards,
     PiercingArrows,
     FanOfDaggers,
-    
-    // Batch 2 - AoE / Aura
     Whirlwind,
     AuraDamage,
     ShockwavePulse,
-    
-    // Batch 3 - Special Mechanics
     ChainLightning,
     Boomerang,
     SpinningShuriken,
     ConeAttack,
-    
-    // Batch 4 - Advanced
     MeteorShower,
     ExplodingProjectiles,
     LaserBeam,
@@ -36,7 +27,6 @@ public enum SkillType
     // PASSIVE SKILLS
     // ==================
     
-    // Existing Passives
     MoveSpeed,
     MaxHealth,
     Magnet,
@@ -54,6 +44,7 @@ public enum SkillType
     // ==================
     // COMBINED / EVOLVED SKILLS
     // ==================
+    
     BeastMode,          // Fireball + HealthRegen
     BladeStorm,         // Sword + AttackSpeed
     VampiricField,      // AuraDamage + Lifesteal

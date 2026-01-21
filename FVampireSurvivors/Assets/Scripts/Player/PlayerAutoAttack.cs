@@ -50,6 +50,7 @@ public class PlayerAutoAttack : MonoBehaviour
         if (PassiveStats.instance != null)
         {
             effectiveCooldown /= PassiveStats.instance.attackSpeedMultiplier;
+            Debug.Log($"[Fireball] Cooldown: base={attackCooldown}, multiplier={PassiveStats.instance.attackSpeedMultiplier}, effective={effectiveCooldown}");
         }
 
         if (cooldownTimer < effectiveCooldown)
@@ -102,7 +103,12 @@ public class PlayerAutoAttack : MonoBehaviour
     {
         isFiring = true;
 
+        // Apply bonus projectiles from PassiveStats
         int effectiveCount = projectileCount;
+        if (PassiveStats.instance != null)
+        {
+            effectiveCount = PassiveStats.instance.GetTotalProjectileCount(projectileCount);
+        }
 
         if (effectiveCount <= 1)
         {
@@ -171,9 +177,15 @@ public class PlayerAutoAttack : MonoBehaviour
 
             // Calculate damage with PassiveStats
             int finalDamage = baseDamage + bonusDamage;
+            Debug.Log($"[Fireball] Before PassiveStats: baseDamage={baseDamage}, bonusDamage={bonusDamage}, finalDamage={finalDamage}");
             if (PassiveStats.instance != null)
             {
                 finalDamage = PassiveStats.instance.CalculateDamage(finalDamage);
+                Debug.Log($"[Fireball] After CalculateDamage: finalDamage={finalDamage}");
+            }
+            else
+            {
+                Debug.LogWarning("[Fireball] PassiveStats.instance is NULL!");
             }
             projectileComponent.SetDamage(finalDamage);
         }
