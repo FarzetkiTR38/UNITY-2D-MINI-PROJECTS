@@ -61,6 +61,21 @@ public class PlayerSkillManager : MonoBehaviour
         SkillType.Armor
     };
 
+    // Evrim gereksinimleri: (Evolved Skill) -> (Skill1, Skill2)
+    public static readonly Dictionary<SkillType, (SkillType skill1, SkillType skill2)> EvolutionRequirements = new Dictionary<SkillType, (SkillType, SkillType)>
+    {
+        { SkillType.BeastMode, (SkillType.Fireball, SkillType.HealthRegen) },
+        { SkillType.BladeStorm, (SkillType.Sword, SkillType.AttackSpeed) },
+        { SkillType.VampiricField, (SkillType.AuraDamage, SkillType.Lifesteal) },
+        { SkillType.FrozenWorld, (SkillType.IceShards, SkillType.AreaSize) },
+        { SkillType.MeteorFire, (SkillType.MeteorShower, SkillType.CriticalDamage) },
+        { SkillType.GreedyOverlord, (SkillType.XPGain, SkillType.Damage) },
+        { SkillType.ImmortalForm, (SkillType.HealthRegen, SkillType.MaxHealth) }
+    };
+
+    // Aktif evrimler - hangi evolved skill'ler unlock edildi
+    private HashSet<SkillType> unlockedEvolutions = new HashSet<SkillType>();
+
     private void Awake()
     {
         instance = this;
@@ -113,6 +128,13 @@ public class PlayerSkillManager : MonoBehaviour
 
     public void UpgradeSkill(SkillType type)
     {
+        // Check if this is an evolved skill
+        if (IsEvolvedSkill(type))
+        {
+            ActivateEvolution(type);
+            return;
+        }
+
         SkillData skill = allSkills.Find(s => s.skillType == type);
         if (skill == null) return;
         if (skill.currentLevel >= skill.maxLevel) return;
@@ -200,10 +222,12 @@ public class PlayerSkillManager : MonoBehaviour
     /// <summary>
     /// Get random skills for level-up selection
     /// Respects 8-slot limits: if 8 skills selected, only those skills appear
+    /// Also includes available evolutions!
     /// </summary>
     public List<SkillData> GetRandomSkills(int count)
     {
         List<SkillData> pool = new List<SkillData>();
+        List<SkillData> evolutionPool = new List<SkillData>(); // Priority pool for evolutions
 
         List<SkillData> unlockedActives = GetUnlockedActiveSkills();
         List<SkillData> unlockedPassives = GetUnlockedPassiveSkills();
@@ -211,9 +235,20 @@ public class PlayerSkillManager : MonoBehaviour
         bool activeSlotsFull = unlockedActives.Count >= maxActiveSkillSlots;
         bool passiveSlotsFull = unlockedPassives.Count >= maxPassiveSkillSlots;
 
+        // Check for available evolutions first
+        List<SkillType> availableEvolutions = GetAvailableEvolutions();
+        foreach (var evolvedType in availableEvolutions)
+        {
+            SkillData evolvedSkill = allSkills.Find(s => s.skillType == evolvedType);
+            if (evolvedSkill != null && !evolvedSkill.isUnlocked)
+            {
+                evolutionPool.Add(evolvedSkill);
+            }
+        }
+
         foreach (var skill in allSkills)
         {
-            // Skip evolved skills
+            // Skip evolved skills (they're handled separately above)
             if (IsEvolvedSkill(skill.skillType)) continue;
 
             // Skip max level skills
@@ -254,8 +289,19 @@ public class PlayerSkillManager : MonoBehaviour
             }
         }
 
-        // Random selection
+        // Random selection - prioritize evolutions!
         List<SkillData> result = new List<SkillData>();
+        
+        // Add evolutions first (guaranteed if available)
+        foreach (var evolved in evolutionPool)
+        {
+            if (result.Count < count)
+            {
+                result.Add(evolved);
+            }
+        }
+
+        // Fill remaining slots with regular skills
         while (result.Count < count && pool.Count > 0)
         {
             int index = UnityEngine.Random.Range(0, pool.Count);
@@ -371,4 +417,104 @@ public class PlayerSkillManager : MonoBehaviour
     /// Check if passive skill slots are full
     /// </summary>
     public bool ArePassiveSlotsFull() => GetUnlockedPassiveSkills().Count >= maxPassiveSkillSlots;
+
+    // ==================
+    // EVOLUTION SYSTEM
+    // ==================
+
+    /// <summary>
+    /// Check if a specific evolved skill can be unlocked
+    /// </summary>
+    /// <summary>
+    /// Check if a specific evolved skill can be unlocked
+    /// </summary>
+    public bool CanEvolve(SkillType evolvedType)
+    {
+        if (!EvolutionRequirements.ContainsKey(evolvedType)) return false;
+        if (unlockedEvolutions.Contains(evolvedType)) return false; // Already evolved
+
+        var req = EvolutionRequirements[evolvedType];
+        bool skill1Max = IsSkillMaxLevel(req.skill1);
+        bool skill2Max = IsSkillMaxLevel(req.skill2);
+        
+        Debug.Log($"[Evolution] Checking {evolvedType}: {req.skill1} maxLevel={skill1Max} (Lv{GetSkillLevel(req.skill1)}), {req.skill2} maxLevel={skill2Max} (Lv{GetSkillLevel(req.skill2)})");
+        
+        return skill1Max && skill2Max;
+    }
+
+    /// <summary>
+    /// Get list of available evolutions (both skills at max level)
+    /// </summary>
+    public List<SkillType> GetAvailableEvolutions()
+    {
+        List<SkillType> available = new List<SkillType>();
+
+        foreach (var kvp in EvolutionRequirements)
+        {
+            if (CanEvolve(kvp.Key))
+            {
+                available.Add(kvp.Key);
+                Debug.Log($"[Evolution] <color=green>{kvp.Key} is AVAILABLE!</color>");
+            }
+        }
+
+        Debug.Log($"[Evolution] Total available evolutions: {available.Count}");
+        return available;
+    }
+
+    /// <summary>
+    /// Activate an evolved skill
+    /// </summary>
+    public void ActivateEvolution(SkillType evolvedType)
+    {
+        if (!CanEvolve(evolvedType)) return;
+
+        unlockedEvolutions.Add(evolvedType);
+        Debug.Log($"<color=magenta>🔄 EVOLUTION UNLOCKED: {evolvedType}</color>");
+
+        // Apply evolved skill effect
+        SkillData evolvedSkill = allSkills.Find(s => s.skillType == evolvedType);
+        if (evolvedSkill != null)
+        {
+            evolvedSkill.isUnlocked = true;
+            evolvedSkill.currentLevel = 1;
+            if (evolvedSkill.unlockOrder == int.MaxValue)
+                evolvedSkill.unlockOrder = _unlockCounter++;
+        }
+
+        // Apply the evolved effect
+        ApplyEvolvedEffect(evolvedType);
+        SkillsChanged?.Invoke();
+    }
+
+    /// <summary>
+    /// Apply the special effect of an evolved skill
+    /// </summary>
+    void ApplyEvolvedEffect(SkillType evolvedType)
+    {
+        // EvolvedSkillEffects component will handle these
+        EvolvedSkillEffects effects = FindAnyObjectByType<EvolvedSkillEffects>();
+        if (effects == null)
+        {
+            // Create if not exists
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                effects = player.AddComponent<EvolvedSkillEffects>();
+            }
+        }
+
+        if (effects != null)
+        {
+            effects.ActivateEvolution(evolvedType);
+        }
+    }
+
+    /// <summary>
+    /// Check if an evolution is already unlocked
+    /// </summary>
+    public bool IsEvolutionUnlocked(SkillType evolvedType)
+    {
+        return unlockedEvolutions.Contains(evolvedType);
+    }
 }

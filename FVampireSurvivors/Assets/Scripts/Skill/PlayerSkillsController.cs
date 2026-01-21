@@ -41,6 +41,22 @@ public class PlayerSkillsController : MonoBehaviour
     public Transform shurikenAnchor;
     public LineRenderer laserLineRenderer;
 
+    [Header("Evolved Prefabs (Optional - replaces base skill when evolved)")]
+    [Tooltip("BeastMode: Replaces Fireball prefab")]
+    public GameObject beastModePrefab;
+    
+    [Tooltip("BladeStorm: Replaces Sword prefab")]
+    public GameObject bladeStormPrefab;
+    
+    [Tooltip("VampiricField: Replaces AuraDamage prefab")]
+    public GameObject vampiricFieldPrefab;
+    
+    [Tooltip("FrozenWorld: Replaces IceShards prefab")]
+    public GameObject frozenWorldPrefab;
+    
+    [Tooltip("MeteorFire: Replaces Meteor prefab")]
+    public GameObject meteorFirePrefab;
+
     // Internal skill instances
     private PlayerAutoAttack fireball;
     private PlayerSwordSkill sword;
@@ -252,4 +268,60 @@ public class PlayerSkillsController : MonoBehaviour
     public ConeAttack GetConeAttack() => coneAttack;
     public ExplodingProjectiles GetExplodingProjectiles() => explodingProjectiles;
     public LaserBeam GetLaserBeam() => laserBeam;
+
+    // ==================
+    // EVOLVED PREFAB SWAP
+    // ==================
+
+    /// <summary>
+    /// Swap base skill prefab to evolved version
+    /// Called when an evolution is activated
+    /// </summary>
+    public void SwapToEvolvedPrefab(SkillType evolvedType)
+    {
+        switch (evolvedType)
+        {
+            case SkillType.BeastMode:
+                if (beastModePrefab != null && fireball != null)
+                {
+                    fireball.projectilePrefab = beastModePrefab;
+                    Debug.Log("<color=orange>🔥 BeastMode prefab swapped!</color>");
+                }
+                break;
+
+            case SkillType.BladeStorm:
+                if (bladeStormPrefab != null)
+                {
+                    swordPrefab = bladeStormPrefab;
+                    Debug.Log("<color=cyan>⚔️ BladeStorm prefab swapped!</color>");
+                }
+                break;
+
+            case SkillType.VampiricField:
+                if (vampiricFieldPrefab != null)
+                {
+                    auraEffectPrefab = vampiricFieldPrefab;
+                    Debug.Log("<color=red>🩸 VampiricField prefab swapped!</color>");
+                }
+                break;
+
+            case SkillType.FrozenWorld:
+                if (frozenWorldPrefab != null && iceShards != null)
+                {
+                    iceShards.shardPrefab = frozenWorldPrefab;
+                    Debug.Log("<color=blue>❄️ FrozenWorld prefab swapped!</color>");
+                }
+                break;
+
+            case SkillType.MeteorFire:
+                if (meteorFirePrefab != null && meteorShower != null)
+                {
+                    meteorShower.meteorPrefab = meteorFirePrefab;
+                    Debug.Log("<color=yellow>☄️ MeteorFire prefab swapped!</color>");
+                }
+                break;
+
+            // GreedyOverlord and ImmortalForm don't have visual changes (both passive)
+        }
+    }
 }

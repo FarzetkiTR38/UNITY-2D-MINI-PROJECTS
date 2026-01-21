@@ -188,6 +188,19 @@ public class PlayerAutoAttack : MonoBehaviour
                 Debug.LogWarning("[Fireball] PassiveStats.instance is NULL!");
             }
             projectileComponent.SetDamage(finalDamage);
+
+            // BeastMode: Heal on hit
+            if (EvolvedSkillEffects.instance != null && EvolvedSkillEffects.instance.beastModeActive)
+            {
+                projectileComponent.onHitCallback = () =>
+                {
+                    int healAmount = EvolvedSkillEffects.instance.GetBeastModeHeal();
+                    if (healAmount > 0 && PlayerHealthController.instance != null)
+                    {
+                        PlayerHealthController.instance.Heal(healAmount);
+                    }
+                };
+            }
         }
     }
 

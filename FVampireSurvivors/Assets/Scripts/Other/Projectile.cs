@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(CircleCollider2D))]
@@ -21,6 +22,9 @@ public class Projectile : MonoBehaviour
 
     [Tooltip("Sprite's default facing angle (e.g. 45 if sprite faces top-right, 0 if faces right, 90 if faces up)")]
     public float spriteDefaultAngle = 45f;
+
+    // Callback when projectile hits an enemy (for BeastMode, etc.)
+    [NonSerialized] public Action onHitCallback;
 
     private Vector3 moveDirection;
     private float lifetime = 0f;
@@ -137,6 +141,9 @@ public class Projectile : MonoBehaviour
             // Apply lifesteal
             if (PassiveStats.instance != null)
                 PassiveStats.instance.ApplyLifesteal(damage);
+
+            // Invoke hit callback (for BeastMode healing, etc.)
+            onHitCallback?.Invoke();
         }
 
         Destroy(gameObject);

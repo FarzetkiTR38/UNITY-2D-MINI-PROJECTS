@@ -74,12 +74,16 @@ public class GameManager : MonoBehaviour
         } 
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            PassiveStats.instance?.UpgradeArmor(4);
-        } 
+            // Sword'u Lv5'e yükselt
+            for (int i = 0; i < 5; i++)
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.Sword);
+        }
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
-            PassiveStats.instance?.UpgradeArmor(5);
-        }  
+            // AttackSpeed'i Lv5'e yükselt
+            for (int i = 0; i < 5; i++)
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.AttackSpeed);
+        }
         if (Input.GetKeyDown(KeyCode.X))
         {
             player.GetComponent<PlayerExperience>().LevelUp();
