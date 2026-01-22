@@ -50,7 +50,6 @@ public class PlayerAutoAttack : MonoBehaviour
         if (PassiveStats.instance != null)
         {
             effectiveCooldown /= PassiveStats.instance.attackSpeedMultiplier;
-            Debug.Log($"[Fireball] Cooldown: base={attackCooldown}, multiplier={PassiveStats.instance.attackSpeedMultiplier}, effective={effectiveCooldown}");
         }
 
         if (cooldownTimer < effectiveCooldown)

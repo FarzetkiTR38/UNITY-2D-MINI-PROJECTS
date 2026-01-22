@@ -1,8 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// Ice Shards - Fires projectiles that slow enemies
-/// Level increases: projectile count, slow duration
+/// Ice Shards - Fires single projectile that creates AoE slow explosion
+/// Level increases: damage, explosion radius, slow duration
 /// </summary>
 public class IceShards : MonoBehaviour
 {
@@ -11,12 +11,21 @@ public class IceShards : MonoBehaviour
     public Transform firePoint;
 
     [Header("Stats")]
-    public float baseFireRate = 1f;
-    public int baseDamage = 8;
-    public float shardSpeed = 8f;
-    public float attackRange = 10f;
+    public float baseFireRate = 1.2f;
+    public int baseDamage = 12;
+    public float shardSpeed = 10f;
+    public float attackRange = 12f;
+    
+    [Header("Slow Settings")]
     public float slowPercent = 0.5f; // 50% slow
-    public float baseSlowDuration = 2f;
+    public float baseSlowDuration = 1.5f;
+    
+    [Header("Explosion Settings")]
+    public float baseExplosionRadius = 1.5f;
+    public float explosionRadiusPerLevel = 0.3f;
+    
+    [Header("Visual")]
+    public GameObject explosionEffectPrefab;
 
     private int currentLevel = 0;
     private float fireTimer = 0f;
@@ -32,47 +41,38 @@ public class IceShards : MonoBehaviour
         fireTimer += Time.deltaTime;
         if (fireTimer >= interval)
         {
-            FireShards();
+            FireShard();
             fireTimer = 0f;
         }
     }
 
-    void FireShards()
+    void FireShard()
     {
         Transform target = GetNearestEnemy();
         if (target == null) return;
 
-        int shardCount = GetShardCount();
-        float spreadAngle = 30f;
-        float angleStep = shardCount > 1 ? spreadAngle / (shardCount - 1) : 0;
-        float startAngle = -spreadAngle / 2f;
+        GameObject shard = Instantiate(shardPrefab, firePoint.position, Quaternion.identity);
 
-        for (int i = 0; i < shardCount; i++)
+        IceShardProjectile iceProj = shard.GetComponent<IceShardProjectile>();
+        if (iceProj != null)
         {
-            float offsetAngle = shardCount > 1 ? startAngle + (angleStep * i) : 0;
-            Vector3 spawnOffset = Quaternion.Euler(0, 0, offsetAngle) * Vector3.right * 0.3f;
-
-            GameObject shard = Instantiate(shardPrefab, firePoint.position + spawnOffset, Quaternion.identity);
-
-            IceShardProjectile iceProj = shard.GetComponent<IceShardProjectile>();
-            if (iceProj != null)
+            iceProj.SetTarget(target);
+            iceProj.damage = GetDamage();
+            iceProj.speed = shardSpeed;
+            iceProj.slowPercent = slowPercent;
+            iceProj.slowDuration = GetSlowDuration();
+            iceProj.explosionRadius = GetExplosionRadius();
+            iceProj.explosionEffectPrefab = explosionEffectPrefab;
+        }
+        else
+        {
+            // Fallback to regular projectile
+            Projectile proj = shard.GetComponent<Projectile>();
+            if (proj != null)
             {
-                iceProj.SetTarget(target);
-                iceProj.damage = GetDamage();
-                iceProj.speed = shardSpeed;
-                iceProj.slowPercent = slowPercent;
-                iceProj.slowDuration = GetSlowDuration();
-            }
-            else
-            {
-                // Fallback to regular projectile
-                Projectile proj = shard.GetComponent<Projectile>();
-                if (proj != null)
-                {
-                    proj.SetTarget(target);
-                    proj.SetDamage(GetDamage());
-                    proj.speed = shardSpeed;
-                }
+                proj.SetTarget(target);
+                proj.SetDamage(GetDamage());
+                proj.speed = shardSpeed;
             }
         }
     }
@@ -96,17 +96,9 @@ public class IceShards : MonoBehaviour
         return nearest;
     }
 
-    int GetShardCount()
-    {
-        int baseCount = currentLevel;
-        return PassiveStats.instance != null 
-            ? PassiveStats.instance.GetTotalProjectileCount(baseCount) 
-            : baseCount;
-    }
-
     int GetDamage()
     {
-        int damage = baseDamage + (currentLevel * 3);
+        int damage = baseDamage + (currentLevel * 4); // +4 damage per level
         return PassiveStats.instance != null 
             ? PassiveStats.instance.CalculateDamage(damage) 
             : damage;
@@ -114,11 +106,25 @@ public class IceShards : MonoBehaviour
 
     float GetSlowDuration()
     {
-        return baseSlowDuration + (currentLevel * 0.5f);
+        return baseSlowDuration + (currentLevel * 0.5f); // +0.5s per level
+    }
+
+    float GetExplosionRadius()
+    {
+        float radius = baseExplosionRadius + (currentLevel * explosionRadiusPerLevel);
+        
+        // FrozenWorld doubles the radius
+        if (EvolvedSkillEffects.instance != null)
+        {
+            radius *= EvolvedSkillEffects.instance.GetFrozenWorldRadiusMultiplier();
+        }
+        
+        return radius;
     }
 
     public void Upgrade(int level)
     {
         currentLevel = level;
+        Debug.Log($"<color=blue>❄️ IceShards upgraded to Lv{level} - Radius: {GetExplosionRadius()}, Duration: {GetSlowDuration()}s</color>");
     }
 }

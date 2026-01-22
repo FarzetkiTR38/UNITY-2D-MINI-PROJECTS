@@ -59,38 +59,100 @@ public class GameManager : MonoBehaviour
 
     void TestKeys()
     {
-        // TEST //
+        // EVOLVED SKILL TEST SHORTCUTS //
+        // Her tuş ilgili aktif + pasif skill'i Lv5 yapar
+        // Sonra X ile level up → Evolved skill seçeneği çıkar
+
+        // 1 = BeastMode (Fireball + HealthRegen)
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            PassiveStats.instance?.UpgradeArmor(1);
-        } 
+            for (int i = 0; i < 5; i++)
+            {
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.Fireball);
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.HealthRegen);
+            }
+            Debug.Log("<color=orange>🔥 BeastMode hazır! X ile level up</color>");
+        }
+
+        // 2 = BladeStorm (Sword + AttackSpeed)
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            PassiveStats.instance?.UpgradeArmor(2);
+            for (int i = 0; i < 5; i++)
+            {
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.Sword);
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.AttackSpeed);
+            }
+            Debug.Log("<color=cyan>⚔️ BladeStorm hazır! X ile level up</color>");
         }
+
+        // 3 = VampiricField (AuraDamage + Lifesteal)
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            PassiveStats.instance?.UpgradeArmor(3);
-        } 
+            for (int i = 0; i < 5; i++)
+            {
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.AuraDamage);
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.Lifesteal);
+            }
+            Debug.Log("<color=red>🩸 VampiricField hazır! X ile level up</color>");
+        }
+
+        // 4 = FrozenWorld (IceShards + AreaSize)
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            // Sword'u Lv5'e yükselt
             for (int i = 0; i < 5; i++)
-                PlayerSkillManager.instance?.UpgradeSkill(SkillType.Sword);
+            {
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.IceShards);
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.AreaSize);
+            }
+            Debug.Log("<color=blue>❄️ FrozenWorld hazır! X ile level up</color>");
         }
+
+        // 5 = MeteorFire (MeteorShower + CriticalDamage)
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
-            // AttackSpeed'i Lv5'e yükselt
             for (int i = 0; i < 5; i++)
-                PlayerSkillManager.instance?.UpgradeSkill(SkillType.AttackSpeed);
+            {
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.MeteorShower);
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.CriticalDamage);
+            }
+            Debug.Log("<color=yellow>☄️ MeteorFire hazır! X ile level up</color>");
         }
+
+        // 6 = GreedyOverlord (XPGain + Damage)
+        if (Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.XPGain);
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.Damage);
+            }
+            Debug.Log("<color=yellow>💰 GreedyOverlord hazır! X ile level up</color>");
+        }
+
+        // 7 = ImmortalForm (HealthRegen + MaxHealth)
+        if (Input.GetKeyDown(KeyCode.Alpha7))
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.HealthRegen);
+                PlayerSkillManager.instance?.UpgradeSkill(SkillType.MaxHealth);
+            }
+            Debug.Log("<color=white>✨ ImmortalForm hazır! X ile level up</color>");
+        }
+
+        // X = Level Up (evolved skill seçeneği çıkar)
         if (Input.GetKeyDown(KeyCode.X))
         {
             player.GetComponent<PlayerExperience>().LevelUp();
-        }  
-        // TEST //
+        }
+        // EVOLVED SKILL TEST SHORTCUTS //
 
-        // PlayerSkillsController.instance?.UpgradeSkill(SkillType.MoveSpeed, 5);
+        // C = Spin Wheel (test)
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            SpinWheelManager.instance?.Show();
+            Debug.Log("Test: Spin Wheel opened!");
+        }
     }
 
 

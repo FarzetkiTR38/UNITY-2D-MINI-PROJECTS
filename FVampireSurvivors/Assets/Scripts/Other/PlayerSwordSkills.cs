@@ -110,4 +110,36 @@ public class PlayerSwordSkill : MonoBehaviour
     {
         return activeSwords.Count;
     }
+
+    /// <summary>
+    /// Respawn all swords with current prefab (used for evolved skill prefab swap)
+    /// </summary>
+    public void RespawnAllSwords()
+    {
+        if (currentLevel <= 0) return;
+
+        // Destroy existing swords
+        foreach (var sword in activeSwords)
+        {
+            if (sword != null)
+                Destroy(sword);
+        }
+        activeSwords.Clear();
+
+        // Respawn with current prefab
+        Upgrade(currentLevel);
+        Debug.Log($"<color=cyan>⚔️ Swords respawned with evolved prefab! Count: {currentLevel}</color>");
+    }
+
+    /// <summary>
+    /// Update the sword prefab and respawn (called from PlayerSkillsController)
+    /// </summary>
+    public void SetPrefabAndRespawn(GameObject newPrefab)
+    {
+        if (newPrefab != null)
+        {
+            swordPrefab = newPrefab;
+            RespawnAllSwords();
+        }
+    }
 }

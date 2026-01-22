@@ -18,6 +18,10 @@ public class EnemyHealthController : MonoBehaviour
     // xporb da zaten xpvalue var ama buradaki xpamount'u oraya atıyoruz 
     // bu sayede farklı enemylerde farklı xp vermesini sağlayabilcez
 
+    [Header("Boss Settings")]
+    public bool isBoss = false;
+    public GameObject chestPrefab;
+
     private void Start()
     {
         currentHP = maxHP;
@@ -45,6 +49,13 @@ public class EnemyHealthController : MonoBehaviour
             {
                 xp.xpValue = xpAmount;
             }
+        }
+
+        // Boss ise chest düşür
+        if (isBoss && chestPrefab != null)
+        {
+            Instantiate(chestPrefab, transform.position, Quaternion.identity);
+            Debug.Log("[Boss] Chest dropped!");
         }
 
         Destroy(gameObject);

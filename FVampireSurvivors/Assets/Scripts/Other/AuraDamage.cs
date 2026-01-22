@@ -116,4 +116,30 @@ public class AuraDamage : MonoBehaviour
     {
         currentLevel = level;
     }
+
+    /// <summary>
+    /// Update prefab and respawn effect (for evolved skill swap)
+    /// </summary>
+    public void SetPrefabAndRespawn(GameObject newPrefab)
+    {
+        if (newPrefab != null)
+        {
+            auraEffectPrefab = newPrefab;
+            
+            // Destroy existing effect
+            if (activeEffect != null)
+            {
+                Destroy(activeEffect);
+                activeEffect = null;
+            }
+            
+            // Respawn with new prefab
+            if (currentLevel > 0)
+            {
+                activeEffect = Instantiate(auraEffectPrefab, transform);
+                activeEffect.transform.localPosition = Vector3.zero;
+                Debug.Log("<color=red>🩸 Aura respawned with evolved prefab!</color>");
+            }
+        }
+    }
 }

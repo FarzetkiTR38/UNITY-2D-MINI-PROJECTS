@@ -290,17 +290,17 @@ public class PlayerSkillsController : MonoBehaviour
                 break;
 
             case SkillType.BladeStorm:
-                if (bladeStormPrefab != null)
+                if (bladeStormPrefab != null && sword != null)
                 {
-                    swordPrefab = bladeStormPrefab;
+                    sword.SetPrefabAndRespawn(bladeStormPrefab);
                     Debug.Log("<color=cyan>⚔️ BladeStorm prefab swapped!</color>");
                 }
                 break;
 
             case SkillType.VampiricField:
-                if (vampiricFieldPrefab != null)
+                if (vampiricFieldPrefab != null && auraDamage != null)
                 {
-                    auraEffectPrefab = vampiricFieldPrefab;
+                    auraDamage.SetPrefabAndRespawn(vampiricFieldPrefab);
                     Debug.Log("<color=red>🩸 VampiricField prefab swapped!</color>");
                 }
                 break;
