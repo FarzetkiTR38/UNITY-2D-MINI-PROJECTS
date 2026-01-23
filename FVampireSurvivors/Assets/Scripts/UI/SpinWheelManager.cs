@@ -34,6 +34,9 @@ public class SpinWheelManager : MonoBehaviour
     [Tooltip("Radius of the wheel - how far segments are from center")]
     public float wheelRadius = 120f;
     
+    [Tooltip("Pointer position offset in degrees (0=Right, 90=Top, 180=Left, 270=Bottom)")]
+    public float pointerOffset = 90f;
+    
     [Header("=== SKILL POOL ===")]
     [Tooltip("Leave empty for random selection from all skills. Or specify fixed skills.")]
     public List<SkillType> fixedSkillPool = new List<SkillType>();
@@ -117,8 +120,8 @@ public class SpinWheelManager : MonoBehaviour
         if (wheelPanel != null)
             wheelPanel.SetActive(false);
         
-        // Resume game
-        Time.timeScale = 1f;
+        // Don't resume game here - let RewardDisplay handle it
+        // Time.timeScale stays at 0 until reward panel closes
     }
     
     /// <summary>
@@ -270,14 +273,22 @@ public class SpinWheelManager : MonoBehaviour
         Debug.Log("[SpinWheel] Spin complete!");
         
         // Calculate which segment the pointer is on
-        // Pointer is at top (0 degrees), wheel rotated by currentRotation
+        // Pointer is at TOP (90 degrees in Unity's coordinate system)
+        // We need to offset by 90 degrees to match
         float normalizedRotation = currentRotation % 360f;
+        
+        // Use Inspector-configurable pointer offset
+        // 0=Right, 90=Top, 180=Left, 270=Bottom
+        float adjustedRotation = (normalizedRotation + pointerOffset) % 360f;
+        
         float anglePerSegment = 360f / segmentCount;
         
         List<SkillType> wonSkills = new List<SkillType>();
         
         // Get 'rewardCount' consecutive segments starting from pointer position
-        int startIndex = Mathf.FloorToInt(normalizedRotation / anglePerSegment);
+        int startIndex = Mathf.FloorToInt(adjustedRotation / anglePerSegment);
+        
+        Debug.Log($"[SpinWheel] Rotation={normalizedRotation:F1}, Adjusted={adjustedRotation:F1}, WinIndex={startIndex}");
         
         for (int i = 0; i < rewardCount; i++)
         {
@@ -309,14 +320,14 @@ public class SpinWheelManager : MonoBehaviour
             rewardText.text = text;
         }
         
-        // Auto-close after delay
-        StartCoroutine(AutoCloseRoutine());
+        // Auto-close wheel, then show reward display
+        StartCoroutine(AutoCloseAndShowRewards(wonSkills));
     }
     
-    IEnumerator AutoCloseRoutine()
+    IEnumerator AutoCloseAndShowRewards(List<SkillType> wonSkills)
     {
-        // Wait 2 seconds (unscaled)
-        float wait = 2f;
+        // Wait 1.5 seconds for player to see wheel result
+        float wait = 1.5f;
         float elapsed = 0f;
         while (elapsed < wait)
         {
@@ -324,7 +335,19 @@ public class SpinWheelManager : MonoBehaviour
             yield return null;
         }
         
+        // Hide wheel
         Hide();
+        
+        // Show reward display with icons
+        if (SpinWheelRewardDisplay.instance != null)
+        {
+            SpinWheelRewardDisplay.instance.ShowRewards(wonSkills);
+        }
+        else
+        {
+            // If no reward display, just resume game
+            Time.timeScale = 1f;
+        }
     }
     
     // ==================
