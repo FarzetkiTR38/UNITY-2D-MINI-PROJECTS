@@ -179,40 +179,30 @@ public class SpinWheelManager : MonoBehaviour
             Destroy(child.gameObject);
         }
         
-        // Create new segments arranged in a circle
+        // Create pizza-style pie slices from center
         float anglePerSegment = 360f / segmentCount;
-        float radius = wheelRadius; // Use Inspector-configurable value
         
         for (int i = 0; i < currentSegmentSkills.Count; i++)
         {
             GameObject seg = Instantiate(segmentPrefab, segmentHolder);
             
-            // Calculate angle for this segment (starting from top, going clockwise)
-            float angle = i * anglePerSegment;
-            float angleRad = (90f - angle) * Mathf.Deg2Rad; // 90 offset to start from top
+            // Calculate rotation angle for this slice (starting from top)
+            // 90 degrees offset so first slice is at top
+            float rotationAngle = 90f - (i * anglePerSegment) - (anglePerSegment / 2f);
             
-            // Position segment on the circle
-            float x = Mathf.Cos(angleRad) * radius;
-            float y = Mathf.Sin(angleRad) * radius;
-            
+            // Position at center (all slices share the same center)
             RectTransform rectTransform = seg.GetComponent<RectTransform>();
             if (rectTransform != null)
             {
-                rectTransform.anchoredPosition = new Vector2(x, y);
-                // Rotate segment to face outward from center
-                rectTransform.localRotation = Quaternion.Euler(0, 0, -angle);
-            }
-            else
-            {
-                seg.transform.localPosition = new Vector3(x, y, 0);
-                seg.transform.localRotation = Quaternion.Euler(0, 0, -angle);
+                rectTransform.anchoredPosition = Vector2.zero;
+                rectTransform.sizeDelta = new Vector2(wheelRadius * 2f, wheelRadius * 2f);
             }
             
-            // Set skill info
+            // Set skill info with angle parameters
             SpinWheelSegment segScript = seg.GetComponent<SpinWheelSegment>();
             if (segScript != null)
             {
-                segScript.Setup(currentSegmentSkills[i], anglePerSegment);
+                segScript.Setup(currentSegmentSkills[i], anglePerSegment, rotationAngle, i);
             }
         }
     }
