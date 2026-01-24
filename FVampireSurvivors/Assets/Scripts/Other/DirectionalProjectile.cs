@@ -104,12 +104,14 @@ public class DirectionalProjectile : MonoBehaviour
     {
         if (!other.CompareTag("Enemy")) return;
 
-        EnemyHealthController hp = other.GetComponent<EnemyHealthController>();
-        if (hp != null)
-            hp.TakeDamage(damage);
+        IDamageable damageable = other.GetComponent<IDamageable>();
+        if (damageable != null)
+        {
+            damageable.TakeDamage(DamageInfo.Normal(damage, damageable.GetDamageTextPosition()));
 
-        if (PassiveStats.instance != null)
-            PassiveStats.instance.ApplyLifesteal(damage);
+            if (PassiveStats.instance != null)
+                PassiveStats.instance.ApplyLifesteal(damage);
+        }
 
         Destroy(gameObject);
     }

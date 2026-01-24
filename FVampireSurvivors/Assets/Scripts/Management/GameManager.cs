@@ -7,6 +7,11 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI levelText;
     [SerializeField] TextMeshProUGUI timerText;
+    
+    [Header("Spin Wheel Initialization")]
+    [Tooltip("Assign these panels so their Awake() runs at game start")]
+    [SerializeField] GameObject spinWheelPanel;
+    [SerializeField] GameObject rewardDisplayPanel;
 
     private Transform player;          // Player referansı
 
@@ -22,7 +27,22 @@ public class GameManager : MonoBehaviour
     private void Awake() 
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
-
+        
+        // Initialize spin wheel panels - activate briefly to trigger their Awake()
+        InitializePanel(spinWheelPanel);
+        InitializePanel(rewardDisplayPanel);
+    }
+    
+    /// <summary>
+    /// Activates a panel briefly to trigger Awake()/OnEnable(), then deactivates it
+    /// </summary>
+    void InitializePanel(GameObject panel)
+    {
+        if (panel != null)
+        {
+            panel.SetActive(true);
+            panel.SetActive(false);
+        }
     }
 
     private void Update() 

@@ -84,10 +84,10 @@ public class BoomerangProjectile : MonoBehaviour
             hitEnemiesBack.Add(enemyId);
         }
 
-        EnemyHealthController hp = other.GetComponent<EnemyHealthController>();
-        if (hp != null)
+        IDamageable damageable = other.GetComponent<IDamageable>();
+        if (damageable != null)
         {
-            hp.TakeDamage(damage);
+            damageable.TakeDamage(DamageInfo.Normal(damage, damageable.GetDamageTextPosition()));
 
             if (PassiveStats.instance != null)
                 PassiveStats.instance.ApplyLifesteal(damage);

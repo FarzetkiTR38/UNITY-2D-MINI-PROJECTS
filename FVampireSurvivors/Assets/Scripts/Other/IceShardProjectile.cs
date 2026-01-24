@@ -122,13 +122,15 @@ public class IceShardProjectile : MonoBehaviour
         if (!other.CompareTag("Enemy")) return;
 
         // Deal damage to hit enemy
-        EnemyHealthController hp = other.GetComponent<EnemyHealthController>();
-        if (hp != null)
-            hp.TakeDamage(damage);
+        IDamageable damageable = other.GetComponent<IDamageable>();
+        if (damageable != null)
+        {
+            damageable.TakeDamage(DamageInfo.Normal(damage, damageable.GetDamageTextPosition()));
 
-        // Apply lifesteal
-        if (PassiveStats.instance != null)
-            PassiveStats.instance.ApplyLifesteal(damage);
+            // Apply lifesteal
+            if (PassiveStats.instance != null)
+                PassiveStats.instance.ApplyLifesteal(damage);
+        }
 
         // Create AoE slow explosion at impact point
         CreateFrostExplosion();

@@ -16,10 +16,10 @@ public class SwordDamage : MonoBehaviour
 
         if (other.CompareTag("Enemy"))
         {
-            EnemyHealthController enemy = other.GetComponent<EnemyHealthController>();
-            if (enemy != null)
+            IDamageable damageable = other.GetComponent<IDamageable>();
+            if (damageable != null)
             {
-                enemy.TakeDamage(damage);
+                damageable.TakeDamage(DamageInfo.Normal(damage, damageable.GetDamageTextPosition()));
 
                 lastHitTime = Time.time;
                 lastHitEnemy = other;

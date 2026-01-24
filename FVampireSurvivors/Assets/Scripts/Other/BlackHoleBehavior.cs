@@ -115,10 +115,10 @@ public class BlackHoleBehavior : MonoBehaviour
         {
             if (!hit.CompareTag("Enemy")) continue;
 
-            EnemyHealthController hp = hit.GetComponent<EnemyHealthController>();
-            if (hp != null)
+            IDamageable damageable = hit.GetComponent<IDamageable>();
+            if (damageable != null)
             {
-                hp.TakeDamage(damage);
+                damageable.TakeDamage(DamageInfo.Normal(damage, damageable.GetDamageTextPosition()));
 
                 if (PassiveStats.instance != null)
                     PassiveStats.instance.ApplyLifesteal(damage);

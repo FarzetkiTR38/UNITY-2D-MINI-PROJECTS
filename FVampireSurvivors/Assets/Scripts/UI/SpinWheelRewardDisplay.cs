@@ -29,10 +29,15 @@ public class SpinWheelRewardDisplay : MonoBehaviour
     
     private void Awake()
     {
+        // Set instance in Awake (if panel starts active)
         instance = this;
-        
-        if (rewardPanel != null)
-            rewardPanel.SetActive(false);
+    }
+    
+    private void OnEnable()
+    {
+        // Also set instance on enable - this ensures instance is set
+        // even if the GameObject starts disabled in the scene
+        instance = this;
     }
     
     private void Start()

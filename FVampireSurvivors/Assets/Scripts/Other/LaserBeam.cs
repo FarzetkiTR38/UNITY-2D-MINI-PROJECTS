@@ -109,10 +109,10 @@ public class LaserBeam : MonoBehaviour
         {
             if (!hit.collider.CompareTag("Enemy")) continue;
 
-            EnemyHealthController hp = hit.collider.GetComponent<EnemyHealthController>();
-            if (hp != null)
+            IDamageable damageable = hit.collider.GetComponent<IDamageable>();
+            if (damageable != null)
             {
-                hp.TakeDamage(damage);
+                damageable.TakeDamage(DamageInfo.Normal(damage, damageable.GetDamageTextPosition()));
 
                 if (PassiveStats.instance != null)
                     PassiveStats.instance.ApplyLifesteal(damage);

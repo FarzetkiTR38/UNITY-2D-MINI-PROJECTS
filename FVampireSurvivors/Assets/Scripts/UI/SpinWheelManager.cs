@@ -70,10 +70,6 @@ public class SpinWheelManager : MonoBehaviour
     {
         if (spinButton != null)
             spinButton.onClick.AddListener(Spin);
-        
-        // Hide panel at start (after instance is set)
-        if (wheelPanel != null)
-            wheelPanel.SetActive(false);
     }
     
     /// <summary>

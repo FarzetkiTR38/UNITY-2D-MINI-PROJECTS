@@ -56,10 +56,10 @@ public class ChainLightning : MonoBehaviour
             SpawnLightningEffect(previousPos, currentTarget.position);
 
             // Deal damage
-            EnemyHealthController hp = currentTarget.GetComponent<EnemyHealthController>();
-            if (hp != null)
+            IDamageable damageable = currentTarget.GetComponent<IDamageable>();
+            if (damageable != null)
             {
-                hp.TakeDamage(damage);
+                damageable.TakeDamage(DamageInfo.Normal(damage, damageable.GetDamageTextPosition()));
 
                 if (PassiveStats.instance != null)
                     PassiveStats.instance.ApplyLifesteal(damage);

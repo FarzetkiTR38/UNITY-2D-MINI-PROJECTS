@@ -115,12 +115,14 @@ public class PiercingProjectile : MonoBehaviour
         if (hitEnemies.Contains(enemyId)) return;
         hitEnemies.Add(enemyId);
 
-        EnemyHealthController hp = other.GetComponent<EnemyHealthController>();
-        if (hp != null)
-            hp.TakeDamage(damage);
+        IDamageable damageable = other.GetComponent<IDamageable>();
+        if (damageable != null)
+        {
+            damageable.TakeDamage(DamageInfo.Normal(damage, damageable.GetDamageTextPosition()));
 
-        if (PassiveStats.instance != null)
-            PassiveStats.instance.ApplyLifesteal(damage);
+            if (PassiveStats.instance != null)
+                PassiveStats.instance.ApplyLifesteal(damage);
+        }
 
         currentPierceCount++;
         if (currentPierceCount >= maxPierceCount)

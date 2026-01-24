@@ -149,10 +149,10 @@ public class ConeAttack : MonoBehaviour
             // Check if enemy is within cone
             if (distance <= damageRange && angle <= coneAngle / 2f)
             {
-                EnemyHealthController hp = enemy.GetComponent<EnemyHealthController>();
-                if (hp != null)
+                IDamageable damageable = enemy.GetComponent<IDamageable>();
+                if (damageable != null)
                 {
-                    hp.TakeDamage(damage);
+                    damageable.TakeDamage(DamageInfo.Normal(damage, damageable.GetDamageTextPosition()));
 
                     if (PassiveStats.instance != null)
                         PassiveStats.instance.ApplyLifesteal(damage);

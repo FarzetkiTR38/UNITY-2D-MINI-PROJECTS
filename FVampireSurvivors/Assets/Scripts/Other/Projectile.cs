@@ -133,10 +133,11 @@ public class Projectile : MonoBehaviour
         // ONLY hit enemies
         if (!other.CompareTag("Enemy")) return;
 
-        EnemyHealthController hp = other.GetComponent<EnemyHealthController>();
-        if (hp != null)
+        // IDamageable kullan - hem EnemyHealthController hem LuckyBox vurulabilir
+        IDamageable damageable = other.GetComponent<IDamageable>();
+        if (damageable != null)
         {
-            hp.TakeDamage(damage);
+            damageable.TakeDamage(DamageInfo.Normal(damage, damageable.GetDamageTextPosition()));
 
             // Apply lifesteal
             if (PassiveStats.instance != null)
