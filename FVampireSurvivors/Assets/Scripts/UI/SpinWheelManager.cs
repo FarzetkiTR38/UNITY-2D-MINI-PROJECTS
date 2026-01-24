@@ -12,7 +12,7 @@ public class SpinWheelManager : MonoBehaviour
 {
     public static SpinWheelManager instance;
     
-    [Header("=== WHEEL SETTINGS ===")]
+    [Header("WHEEL SETTINGS")]
     [Tooltip("Number of segments on the wheel")]
     [Range(4, 16)]
     public int segmentCount = 8;
@@ -21,7 +21,7 @@ public class SpinWheelManager : MonoBehaviour
     [Range(1, 8)]
     public int rewardCount = 3;
     
-    [Header("=== SPIN SETTINGS ===")]
+    [Header("SPIN SETTINGS")]
     [Tooltip("How long the wheel spins")]
     public float spinDuration = 3f;
     
@@ -37,11 +37,11 @@ public class SpinWheelManager : MonoBehaviour
     [Tooltip("Pointer position offset in degrees (0=Right, 90=Top, 180=Left, 270=Bottom)")]
     public float pointerOffset = 90f;
     
-    [Header("=== SKILL POOL ===")]
+    [Header("SKILL POOL")]
     [Tooltip("Leave empty for random selection from all skills. Or specify fixed skills.")]
     public List<SkillType> fixedSkillPool = new List<SkillType>();
     
-    [Header("=== UI REFERENCES ===")]
+    [Header("UI REFERENCES")]
     public GameObject wheelPanel;           // The main panel (this object)
     public RectTransform wheelTransform;    // The rotating wheel container
     public Button spinButton;
@@ -272,23 +272,40 @@ public class SpinWheelManager : MonoBehaviour
     {
         Debug.Log("[SpinWheel] Spin complete!");
         
-        // Calculate which segment the pointer is on
-        // Pointer is at TOP (90 degrees in Unity's coordinate system)
-        // We need to offset by 90 degrees to match
         float normalizedRotation = currentRotation % 360f;
-        
-        // Use Inspector-configurable pointer offset
-        // 0=Right, 90=Top, 180=Left, 270=Bottom
-        float adjustedRotation = (normalizedRotation + pointerOffset) % 360f;
+        if (normalizedRotation < 0) normalizedRotation += 360f;
         
         float anglePerSegment = 360f / segmentCount;
         
+        // Segments are positioned with: rotationAngle = 90 - (i * anglePerSegment) - (anglePerSegment / 2)
+        // Wheel rotates by -currentRotation degrees (clockwise)
+        // After rotation, segment i is at angle: originalAngle - wheelRotation
+        // 
+        // To find which segment is at TOP (90°):
+        // originalAngle - wheelRotation = 90
+        // originalAngle = 90 + wheelRotation
+        //
+        // Segment i was at: 90 - (i * anglePerSegment) - (anglePerSegment/2)
+        // Setting equal: 90 - i*anglePerSegment - anglePerSegment/2 = 90 + normalizedRotation
+        // -i*anglePerSegment = normalizedRotation + anglePerSegment/2
+        // i = -(normalizedRotation + anglePerSegment/2) / anglePerSegment
+        // i = -(normalizedRotation/anglePerSegment + 0.5)
+        //
+        // To get positive index, add segmentCount:
+        // i = segmentCount - (normalizedRotation/anglePerSegment + 0.5)
+        
+        // Apply pointerOffset (in degrees) to fine-tune selection
+        float adjustedRotation = normalizedRotation + pointerOffset;
+        if (adjustedRotation < 0) adjustedRotation += 360f;
+        adjustedRotation = adjustedRotation % 360f;
+        
+        float rawIndex = (adjustedRotation / anglePerSegment) + 0.5f;
+        int startIndex = segmentCount - Mathf.FloorToInt(rawIndex);
+        startIndex = ((startIndex % segmentCount) + segmentCount) % segmentCount; // Ensure positive
+        
+        Debug.Log($"[SpinWheel] Rotation={normalizedRotation:F1}°, Offset={pointerOffset}°, WinIndex={startIndex}, Skill={currentSegmentSkills[startIndex]}");
+        
         List<SkillType> wonSkills = new List<SkillType>();
-        
-        // Get 'rewardCount' consecutive segments starting from pointer position
-        int startIndex = Mathf.FloorToInt(adjustedRotation / anglePerSegment);
-        
-        Debug.Log($"[SpinWheel] Rotation={normalizedRotation:F1}, Adjusted={adjustedRotation:F1}, WinIndex={startIndex}");
         
         for (int i = 0; i < rewardCount; i++)
         {
