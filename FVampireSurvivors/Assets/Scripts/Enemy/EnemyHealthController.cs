@@ -117,6 +117,9 @@ public class EnemyHealthController : MonoBehaviour, IDamageable
             Debug.Log("[Boss] Chest dropped!");
         }
 
+        // Kill counter'ı arttır
+        GameManager.instance?.IncrementKillCount();
+
         Destroy(gameObject);
     }
 }

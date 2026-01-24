@@ -5,8 +5,11 @@ using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
+    
     [SerializeField] TextMeshProUGUI levelText;
     [SerializeField] TextMeshProUGUI timerText;
+    [SerializeField] TextMeshProUGUI killCountText;
     
     [Header("Spin Wheel Initialization")]
     [Tooltip("Assign these panels so their Awake() runs at game start")]
@@ -23,9 +26,13 @@ public class GameManager : MonoBehaviour
     int currentXP;
     int xpToNextLevel;
     float levelUpPercent;
+    
+    // Kill Counter
+    private int killCount = 0;
 
     private void Awake() 
     {
+        instance = this;
         player = GameObject.FindGameObjectWithTag("Player").transform;
         
         // Initialize spin wheel panels - activate briefly to trigger their Awake()
@@ -51,6 +58,7 @@ public class GameManager : MonoBehaviour
         Timer();
         TestKeys();
         LevelText();
+        UpdateKillCountUI();
 
 
     }
@@ -174,11 +182,24 @@ public class GameManager : MonoBehaviour
             Debug.Log("Test: Spin Wheel opened!");
         }
     }
-
-
-
     
-
-
-
+    // ===== KILL COUNTER SYSTEM =====
+    
+    /// <summary>
+    /// Enemy veya Boss öldüğünde çağrılır - killCount'u 1 arttırır
+    /// </summary>
+    public void IncrementKillCount()
+    {
+        killCount++;
+    }
+    
+    void UpdateKillCountUI()
+    {
+        if (killCountText != null)
+        {
+            killCountText.text = killCount.ToString();
+        }
+    }
+    
+    public int GetKillCount() => killCount;
 }
