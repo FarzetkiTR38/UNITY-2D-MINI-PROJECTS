@@ -192,6 +192,14 @@ public class DamageTextManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Convenience method: Show gold pickup at position.
+    /// </summary>
+    public void ShowGold(int amount, Vector3 position)
+    {
+        ShowDamage(DamageInfo.Gold(amount, position + Vector3.up * defaultYOffset));
+    }
+
+    /// <summary>
     /// Get current pool statistics for debugging.
     /// </summary>
     public string GetPoolStats()

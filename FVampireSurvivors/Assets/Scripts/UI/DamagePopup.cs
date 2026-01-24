@@ -36,6 +36,7 @@ public class DamagePopup : MonoBehaviour
     [SerializeField] private Color criticalColor = new Color(1f, 0.8f, 0f); // Yellow-Orange
     [SerializeField] private Color dotColor = new Color(0.8f, 0.2f, 0.8f); // Purple
     [SerializeField] private Color healColor = new Color(0.2f, 1f, 0.2f); // Green
+    [SerializeField] private Color goldColor = new Color(1f, 0.85f, 0f); // Gold/Yellow
 
     // Components
     private TextMeshPro textMesh;
@@ -157,6 +158,12 @@ public class DamagePopup : MonoBehaviour
                 displayText = "+" + info.Amount.ToString();
                 fontSize = baseFontSize;
                 currentColor = healColor;
+                break;
+
+            case DamageType.Gold:
+                displayText = "+" + info.Amount.ToString();
+                fontSize = baseFontSize;
+                currentColor = goldColor;
                 break;
                 
             case DamageType.Normal:

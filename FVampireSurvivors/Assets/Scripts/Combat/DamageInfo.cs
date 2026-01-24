@@ -8,7 +8,8 @@ public enum DamageType
     Normal,     // White, standard size
     Critical,   // Yellow/Orange, larger, shake effect
     DOT,        // Purple/Green, smaller (poison, burn, etc.)
-    Heal        // Green, "+" prefix
+    Heal,       // Green, "+" prefix
+    Gold        // Yellow/Gold, "+" prefix
 }
 
 /// <summary>
@@ -63,4 +64,13 @@ public struct DamageInfo
     {
         return new DamageInfo(amount, DamageType.Heal, position);
     }
+
+    /// <summary>
+    /// Create a gold pickup info.
+    /// </summary>
+    public static DamageInfo Gold(int amount, Vector3 position = default)
+    {
+        return new DamageInfo(amount, DamageType.Gold, position);
+    }
 }
+
