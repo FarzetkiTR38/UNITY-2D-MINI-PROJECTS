@@ -1,5 +1,7 @@
 using UnityEngine;
 using NeonGalaxy.Services;
+using NeonGalaxy.Meta;
+using NeonGalaxy.Data;
 using NeonGalaxy.Utility;
 
 namespace NeonGalaxy.Boot
@@ -13,6 +15,14 @@ namespace NeonGalaxy.Boot
     /// </summary>
     public class BootManager : MonoBehaviour
     {
+        [Header("Configurations")]
+        [SerializeField] private ProgressionConfigSO progressionConfig;
+        [SerializeField] private AdPolicyConfigSO adPolicyConfig;
+
+        [Header("Content Registries")]
+        [SerializeField] private AchievementDefinitionSO[] achievementDefinitions;
+        [SerializeField] private CosmeticItemSO[] cosmeticItems;
+
         [Header("Status")]
         [SerializeField, Tooltip("Shows initialization progress in inspector.")]
 #pragma warning disable 0414
@@ -37,27 +47,68 @@ namespace NeonGalaxy.Boot
             _status = "Initializing services...";
             Debug.Log("[BootManager] Starting initialization...");
 
-            // ── Create and register services ─────────────────────
+            // ── Layer 1: Core Services ───────────────────────────
 
-            // Save Service (must be first — other services may need save data)
+            // Save Service (must be first — other services depend on save data)
             var saveService = new SaveService();
             saveService.Load();
             ServiceLocator.Register(saveService);
             Debug.Log("[BootManager] SaveService registered.");
 
-            // Future services will be registered here in Phase 4:
-            // - AuthService
-            // - LeaderboardService
-            // - AdService / AdPolicyService
-            // - IAPService
-            // - AudioService
-            // - AnalyticsService
-            // - ProgressionManager
-            // - AchievementManager
-            // - CosmeticManager
+            // ── Layer 2: Monetization Services ───────────────────
 
-            _status = "Services initialized. Loading Home scene...";
-            Debug.Log("[BootManager] All Phase 2 services initialized.");
+            // Ad Service (mock for now — replace with real SDK wrapper later)
+            IAdService adService = new MockAdService();
+            ServiceLocator.Register(adService);
+            Debug.Log("[BootManager] IAdService (Mock) registered.");
+
+            // IAP Service (mock for now — replace with Unity IAP wrapper later)
+            IIAPService iapService = new MockIAPService();
+            ServiceLocator.Register(iapService);
+            Debug.Log("[BootManager] IIAPService (Mock) registered.");
+
+            // ── Layer 3: Meta Managers ───────────────────────────
+
+            // Progression Manager
+            var progressionManager = new ProgressionManager(saveService, progressionConfig);
+            ServiceLocator.Register(progressionManager);
+            Debug.Log("[BootManager] ProgressionManager registered.");
+
+            // Achievement Manager
+            var achievementManager = new AchievementManager(saveService, achievementDefinitions);
+            ServiceLocator.Register(achievementManager);
+            Debug.Log("[BootManager] AchievementManager registered.");
+
+            // Cosmetic Manager
+            var cosmeticManager = new CosmeticManager(saveService, cosmeticItems);
+            ServiceLocator.Register(cosmeticManager);
+            Debug.Log("[BootManager] CosmeticManager registered.");
+
+            // Currency Manager
+            var currencyManager = new CurrencyManager(saveService);
+            ServiceLocator.Register(currencyManager);
+            Debug.Log("[BootManager] CurrencyManager registered.");
+
+            // Ad Policy Manager
+            var adPolicyManager = new AdPolicyManager(saveService, adService, adPolicyConfig);
+            ServiceLocator.Register(adPolicyManager);
+            Debug.Log("[BootManager] AdPolicyManager registered.");
+
+            // ── Layer 4: Online Services ─────────────────────────
+
+            // Leaderboard Service (mock for now — replace with UGS implementation later)
+            ILeaderboardService leaderboardService = new MockLeaderboardService(saveService);
+            ServiceLocator.Register(leaderboardService);
+            Debug.Log("[BootManager] ILeaderboardService (Mock) registered.");
+
+            // Async authentication (fire-and-forget, UI handles state)
+            _ = leaderboardService.AuthenticateAsync();
+
+            // Flush any pending score submissions from previous sessions
+            _ = leaderboardService.FlushPendingSubmissionsAsync();
+
+            _status = "All services initialized. Loading Home scene...";
+            Debug.Log("[BootManager] All Phase 4 services initialized.");
 
             // ── Load Home scene ──────────────────────────────────
             LoadHomeScene();

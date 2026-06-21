@@ -6,6 +6,7 @@ using NeonGalaxy.Data;
 using NeonGalaxy.Input;
 using NeonGalaxy.UI;
 using NeonGalaxy.Services;
+using NeonGalaxy.Meta;
 using NeonGalaxy.Generation;
 using NeonGalaxy.Utility;
 
@@ -34,6 +35,7 @@ namespace NeonGalaxy.Core
         [Header("UI Controller References")]
         [SerializeField] private GameplayHUDController hudController;
         [SerializeField] private GameOverPopupController gameOverPopup;
+        [SerializeField] private ResultsScreenController resultsScreen;
         [SerializeField] private PausePopupController pausePopup;
 
         [Header("Prefabs")]
@@ -49,6 +51,8 @@ namespace NeonGalaxy.Core
         private GameState _currentState;
         private GameState _stateBeforePause;
         private SaveService _saveService;
+        private int _runLinesCleared;
+        private int _runBestCombo;
 
         public GameState CurrentState => _currentState;
 
@@ -77,6 +81,12 @@ namespace NeonGalaxy.Core
             {
                 gameOverPopup.OnRetryClicked -= HandleRetryGame;
                 gameOverPopup.OnHomeClicked -= HandleQuitToHome;
+            }
+
+            if (resultsScreen != null)
+            {
+                resultsScreen.OnRetryClicked -= HandleRetryGame;
+                resultsScreen.OnHomeClicked -= HandleQuitToHome;
             }
 
             if (pausePopup != null)
@@ -123,9 +133,15 @@ namespace NeonGalaxy.Core
                 gameOverPopup.OnHomeClicked += HandleQuitToHome;
             }
 
+            if (resultsScreen != null)
+            {
+                resultsScreen.OnRetryClicked += HandleRetryGame;
+                resultsScreen.OnHomeClicked += HandleQuitToHome;
+            }
+
             if (pausePopup != null)
             {
-                pausePopup.OnResumeClicked -= ResumeGame; // Wait, let's fix subtraction
+                pausePopup.OnResumeClicked -= ResumeGame;
                 pausePopup.OnResumeClicked += ResumeGame;
                 pausePopup.OnQuitClicked += HandleQuitToHome;
             }
@@ -141,6 +157,8 @@ namespace NeonGalaxy.Core
             _boardModel.Reset();
             _comboManager.Reset();
             _scoreManager.Reset();
+            _runLinesCleared = 0;
+            _runBestCombo = 0;
 
             boardController.RefreshBoard(_boardModel);
             pieceTrayController.ClearTray();
@@ -154,6 +172,7 @@ namespace NeonGalaxy.Core
             }
 
             if (gameOverPopup != null) gameOverPopup.Hide();
+            if (resultsScreen != null) resultsScreen.Hide();
             if (pausePopup != null) pausePopup.Hide();
 
             // Register total run count statistics
@@ -266,7 +285,25 @@ namespace NeonGalaxy.Core
             int finalScore = _scoreManager.TotalScore;
             bool isNewBest = SaveHighScore(finalScore);
 
-            if (gameOverPopup != null)
+            // Show results screen (full Sprint 4 version) or fallback to simple popup
+            if (resultsScreen != null)
+            {
+                // Ad policy check — show interstitial before results if appropriate
+                var adPolicyManager = Boot.ServiceLocator.Get<AdPolicyManager>();
+                adPolicyManager?.OnGameOverTriggered(() =>
+                {
+                    resultsScreen.Show(finalScore, GetHighScore(), isNewBest,
+                                       _runLinesCleared, _runBestCombo);
+                });
+
+                // If no ad policy manager, show results immediately
+                if (adPolicyManager == null)
+                {
+                    resultsScreen.Show(finalScore, GetHighScore(), isNewBest,
+                                       _runLinesCleared, _runBestCombo);
+                }
+            }
+            else if (gameOverPopup != null)
             {
                 gameOverPopup.Show(finalScore, GetHighScore(), isNewBest);
             }
@@ -296,6 +333,11 @@ namespace NeonGalaxy.Core
                     _comboManager.OnPlacementResolved(result);
                     _scoreManager.OnPiecePlaced(piece, result, placementWorldPos);
                     pieceTrayController.OnPiecePlaced(slotIndex);
+
+                    // Track run stats for results screen
+                    _runLinesCleared += result.LinesCleared;
+                    if (_comboManager.CurrentCombo > _runBestCombo)
+                        _runBestCombo = _comboManager.CurrentCombo;
 
                     if (_saveService != null && result.LinesCleared > 0)
                     {

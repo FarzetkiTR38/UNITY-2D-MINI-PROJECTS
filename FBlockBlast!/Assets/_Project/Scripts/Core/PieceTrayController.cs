@@ -145,9 +145,21 @@ namespace NeonGalaxy.Core
                 return slots[index];
             }
 
-            // Fallback: Create dynamic slot positions relative to the tray root
+            // Calculate slot positions aligned to the board grid.
+            // Middle piece (index 1) sits exactly between columns 3 and 4 (0-indexed),
+            // which is the center of an 8-column grid (between columns 4 and 5 in 1-based indexing).
+            // Side pieces (index 0, 2) are exactly 3 cells away to the left and right,
+            // placing them between columns 0 and 1, and columns 6 and 7 respectively.
             string slotName = $"Slot_{index}";
-            float horizontalOffset = (index - 1) * 2.7f; // Spaced 2.7 units apart instead of 3.5 for better screen fit
+
+            // Spacing between slot centers: exactly 3 cells to align perfectly with the grid
+            float slotSpacing = 3f * (boardConfig.cellSize + boardConfig.cellSpacing);
+
+            // Center X of the board (local to tray parent)
+            float boardCenterX = 0f;
+
+            float horizontalOffset = (index - 1) * slotSpacing + boardCenterX;
+
             Transform existing = transform.Find(slotName);
             if (existing != null)
             {
