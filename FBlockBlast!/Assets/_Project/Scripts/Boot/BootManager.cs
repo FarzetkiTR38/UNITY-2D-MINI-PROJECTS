@@ -15,7 +15,9 @@ namespace NeonGalaxy.Boot
     {
         [Header("Status")]
         [SerializeField, Tooltip("Shows initialization progress in inspector.")]
+#pragma warning disable 0414
         private string _status = "Not started";
+#pragma warning restore 0414
 
         private void Awake()
         {
