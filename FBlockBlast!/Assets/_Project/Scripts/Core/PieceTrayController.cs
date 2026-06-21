@@ -147,14 +147,16 @@ namespace NeonGalaxy.Core
 
             // Fallback: Create dynamic slot positions relative to the tray root
             string slotName = $"Slot_{index}";
+            float horizontalOffset = (index - 1) * 2.7f; // Spaced 2.7 units apart instead of 3.5 for better screen fit
             Transform existing = transform.Find(slotName);
-            if (existing != null) return existing;
+            if (existing != null)
+            {
+                existing.localPosition = new Vector3(horizontalOffset, 0f, 0f);
+                return existing;
+            }
 
             GameObject newSlot = new GameObject(slotName);
             newSlot.transform.SetParent(transform);
-            
-            // Default offsets: Space pieces apart horizontally
-            float horizontalOffset = (index - 1) * 3.5f; 
             newSlot.transform.localPosition = new Vector3(horizontalOffset, 0f, 0f);
 
             return newSlot.transform;
