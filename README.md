@@ -412,6 +412,37 @@ Klasik **Tower Defense** mantığına sahip bu oyunda, oyuncu harita üzerinde s
 ---
 
 
+### 11. 🧩 Block Blast!  
+📌 **Kısa Açıklama:**  
+Klasik "Block Blast" oyun mekaniklerine dayalı 2D bulmaca oyunudur. Oyuncu, alttaki tepsiden seçtiği 3'lü blok parçalarını 8x8 tahtaya yerleştirerek satır ve sütunları doldurup patlatmaya çalışır.
+
+🔧 **Kullanılan Teknolojiler:**  
+- Unity 6  
+- C#  
+- TextMeshPro (Dünya koordinatlarında puan uçuş efektleri ve UI için)  
+- Aseprite / Özel Matematiksel Sprite Üretici (Neon görsel stil)
+
+🎮 **Oynanış Özellikleri:**  
+- 🟩 **8x8 Grid Tahtası:** Hücrelerin yerleşimini ve doluluğunu takip eden 2D grid yapısı.  
+- 🔲 **Hayalet Önizleme (Ghost Preview):** Sürüklenen parçanın yerleşeceği hücreleri yeşil (geçerli) veya kırmızı (geçersiz) olarak gösteren önizleme gölgesi.  
+- 💥 **Çizgi Temizleme & Nova Cross:** Aynı anda hem satır hem sütun temizlendiğinde tetiklenen özel Nova Cross bonusu.  
+- 🔄 **Kombo Sistemi:** Ardışık temizlemelerde katlanarak artan skor çarpanları ve kombo puanları.  
+- 🧠 **Yapay Zekâ Destekli Parça Seçici (Combo-Friendly Batch Generator):** Oyuncunun kombo yapmasını kolaylaştıran, tahtadaki boşlukları simüle ederek en uygun 3'lü parça gruplarını üreten akıllı algoritma.  
+- 🛑 **Oyun Bitişi Algılama (Game Over Detector):** Tepside kalan parçaların tahtada hiçbir yere sığmadığı anı tespit ederek oyunu sonlandıran sistem.  
+
+📸 **Görseller:**  
+![Ekran Görüntüsü 1](gorseller/blockblast1.png) — daha sonra yüklenecektir.  
+
+![Ekran Görüntüsü 2](gorseller/blockblast2.png) — daha sonra yüklenecektir.  
+
+▶️ **Oynanış Videosu:**  
+[Oynanış Videosunu İzle](https://youtu.be/...) — daha sonra yüklenecektir.  
+
+📂 **Proje Dizini:**  
+[Block Blast Oyun Dosyalarına Git](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/tree/main/FBlockBlast!)
+
+---
+
 <!--  -->
 
 
