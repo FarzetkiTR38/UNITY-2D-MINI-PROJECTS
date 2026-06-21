@@ -53,6 +53,7 @@ namespace NeonGalaxy.Core
         private SaveService _saveService;
         private int _runLinesCleared;
         private int _runBestCombo;
+        private int _revivesUsedThisRun;
 
         public GameState CurrentState => _currentState;
 
@@ -159,6 +160,7 @@ namespace NeonGalaxy.Core
             _scoreManager.Reset();
             _runLinesCleared = 0;
             _runBestCombo = 0;
+            _revivesUsedThisRun = 0;
 
             boardController.RefreshBoard(_boardModel);
             pieceTrayController.ClearTray();
@@ -226,6 +228,10 @@ namespace NeonGalaxy.Core
                     HandleGameOverState();
                     break;
 
+                case GameState.Reviving:
+                    // Handled by AttemptRevive() coroutine
+                    break;
+
                 case GameState.Paused:
                     // Handled explicitly inside PauseGame()
                     break;
@@ -269,6 +275,12 @@ namespace NeonGalaxy.Core
                 if (canPlay)
                 {
                     TransitionState(GameState.PieceSelection);
+                }
+                else if (CanRevive())
+                {
+                    // Offer revive before game over
+                    TransitionState(GameState.Reviving);
+                    AttemptRevive();
                 }
                 else
                 {
@@ -401,6 +413,63 @@ namespace NeonGalaxy.Core
         {
             Time.timeScale = 1f;
             SceneLoader.LoadScene(Constants.SCENE_HOME);
+        }
+
+        // ── Revive System ────────────────────────────────────────
+
+        /// <summary>
+        /// Returns true if the player is eligible for a revive this run.
+        /// </summary>
+        private bool CanRevive()
+        {
+            if (_revivesUsedThisRun >= Constants.MAX_REVIVES_PER_RUN)
+                return false;
+
+            var adService = Boot.ServiceLocator.Get<IAdService>();
+            return adService != null && adService.IsRewardedAdReady;
+        }
+
+        /// <summary>
+        /// Offers the player a rewarded ad to revive.
+        /// If accepted: clears the N fullest rows, refreshes the board, and resumes play.
+        /// If declined: transitions to GameOver.
+        /// </summary>
+        private void AttemptRevive()
+        {
+            var adService = Boot.ServiceLocator.Get<IAdService>();
+            if (adService == null)
+            {
+                TransitionState(GameState.GameOver);
+                return;
+            }
+
+            adService.ShowRewardedAd((success) =>
+            {
+                if (success)
+                {
+                    _revivesUsedThisRun++;
+
+                    // Clear the fullest rows to make room
+                    int rowsToClear = Constants.REVIVE_ROWS_TO_CLEAR;
+                    _boardModel.ClearFullestRows(rowsToClear);
+                    boardController.RefreshBoard(_boardModel);
+
+                    // Notify ad policy that a rewarded ad was watched
+                    var adPolicyManager = Boot.ServiceLocator.Get<Meta.AdPolicyManager>();
+                    adPolicyManager?.OnRewardedAdWatched();
+
+                    Debug.Log($"[GameManager] Revive successful! Cleared {rowsToClear} rows.");
+
+                    // Resume play — re-check if pieces can now be placed
+                    TransitionState(GameState.CheckGameOver);
+                }
+                else
+                {
+                    // Player declined or ad failed — proceed to game over
+                    Debug.Log("[GameManager] Revive declined. Proceeding to Game Over.");
+                    TransitionState(GameState.GameOver);
+                }
+            });
         }
 
         private void HandleScorePopupRequested(int score, Vector3 worldPos)

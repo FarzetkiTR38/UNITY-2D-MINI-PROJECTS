@@ -107,8 +107,16 @@ namespace NeonGalaxy.Boot
             // Flush any pending score submissions from previous sessions
             _ = leaderboardService.FlushPendingSubmissionsAsync();
 
+            // ── Layer 5: Analytics ───────────────────────────────
+
+            IAnalyticsService analyticsService = new MockAnalyticsService();
+            ServiceLocator.Register(analyticsService);
+            AnalyticsEvents.Initialize(analyticsService);
+            AnalyticsEvents.SessionStart();
+            Debug.Log("[BootManager] IAnalyticsService (Mock) registered.");
+
             _status = "All services initialized. Loading Home scene...";
-            Debug.Log("[BootManager] All Phase 4 services initialized.");
+            Debug.Log("[BootManager] All services initialized (Phase 4 + Phase 5).");
 
             // ── Load Home scene ──────────────────────────────────
             LoadHomeScene();

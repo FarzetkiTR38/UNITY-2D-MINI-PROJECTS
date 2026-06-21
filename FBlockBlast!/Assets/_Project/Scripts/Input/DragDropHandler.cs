@@ -56,8 +56,8 @@ namespace NeonGalaxy.Input
             _draggingPiece = pieceView;
             _isDragging = true;
 
-            // Lift and scale up the piece view
-            _draggingPiece.AnimatePickup(touchWorldPos, _fingerOffset);
+            // Lift and scale up the piece view (offsetting by visual center so it centers horizontally on the touch point)
+            _draggingPiece.AnimatePickup(touchWorldPos, _fingerOffset - _draggingPiece.VisualCenterOffset);
 
             // Show ghost preview overlay if available
             if (_ghostPreview != null && _draggingPiece.Piece != null)
@@ -73,8 +73,8 @@ namespace NeonGalaxy.Input
         {
             if (!_isDragging || _draggingPiece == null) return;
 
-            // Update piece position directly under the finger (plus offset)
-            Vector3 targetPos = touchWorldPos + _fingerOffset;
+            // Update piece position directly under the finger (plus offset, minus visual center offset)
+            Vector3 targetPos = touchWorldPos + _fingerOffset - _draggingPiece.VisualCenterOffset;
             _draggingPiece.transform.position = targetPos;
 
             // Check if the piece is hovering over a valid board position

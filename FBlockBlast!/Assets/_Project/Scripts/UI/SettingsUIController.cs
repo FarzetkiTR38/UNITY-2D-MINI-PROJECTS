@@ -121,7 +121,15 @@ namespace NeonGalaxy.UI
             }
 
             UpdateVolumeText(musicValueText, value);
-            AudioListener.volume = value; // Quick global audio control
+            
+            if (NeonGalaxy.VFX.AudioManager.Instance != null)
+            {
+                NeonGalaxy.VFX.AudioManager.Instance.SetMusicVolume(value);
+            }
+            else
+            {
+                AudioListener.volume = value; // Quick global audio control fallback
+            }
         }
 
         private void OnSFXVolumeChanged(float value)
@@ -133,6 +141,11 @@ namespace NeonGalaxy.UI
             }
 
             UpdateVolumeText(sfxValueText, value);
+
+            if (NeonGalaxy.VFX.AudioManager.Instance != null)
+            {
+                NeonGalaxy.VFX.AudioManager.Instance.SetSFXVolume(value);
+            }
         }
 
         private void OnPlayerNameChanged(string newName)

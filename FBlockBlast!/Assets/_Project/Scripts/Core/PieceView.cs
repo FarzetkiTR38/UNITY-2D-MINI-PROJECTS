@@ -19,6 +19,9 @@ namespace NeonGalaxy.Core
         [SerializeField] private float trayScale = 0.55f;
         [SerializeField] private float animDuration = 0.15f;
 
+        public float TrayScale => trayScale;
+        public Vector3 VisualCenterOffset { get; private set; }
+
         public PieceInstance Piece { get; private set; }
         public int SlotIndex { get; private set; }
 
@@ -54,6 +57,12 @@ namespace NeonGalaxy.Core
 
             float totalCell = cellSize + cellSpacing;
 
+            // Calculate the bounds to find the visual center offset of the piece relative to pivot (0,0)
+            RectInt bounds = Piece.Definition.GetBounds();
+            float centerX = (bounds.x + (bounds.width - 1f) / 2f) * totalCell;
+            float centerY = (bounds.y + (bounds.height - 1f) / 2f) * totalCell;
+            VisualCenterOffset = new Vector3(centerX, centerY, 0f);
+
             // Spawn blocks at cell offset coordinates
             foreach (Vector2Int offset in Piece.CellOffsets)
             {
@@ -67,13 +76,13 @@ namespace NeonGalaxy.Core
                 SpriteRenderer sr = blockObj.AddComponent<SpriteRenderer>();
                 sr.sprite = blockSprite;
                 sr.color = color;
+                sr.sortingLayerName = "Board Blocks";
                 sr.sortingOrder = 10; // Sorting order on top of board blocks
 
                 _blockRenderers.Add(sr);
             }
 
             // Dynamically calculate and configure the BoxCollider2D bounds for touch detection
-            RectInt bounds = Piece.Definition.GetBounds();
             _collider.size = new Vector2(bounds.width * totalCell, bounds.height * totalCell);
             _collider.offset = new Vector2(
                 (bounds.x + (bounds.width - 1f) / 2f) * totalCell,

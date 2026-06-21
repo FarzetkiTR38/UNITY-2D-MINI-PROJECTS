@@ -55,7 +55,8 @@ namespace NeonGalaxy.Core
 
                 // Initialize the PieceView
                 pieceView.Setup(piece, i, blockColor, boardConfig.cellSize, boardConfig.cellSpacing);
-                pieceView.transform.localPosition = Vector3.zero;
+                // Center the piece visually within the tray slot by applying negative visual center offset scaled by the tray scale
+                pieceView.transform.localPosition = -pieceView.VisualCenterOffset * pieceView.TrayScale;
                 pieceView.SetOriginalTrayPosition(pieceView.transform.position);
 
                 _activePieceViews[i] = pieceView;
