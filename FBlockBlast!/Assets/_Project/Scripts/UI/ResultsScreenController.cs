@@ -229,6 +229,10 @@ namespace NeonGalaxy.UI
             // Animate XP bar
             if (xpBarFill != null && _progressionResult != null)
             {
+                xpBarFill.type = Image.Type.Filled;
+                xpBarFill.fillMethod = Image.FillMethod.Horizontal;
+                xpBarFill.fillOrigin = (int)Image.OriginHorizontal.Left;
+
                 float startFill = _progressionResult.DidLevelUp ? 0f :
                     Mathf.Clamp01((_progressionResult.XPProgressNormalized * _progressionResult.XPNeededForNextLevel - _progressionResult.XPEarned)
                     / Mathf.Max(1, _progressionResult.XPNeededForNextLevel));

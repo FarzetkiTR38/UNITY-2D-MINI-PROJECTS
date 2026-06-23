@@ -276,12 +276,6 @@ namespace NeonGalaxy.Core
                 {
                     TransitionState(GameState.PieceSelection);
                 }
-                else if (CanRevive())
-                {
-                    // Offer revive before game over
-                    TransitionState(GameState.Reviving);
-                    AttemptRevive();
-                }
                 else
                 {
                     TransitionState(GameState.GameOver);

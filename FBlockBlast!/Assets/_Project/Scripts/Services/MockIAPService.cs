@@ -41,11 +41,15 @@ namespace NeonGalaxy.Services
 
         public void PurchaseProduct(string productId, Action<bool> onComplete)
         {
-            Debug.Log($"[MockIAPService] Mock purchase started for: {productId}");
+            Debug.Log($"[MockIAPService] Mock purchase completed immediately for: {productId}");
 
-            // Simulate async purchase with a short delay
-            // In a real implementation, this would go through Unity IAP
-            SimulatePurchase(productId, onComplete);
+            // Mark non-consumable as owned
+            if (productId == Constants.IAP_REMOVE_ADS || productId == Constants.IAP_STARTER_PACK)
+            {
+                _ownedProducts.Add(productId);
+            }
+
+            onComplete?.Invoke(true);
         }
 
         public bool IsProductOwned(string productId)
@@ -56,23 +60,6 @@ namespace NeonGalaxy.Services
         public void RestorePurchases(Action<bool> onComplete)
         {
             Debug.Log("[MockIAPService] Mock restore purchases — nothing to restore.");
-            onComplete?.Invoke(true);
-        }
-
-        // ── Internal ─────────────────────────────────────────────
-
-        private async void SimulatePurchase(string productId, Action<bool> onComplete)
-        {
-            // Simulate store confirmation delay
-            await System.Threading.Tasks.Task.Delay(800);
-
-            // Mark non-consumable as owned
-            if (productId == Constants.IAP_REMOVE_ADS || productId == Constants.IAP_STARTER_PACK)
-            {
-                _ownedProducts.Add(productId);
-            }
-
-            Debug.Log($"[MockIAPService] Mock purchase completed for: {productId}");
             onComplete?.Invoke(true);
         }
     }
