@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using NeonGalaxy.Core;
 using NeonGalaxy.Data;
-using UnityInput = UnityEngine.Input;
 
 namespace NeonGalaxy.Input
 {
@@ -72,8 +72,11 @@ namespace NeonGalaxy.Input
 
         private void HandleInput()
         {
+            var pointer = Pointer.current;
+            if (pointer == null) return;
+
             // Begin Drag
-            if (UnityInput.GetMouseButtonDown(0))
+            if (pointer.press.wasPressedThisFrame)
             {
                 Vector3 touchWorldPos = GetTouchWorldPosition();
                 RaycastHit2D hit = Physics2D.Raycast(touchWorldPos, Vector2.zero);
@@ -88,13 +91,13 @@ namespace NeonGalaxy.Input
                 }
             }
             // Update Drag
-            else if (UnityInput.GetMouseButton(0) && _dragDropHandler.IsDragging)
+            else if (pointer.press.isPressed && _dragDropHandler.IsDragging)
             {
                 Vector3 touchWorldPos = GetTouchWorldPosition();
                 _dragDropHandler.UpdateDrag(touchWorldPos);
             }
             // End Drag
-            else if (UnityInput.GetMouseButtonUp(0) && _dragDropHandler.IsDragging)
+            else if (pointer.press.wasReleasedThisFrame && _dragDropHandler.IsDragging)
             {
                 PieceView currentPieceView = _dragDropHandler.DraggingPiece;
                 int slotIndex = currentPieceView != null ? currentPieceView.SlotIndex : -1;
@@ -112,7 +115,8 @@ namespace NeonGalaxy.Input
 
         private Vector3 GetTouchWorldPosition()
         {
-            Vector3 screenPos = UnityInput.mousePosition;
+            var pointer = Pointer.current;
+            Vector3 screenPos = pointer != null ? (Vector3)pointer.position.ReadValue() : Vector3.zero;
             Vector3 worldPos = mainCamera.ScreenToWorldPoint(screenPos);
             worldPos.z = 0f; // Force flat 2D plane
             return worldPos;

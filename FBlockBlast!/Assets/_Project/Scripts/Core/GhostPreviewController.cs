@@ -41,6 +41,7 @@ namespace NeonGalaxy.Core
 
                 SpriteRenderer sr = cellObj.AddComponent<SpriteRenderer>();
                 sr.sprite = ghostBlockSprite;
+                sr.sortingLayerName = "Board Blocks";
                 sr.sortingOrder = 5; // Layered between Board Background (0) and Dragging Piece (10)
                 cellObj.SetActive(false);
 

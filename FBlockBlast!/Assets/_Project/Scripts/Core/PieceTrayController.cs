@@ -55,7 +55,8 @@ namespace NeonGalaxy.Core
 
                 // Initialize the PieceView
                 pieceView.Setup(piece, i, blockColor, boardConfig.cellSize, boardConfig.cellSpacing);
-                pieceView.transform.localPosition = Vector3.zero;
+                // Center the piece visually within the tray slot by applying negative visual center offset scaled by the tray scale
+                pieceView.transform.localPosition = -pieceView.VisualCenterOffset * pieceView.TrayScale;
                 pieceView.SetOriginalTrayPosition(pieceView.transform.position);
 
                 _activePieceViews[i] = pieceView;
@@ -145,16 +146,30 @@ namespace NeonGalaxy.Core
                 return slots[index];
             }
 
-            // Fallback: Create dynamic slot positions relative to the tray root
+            // Calculate slot positions aligned to the board grid.
+            // Middle piece (index 1) sits exactly between columns 3 and 4 (0-indexed),
+            // which is the center of an 8-column grid (between columns 4 and 5 in 1-based indexing).
+            // Side pieces (index 0, 2) are exactly 3 cells away to the left and right,
+            // placing them between columns 0 and 1, and columns 6 and 7 respectively.
             string slotName = $"Slot_{index}";
+
+            // Spacing between slot centers: exactly 3 cells to align perfectly with the grid
+            float slotSpacing = 3f * (boardConfig.cellSize + boardConfig.cellSpacing);
+
+            // Center X of the board (local to tray parent)
+            float boardCenterX = 0f;
+
+            float horizontalOffset = (index - 1) * slotSpacing + boardCenterX;
+
             Transform existing = transform.Find(slotName);
-            if (existing != null) return existing;
+            if (existing != null)
+            {
+                existing.localPosition = new Vector3(horizontalOffset, 0f, 0f);
+                return existing;
+            }
 
             GameObject newSlot = new GameObject(slotName);
             newSlot.transform.SetParent(transform);
-            
-            // Default offsets: Space pieces apart horizontally
-            float horizontalOffset = (index - 1) * 3.5f; 
             newSlot.transform.localPosition = new Vector3(horizontalOffset, 0f, 0f);
 
             return newSlot.transform;

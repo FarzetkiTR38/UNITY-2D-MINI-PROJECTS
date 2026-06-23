@@ -56,8 +56,8 @@ namespace NeonGalaxy.Input
             _draggingPiece = pieceView;
             _isDragging = true;
 
-            // Lift and scale up the piece view
-            _draggingPiece.AnimatePickup(touchWorldPos, _fingerOffset);
+            // Lift and scale up the piece view (offsetting by visual center so it centers horizontally on the touch point)
+            _draggingPiece.AnimatePickup(touchWorldPos, _fingerOffset - _draggingPiece.VisualCenterOffset);
 
             // Show ghost preview overlay if available
             if (_ghostPreview != null && _draggingPiece.Piece != null)
@@ -73,27 +73,34 @@ namespace NeonGalaxy.Input
         {
             if (!_isDragging || _draggingPiece == null) return;
 
-            // Update piece position directly under the finger (plus offset)
-            Vector3 targetPos = touchWorldPos + _fingerOffset;
+            // Update piece position directly under the finger (plus offset, minus visual center offset)
+            Vector3 targetPos = touchWorldPos + _fingerOffset - _draggingPiece.VisualCenterOffset;
             _draggingPiece.transform.position = targetPos;
 
-            // Check if the piece is hovering over a valid board position
-            if (_boardController.WorldToGrid(targetPos, out Vector2Int gridPos))
+            // Get raw grid position (which can be out of bounds)
+            _boardController.WorldToGrid(targetPos, out Vector2Int rawGridPos);
+
+            // Clamp grid position to board boundaries for visual preview snapping
+            int boardWidth = 8;
+            int boardHeight = 8;
+            if (_boardModel != null)
             {
-                bool canPlace = _boardModel.CanPlacePiece(_draggingPiece.Piece, gridPos.y, gridPos.x);
-                
-                if (_ghostPreview != null)
-                {
-                    _ghostPreview.UpdatePosition(gridPos, canPlace);
-                }
+                boardWidth = _boardModel.Width;
+                boardHeight = _boardModel.Height;
             }
-            else
+
+            Vector2Int clampedGridPos = new Vector2Int(
+                Mathf.Clamp(rawGridPos.x, 0, boardWidth - 1),
+                Mathf.Clamp(rawGridPos.y, 0, boardHeight - 1)
+            );
+
+            // Placement is valid ONLY if the raw position is inside the board boundaries AND placeable
+            bool isInside = _boardController.IsValidGridPos(rawGridPos);
+            bool canPlace = isInside && _boardModel.CanPlacePiece(_draggingPiece.Piece, rawGridPos.y, rawGridPos.x);
+
+            if (_ghostPreview != null)
             {
-                // Pivot is outside the board boundaries
-                if (_ghostPreview != null)
-                {
-                    _ghostPreview.Hide();
-                }
+                _ghostPreview.UpdatePosition(clampedGridPos, canPlace);
             }
         }
 

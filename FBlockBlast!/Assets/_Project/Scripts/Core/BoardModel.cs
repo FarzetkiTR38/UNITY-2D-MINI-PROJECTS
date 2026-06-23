@@ -337,5 +337,64 @@ namespace NeonGalaxy.Core
                 }
             }
         }
+
+        /// <summary>
+        /// Clears the N rows with the most occupied cells.
+        /// Used by the revive system to maximize breathing room.
+        /// Returns the indices of the cleared rows.
+        /// </summary>
+        public int[] ClearFullestRows(int count)
+        {
+            // Score each row by occupancy
+            int[] rowScores = new int[Height];
+            for (int r = 0; r < Height; r++)
+            {
+                int occupied = 0;
+                for (int c = 0; c < Width; c++)
+                {
+                    if (_cells[r, c]) occupied++;
+                }
+                rowScores[r] = occupied;
+            }
+
+            // Find the N fullest rows
+            int[] selectedRows = new int[Mathf.Min(count, Height)];
+            for (int i = 0; i < selectedRows.Length; i++)
+            {
+                int bestRow = -1;
+                int bestScore = -1;
+                for (int r = 0; r < Height; r++)
+                {
+                    if (rowScores[r] > bestScore)
+                    {
+                        bestScore = rowScores[r];
+                        bestRow = r;
+                    }
+                }
+
+                if (bestRow >= 0 && bestScore > 0)
+                {
+                    selectedRows[i] = bestRow;
+                    rowScores[bestRow] = -1; // Exclude from future selection
+                }
+                else
+                {
+                    selectedRows[i] = i; // Fallback to sequential rows
+                }
+            }
+
+            // Clear selected rows
+            for (int i = 0; i < selectedRows.Length; i++)
+            {
+                int r = selectedRows[i];
+                for (int c = 0; c < Width; c++)
+                {
+                    _cells[r, c] = false;
+                    _colors[r, c] = 0;
+                }
+            }
+
+            return selectedRows;
+        }
     }
 }

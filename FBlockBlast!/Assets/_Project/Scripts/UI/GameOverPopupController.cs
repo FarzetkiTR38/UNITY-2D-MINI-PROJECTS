@@ -55,6 +55,8 @@ namespace NeonGalaxy.UI
             {
                 StartCoroutine(CountUpScoreRoutine(finalScore));
             }
+
+            StartCoroutine(NeonGalaxy.VFX.UIAnimator.BounceIn(transform, 0.4f));
         }
 
         /// <summary>
@@ -62,6 +64,13 @@ namespace NeonGalaxy.UI
         /// </summary>
         public void Hide()
         {
+            if (!gameObject.activeSelf) return;
+            StartCoroutine(HideRoutine());
+        }
+
+        private IEnumerator HideRoutine()
+        {
+            yield return StartCoroutine(NeonGalaxy.VFX.UIAnimator.ScaleOut(transform, 0.2f));
             gameObject.SetActive(false);
         }
 

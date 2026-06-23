@@ -92,6 +92,18 @@ namespace NeonGalaxy.Core
         /// </summary>
         public static event Action<int> OnNewBestScore;
 
+        /// <summary>
+        /// Fired when the player's coin balance changes.
+        /// Args: new balance.
+        /// </summary>
+        public static event Action<int> OnCoinBalanceChanged;
+
+        /// <summary>
+        /// Fired when a rewarded ad finishes.
+        /// Args: true if reward granted, false if cancelled.
+        /// </summary>
+        public static event Action<bool> OnAdRewardReceived;
+
         // ══════════════════════════════════════════════════════════
         // UI EVENTS
         // ══════════════════════════════════════════════════════════
@@ -142,6 +154,12 @@ namespace NeonGalaxy.Core
         public static void InvokeNewBestScore(int score)
             => OnNewBestScore?.Invoke(score);
 
+        public static void InvokeCoinBalanceChanged(int newBalance)
+            => OnCoinBalanceChanged?.Invoke(newBalance);
+
+        public static void InvokeAdRewardReceived(bool success)
+            => OnAdRewardReceived?.Invoke(success);
+
         public static void InvokeScorePopupRequested(int points, Vector3 worldPos)
             => OnScorePopupRequested?.Invoke(points, worldPos);
 
@@ -167,6 +185,8 @@ namespace NeonGalaxy.Core
             OnLevelUp = null;
             OnAchievementUnlocked = null;
             OnNewBestScore = null;
+            OnCoinBalanceChanged = null;
+            OnAdRewardReceived = null;
             OnScorePopupRequested = null;
         }
     }
