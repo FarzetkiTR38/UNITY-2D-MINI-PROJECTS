@@ -153,8 +153,8 @@ namespace NeonGalaxy.Core
             // placing them between columns 0 and 1, and columns 6 and 7 respectively.
             string slotName = $"Slot_{index}";
 
-            // Spacing between slot centers: exactly 3 cells to align perfectly with the grid
-            float slotSpacing = 3f * (boardConfig.cellSize + boardConfig.cellSpacing);
+            // Spacing between slot centers: 2.5 cells for tighter tray layout
+            float slotSpacing = 2.6f * (boardConfig.cellSize + boardConfig.cellSpacing);
 
             // Center X of the board (local to tray parent)
             float boardCenterX = 0f;

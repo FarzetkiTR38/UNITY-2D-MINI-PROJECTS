@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using NeonGalaxy.Core;
 using NeonGalaxy.Data;
@@ -9,7 +10,7 @@ namespace NeonGalaxy.UI
 {
     /// <summary>
     /// Updates the main gameplay HUD, including current score, highest score, 
-    /// combo counters, and text punch animations.
+    /// combo counters, top bar (back/pause/currency), and text punch animations.
     /// </summary>
     public class GameplayHUDController : MonoBehaviour
     {
@@ -21,6 +22,12 @@ namespace NeonGalaxy.UI
         [Header("Containers")]
         [SerializeField] private GameObject comboContainer;
         [SerializeField] private GameObject newBestBadge;
+
+        [Header("Top Bar")]
+        [SerializeField] private Button backButton;
+        [SerializeField] private Button pauseButton;
+        [SerializeField] private Button addCurrencyButton;
+        [SerializeField] private TextMeshProUGUI currencyText;
 
         [Header("Text Animations")]
         [SerializeField] private float punchScale = 1.2f;
@@ -38,6 +45,11 @@ namespace NeonGalaxy.UI
 
             if (newBestBadge != null) newBestBadge.SetActive(false);
             if (comboContainer != null) comboContainer.SetActive(false);
+
+            // Wire up top bar buttons
+            if (backButton != null) backButton.onClick.AddListener(HandleBackPressed);
+            if (pauseButton != null) pauseButton.onClick.AddListener(HandlePausePressed);
+            if (addCurrencyButton != null) addCurrencyButton.onClick.AddListener(HandleAddCurrencyPressed);
         }
 
         private void OnEnable()
@@ -45,6 +57,7 @@ namespace NeonGalaxy.UI
             GameEvents.OnScoreChanged += HandleScoreChanged;
             GameEvents.OnComboUpdated += HandleComboUpdated;
             GameEvents.OnNewBestScore += HandleNewBestScore;
+            GameEvents.OnCoinBalanceChanged += HandleCoinBalanceChanged;
         }
 
         private void OnDisable()
@@ -52,6 +65,7 @@ namespace NeonGalaxy.UI
             GameEvents.OnScoreChanged -= HandleScoreChanged;
             GameEvents.OnComboUpdated -= HandleComboUpdated;
             GameEvents.OnNewBestScore -= HandleNewBestScore;
+            GameEvents.OnCoinBalanceChanged -= HandleCoinBalanceChanged;
         }
 
         /// <summary>
@@ -103,6 +117,39 @@ namespace NeonGalaxy.UI
                 newBestBadge.SetActive(true);
             }
             UpdateBestScore(newBestScore);
+        }
+
+        private void HandleCoinBalanceChanged(int newBalance)
+        {
+            UpdateCurrency(newBalance);
+        }
+
+        /// <summary>
+        /// Updates the currency display text.
+        /// </summary>
+        public void UpdateCurrency(int amount)
+        {
+            if (currencyText != null)
+            {
+                currencyText.text = amount.ToString("N0");
+            }
+        }
+
+        private void HandleBackPressed()
+        {
+            // Navigate back to Home scene
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Home");
+        }
+
+        private void HandlePausePressed()
+        {
+            GameEvents.InvokeGameStateChanged(GameState.Paused);
+        }
+
+        private void HandleAddCurrencyPressed()
+        {
+            // Placeholder: open shop or trigger rewarded ad
+            Debug.Log("[HUD] Add currency pressed — hook up to shop or rewarded ad.");
         }
 
         private IEnumerator PunchTextRoutine(Transform targetTransform, Vector3 originalScale)

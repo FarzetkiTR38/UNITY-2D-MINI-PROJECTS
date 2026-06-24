@@ -17,6 +17,7 @@ namespace NeonGalaxy.Core
 
         [Header("Visuals")]
         [SerializeField] private Sprite ghostBlockSprite;
+        [SerializeField] private float boardScale = 0.9f;
         [SerializeField] private Color validTint = new Color(0.2f, 1.0f, 0.5f, 0.45f); // Neon Green with alpha
         [SerializeField] private Color invalidTint = new Color(1.0f, 0.2f, 0.2f, 0.45f); // Neon Red with alpha
 
@@ -70,8 +71,8 @@ namespace NeonGalaxy.Core
                 if (i < piece.CellOffsets.Length)
                 {
                     Vector2Int offset = piece.CellOffsets[i];
-                    sr.transform.localPosition = new Vector3(offset.x * totalCell, offset.y * totalCell, 0f);
-                    sr.transform.localScale = new Vector3(cellSize, cellSize, 1f);
+                    sr.transform.localPosition = new Vector3(offset.x * totalCell * boardScale, offset.y * totalCell * boardScale, 0f);
+                    sr.transform.localScale = new Vector3(cellSize * boardScale, cellSize * boardScale, 1f);
                     sr.gameObject.SetActive(true);
                 }
                 else

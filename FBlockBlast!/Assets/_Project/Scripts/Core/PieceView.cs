@@ -17,6 +17,7 @@ namespace NeonGalaxy.Core
         [Header("Visual Settings")]
         [SerializeField] private Sprite blockSprite;
         [SerializeField] private float trayScale = 0.55f;
+        [SerializeField] private float dragScale = 0.9f;
         [SerializeField] private float animDuration = 0.15f;
 
         public float TrayScale => trayScale;
@@ -114,7 +115,7 @@ namespace NeonGalaxy.Core
         public void AnimatePickup(Vector3 touchWorldPos, Vector3 offset)
         {
             StopActiveAnimation();
-            _activeAnimation = StartCoroutine(ScaleRoutine(Vector3.one, touchWorldPos + offset));
+            _activeAnimation = StartCoroutine(ScaleRoutine(Vector3.one * dragScale, touchWorldPos + offset));
         }
 
         /// <summary>
