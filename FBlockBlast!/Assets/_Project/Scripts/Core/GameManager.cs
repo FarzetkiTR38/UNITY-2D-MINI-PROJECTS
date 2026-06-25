@@ -240,7 +240,7 @@ namespace NeonGalaxy.Core
 
         private void GenerateAndSetNewBatch()
         {
-            int colorPaletteCount = boardConfig.blockPalette.Length;
+            int colorPaletteCount = boardConfig.blockSkins.Length;
             PieceInstance[] batch = _batchGenerator.GenerateBatch(_boardModel, piecePool, colorPaletteCount);
 
             // Spawns pieces visually in the tray

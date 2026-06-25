@@ -15,8 +15,8 @@ namespace NeonGalaxy.Core
     public class PieceView : MonoBehaviour
     {
         [Header("Visual Settings")]
-        [SerializeField] private Sprite blockSprite;
         [SerializeField] private float trayScale = 0.55f;
+        [SerializeField] private float dragScale = 0.9f;
         [SerializeField] private float animDuration = 0.15f;
 
         public float TrayScale => trayScale;
@@ -39,7 +39,7 @@ namespace NeonGalaxy.Core
         /// <summary>
         /// Instantiates the block visual renderers and sets up colliders based on the piece shape.
         /// </summary>
-        public void Setup(PieceInstance pieceInstance, int slotIndex, Color color, float cellSize, float cellSpacing)
+        public void Setup(PieceInstance pieceInstance, int slotIndex, Sprite blockSprite, Color tintColor, float cellSize, float cellSpacing)
         {
             Piece = pieceInstance;
             SlotIndex = slotIndex;
@@ -75,7 +75,7 @@ namespace NeonGalaxy.Core
 
                 SpriteRenderer sr = blockObj.AddComponent<SpriteRenderer>();
                 sr.sprite = blockSprite;
-                sr.color = color;
+                sr.color = tintColor;
                 sr.sortingLayerName = "Board Blocks";
                 sr.sortingOrder = 10; // Sorting order on top of board blocks
 
@@ -114,7 +114,7 @@ namespace NeonGalaxy.Core
         public void AnimatePickup(Vector3 touchWorldPos, Vector3 offset)
         {
             StopActiveAnimation();
-            _activeAnimation = StartCoroutine(ScaleRoutine(Vector3.one, touchWorldPos + offset));
+            _activeAnimation = StartCoroutine(ScaleRoutine(Vector3.one * dragScale, touchWorldPos + offset));
         }
 
         /// <summary>

@@ -35,9 +35,9 @@ namespace NeonGalaxy.Core
         }
 
         /// <summary>
-        /// Sets the cell to the occupied state with a specific color.
+        /// Sets the cell to the occupied state with a specific sprite and tint color.
         /// </summary>
-        public void SetOccupied(Color color)
+        public void SetOccupied(Sprite sprite, Color tintColor)
         {
             StopActiveAnimation();
             transform.localScale = _originalScale;
@@ -45,7 +45,8 @@ namespace NeonGalaxy.Core
             if (blockRenderer != null)
             {
                 blockRenderer.gameObject.SetActive(true);
-                blockRenderer.color = new Color(color.r, color.g, color.b, 1.0f);
+                if (sprite != null) blockRenderer.sprite = sprite;
+                blockRenderer.color = new Color(tintColor.r, tintColor.g, tintColor.b, 1.0f);
             }
         }
 
@@ -66,7 +67,7 @@ namespace NeonGalaxy.Core
         /// <summary>
         /// Sets the cell to a semi-transparent ghost preview state.
         /// </summary>
-        public void SetGhostPreview(Color color, bool isValid)
+        public void SetGhostPreview(Sprite sprite, Color color, bool isValid)
         {
             StopActiveAnimation();
             transform.localScale = _originalScale;
@@ -74,6 +75,7 @@ namespace NeonGalaxy.Core
             if (blockRenderer != null)
             {
                 blockRenderer.gameObject.SetActive(true);
+                if (sprite != null) blockRenderer.sprite = sprite;
                 // 50% opacity for preview. If valid, tint green or keep color, otherwise maybe apply error hue.
                 float alpha = 0.5f;
                 Color previewColor = isValid ? color : Color.red;

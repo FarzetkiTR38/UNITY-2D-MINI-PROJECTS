@@ -16,9 +16,10 @@ namespace NeonGalaxy.Core
         [SerializeField] private BoardController boardController;
 
         [Header("Visuals")]
-        [SerializeField] private Sprite ghostBlockSprite;
-        [SerializeField] private Color validTint = new Color(0.2f, 1.0f, 0.5f, 0.45f); // Neon Green with alpha
-        [SerializeField] private Color invalidTint = new Color(1.0f, 0.2f, 0.2f, 0.45f); // Neon Red with alpha
+        [SerializeField] private float boardScale = 0.9f;
+        [Range(0f, 1f)]
+        [SerializeField] private float previewAlpha = 0.25f; // Opacity for the preview
+
 
         private const int MaxGhostCells = 9; // Large piece has at most 9 cells
         private readonly List<SpriteRenderer> _cellPool = new List<SpriteRenderer>();
@@ -40,7 +41,7 @@ namespace NeonGalaxy.Core
                 cellObj.transform.localPosition = Vector3.zero;
 
                 SpriteRenderer sr = cellObj.AddComponent<SpriteRenderer>();
-                sr.sprite = ghostBlockSprite;
+                // Sprite will be set dynamically in Show() based on the piece's skin
                 sr.sortingLayerName = "Board Blocks";
                 sr.sortingOrder = 5; // Layered between Board Background (0) and Dragging Piece (10)
                 cellObj.SetActive(false);
@@ -63,6 +64,8 @@ namespace NeonGalaxy.Core
             float cellSpacing = boardConfig.cellSpacing;
             float totalCell = cellSize + cellSpacing;
 
+            BlockSkin skin = boardConfig.GetBlockSkin(piece.ColorIndex);
+
             // Configure cell positions relative to this controller's origin
             for (int i = 0; i < MaxGhostCells; i++)
             {
@@ -70,8 +73,12 @@ namespace NeonGalaxy.Core
                 if (i < piece.CellOffsets.Length)
                 {
                     Vector2Int offset = piece.CellOffsets[i];
-                    sr.transform.localPosition = new Vector3(offset.x * totalCell, offset.y * totalCell, 0f);
-                    sr.transform.localScale = new Vector3(cellSize, cellSize, 1f);
+                    sr.transform.localPosition = new Vector3(offset.x * totalCell * boardScale, offset.y * totalCell * boardScale, 0f);
+                    sr.transform.localScale = new Vector3(cellSize * boardScale, cellSize * boardScale, 1f);
+                    
+                    // Apply the piece's actual sprite
+                    sr.sprite = skin.sprite;
+                    
                     sr.gameObject.SetActive(true);
                 }
                 else
@@ -89,17 +96,31 @@ namespace NeonGalaxy.Core
         {
             if (!_isShowing || _activePiece == null || boardController == null) return;
 
+            // If it's not a valid placement, hide the preview completely
+            if (!isValid)
+            {
+                for (int i = 0; i < _activePiece.CellOffsets.Length; i++)
+                {
+                    _cellPool[i].gameObject.SetActive(false);
+                }
+                return;
+            }
+
             // Snap the parent transform to the world coordinates of the board cell pivot
             Vector3 targetWorldPos = boardController.GridToWorld(gridPivot.y, gridPivot.x);
             transform.position = targetWorldPos;
 
-            // Determine overlay colors
-            Color tintColor = isValid ? validTint : invalidTint;
+            // Fetch the piece's skin to get its original tint color
+            BlockSkin skin = boardConfig.GetBlockSkin(_activePiece.ColorIndex);
+            
+            // Apply original color but with reduced opacity
+            Color previewColor = new Color(skin.tintColor.r, skin.tintColor.g, skin.tintColor.b, previewAlpha);
 
-            // Tint only the active cells in the shape
+            // Reactivate and tint the active cells in the shape
             for (int i = 0; i < _activePiece.CellOffsets.Length; i++)
             {
-                _cellPool[i].color = tintColor;
+                _cellPool[i].gameObject.SetActive(true);
+                _cellPool[i].color = previewColor;
             }
         }
 
