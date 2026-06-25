@@ -75,7 +75,7 @@ namespace NeonGalaxy.UI
         {
             if (bestScoreText != null)
             {
-                bestScoreText.text = $"BEST: {bestScore}";
+                bestScoreText.text = $"BEST: {bestScore:N0}";
             }
         }
 
@@ -83,7 +83,7 @@ namespace NeonGalaxy.UI
         {
             if (scoreText != null)
             {
-                scoreText.text = currentScore.ToString();
+                scoreText.text = currentScore.ToString("N0");
                 
                 // Trigger score punch animation
                 if (_scorePunchRoutine != null) StopCoroutine(_scorePunchRoutine);

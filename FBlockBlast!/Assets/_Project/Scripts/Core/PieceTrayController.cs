@@ -50,11 +50,11 @@ namespace NeonGalaxy.Core
                 Transform slot = GetOrCreateSlot(i);
                 PieceView pieceView = Instantiate(piecePrefab, slot);
                 
-                // Determine block color from config palette
-                Color blockColor = GetColorFromPalette(piece.ColorIndex);
+                // Determine block skin (sprite + tint) from config palette
+                BlockSkin skin = boardConfig.GetBlockSkin(piece.ColorIndex);
 
-                // Initialize the PieceView
-                pieceView.Setup(piece, i, blockColor, boardConfig.cellSize, boardConfig.cellSpacing);
+                // Initialize the PieceView with the block sprite and tint
+                pieceView.Setup(piece, i, skin.sprite, skin.tintColor, boardConfig.cellSize, boardConfig.cellSpacing);
                 // Center the piece visually within the tray slot by applying negative visual center offset scaled by the tray scale
                 pieceView.transform.localPosition = -pieceView.VisualCenterOffset * pieceView.TrayScale;
                 pieceView.SetOriginalTrayPosition(pieceView.transform.position);
@@ -177,11 +177,7 @@ namespace NeonGalaxy.Core
 
         private Color GetColorFromPalette(int index)
         {
-            if (boardConfig == null || boardConfig.blockPalette == null || boardConfig.blockPalette.Length == 0)
-                return Color.white;
-
-            int safeIndex = Mathf.Clamp(index, 0, boardConfig.blockPalette.Length - 1);
-            return boardConfig.blockPalette[safeIndex];
+            return boardConfig.GetBlockSkin(index).tintColor;
         }
     }
 }

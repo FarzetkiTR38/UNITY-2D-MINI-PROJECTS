@@ -104,8 +104,8 @@ namespace NeonGalaxy.Core
                     if (boardModel.IsOccupied(r, c))
                     {
                         int colorIdx = boardModel.GetColor(r, c);
-                        Color blockColor = GetColorFromPalette(colorIdx);
-                        cell.SetOccupied(blockColor);
+                        BlockSkin skin = config.GetBlockSkin(colorIdx);
+                        cell.SetOccupied(skin.sprite, skin.tintColor);
                     }
                     else
                     {
@@ -243,11 +243,7 @@ namespace NeonGalaxy.Core
 
         private Color GetColorFromPalette(int index)
         {
-            if (config == null || config.blockPalette == null || config.blockPalette.Length == 0)
-                return Color.white;
-
-            int safeIndex = Mathf.Clamp(index, 0, config.blockPalette.Length - 1);
-            return config.blockPalette[safeIndex];
+            return config.GetBlockSkin(index).tintColor;
         }
     }
 }
