@@ -40,8 +40,13 @@ namespace NeonGalaxy.Data
         public List<string> unlockedAchievementIds = new List<string>();
 
         // ── Settings ─────────────────────────────────────────────
+        public float masterVolume = 1.0f;
         public float musicVolume = 1.0f;
         public float sfxVolume = 1.0f;
+        public bool vibrationEnabled = true;
+        public bool particleEffectsEnabled = true;
+        public bool confirmUndoEnabled = true;
+        public bool notificationsEnabled = true;
 
         // ── Purchases ────────────────────────────────────────────
         public bool removeAdsPurchased = false;
