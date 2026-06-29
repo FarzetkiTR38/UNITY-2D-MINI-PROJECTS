@@ -23,9 +23,14 @@ namespace NeonGalaxy.UI
         [SerializeField] private TextMeshProUGUI statusText;
         [SerializeField] private GameObject loadingIndicator;
 
-        [Header("Player Highlight")]
-        [SerializeField] private TextMeshProUGUI playerRankText;
-        [SerializeField] private TextMeshProUGUI playerScoreText;
+        [Header("Top 3 Players")]
+        [SerializeField] private TextMeshProUGUI firstPlayerNameText;
+        [SerializeField] private TextMeshProUGUI firstPlayerScoreText;
+        [SerializeField] private TextMeshProUGUI secondPlayerNameText;
+        [SerializeField] private TextMeshProUGUI secondPlayerScoreText;
+        [SerializeField] private TextMeshProUGUI thirdPlayerNameText;
+        [SerializeField] private TextMeshProUGUI thirdPlayerScoreText;
+
 
         [Header("Buttons")]
         [SerializeField] private Button refreshButton;
@@ -116,15 +121,47 @@ namespace NeonGalaxy.UI
                 Destroy(child.gameObject);
             }
 
+            // Reset top 3 texts
+            if (firstPlayerNameText != null) firstPlayerNameText.text = "---";
+            if (firstPlayerScoreText != null) firstPlayerScoreText.text = "0";
+            if (secondPlayerNameText != null) secondPlayerNameText.text = "---";
+            if (secondPlayerScoreText != null) secondPlayerScoreText.text = "0";
+            if (thirdPlayerNameText != null) thirdPlayerNameText.text = "---";
+            if (thirdPlayerScoreText != null) thirdPlayerScoreText.text = "0";
+
             if (data == null || data.entries == null || data.entries.Count == 0)
             {
                 SetStatusText("No leaderboard data available.");
                 return;
             }
 
-            // Populate entries
-            foreach (var entry in data.entries)
+            // Populate entries (max 10 total)
+            int count = Mathf.Min(data.entries.Count, 10);
+            for (int i = 0; i < count; i++)
             {
+                var entry = data.entries[i];
+
+                // Top 3 handling
+                if (i == 0)
+                {
+                    if (firstPlayerNameText != null) firstPlayerNameText.text = entry.playerName;
+                    if (firstPlayerScoreText != null) firstPlayerScoreText.text = entry.score.ToString("N0");
+                    continue; // Skip creating prefab for top 3
+                }
+                else if (i == 1)
+                {
+                    if (secondPlayerNameText != null) secondPlayerNameText.text = entry.playerName;
+                    if (secondPlayerScoreText != null) secondPlayerScoreText.text = entry.score.ToString("N0");
+                    continue; // Skip creating prefab for top 3
+                }
+                else if (i == 2)
+                {
+                    if (thirdPlayerNameText != null) thirdPlayerNameText.text = entry.playerName;
+                    if (thirdPlayerScoreText != null) thirdPlayerScoreText.text = entry.score.ToString("N0");
+                    continue; // Skip creating prefab for top 3
+                }
+
+                // 4th and beyond
                 var entryGO = Instantiate(entryPrefab, entryListParent);
                 entryGO.SetActive(true);
 
@@ -132,13 +169,13 @@ namespace NeonGalaxy.UI
                 var texts = entryGO.GetComponentsInChildren<TextMeshProUGUI>();
                 if (texts.Length >= 3)
                 {
-                    texts[0].text = $"#{entry.rank}";
+                    texts[0].text = entry.rank.ToString();
                     texts[1].text = entry.playerName;
                     texts[2].text = entry.score.ToString("N0");
                 }
                 else if (texts.Length >= 1)
                 {
-                    texts[0].text = $"#{entry.rank}  {entry.playerName}  —  {entry.score:N0}";
+                    texts[0].text = $"{entry.rank}  {entry.playerName}  —  {entry.score:N0}";
                 }
 
                 // Highlight player entry
@@ -154,15 +191,6 @@ namespace NeonGalaxy.UI
                 }
             }
 
-            // Update player summary
-            if (data.playerEntry != null)
-            {
-                if (playerRankText != null)
-                    playerRankText.text = $"Your Rank: #{data.playerEntry.rank}";
-
-                if (playerScoreText != null)
-                    playerScoreText.text = $"Your Best: {data.playerEntry.score:N0}";
-            }
         }
 
         private void SetLoading(bool loading)

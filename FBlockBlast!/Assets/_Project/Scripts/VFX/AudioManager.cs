@@ -38,6 +38,7 @@ namespace NeonGalaxy.VFX
 
         private float _sfxVolume = 0.8f;
         private float _musicVolume = 0.5f;
+        private float _masterVolume = 1.0f;
         private int _currentCombo;
 
         // ── Initialization ──────────────────────────────────────
@@ -151,11 +152,13 @@ namespace NeonGalaxy.VFX
                 var saveService = ServiceLocator.Get<SaveService>();
                 _sfxVolume = saveService.Data.sfxVolume;
                 _musicVolume = saveService.Data.musicVolume;
+                _masterVolume = saveService.Data.masterVolume;
             }
             else if (config != null)
             {
                 _sfxVolume = config.defaultSFXVolume;
                 _musicVolume = config.defaultMusicVolume;
+                _masterVolume = 1.0f;
             }
 
             ApplyVolumes();
@@ -245,8 +248,18 @@ namespace NeonGalaxy.VFX
             ApplyVolumes();
         }
 
+        /// <summary>
+        /// Sets the master volume (0.0 to 1.0). Applied as a global multiplier via AudioListener.
+        /// </summary>
+        public void SetMasterVolume(float volume)
+        {
+            _masterVolume = Mathf.Clamp01(volume);
+            ApplyVolumes();
+        }
+
         public float SFXVolume => _sfxVolume;
         public float MusicVolume => _musicVolume;
+        public float MasterVolume => _masterVolume;
 
         // ── Event Handlers ──────────────────────────────────────
 
@@ -342,6 +355,9 @@ namespace NeonGalaxy.VFX
 
         private void ApplyVolumes()
         {
+            // Master volume applied as global multiplier via AudioListener
+            AudioListener.volume = _masterVolume;
+
             if (musicSource != null)
                 musicSource.volume = _musicVolume;
 

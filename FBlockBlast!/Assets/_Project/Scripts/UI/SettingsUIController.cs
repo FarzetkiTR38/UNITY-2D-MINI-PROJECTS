@@ -8,28 +8,27 @@ namespace NeonGalaxy.UI
 {
     /// <summary>
     /// Controls the Settings panel UI.
-    /// Manages volume sliders, player name editing,
-    /// debug options, and version display.
+    /// Manages custom image-based volume sliders, gameplay toggle buttons,
+    /// and integrates with AudioManager and SaveService for persistent settings.
     /// </summary>
     public class SettingsUIController : MonoBehaviour
     {
-        [Header("Volume")]
-        [SerializeField] private Slider musicSlider;
-        [SerializeField] private Slider sfxSlider;
-        [SerializeField] private TextMeshProUGUI musicValueText;
-        [SerializeField] private TextMeshProUGUI sfxValueText;
+        [Header("Audio Sliders")]
+        [SerializeField] private CustomSliderUI masterVolumeSlider;
+        [SerializeField] private CustomSliderUI musicSlider;
+        [SerializeField] private CustomSliderUI sfxSlider;
 
-        [Header("Player Name")]
-        [SerializeField] private TMP_InputField playerNameInput;
-
-        [Header("App Info")]
-        [SerializeField] private TextMeshProUGUI versionText;
-
-        [Header("Debug")]
-        [SerializeField] private Button deleteSaveButton;
+        [Header("Gameplay Toggles")]
+        [SerializeField] private ToggleButtonUI vibrationToggle;
+        [SerializeField] private ToggleButtonUI particleEffectsToggle;
+        [SerializeField] private ToggleButtonUI confirmUndoToggle;
+        [SerializeField] private ToggleButtonUI notificationsToggle;
 
         [Header("Navigation")]
         [SerializeField] private Button closeButton;
+
+        [Header("App Info")]
+        [SerializeField] private TextMeshProUGUI versionText;
 
         public event System.Action OnCloseClicked;
 
@@ -45,31 +44,30 @@ namespace NeonGalaxy.UI
 
         private void SetupUI()
         {
+            // Sliders
+            if (masterVolumeSlider != null)
+                masterVolumeSlider.OnValueChanged += OnMasterVolumeChanged;
+
             if (musicSlider != null)
-            {
-                musicSlider.minValue = 0f;
-                musicSlider.maxValue = 1f;
-                musicSlider.onValueChanged.AddListener(OnMusicVolumeChanged);
-            }
+                musicSlider.OnValueChanged += OnMusicVolumeChanged;
 
             if (sfxSlider != null)
-            {
-                sfxSlider.minValue = 0f;
-                sfxSlider.maxValue = 1f;
-                sfxSlider.onValueChanged.AddListener(OnSFXVolumeChanged);
-            }
+                sfxSlider.OnValueChanged += OnSFXVolumeChanged;
 
-            if (playerNameInput != null)
-            {
-                playerNameInput.characterLimit = 20;
-                playerNameInput.onEndEdit.AddListener(OnPlayerNameChanged);
-            }
+            // Toggles
+            if (vibrationToggle != null)
+                vibrationToggle.OnToggleChanged += OnVibrationChanged;
 
-            if (deleteSaveButton != null)
-            {
-                deleteSaveButton.onClick.AddListener(OnDeleteSaveClicked);
-            }
+            if (particleEffectsToggle != null)
+                particleEffectsToggle.OnToggleChanged += OnParticleEffectsChanged;
 
+            if (confirmUndoToggle != null)
+                confirmUndoToggle.OnToggleChanged += OnConfirmUndoChanged;
+
+            if (notificationsToggle != null)
+                notificationsToggle.OnToggleChanged += OnNotificationsChanged;
+
+            // Close button
             if (closeButton != null)
             {
                 closeButton.onClick.AddListener(() =>
@@ -80,6 +78,7 @@ namespace NeonGalaxy.UI
                 });
             }
 
+            // Version text
             if (versionText != null)
             {
                 versionText.text = $"v{Application.version}";
@@ -92,25 +91,50 @@ namespace NeonGalaxy.UI
 
             var data = _saveService.Data;
 
+            // Load slider values without triggering events
+            if (masterVolumeSlider != null)
+                masterVolumeSlider.SetValueWithoutNotify(data.masterVolume);
+
             if (musicSlider != null)
-            {
                 musicSlider.SetValueWithoutNotify(data.musicVolume);
-                UpdateVolumeText(musicValueText, data.musicVolume);
-            }
 
             if (sfxSlider != null)
-            {
                 sfxSlider.SetValueWithoutNotify(data.sfxVolume);
-                UpdateVolumeText(sfxValueText, data.sfxVolume);
-            }
 
-            if (playerNameInput != null)
-            {
-                playerNameInput.SetTextWithoutNotify(data.playerName);
-            }
+            // Load toggle states without triggering events
+            if (vibrationToggle != null)
+                vibrationToggle.SetStateWithoutNotify(data.vibrationEnabled);
+
+            if (particleEffectsToggle != null)
+                particleEffectsToggle.SetStateWithoutNotify(data.particleEffectsEnabled);
+
+            if (confirmUndoToggle != null)
+                confirmUndoToggle.SetStateWithoutNotify(data.confirmUndoEnabled);
+
+            if (notificationsToggle != null)
+                notificationsToggle.SetStateWithoutNotify(data.notificationsEnabled);
         }
 
-        // ── Event Handlers ───────────────────────────────────────
+        // ── Slider Event Handlers ────────────────────────────────
+
+        private void OnMasterVolumeChanged(float value)
+        {
+            if (_saveService != null)
+            {
+                _saveService.Data.masterVolume = value;
+                _saveService.MarkDirty();
+            }
+
+            // Apply to AudioManager
+            if (NeonGalaxy.VFX.AudioManager.Instance != null)
+            {
+                NeonGalaxy.VFX.AudioManager.Instance.SetMasterVolume(value);
+            }
+            else
+            {
+                AudioListener.volume = value;
+            }
+        }
 
         private void OnMusicVolumeChanged(float value)
         {
@@ -120,15 +144,9 @@ namespace NeonGalaxy.UI
                 _saveService.MarkDirty();
             }
 
-            UpdateVolumeText(musicValueText, value);
-            
             if (NeonGalaxy.VFX.AudioManager.Instance != null)
             {
                 NeonGalaxy.VFX.AudioManager.Instance.SetMusicVolume(value);
-            }
-            else
-            {
-                AudioListener.volume = value; // Quick global audio control fallback
             }
         }
 
@@ -140,49 +158,59 @@ namespace NeonGalaxy.UI
                 _saveService.MarkDirty();
             }
 
-            UpdateVolumeText(sfxValueText, value);
-
             if (NeonGalaxy.VFX.AudioManager.Instance != null)
             {
                 NeonGalaxy.VFX.AudioManager.Instance.SetSFXVolume(value);
             }
         }
 
-        private void OnPlayerNameChanged(string newName)
-        {
-            if (string.IsNullOrWhiteSpace(newName))
-            {
-                newName = "Player";
-                if (playerNameInput != null)
-                    playerNameInput.SetTextWithoutNotify(newName);
-            }
+        // ── Toggle Event Handlers ────────────────────────────────
 
+        private void OnVibrationChanged(bool enabled)
+        {
             if (_saveService != null)
             {
-                _saveService.Data.playerName = newName.Trim();
+                _saveService.Data.vibrationEnabled = enabled;
                 _saveService.MarkDirty();
             }
 
-            Debug.Log($"[Settings] Player name changed to: {newName}");
+            Debug.Log($"[Settings] Vibration {(enabled ? "enabled" : "disabled")}");
         }
 
-        private void OnDeleteSaveClicked()
+        private void OnParticleEffectsChanged(bool enabled)
         {
             if (_saveService != null)
             {
-                _saveService.DeleteSave();
-                LoadSettings(); // Reload defaults
-                Debug.Log("[Settings] Save data deleted.");
+                _saveService.Data.particleEffectsEnabled = enabled;
+                _saveService.MarkDirty();
             }
+
+            Debug.Log($"[Settings] Particle Effects {(enabled ? "enabled" : "disabled")}");
+        }
+
+        private void OnConfirmUndoChanged(bool enabled)
+        {
+            if (_saveService != null)
+            {
+                _saveService.Data.confirmUndoEnabled = enabled;
+                _saveService.MarkDirty();
+            }
+
+            Debug.Log($"[Settings] Confirm Undo {(enabled ? "enabled" : "disabled")}");
+        }
+
+        private void OnNotificationsChanged(bool enabled)
+        {
+            if (_saveService != null)
+            {
+                _saveService.Data.notificationsEnabled = enabled;
+                _saveService.MarkDirty();
+            }
+
+            Debug.Log($"[Settings] Notifications {(enabled ? "enabled" : "disabled")}");
         }
 
         // ── Helpers ──────────────────────────────────────────────
-
-        private void UpdateVolumeText(TextMeshProUGUI text, float value)
-        {
-            if (text != null)
-                text.text = $"{Mathf.RoundToInt(value * 100)}%";
-        }
 
         private void SaveAllSettings()
         {

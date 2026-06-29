@@ -40,6 +40,16 @@ namespace NeonGalaxy.Core
             if (result.LinesCleared > 0)
             {
                 BatchLinesCleared += result.LinesCleared;
+
+                // Increment combo instantly upon clearing lines with this placement
+                CurrentCombo += 1;
+
+                if (result.NovaCross)
+                {
+                    CurrentCombo += _config.novaCrossBonusComboIncrement;
+                }
+
+                GameEvents.InvokeComboUpdated(CurrentCombo);
             }
 
             if (result.NovaCross)
@@ -49,36 +59,21 @@ namespace NeonGalaxy.Core
         }
 
         /// <summary>
-        /// Evaluates combo growth or reset rules at the end of a 3-piece batch.
+        /// Evaluates combo reset rules at the end of a 3-piece batch.
         /// </summary>
         public void OnBatchComplete()
         {
             if (_config == null) return;
 
-            if (BatchLinesCleared > 0)
-            {
-                // Calculate combo growth based on total lines cleared in this batch
-                int increment = _config.GetComboIncrement(BatchLinesCleared);
-
-                // Add bonus increment if any placement in the batch triggered a Nova Cross
-                if (BatchHadNovaCross)
-                {
-                    increment += _config.novaCrossBonusComboIncrement;
-                }
-
-                CurrentCombo += increment;
-            }
-            else
+            if (BatchLinesCleared == 0)
             {
                 // Reset combo to zero if the entire batch resulted in no lines cleared
                 if (_config.resetOnZeroClearBatch)
                 {
                     CurrentCombo = 0;
+                    GameEvents.InvokeComboUpdated(CurrentCombo);
                 }
             }
-
-            // Dispatch event to update UI and systems
-            GameEvents.InvokeComboUpdated(CurrentCombo);
 
             // Reset batch counters for the next batch
             BatchLinesCleared = 0;

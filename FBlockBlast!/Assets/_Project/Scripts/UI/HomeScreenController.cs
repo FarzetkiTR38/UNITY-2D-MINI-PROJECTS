@@ -27,16 +27,22 @@ namespace NeonGalaxy.UI
         [SerializeField] private Button leaderboardButton;
         [SerializeField] private Button settingsButton;
         [SerializeField] private Button shopButton;
+        [SerializeField] private Button creditsButton;
 
         [Header("Popup Panels")]
+        [SerializeField] private GameObject mainPanel;
         [SerializeField] private GameObject leaderboardPanel;
         [SerializeField] private GameObject settingsPanel;
         [SerializeField] private GameObject shopPanel;
+        [SerializeField] private GameObject creditsPanel;
 
         private void Start()
         {
             SetupButtons();
             RefreshUI();
+            
+            // Default to showing only main panel
+            OnBackClicked();
         }
 
         private void OnEnable()
@@ -85,6 +91,9 @@ namespace NeonGalaxy.UI
 
             if (shopButton != null)
                 shopButton.onClick.AddListener(OnShopClicked);
+
+            if (creditsButton != null)
+                creditsButton.onClick.AddListener(OnCreditsClicked);
         }
 
         // ── Button Handlers ──────────────────────────────────────
@@ -98,25 +107,39 @@ namespace NeonGalaxy.UI
         private void OnLeaderboardClicked()
         {
             Debug.Log("[HomeScreen] Leaderboard button clicked.");
-            CloseAllPanels();
-            if (leaderboardPanel != null)
-                leaderboardPanel.SetActive(true);
+            OpenPanel(leaderboardPanel);
         }
 
         private void OnSettingsClicked()
         {
             Debug.Log("[HomeScreen] Settings button clicked.");
-            CloseAllPanels();
-            if (settingsPanel != null)
-                settingsPanel.SetActive(true);
+            OpenPanel(settingsPanel);
         }
 
         private void OnShopClicked()
         {
             Debug.Log("[HomeScreen] Shop button clicked.");
+            OpenPanel(shopPanel);
+        }
+
+        private void OnCreditsClicked()
+        {
+            Debug.Log("[HomeScreen] Credits button clicked.");
+            OpenPanel(creditsPanel);
+        }
+
+        private void OpenPanel(GameObject panel)
+        {
             CloseAllPanels();
-            if (shopPanel != null)
-                shopPanel.SetActive(true);
+            if (mainPanel != null) mainPanel.SetActive(false);
+            if (panel != null) panel.SetActive(true);
+        }
+
+        public void OnBackClicked()
+        {
+            Debug.Log("[HomeScreen] Back button clicked.");
+            CloseAllPanels();
+            if (mainPanel != null) mainPanel.SetActive(true);
         }
 
         private void CloseAllPanels()
@@ -124,6 +147,7 @@ namespace NeonGalaxy.UI
             if (leaderboardPanel != null) leaderboardPanel.SetActive(false);
             if (settingsPanel != null) settingsPanel.SetActive(false);
             if (shopPanel != null) shopPanel.SetActive(false);
+            if (creditsPanel != null) creditsPanel.SetActive(false);
         }
 
         // ── Event Handlers ───────────────────────────────────────
