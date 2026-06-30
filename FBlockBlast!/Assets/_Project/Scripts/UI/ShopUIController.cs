@@ -12,8 +12,8 @@ namespace NeonGalaxy.UI
 {
     /// <summary>
     /// Controls the Shop panel UI.
-    /// Displays purchasable products organized by category tabs,
-    /// handles IAP purchases and coin purchases.
+    /// Displays purchasable products, handles IAP purchases, coin, and gem purchases.
+    /// Updated for unified grid display (no tabs).
     /// </summary>
     public class ShopUIController : MonoBehaviour
     {
@@ -24,18 +24,12 @@ namespace NeonGalaxy.UI
         [SerializeField] private Transform productListParent;
         [SerializeField] private GameObject productCardPrefab;
         [SerializeField] private TextMeshProUGUI coinBalanceText;
-
-        [Header("Category Tabs")]
-        [SerializeField] private Button tabRemoveAds;
-        [SerializeField] private Button tabCoinPacks;
-        [SerializeField] private Button tabCosmetics;
+        [SerializeField] private TextMeshProUGUI gemBalanceText; // Added for new GUI
 
         [Header("Navigation")]
         [SerializeField] private Button closeButton;
 
         public event System.Action OnCloseClicked;
-
-        private ShopProductType _activeTab = ShopProductType.CoinPack;
 
         private void Awake()
         {
@@ -47,55 +41,39 @@ namespace NeonGalaxy.UI
                     gameObject.SetActive(false);
                 });
             }
-
-            SetupTabs();
         }
 
         private void OnEnable()
         {
             RefreshUI();
             GameEvents.OnCoinBalanceChanged += HandleCoinBalanceChanged;
+            GameEvents.OnGemBalanceChanged += HandleGemBalanceChanged;
         }
 
         private void OnDisable()
         {
             GameEvents.OnCoinBalanceChanged -= HandleCoinBalanceChanged;
-        }
-
-        // ── Tab Setup ────────────────────────────────────────────
-
-        private void SetupTabs()
-        {
-            if (tabRemoveAds != null)
-                tabRemoveAds.onClick.AddListener(() => ShowTab(ShopProductType.RemoveAds));
-
-            if (tabCoinPacks != null)
-                tabCoinPacks.onClick.AddListener(() => ShowTab(ShopProductType.CoinPack));
-
-            if (tabCosmetics != null)
-                tabCosmetics.onClick.AddListener(() => ShowTab(ShopProductType.CosmeticPack));
-        }
-
-        private void ShowTab(ShopProductType type)
-        {
-            _activeTab = type;
-            PopulateProductList();
+            GameEvents.OnGemBalanceChanged -= HandleGemBalanceChanged;
         }
 
         // ── UI Refresh ───────────────────────────────────────────
 
         private void RefreshUI()
         {
-            RefreshCoinBalance();
+            RefreshBalances();
             PopulateProductList();
         }
 
-        private void RefreshCoinBalance()
+        private void RefreshBalances()
         {
             var currencyManager = ServiceLocator.Get<CurrencyManager>();
-            if (coinBalanceText != null && currencyManager != null)
+            if (currencyManager != null)
             {
-                coinBalanceText.text = $"🪙 {currencyManager.GetBalance():N0}";
+                if (coinBalanceText != null)
+                    coinBalanceText.text = $"🪙 {currencyManager.GetBalance():N0}";
+                
+                if (gemBalanceText != null)
+                    gemBalanceText.text = $"💎 {currencyManager.GetGemBalance():N0}";
             }
         }
 
@@ -109,15 +87,18 @@ namespace NeonGalaxy.UI
                 Destroy(child.gameObject);
             }
 
-            // Filter and sort products
-            var filtered = GetProductsByType(_activeTab);
-            filtered.Sort((a, b) => a.sortOrder.CompareTo(b.sortOrder));
+            // Sort products by order
+            var sortedProducts = new List<ShopProductSO>(products);
+            sortedProducts.Sort((a, b) => a.sortOrder.CompareTo(b.sortOrder));
 
             var iapService = ServiceLocator.Get<IIAPService>();
 
-            foreach (var product in filtered)
+            foreach (var product in sortedProducts)
             {
-                CreateProductCard(product, iapService);
+                if (product != null)
+                {
+                    CreateProductCard(product, iapService);
+                }
             }
         }
 
@@ -126,21 +107,27 @@ namespace NeonGalaxy.UI
             var cardGO = Instantiate(productCardPrefab, productListParent);
             cardGO.SetActive(true);
 
-            // Find text components
-            var texts = cardGO.GetComponentsInChildren<TextMeshProUGUI>();
-            var button = cardGO.GetComponentInChildren<Button>();
+            // Find common UI components in the prefab (Order: Name, Description/Amount, Price, Badge)
+            var texts = cardGO.GetComponentsInChildren<TextMeshProUGUI>(true);
+            var button = cardGO.GetComponentInChildren<Button>(true);
+            var images = cardGO.GetComponentsInChildren<Image>(true); // To set the icon
 
+            // Set Texts
             if (texts.Length >= 3)
             {
                 texts[0].text = product.displayName;
-                texts[1].text = product.description;
-
-                // Price display
-                string priceStr = GetPriceString(product, iapService);
-                texts[2].text = priceStr;
+                texts[1].text = string.IsNullOrEmpty(product.description) ? GetAmountString(product) : product.description;
+                texts[2].text = GetPriceString(product, iapService);
             }
 
-            // Check if already owned (non-consumable)
+            // Optional Icon Setup
+            if (product.icon != null && images.Length > 1)
+            {
+                // Assuming images[0] is background, images[1] is the item icon. Adjust in prefab as needed.
+                images[1].sprite = product.icon;
+            }
+
+            // Handle Ownership (Non-consumable)
             bool isOwned = false;
             if (iapService != null && product.productType == ShopProductType.RemoveAds)
             {
@@ -149,24 +136,20 @@ namespace NeonGalaxy.UI
 
             if (isOwned)
             {
-                if (texts.Length >= 3)
-                    texts[2].text = "✅ Purchased";
-
-                if (button != null)
-                    button.interactable = false;
+                if (texts.Length >= 3) texts[2].text = "✅ Owned";
+                if (button != null) button.interactable = false;
             }
             else if (button != null)
             {
-                // Capture for closure
                 var capturedProduct = product;
                 button.onClick.AddListener(() => OnProductPurchaseClicked(capturedProduct));
             }
 
-            // Badge
+            // Badge Setup
             if (!string.IsNullOrEmpty(product.badgeText) && texts.Length >= 4)
             {
                 texts[3].text = product.badgeText;
-                texts[3].gameObject.SetActive(true);
+                texts[3].transform.parent.gameObject.SetActive(true); // Assuming text has a background parent
             }
         }
 
@@ -174,24 +157,34 @@ namespace NeonGalaxy.UI
 
         private void OnProductPurchaseClicked(ShopProductSO product)
         {
-            // Coin purchase path
-            if (product.coinCost > 0 && product.productType == ShopProductType.CosmeticPack)
+            var currencyManager = ServiceLocator.Get<CurrencyManager>();
+
+            // Soft Currency Purchase Path (Gems first, then Coins)
+            if (product.gemCost > 0)
             {
-                var currencyManager = ServiceLocator.Get<CurrencyManager>();
+                if (currencyManager != null && currencyManager.SpendGems(product.gemCost))
+                {
+                    GrantProduct(product);
+                    RefreshUI();
+                    return;
+                }
+                Debug.Log($"[Shop] Not enough gems for {product.displayName}");
+                return;
+            }
+            
+            if (product.coinCost > 0)
+            {
                 if (currencyManager != null && currencyManager.SpendCoins(product.coinCost))
                 {
                     GrantProduct(product);
                     RefreshUI();
                     return;
                 }
-                else
-                {
-                    Debug.Log($"[Shop] Not enough coins for {product.displayName}");
-                    return;
-                }
+                Debug.Log($"[Shop] Not enough coins for {product.displayName}");
+                return;
             }
 
-            // IAP purchase path
+            // Real Money IAP Purchase Path
             var iapService = ServiceLocator.Get<IIAPService>();
             if (iapService == null) return;
 
@@ -221,35 +214,31 @@ namespace NeonGalaxy.UI
                     if (saveService != null)
                     {
                         saveService.Data.removeAdsPurchased = true;
-                        saveService.MarkDirty();
-                        saveService.Save();
                     }
                     Debug.Log("[Shop] Remove Ads purchased!");
                     break;
 
                 case ShopProductType.CoinPack:
                     currencyManager?.AddCoins(product.coinAmount);
-                    Debug.Log($"[Shop] Granted {product.coinAmount} coins.");
                     break;
 
-                case ShopProductType.CosmeticPack:
+                case ShopProductType.GemPack:
+                    currencyManager?.AddGems(product.gemAmount);
+                    break;
+
                 case ShopProductType.StarterPack:
-                    // Unlock included cosmetics
+                case ShopProductType.CosmeticPack:
+                    // Unlock cosmetics
                     if (product.includedCosmetics != null && cosmeticManager != null)
                     {
                         foreach (var cosmetic in product.includedCosmetics)
                         {
-                            if (cosmetic != null)
-                                cosmeticManager.TryUnlock(cosmetic.itemId);
+                            if (cosmetic != null) cosmeticManager.TryUnlock(cosmetic.itemId);
                         }
                     }
-
-                    // Grant coins if starter pack includes them
-                    if (product.coinAmount > 0)
-                        currencyManager?.AddCoins(product.coinAmount);
-
-                    saveService?.Save();
-                    Debug.Log($"[Shop] Pack granted: {product.displayName}");
+                    // Grant currencies
+                    if (product.coinAmount > 0) currencyManager?.AddCoins(product.coinAmount);
+                    if (product.gemAmount > 0) currencyManager?.AddGems(product.gemAmount);
                     break;
             }
 
@@ -260,52 +249,48 @@ namespace NeonGalaxy.UI
                 saveService.MarkDirty();
                 saveService.Save();
             }
+            else
+            {
+                saveService?.MarkDirty();
+                saveService?.Save();
+            }
         }
 
         // ── Helpers ──────────────────────────────────────────────
 
-        private List<ShopProductSO> GetProductsByType(ShopProductType type)
+        private string GetAmountString(ShopProductSO product)
         {
-            var result = new List<ShopProductSO>();
-            if (products == null) return result;
-
-            foreach (var p in products)
-            {
-                if (p != null && p.productType == type)
-                    result.Add(p);
-            }
-
-            // Also include StarterPack in RemoveAds tab
-            if (type == ShopProductType.RemoveAds)
-            {
-                foreach (var p in products)
-                {
-                    if (p != null && p.productType == ShopProductType.StarterPack)
-                        result.Add(p);
-                }
-            }
-
-            return result;
+            if (product.coinAmount > 0 && product.gemAmount > 0)
+                return $"{product.coinAmount:N0} Coins & {product.gemAmount:N0} Gems";
+            if (product.coinAmount > 0)
+                return $"{product.coinAmount:N0}";
+            if (product.gemAmount > 0)
+                return $"{product.gemAmount:N0}";
+            
+            return "Item";
         }
 
         private string GetPriceString(ShopProductSO product, IIAPService iapService)
         {
-            if (product.coinCost > 0 && product.productType == ShopProductType.CosmeticPack)
-            {
-                return $"🪙 {product.coinCost}";
-            }
+            if (product.gemCost > 0) return $"💎 {product.gemCost}";
+            if (product.coinCost > 0) return $"🪙 {product.coinCost}";
 
-            if (iapService != null)
+            if (iapService != null && !string.IsNullOrEmpty(product.iapProductId))
             {
                 return iapService.GetLocalizedPrice(product.iapProductId);
             }
 
-            return "—";
+            return "$1.99"; // Fallback preview
         }
 
         private void HandleCoinBalanceChanged(int newBalance)
         {
-            RefreshCoinBalance();
+            RefreshBalances();
+        }
+
+        private void HandleGemBalanceChanged(int newBalance)
+        {
+            RefreshBalances();
         }
     }
 }

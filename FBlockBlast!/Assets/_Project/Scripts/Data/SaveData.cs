@@ -28,6 +28,7 @@ namespace NeonGalaxy.Data
 
         // ── Currency ─────────────────────────────────────────────
         public int coins = 0;
+        public int gems = 0;
 
         // ── Cosmetics ────────────────────────────────────────────
         public List<string> unlockedCosmeticIds = new List<string>();

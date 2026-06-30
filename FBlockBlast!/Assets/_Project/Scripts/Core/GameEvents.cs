@@ -99,6 +99,12 @@ namespace NeonGalaxy.Core
         public static event Action<int> OnCoinBalanceChanged;
 
         /// <summary>
+        /// Fired when the player's gem balance changes.
+        /// Args: new balance.
+        /// </summary>
+        public static event Action<int> OnGemBalanceChanged;
+
+        /// <summary>
         /// Fired when a rewarded ad finishes.
         /// Args: true if reward granted, false if cancelled.
         /// </summary>
@@ -157,6 +163,9 @@ namespace NeonGalaxy.Core
         public static void InvokeCoinBalanceChanged(int newBalance)
             => OnCoinBalanceChanged?.Invoke(newBalance);
 
+        public static void InvokeGemBalanceChanged(int newBalance)
+            => OnGemBalanceChanged?.Invoke(newBalance);
+
         public static void InvokeAdRewardReceived(bool success)
             => OnAdRewardReceived?.Invoke(success);
 
@@ -186,6 +195,7 @@ namespace NeonGalaxy.Core
             OnAchievementUnlocked = null;
             OnNewBestScore = null;
             OnCoinBalanceChanged = null;
+            OnGemBalanceChanged = null;
             OnAdRewardReceived = null;
             OnScorePopupRequested = null;
         }

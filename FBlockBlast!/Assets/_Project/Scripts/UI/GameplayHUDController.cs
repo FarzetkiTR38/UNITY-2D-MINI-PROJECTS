@@ -28,6 +28,7 @@ namespace NeonGalaxy.UI
         [SerializeField] private Button pauseButton;
         [SerializeField] private Button addCurrencyButton;
         [SerializeField] private TextMeshProUGUI currencyText;
+        [SerializeField] private TextMeshProUGUI gemText;
 
         [Header("Text Animations")]
         [SerializeField] private float punchScale = 1.2f;
@@ -58,6 +59,7 @@ namespace NeonGalaxy.UI
             GameEvents.OnComboUpdated += HandleComboUpdated;
             GameEvents.OnNewBestScore += HandleNewBestScore;
             GameEvents.OnCoinBalanceChanged += HandleCoinBalanceChanged;
+            GameEvents.OnGemBalanceChanged += HandleGemBalanceChanged;
         }
 
         private void OnDisable()
@@ -66,6 +68,7 @@ namespace NeonGalaxy.UI
             GameEvents.OnComboUpdated -= HandleComboUpdated;
             GameEvents.OnNewBestScore -= HandleNewBestScore;
             GameEvents.OnCoinBalanceChanged -= HandleCoinBalanceChanged;
+            GameEvents.OnGemBalanceChanged -= HandleGemBalanceChanged;
         }
 
         /// <summary>
@@ -122,6 +125,12 @@ namespace NeonGalaxy.UI
         private void HandleCoinBalanceChanged(int newBalance)
         {
             UpdateCurrency(newBalance);
+        }
+
+        private void HandleGemBalanceChanged(int newBalance)
+        {
+            if (gemText != null)
+                gemText.text = newBalance.ToString("N0");
         }
 
         /// <summary>
