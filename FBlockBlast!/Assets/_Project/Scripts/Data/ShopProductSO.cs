@@ -10,6 +10,7 @@ namespace NeonGalaxy.Data
         RemoveAds,
         StarterPack,
         CoinPack,
+        GemPack,
         CosmeticPack
     }
 
@@ -39,9 +40,12 @@ namespace NeonGalaxy.Data
         [Tooltip("Category of this product.")]
         public ShopProductType productType;
 
-        [Header("Coin Pack Details")]
-        [Tooltip("Number of coins granted if this is a CoinPack.")]
+        [Header("Currency Pack Details")]
+        [Tooltip("Number of coins granted if this pack provides coins.")]
         public int coinAmount;
+
+        [Tooltip("Number of gems granted if this pack provides gems.")]
+        public int gemAmount;
 
         [Header("Cosmetic Pack Details")]
         [Tooltip("Cosmetics included if this is a CosmeticPack.")]
@@ -53,6 +57,9 @@ namespace NeonGalaxy.Data
 
         [Tooltip("If > 0, this item can also be purchased with in-game coins.")]
         public int coinCost;
+
+        [Tooltip("If > 0, this item can also be purchased with in-game gems.")]
+        public int gemCost;
 
         [Header("Display")]
         [Tooltip("Badge text for promotional items (e.g., 'BEST VALUE', '2X COINS'). Leave empty for no badge.")]

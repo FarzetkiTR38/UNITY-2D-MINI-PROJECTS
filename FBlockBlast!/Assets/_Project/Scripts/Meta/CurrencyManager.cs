@@ -29,6 +29,11 @@ namespace NeonGalaxy.Meta
         public int GetBalance() => _saveService.Data.coins;
 
         /// <summary>
+        /// Returns the current gem balance.
+        /// </summary>
+        public int GetGemBalance() => _saveService.Data.gems;
+
+        /// <summary>
         /// Adds coins to the player's balance.
         /// </summary>
         public void AddCoins(int amount)
@@ -77,5 +82,57 @@ namespace NeonGalaxy.Meta
         /// Returns true if the player can afford the given amount.
         /// </summary>
         public bool CanAfford(int amount) => _saveService.Data.coins >= amount;
+
+        // ── Gems ───────────────────────────────────────────────
+
+        /// <summary>
+        /// Adds gems to the player's balance.
+        /// </summary>
+        public void AddGems(int amount)
+        {
+            if (amount <= 0)
+            {
+                Debug.LogWarning($"[CurrencyManager] AddGems called with non-positive amount: {amount}");
+                return;
+            }
+
+            _saveService.Data.gems += amount;
+            _saveService.MarkDirty();
+            _saveService.Save();
+
+            GameEvents.InvokeGemBalanceChanged(_saveService.Data.gems);
+            Debug.Log($"[CurrencyManager] Added {amount} gems. New balance: {_saveService.Data.gems}");
+        }
+
+        /// <summary>
+        /// Attempts to spend gems. Returns true if the player had enough.
+        /// </summary>
+        public bool SpendGems(int amount)
+        {
+            if (amount <= 0)
+            {
+                Debug.LogWarning($"[CurrencyManager] SpendGems called with non-positive amount: {amount}");
+                return false;
+            }
+
+            if (_saveService.Data.gems < amount)
+            {
+                Debug.Log($"[CurrencyManager] Insufficient gems. Need {amount}, have {_saveService.Data.gems}");
+                return false;
+            }
+
+            _saveService.Data.gems -= amount;
+            _saveService.MarkDirty();
+            _saveService.Save();
+
+            GameEvents.InvokeGemBalanceChanged(_saveService.Data.gems);
+            Debug.Log($"[CurrencyManager] Spent {amount} gems. New balance: {_saveService.Data.gems}");
+            return true;
+        }
+
+        /// <summary>
+        /// Returns true if the player can afford the given amount of gems.
+        /// </summary>
+        public bool CanAffordGems(int amount) => _saveService.Data.gems >= amount;
     }
 }

@@ -21,6 +21,7 @@ namespace NeonGalaxy.UI
 
         [Header("Currency")]
         [SerializeField] private TextMeshProUGUI coinText;
+        [SerializeField] private TextMeshProUGUI gemText;
 
         [Header("Buttons")]
         [SerializeField] private Button playButton;
@@ -48,11 +49,13 @@ namespace NeonGalaxy.UI
         private void OnEnable()
         {
             GameEvents.OnCoinBalanceChanged += HandleCoinBalanceChanged;
+            GameEvents.OnGemBalanceChanged += HandleGemBalanceChanged;
         }
 
         private void OnDisable()
         {
             GameEvents.OnCoinBalanceChanged -= HandleCoinBalanceChanged;
+            GameEvents.OnGemBalanceChanged -= HandleGemBalanceChanged;
         }
 
         // ── UI Refresh ───────────────────────────────────────────
@@ -70,9 +73,13 @@ namespace NeonGalaxy.UI
         private void RefreshCoinDisplay()
         {
             var currencyManager = ServiceLocator.Get<CurrencyManager>();
-            if (coinText != null && currencyManager != null)
+            if (currencyManager != null)
             {
-                coinText.text = currencyManager.GetBalance().ToString("N0");
+                if (coinText != null)
+                    coinText.text = currencyManager.GetBalance().ToString("N0");
+                
+                if (gemText != null)
+                    gemText.text = currencyManager.GetGemBalance().ToString("N0");
             }
         }
 
@@ -156,6 +163,12 @@ namespace NeonGalaxy.UI
         {
             if (coinText != null)
                 coinText.text = newBalance.ToString("N0");
+        }
+
+        private void HandleGemBalanceChanged(int newBalance)
+        {
+            if (gemText != null)
+                gemText.text = newBalance.ToString("N0");
         }
     }
 }
