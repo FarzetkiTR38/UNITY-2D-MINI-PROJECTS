@@ -26,6 +26,11 @@ namespace NeonGalaxy.UI
         [SerializeField] private TextMeshProUGUI coinBalanceText;
         [SerializeField] private TextMeshProUGUI gemBalanceText; // Added for new GUI
 
+        [Header("Limited Offer (Starter Pack)")]
+        [SerializeField] private ShopProductSO limitedOfferProduct;
+        [SerializeField] private Button limitedOfferButton;
+        [SerializeField] private TextMeshProUGUI limitedOfferPriceText;
+
         [Header("Navigation")]
         [SerializeField] private Button closeButton;
 
@@ -40,6 +45,11 @@ namespace NeonGalaxy.UI
                     OnCloseClicked?.Invoke();
                     gameObject.SetActive(false);
                 });
+            }
+
+            if (limitedOfferButton != null && limitedOfferProduct != null)
+            {
+                limitedOfferButton.onClick.AddListener(() => OnProductPurchaseClicked(limitedOfferProduct));
             }
         }
 
@@ -93,9 +103,15 @@ namespace NeonGalaxy.UI
 
             var iapService = ServiceLocator.Get<IIAPService>();
 
+            // Setup Limited Offer Price if available
+            if (limitedOfferProduct != null && limitedOfferPriceText != null)
+            {
+                limitedOfferPriceText.text = GetPriceString(limitedOfferProduct, iapService);
+            }
+
             foreach (var product in sortedProducts)
             {
-                if (product != null)
+                if (product != null && product.productType != ShopProductType.StarterPack)
                 {
                     CreateProductCard(product, iapService);
                 }
