@@ -69,8 +69,23 @@ namespace NeonGalaxy.Core
             StartGame();
         }
 
+        private void OnEnable()
+        {
+            GameEvents.OnGameStateChanged += HandleGameStateChanged;
+        }
+
+        private void HandleGameStateChanged(GameState state)
+        {
+            if (state == GameState.Paused && _currentState != GameState.Paused)
+            {
+                PauseGame();
+            }
+        }
+
         private void OnDestroy()
         {
+            GameEvents.OnGameStateChanged -= HandleGameStateChanged;
+
             // Unsubscribe to prevent memory leaks across scene updates
             if (touchInputController != null)
             {
@@ -93,6 +108,7 @@ namespace NeonGalaxy.Core
             if (pausePopup != null)
             {
                 pausePopup.OnResumeClicked -= ResumeGame;
+                pausePopup.OnRestartClicked -= HandleRetryGame;
                 pausePopup.OnQuitClicked -= HandleQuitToHome;
             }
         }
@@ -144,6 +160,11 @@ namespace NeonGalaxy.Core
             {
                 pausePopup.OnResumeClicked -= ResumeGame;
                 pausePopup.OnResumeClicked += ResumeGame;
+
+                pausePopup.OnRestartClicked -= HandleRetryGame;
+                pausePopup.OnRestartClicked += HandleRetryGame;
+
+                pausePopup.OnQuitClicked -= HandleQuitToHome;
                 pausePopup.OnQuitClicked += HandleQuitToHome;
             }
         }
