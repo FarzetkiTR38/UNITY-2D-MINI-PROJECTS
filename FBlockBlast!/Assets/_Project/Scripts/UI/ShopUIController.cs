@@ -23,8 +23,15 @@ namespace NeonGalaxy.UI
         [Header("UI Elements")]
         [SerializeField] private Transform productListParent;
         [SerializeField] private GameObject productCardPrefab;
-        [SerializeField] private TextMeshProUGUI coinBalanceText;
-        [SerializeField] private TextMeshProUGUI gemBalanceText; // Added for new GUI
+        [UnityEngine.Serialization.FormerlySerializedAs("coinBalanceText")]
+        [SerializeField] private TextMeshProUGUI coinText;
+        [UnityEngine.Serialization.FormerlySerializedAs("gemBalanceText")]
+        [SerializeField] private TextMeshProUGUI gemText;
+
+        [Header("Limited Offer (Starter Pack)")]
+        [SerializeField] private ShopProductSO limitedOfferProduct;
+        [SerializeField] private Button limitedOfferButton;
+        [SerializeField] private TextMeshProUGUI limitedOfferPriceText;
 
         [Header("Navigation")]
         [SerializeField] private Button closeButton;
@@ -40,6 +47,11 @@ namespace NeonGalaxy.UI
                     OnCloseClicked?.Invoke();
                     gameObject.SetActive(false);
                 });
+            }
+
+            if (limitedOfferButton != null && limitedOfferProduct != null)
+            {
+                limitedOfferButton.onClick.AddListener(() => OnProductPurchaseClicked(limitedOfferProduct));
             }
         }
 
@@ -69,11 +81,11 @@ namespace NeonGalaxy.UI
             var currencyManager = ServiceLocator.Get<CurrencyManager>();
             if (currencyManager != null)
             {
-                if (coinBalanceText != null)
-                    coinBalanceText.text = $"🪙 {currencyManager.GetBalance():N0}";
+                if (coinText != null)
+                    coinText.text = $"{currencyManager.GetBalance():N0}";
                 
-                if (gemBalanceText != null)
-                    gemBalanceText.text = $"💎 {currencyManager.GetGemBalance():N0}";
+                if (gemText != null)
+                    gemText.text = $"{currencyManager.GetGemBalance():N0}";
             }
         }
 
@@ -93,9 +105,15 @@ namespace NeonGalaxy.UI
 
             var iapService = ServiceLocator.Get<IIAPService>();
 
+            // Setup Limited Offer Price if available
+            if (limitedOfferProduct != null && limitedOfferPriceText != null)
+            {
+                limitedOfferPriceText.text = GetPriceString(limitedOfferProduct, iapService);
+            }
+
             foreach (var product in sortedProducts)
             {
-                if (product != null)
+                if (product != null && product.productType != ShopProductType.StarterPack)
                 {
                     CreateProductCard(product, iapService);
                 }

@@ -5,6 +5,9 @@ using UnityEngine.UI;
 using TMPro;
 using NeonGalaxy.Core;
 using NeonGalaxy.Data;
+using NeonGalaxy.Services;
+using NeonGalaxy.Meta;
+using NeonGalaxy.Boot;
 
 namespace NeonGalaxy.UI
 {
@@ -27,7 +30,8 @@ namespace NeonGalaxy.UI
         [SerializeField] private Button backButton;
         [SerializeField] private Button pauseButton;
         [SerializeField] private Button addCurrencyButton;
-        [SerializeField] private TextMeshProUGUI currencyText;
+        [UnityEngine.Serialization.FormerlySerializedAs("currencyText")]
+        [SerializeField] private TextMeshProUGUI coinText;
         [SerializeField] private TextMeshProUGUI gemText;
 
         [Header("Text Animations")]
@@ -51,6 +55,24 @@ namespace NeonGalaxy.UI
             if (backButton != null) backButton.onClick.AddListener(HandleBackPressed);
             if (pauseButton != null) pauseButton.onClick.AddListener(HandlePausePressed);
             if (addCurrencyButton != null) addCurrencyButton.onClick.AddListener(HandleAddCurrencyPressed);
+        }
+
+        private void Start()
+        {
+            RefreshBalances();
+        }
+
+        private void RefreshBalances()
+        {
+            var currencyManager = ServiceLocator.Get<CurrencyManager>();
+            if (currencyManager != null)
+            {
+                if (coinText != null)
+                    coinText.text = currencyManager.GetBalance().ToString("N0");
+                
+                if (gemText != null)
+                    gemText.text = currencyManager.GetGemBalance().ToString("N0");
+            }
         }
 
         private void OnEnable()
@@ -138,9 +160,9 @@ namespace NeonGalaxy.UI
         /// </summary>
         public void UpdateCurrency(int amount)
         {
-            if (currencyText != null)
+            if (coinText != null)
             {
-                currencyText.text = amount.ToString("N0");
+                coinText.text = amount.ToString("N0");
             }
         }
 
