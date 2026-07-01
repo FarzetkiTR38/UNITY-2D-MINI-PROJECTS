@@ -23,8 +23,10 @@ namespace NeonGalaxy.UI
         [Header("UI Elements")]
         [SerializeField] private Transform productListParent;
         [SerializeField] private GameObject productCardPrefab;
-        [SerializeField] private TextMeshProUGUI coinBalanceText;
-        [SerializeField] private TextMeshProUGUI gemBalanceText; // Added for new GUI
+        [UnityEngine.Serialization.FormerlySerializedAs("coinBalanceText")]
+        [SerializeField] private TextMeshProUGUI coinText;
+        [UnityEngine.Serialization.FormerlySerializedAs("gemBalanceText")]
+        [SerializeField] private TextMeshProUGUI gemText;
 
         [Header("Limited Offer (Starter Pack)")]
         [SerializeField] private ShopProductSO limitedOfferProduct;
@@ -79,11 +81,11 @@ namespace NeonGalaxy.UI
             var currencyManager = ServiceLocator.Get<CurrencyManager>();
             if (currencyManager != null)
             {
-                if (coinBalanceText != null)
-                    coinBalanceText.text = $"🪙 {currencyManager.GetBalance():N0}";
+                if (coinText != null)
+                    coinText.text = $"{currencyManager.GetBalance():N0}";
                 
-                if (gemBalanceText != null)
-                    gemBalanceText.text = $"💎 {currencyManager.GetGemBalance():N0}";
+                if (gemText != null)
+                    gemText.text = $"{currencyManager.GetGemBalance():N0}";
             }
         }
 
