@@ -38,6 +38,9 @@ namespace NeonGalaxy.UI
         [SerializeField] private float punchScale = 1.2f;
         [SerializeField] private float punchDuration = 0.15f;
 
+        [Header("Profile")]
+        [SerializeField] private Image profileAvatarImage;
+
         private Coroutine _scorePunchRoutine;
         private Coroutine _comboPunchRoutine;
         private Vector3 _originalScoreScale;
@@ -60,6 +63,7 @@ namespace NeonGalaxy.UI
         private void Start()
         {
             RefreshBalances();
+            RefreshProfileAvatar();
         }
 
         private void RefreshBalances()
@@ -181,6 +185,18 @@ namespace NeonGalaxy.UI
         {
             // Placeholder: open shop or trigger rewarded ad
             Debug.Log("[HUD] Add currency pressed — hook up to shop or rewarded ad.");
+        }
+
+        private void RefreshProfileAvatar()
+        {
+            if (profileAvatarImage == null) return;
+
+            var profileManager = ServiceLocator.Get<Meta.ProfileManager>();
+            if (profileManager != null)
+            {
+                var sprite = profileManager.GetCurrentAvatarSprite();
+                if (sprite != null) profileAvatarImage.sprite = sprite;
+            }
         }
 
         private IEnumerator PunchTextRoutine(Transform targetTransform, Vector3 originalScale)

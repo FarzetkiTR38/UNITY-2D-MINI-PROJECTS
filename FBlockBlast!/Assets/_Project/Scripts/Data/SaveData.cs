@@ -17,6 +17,11 @@ namespace NeonGalaxy.Data
 
         // ── Profile ──────────────────────────────────────────────
         public string playerName = "Player";
+        public string displayName = "";             // Separate display name (shown publicly)
+        public string email = "";                   // User's email address
+        public int guestNumber = -1;               // -1 = not yet assigned
+        public string profileAvatarId = "default"; // Built-in avatar ID or "custom"
+        public string customAvatarPath = "";        // Local path for gallery-picked photo
         public int playerLevel = 0;
         public int totalXP = 0;
         public int bestScore = 0;
@@ -56,6 +61,27 @@ namespace NeonGalaxy.Data
         // ── Online ───────────────────────────────────────────────
         public string cachedPlayerId = "";
         public List<PendingScoreSubmission> pendingSubmissions = new List<PendingScoreSubmission>();
+
+        // ── Linked Accounts (Multi-provider) ────────────────────
+        public string linkedProviderId = "";           // Legacy: primary provider ID
+        public string linkedProviderDisplayName = "";
+        public string linkedProviderEmail = "";
+
+        // Google
+        public bool isGoogleLinked = false;
+        public string linkedGoogleEmail = "";
+        public string linkedGoogleDisplayName = "";
+
+        // Discord
+        public bool isDiscordLinked = false;
+        public string linkedDiscordTag = "";           // e.g. "Player#1234"
+        public string linkedDiscordDisplayName = "";
+
+        // Email
+        public bool isEmailLinked = false;
+        public string linkedEmailAddress = "";         // Email-based account
+
+        public long cloudSaveTimestamp = 0;             // Last cloud sync time (unix)
 
         // ── Ad Policy State ──────────────────────────────────────
         public int gamesPlayedSinceLastInterstitial = 0;

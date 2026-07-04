@@ -10,11 +10,14 @@ namespace NeonGalaxy.UI
 {
     /// <summary>
     /// Reusable widget that displays player profile information:
-    /// name, level badge, XP progress bar, and best score.
+    /// avatar, name, level badge, XP progress bar, and best score.
     /// Used on Home Screen and Results Screen.
     /// </summary>
     public class ProfileDisplayWidget : MonoBehaviour
     {
+        [Header("Avatar")]
+        [SerializeField] private Image profileAvatarImage;
+
         [Header("Text Fields")]
         [SerializeField] private TextMeshProUGUI playerNameText;
         [SerializeField] private TextMeshProUGUI levelText;
@@ -23,6 +26,18 @@ namespace NeonGalaxy.UI
 
         [Header("Progress Bar")]
         [SerializeField] private Image xpFillImage;
+
+        // ── Lifecycle ────────────────────────────────────────────
+
+        private void OnEnable()
+        {
+            GameEvents.OnProfileUpdated += Refresh;
+        }
+
+        private void OnDisable()
+        {
+            GameEvents.OnProfileUpdated -= Refresh;
+        }
 
         // ── Public API ───────────────────────────────────────────
 
@@ -38,6 +53,17 @@ namespace NeonGalaxy.UI
             if (saveService == null || progressionManager == null) return;
 
             var data = saveService.Data;
+
+            // Avatar
+            if (profileAvatarImage != null)
+            {
+                var profileManager = ServiceLocator.Get<ProfileManager>();
+                if (profileManager != null)
+                {
+                    var sprite = profileManager.GetCurrentAvatarSprite();
+                    if (sprite != null) profileAvatarImage.sprite = sprite;
+                }
+            }
 
             if (playerNameText != null)
                 playerNameText.text = data.playerName;
@@ -73,6 +99,11 @@ namespace NeonGalaxy.UI
                     xpText.text = $"{current} / {needed} XP";
             }
         }
+
+        /// <summary>
+        /// Returns the avatar Image component for external button wiring.
+        /// </summary>
+        public Image GetAvatarImage() => profileAvatarImage;
 
         // ── Internal ─────────────────────────────────────────────
 

@@ -19,7 +19,19 @@ namespace NeonGalaxy.Utility
         // ── Save ─────────────────────────────────────────────────
         public const string SAVE_FILENAME = "ngp_save.json";
         public const string SAVE_TEMP_FILENAME = "ngp_save_tmp.json";
-        public const int SAVE_VERSION = 1;
+        public const int SAVE_VERSION = 2;
+
+        // ── Profile ─────────────────────────────────────────────
+        public const string DEFAULT_AVATAR_ID = "avatar_astronaut";
+        public const string CUSTOM_AVATAR_ID = "custom";
+        public const string GUEST_COUNTER_PREF_KEY = "ngp_guest_counter";
+        public const string CLOUD_SAVE_KEY = "player_profile";
+        public const int PLAYER_NAME_MIN_LENGTH = 3;
+        public const int PLAYER_NAME_MAX_LENGTH = 16;
+        public const int DISPLAY_NAME_MIN_LENGTH = 2;
+        public const int DISPLAY_NAME_MAX_LENGTH = 24;
+        public const int EMAIL_MIN_LENGTH = 5;
+        public const int EMAIL_MAX_LENGTH = 64;
 
         // ── Leaderboard ──────────────────────────────────────────
         public const string LEADERBOARD_ID = "neon_galaxy_all_time_best";

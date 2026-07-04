@@ -121,6 +121,15 @@ namespace NeonGalaxy.Core
         public static event Action<int, Vector3> OnScorePopupRequested;
 
         // ══════════════════════════════════════════════════════════
+        // PROFILE EVENTS
+        // ══════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Fired when any profile data changes (name, avatar, linked account).
+        /// </summary>
+        public static event Action OnProfileUpdated;
+
+        // ══════════════════════════════════════════════════════════
         // INVOKE METHODS (centralized null-safe invocation)
         // ══════════════════════════════════════════════════════════
 
@@ -172,6 +181,9 @@ namespace NeonGalaxy.Core
         public static void InvokeScorePopupRequested(int points, Vector3 worldPos)
             => OnScorePopupRequested?.Invoke(points, worldPos);
 
+        public static void InvokeProfileUpdated()
+            => OnProfileUpdated?.Invoke();
+
         // ══════════════════════════════════════════════════════════
         // CLEANUP
         // ══════════════════════════════════════════════════════════
@@ -198,6 +210,7 @@ namespace NeonGalaxy.Core
             OnGemBalanceChanged = null;
             OnAdRewardReceived = null;
             OnScorePopupRequested = null;
+            OnProfileUpdated = null;
         }
     }
 }

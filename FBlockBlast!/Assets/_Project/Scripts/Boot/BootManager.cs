@@ -22,6 +22,7 @@ namespace NeonGalaxy.Boot
         [Header("Content Registries")]
         [SerializeField] private AchievementDefinitionSO[] achievementDefinitions;
         [SerializeField] private CosmeticItemSO[] cosmeticItems;
+        [SerializeField] private ProfileAvatarRegistrySO avatarRegistry;
 
         [Header("Status")]
         [SerializeField, Tooltip("Shows initialization progress in inspector.")]
@@ -93,6 +94,20 @@ namespace NeonGalaxy.Boot
             var adPolicyManager = new AdPolicyManager(saveService, adService, adPolicyConfig);
             ServiceLocator.Register(adPolicyManager);
             Debug.Log("[BootManager] AdPolicyManager registered.");
+
+            // Profile Manager
+            IAuthService authService = new MockAuthService();
+            ServiceLocator.Register(authService);
+            Debug.Log("[BootManager] IAuthService (Mock) registered.");
+
+            ICloudSaveService cloudSaveService = new MockCloudSaveService();
+            ServiceLocator.Register(cloudSaveService);
+            Debug.Log("[BootManager] ICloudSaveService (Mock) registered.");
+
+            var profileManager = new ProfileManager(saveService, authService, cloudSaveService, avatarRegistry);
+            profileManager.InitializeGuestProfile();
+            ServiceLocator.Register(profileManager);
+            Debug.Log("[BootManager] ProfileManager registered.");
 
             // ── Layer 4: Online Services ─────────────────────────
 

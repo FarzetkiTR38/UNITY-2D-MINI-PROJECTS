@@ -244,9 +244,33 @@ namespace NeonGalaxy.Services
 
         private void MigrateSave(SaveData data)
         {
-            // Future: add migration logic when save version increases
+            // v1 → v2: Profile system additions
+            if (data.version < 2)
+            {
+                // Guest number will be assigned by ProfileManager.InitializeGuestProfile()
+                if (data.guestNumber < 0)
+                    data.guestNumber = -1; // Signals "not yet assigned"
+
+                if (string.IsNullOrEmpty(data.profileAvatarId) || data.profileAvatarId == "default")
+                    data.profileAvatarId = Constants.DEFAULT_AVATAR_ID;
+
+                if (data.customAvatarPath == null)
+                    data.customAvatarPath = "";
+
+                if (data.linkedProviderId == null)
+                    data.linkedProviderId = "";
+
+                if (data.linkedProviderDisplayName == null)
+                    data.linkedProviderDisplayName = "";
+
+                if (data.linkedProviderEmail == null)
+                    data.linkedProviderEmail = "";
+
+                Debug.Log("[SaveService] Migrated save data from v1 → v2 (profile system).");
+            }
+
             data.version = Constants.SAVE_VERSION;
-            Debug.Log($"[SaveService] Migrated save data to version {Constants.SAVE_VERSION}.");
+            Debug.Log($"[SaveService] Save data migration complete. Current version: {Constants.SAVE_VERSION}.");
         }
 
         // ── Debug ────────────────────────────────────────────────
