@@ -29,6 +29,7 @@ namespace NeonGalaxy.UI
         [SerializeField] private Button settingsButton;
         [SerializeField] private Button shopButton;
         [SerializeField] private Button creditsButton;
+        [SerializeField] private Button profileAvatarButton;
 
         [Header("Popup Panels")]
         [SerializeField] private GameObject mainPanel;
@@ -36,6 +37,9 @@ namespace NeonGalaxy.UI
         [SerializeField] private GameObject settingsPanel;
         [SerializeField] private GameObject shopPanel;
         [SerializeField] private GameObject creditsPanel;
+
+        [Header("Profile Popup")]
+        [SerializeField] private ProfilePopupController profilePopup;
 
         private void Start()
         {
@@ -101,6 +105,9 @@ namespace NeonGalaxy.UI
 
             if (creditsButton != null)
                 creditsButton.onClick.AddListener(OnCreditsClicked);
+
+            if (profileAvatarButton != null)
+                profileAvatarButton.onClick.AddListener(OnProfileAvatarClicked);
         }
 
         // ── Button Handlers ──────────────────────────────────────
@@ -133,6 +140,13 @@ namespace NeonGalaxy.UI
         {
             Debug.Log("[HomeScreen] Credits button clicked.");
             OpenPanel(creditsPanel);
+        }
+
+        private void OnProfileAvatarClicked()
+        {
+            Debug.Log("[HomeScreen] Profile avatar clicked.");
+            if (profilePopup != null)
+                profilePopup.Toggle();
         }
 
         private void OpenPanel(GameObject panel)
