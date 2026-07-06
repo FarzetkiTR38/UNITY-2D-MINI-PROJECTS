@@ -76,6 +76,8 @@ namespace NeonGalaxy.UI
                          int linesCleared, int bestCombo)
         {
             gameObject.SetActive(true);
+            transform.localScale = Vector3.one; // FIX: Prevent invisible popup on second open
+            
             _finalScore = finalScore;
             _xpDoubled = false;
 

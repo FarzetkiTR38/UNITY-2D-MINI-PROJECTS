@@ -17,10 +17,12 @@ namespace NeonGalaxy.UI
     {
         [Header("Avatar")]
         [SerializeField] private Image profileAvatarImage;
+        [SerializeField] private Sprite defaultAvatarSprite; // Varsayılan profil fotoğrafı için eklendi
 
         [Header("Text Fields")]
         [SerializeField] private TextMeshProUGUI playerNameText;
-        [SerializeField] private TextMeshProUGUI levelText;
+        [SerializeField] private TextMeshProUGUI levelText;       // "Level 12 -> 13" bar altındaki text
+        [SerializeField] private TextMeshProUGUI levelBadgeText;  // Profil fotoğrafı üstündeki level badge (sadece "12")
         [SerializeField] private TextMeshProUGUI xpText;
         [SerializeField] private TextMeshProUGUI bestScoreText;
 
@@ -28,6 +30,28 @@ namespace NeonGalaxy.UI
         [SerializeField] private Image xpFillImage;
 
         // ── Lifecycle ────────────────────────────────────────────
+
+        private void Awake()
+        {
+            // "Slide yok aslında görsel var" dediğiniz için görselin Fill özelliklerini garantiye alıyoruz
+            if (xpFillImage != null)
+            {
+                // Unity UI Image requires a Sprite for 'Filled' type to work. 
+                // If it's null, the image is drawn as a solid quad (always full).
+                if (xpFillImage.sprite == null)
+                {
+                    Texture2D tex = new Texture2D(1, 1);
+                    tex.SetPixel(0, 0, Color.white);
+                    tex.Apply();
+                    xpFillImage.sprite = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
+                    Debug.LogWarning("[ProfileDisplayWidget] xpFillImage had no sprite! A default white sprite was created so FillAmount works. Please assign a UI Sprite in the inspector.");
+                }
+
+                xpFillImage.type = Image.Type.Filled;
+                xpFillImage.fillMethod = Image.FillMethod.Horizontal;
+                xpFillImage.fillOrigin = (int)Image.OriginHorizontal.Left;
+            }
+        }
 
         private void OnEnable()
         {
@@ -57,19 +81,30 @@ namespace NeonGalaxy.UI
             // Avatar
             if (profileAvatarImage != null)
             {
+                Sprite spriteToUse = defaultAvatarSprite; // Varsayılanı ata
                 var profileManager = ServiceLocator.Get<ProfileManager>();
                 if (profileManager != null)
                 {
-                    var sprite = profileManager.GetCurrentAvatarSprite();
-                    if (sprite != null) profileAvatarImage.sprite = sprite;
+                    var fetchedSprite = profileManager.GetCurrentAvatarSprite();
+                    if (fetchedSprite != null) spriteToUse = fetchedSprite;
                 }
+                
+                if (spriteToUse != null)
+                    profileAvatarImage.sprite = spriteToUse;
             }
 
             if (playerNameText != null)
                 playerNameText.text = data.playerName;
 
+            int currentLevel = progressionManager.GetCurrentLevel();
+
+            // Bar altındaki level progression text: "Level 12 -> 13"
             if (levelText != null)
-                levelText.text = $"LV {progressionManager.GetCurrentLevel()}";
+                levelText.text = $"Level {currentLevel} -> {currentLevel + 1}";
+
+            // Profil fotoğrafı üstündeki badge: sadece level numarası
+            if (levelBadgeText != null)
+                levelBadgeText.text = currentLevel.ToString();
 
             if (bestScoreText != null)
                 bestScoreText.text = $"BEST: {data.bestScore:N0}";

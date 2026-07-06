@@ -396,7 +396,7 @@ namespace NeonGalaxy.Core
 
             if (pausePopup != null)
             {
-                pausePopup.Show();
+                pausePopup.Show(_scoreManager.TotalScore);
             }
 
             TransitionState(GameState.Paused);
