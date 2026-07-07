@@ -1,303 +1,250 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using NeonGalaxy.Boot;
-using NeonGalaxy.Services;
-using NeonGalaxy.Meta;
-using NeonGalaxy.Core;
-using NeonGalaxy.Utility;
 
 namespace NeonGalaxy.UI
 {
     /// <summary>
-    /// Full results screen shown after game over.
-    /// Replaces the simple GameOverPopup with XP progression,
-    /// achievement unlocks, ad rewards, and navigation.
+    /// "Continue Your Run?" popup shown when the player runs out of valid placements.
+    /// Displays a countdown timer with radial fill, score/best score info,
+    /// and three options: Watch Ad, Spend Gems, or No Thanks.
+    /// When the countdown expires or the player declines, the game proceeds to Game Over.
     /// </summary>
     public class ResultsScreenController : MonoBehaviour
     {
         [Header("Score Display")]
-        [SerializeField] private TextMeshProUGUI finalScoreText;
+        [SerializeField] private TextMeshProUGUI scoreText;
         [SerializeField] private TextMeshProUGUI bestScoreText;
-        [SerializeField] private GameObject newBestBadge;
 
-        [Header("XP Display")]
-        [SerializeField] private TextMeshProUGUI xpEarnedText;
-        [SerializeField] private Image xpBarFill;
-        [SerializeField] private TextMeshProUGUI levelText;
-        [SerializeField] private GameObject levelUpBanner;
-
-        [Header("Achievements")]
-        [SerializeField] private Transform achievementListParent;
-        [SerializeField] private TextMeshProUGUI achievementEntryPrefabText;
-
-        [Header("Stats")]
-        [SerializeField] private TextMeshProUGUI linesText;
-        [SerializeField] private TextMeshProUGUI comboText;
+        [Header("Countdown")]
+        [SerializeField] private TextMeshProUGUI countdownText;
+        [SerializeField] private TextMeshProUGUI countdownInfoText;
+        [SerializeField] private Image countdownFillImage;
+        [SerializeField] private float countdownDuration = 5f;
 
         [Header("Buttons")]
-        [SerializeField] private Button retryButton;
-        [SerializeField] private Button homeButton;
-        [SerializeField] private Button doubleXPButton;
-        [SerializeField] private TextMeshProUGUI doubleXPButtonText;
+        [SerializeField] private Button watchAdButton;
+        [SerializeField] private Button spendGemsButton;
+        [SerializeField] private Button noThanksButton;
 
-        [Header("Animation")]
-        [SerializeField] private float countUpDuration = 1.0f;
-        [SerializeField] private float xpBarAnimDuration = 0.8f;
+        [Header("Gem Cost")]
+        [SerializeField] private TextMeshProUGUI gemCostText;
+        [SerializeField] private int gemCost = 50;
 
-        public event System.Action OnRetryClicked;
-        public event System.Action OnHomeClicked;
+        // ── Events ──────────────────────────────────────────────
+        /// <summary>Fired when the player chooses to watch an ad to continue.</summary>
+        public event Action OnContinueWithAd;
 
-        private RunProgressionResult _progressionResult;
-        private int _finalScore;
-        private bool _xpDoubled;
+        /// <summary>Fired when the player chooses to spend gems to continue.</summary>
+        public event Action OnContinueWithGems;
+
+        /// <summary>Fired when the player declines or the countdown expires.</summary>
+        public event Action OnDeclined;
+
+        private Coroutine _countdownCoroutine;
+        private bool _choiceMade;
 
         private void Awake()
         {
-            if (retryButton != null)
-                retryButton.onClick.AddListener(() => OnRetryClicked?.Invoke());
+            if (watchAdButton != null)
+                watchAdButton.onClick.AddListener(OnWatchAdClicked);
 
-            if (homeButton != null)
-                homeButton.onClick.AddListener(() => OnHomeClicked?.Invoke());
+            if (spendGemsButton != null)
+                spendGemsButton.onClick.AddListener(OnSpendGemsClicked);
 
-            if (doubleXPButton != null)
-                doubleXPButton.onClick.AddListener(OnDoubleXPClicked);
+            if (noThanksButton != null)
+                noThanksButton.onClick.AddListener(OnNoThanksClicked);
         }
 
-        // ── Public API ───────────────────────────────────────────
+        // ── Public API ──────────────────────────────────────────
 
         /// <summary>
-        /// Shows the results screen with full progression data.
-        /// Call after game over with the final score.
+        /// Shows the continue popup with score info and starts the countdown timer.
         /// </summary>
-        public void Show(int finalScore, int bestScore, bool isNewBest,
-                         int linesCleared, int bestCombo)
+        public void Show(int finalScore, int bestScore)
         {
             gameObject.SetActive(true);
-            _finalScore = finalScore;
-            _xpDoubled = false;
+            transform.localScale = Vector3.one;
+            _choiceMade = false;
 
-            // Process progression
-            var progressionManager = ServiceLocator.Get<ProgressionManager>();
-            var achievementManager = ServiceLocator.Get<AchievementManager>();
+            // Populate score texts
+            if (scoreText != null)
+                scoreText.text = finalScore.ToString("N0");
 
-            if (progressionManager != null)
+            if (bestScoreText != null)
+                bestScoreText.text = bestScore.ToString("N0");
+
+            // Populate gem cost text
+            if (gemCostText != null)
+                gemCostText.text = gemCost.ToString();
+
+            // Initialize countdown visuals
+            int fullSeconds = Mathf.CeilToInt(countdownDuration);
+            if (countdownText != null)
+                countdownText.text = fullSeconds.ToString();
+
+            if (countdownInfoText != null)
+                countdownInfoText.text = $"Auto game over in {fullSeconds}s";
+
+            if (countdownFillImage != null)
             {
-                _progressionResult = progressionManager.ProcessRunResult(finalScore);
+                countdownFillImage.type = Image.Type.Filled;
+                countdownFillImage.fillMethod = Image.FillMethod.Radial360;
+                countdownFillImage.fillOrigin = (int)Image.Origin360.Top;
+                countdownFillImage.fillClockwise = true;
+                countdownFillImage.fillAmount = 1f;
             }
 
-            // Check achievements
-            List<string> newAchievements = null;
-            if (achievementManager != null)
-            {
-                newAchievements = achievementManager.CheckAllAchievements();
-            }
+            // Enable buttons
+            SetButtonsInteractable(true);
 
-            // Submit score to leaderboard
-            var leaderboardService = ServiceLocator.Get<ILeaderboardService>();
-            if (leaderboardService != null)
-            {
-                _ = leaderboardService.SubmitScoreAsync(finalScore);
-            }
+            // Start countdown
+            if (_countdownCoroutine != null)
+                StopCoroutine(_countdownCoroutine);
+            _countdownCoroutine = StartCoroutine(CountdownRoutine());
 
-            // Populate UI
-            PopulateScoreSection(finalScore, bestScore, isNewBest);
-            PopulateStatsSection(linesCleared, bestCombo);
-            PopulateXPSection();
-            PopulateAchievementSection(newAchievements);
-            SetupDoubleXPButton();
-
-            // Start animations
-            StartCoroutine(AnimateResults());
+            // Bounce in animation
             StartCoroutine(NeonGalaxy.VFX.UIAnimator.BounceIn(transform, 0.4f));
         }
 
         /// <summary>
-        /// Hides the results screen.
+        /// Hides the continue popup with scale-out animation.
         /// </summary>
         public void Hide()
         {
+            if (_countdownCoroutine != null)
+            {
+                StopCoroutine(_countdownCoroutine);
+                _countdownCoroutine = null;
+            }
+
             if (!gameObject.activeSelf) return;
             StartCoroutine(HideRoutine());
+        }
+
+        /// <summary>
+        /// Force-hides without animation (used when immediately transitioning).
+        /// </summary>
+        public void HideImmediate()
+        {
+            if (_countdownCoroutine != null)
+            {
+                StopCoroutine(_countdownCoroutine);
+                _countdownCoroutine = null;
+            }
+
+            gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// Returns the configured gem cost for continue.
+        /// Used by GameManager to know how many gems to spend.
+        /// </summary>
+        public int GetGemCost() => gemCost;
+
+        // ── Countdown ───────────────────────────────────────────
+
+        private IEnumerator CountdownRoutine()
+        {
+            float remaining = countdownDuration;
+
+            while (remaining > 0f)
+            {
+                remaining -= Time.deltaTime;
+                if (remaining < 0f) remaining = 0f;
+
+                float normalizedTime = remaining / countdownDuration;
+                int displaySeconds = Mathf.CeilToInt(remaining);
+
+                // Update countdown number text
+                if (countdownText != null)
+                    countdownText.text = displaySeconds.ToString();
+
+                // Update info text
+                if (countdownInfoText != null)
+                    countdownInfoText.text = $"Auto game over in {displaySeconds}s";
+
+                // Update radial fill (1 → 0 as time passes)
+                if (countdownFillImage != null)
+                    countdownFillImage.fillAmount = normalizedTime;
+
+                yield return null;
+            }
+
+            // Countdown expired — treat as decline
+            _countdownCoroutine = null;
+
+            if (!_choiceMade)
+            {
+                _choiceMade = true;
+                SetButtonsInteractable(false);
+                Debug.Log("[ResultsScreen] Countdown expired. Proceeding to Game Over.");
+                OnDeclined?.Invoke();
+            }
+        }
+
+        // ── Button Handlers ─────────────────────────────────────
+
+        private void OnWatchAdClicked()
+        {
+            if (_choiceMade) return;
+            _choiceMade = true;
+
+            StopCountdown();
+            SetButtonsInteractable(false);
+
+            Debug.Log("[ResultsScreen] Player chose: Watch Ad");
+            OnContinueWithAd?.Invoke();
+        }
+
+        private void OnSpendGemsClicked()
+        {
+            if (_choiceMade) return;
+            _choiceMade = true;
+
+            StopCountdown();
+            SetButtonsInteractable(false);
+
+            Debug.Log($"[ResultsScreen] Player chose: Spend {gemCost} Gems");
+            OnContinueWithGems?.Invoke();
+        }
+
+        private void OnNoThanksClicked()
+        {
+            if (_choiceMade) return;
+            _choiceMade = true;
+
+            StopCountdown();
+            SetButtonsInteractable(false);
+
+            Debug.Log("[ResultsScreen] Player chose: No Thanks");
+            OnDeclined?.Invoke();
+        }
+
+        // ── Helpers ─────────────────────────────────────────────
+
+        private void StopCountdown()
+        {
+            if (_countdownCoroutine != null)
+            {
+                StopCoroutine(_countdownCoroutine);
+                _countdownCoroutine = null;
+            }
+        }
+
+        private void SetButtonsInteractable(bool interactable)
+        {
+            if (watchAdButton != null) watchAdButton.interactable = interactable;
+            if (spendGemsButton != null) spendGemsButton.interactable = interactable;
+            if (noThanksButton != null) noThanksButton.interactable = interactable;
         }
 
         private IEnumerator HideRoutine()
         {
             yield return StartCoroutine(NeonGalaxy.VFX.UIAnimator.ScaleOut(transform, 0.2f));
             gameObject.SetActive(false);
-        }
-
-        // ── UI Population ────────────────────────────────────────
-
-        private void PopulateScoreSection(int finalScore, int bestScore, bool isNewBest)
-        {
-            if (bestScoreText != null)
-                bestScoreText.text = $"BEST: {bestScore:N0}";
-
-            if (newBestBadge != null)
-                newBestBadge.SetActive(isNewBest);
-        }
-
-        private void PopulateStatsSection(int linesCleared, int bestCombo)
-        {
-            if (linesText != null)
-                linesText.text = linesCleared.ToString();
-
-            if (comboText != null)
-                comboText.text = $"{bestCombo}x";
-        }
-
-        private void PopulateXPSection()
-        {
-            if (_progressionResult == null) return;
-
-            if (xpEarnedText != null)
-                xpEarnedText.text = $"+{_progressionResult.XPEarned} XP";
-
-            if (levelText != null)
-                levelText.text = $"LV {_progressionResult.NewLevel}";
-
-            if (levelUpBanner != null)
-                levelUpBanner.SetActive(_progressionResult.DidLevelUp);
-        }
-
-        private void PopulateAchievementSection(List<string> newAchievements)
-        {
-            if (achievementListParent == null) return;
-
-            // Clear previous entries
-            foreach (Transform child in achievementListParent)
-            {
-                Destroy(child.gameObject);
-            }
-
-            if (newAchievements == null || newAchievements.Count == 0) return;
-
-            var achievementManager = ServiceLocator.Get<AchievementManager>();
-            if (achievementManager == null) return;
-
-            foreach (var id in newAchievements)
-            {
-                var def = achievementManager.GetDefinition(id);
-                if (def == null) continue;
-
-                if (achievementEntryPrefabText != null)
-                {
-                    var entry = Instantiate(achievementEntryPrefabText, achievementListParent);
-                    entry.text = $"🏆 {def.displayName}";
-                    entry.gameObject.SetActive(true);
-                }
-            }
-        }
-
-        private void SetupDoubleXPButton()
-        {
-            if (doubleXPButton == null) return;
-
-            var adService = ServiceLocator.Get<IAdService>();
-            bool adReady = adService != null && adService.IsRewardedAdReady;
-
-            doubleXPButton.gameObject.SetActive(adReady);
-            doubleXPButton.interactable = true;
-
-            if (doubleXPButtonText != null)
-                doubleXPButtonText.text = "📺 Watch Ad — 2X XP";
-        }
-
-        // ── Animations ───────────────────────────────────────────
-
-        private IEnumerator AnimateResults()
-        {
-            // Animate score count-up
-            if (finalScoreText != null)
-            {
-                float elapsed = 0f;
-                while (elapsed < countUpDuration)
-                {
-                    elapsed += Time.deltaTime;
-                    float t = elapsed / countUpDuration;
-                    float ease = 1f - Mathf.Pow(1f - t, 3f);
-                    int val = Mathf.RoundToInt(Mathf.Lerp(0, _finalScore, ease));
-                    finalScoreText.text = val.ToString("N0");
-                    yield return null;
-                }
-                finalScoreText.text = _finalScore.ToString("N0");
-            }
-
-            // Animate XP bar
-            if (xpBarFill != null && _progressionResult != null)
-            {
-                xpBarFill.type = Image.Type.Filled;
-                xpBarFill.fillMethod = Image.FillMethod.Horizontal;
-                xpBarFill.fillOrigin = (int)Image.OriginHorizontal.Left;
-
-                float startFill = _progressionResult.DidLevelUp ? 0f :
-                    Mathf.Clamp01((_progressionResult.XPProgressNormalized * _progressionResult.XPNeededForNextLevel - _progressionResult.XPEarned)
-                    / Mathf.Max(1, _progressionResult.XPNeededForNextLevel));
-                float endFill = _progressionResult.XPProgressNormalized;
-
-                if (startFill < 0f) startFill = 0f;
-
-                float elapsed = 0f;
-                while (elapsed < xpBarAnimDuration)
-                {
-                    elapsed += Time.deltaTime;
-                    float t = Mathf.Clamp01(elapsed / xpBarAnimDuration);
-                    float ease = 1f - Mathf.Pow(1f - t, 2f);
-                    xpBarFill.fillAmount = Mathf.Lerp(startFill, endFill, ease);
-                    yield return null;
-                }
-                xpBarFill.fillAmount = endFill;
-            }
-        }
-
-        // ── Button Handlers ──────────────────────────────────────
-
-        private void OnDoubleXPClicked()
-        {
-            if (_xpDoubled) return;
-
-            var adService = ServiceLocator.Get<IAdService>();
-            if (adService == null) return;
-
-            doubleXPButton.interactable = false;
-
-            adService.ShowRewardedAd((success) =>
-            {
-                if (success && _progressionResult != null)
-                {
-                    _xpDoubled = true;
-
-                    // Grant bonus XP equal to what was earned
-                    var saveService = ServiceLocator.Get<SaveService>();
-
-                    if (saveService != null)
-                    {
-                        saveService.Data.totalXP += _progressionResult.XPEarned;
-                        saveService.MarkDirty();
-                        saveService.Save();
-                    }
-
-                    // Update UI
-                    if (xpEarnedText != null)
-                        xpEarnedText.text = $"+{_progressionResult.XPEarned * 2} XP (2X!)";
-
-                    if (doubleXPButtonText != null)
-                        doubleXPButtonText.text = "✅ XP Doubled!";
-
-                    // Notify ad policy
-                    var adPolicyManager = ServiceLocator.Get<AdPolicyManager>();
-                    adPolicyManager?.OnRewardedAdWatched();
-
-                    Debug.Log($"[ResultsScreen] XP doubled via rewarded ad: +{_progressionResult.XPEarned}");
-                }
-                else
-                {
-                    doubleXPButton.interactable = true;
-                }
-            });
         }
     }
 }

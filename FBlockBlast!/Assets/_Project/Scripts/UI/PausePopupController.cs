@@ -33,7 +33,6 @@ namespace NeonGalaxy.UI
         public event Action OnQuitClicked;
 
         private SaveService _saveService;
-        private int _currentScore;
 
         private void Awake()
         {
@@ -45,36 +44,35 @@ namespace NeonGalaxy.UI
             if (sfxSlider != null) sfxSlider.OnValueChanged += OnSFXVolumeChanged;
         }
 
-        private void OnEnable()
-        {
-            GameEvents.OnScoreChanged += HandleScoreChanged;
-        }
-
         private void OnDisable()
         {
-            GameEvents.OnScoreChanged -= HandleScoreChanged;
             if (_saveService != null) _saveService.SaveIfDirty();
         }
 
-        private void Start()
+        public void Show(int currentScore)
         {
-            if (ServiceLocator.Has<SaveService>())
+            gameObject.SetActive(true);
+            transform.localScale = Vector3.one; // FIX: Prevent invisible popup on second open
+
+            if (_saveService == null && ServiceLocator.Has<SaveService>())
             {
                 _saveService = ServiceLocator.Get<SaveService>();
             }
-        }
-
-        public void Show()
-        {
-            gameObject.SetActive(true);
             
             // Update score
-            if (scoreText != null) scoreText.text = _currentScore.ToString("N0");
+            if (scoreText != null) scoreText.text = currentScore.ToString("N0");
             
             // Update best score
             if (bestScoreText != null && _saveService != null)
             {
-                bestScoreText.text = _saveService.Data.bestScore.ToString("N0");
+                if(_saveService.Data.bestScore > currentScore)
+                {
+                    bestScoreText.text = _saveService.Data.bestScore.ToString("N0");
+                }
+                else
+                {
+                     bestScoreText.text = currentScore.ToString("N0");
+                }
             }
 
             // Update Audio Sliders
@@ -100,15 +98,6 @@ namespace NeonGalaxy.UI
         {
             yield return StartCoroutine(NeonGalaxy.VFX.UIAnimator.ScaleOut(transform, 0.2f));
             gameObject.SetActive(false);
-        }
-
-        private void HandleScoreChanged(int score)
-        {
-            _currentScore = score;
-            if (gameObject.activeSelf && scoreText != null) 
-            {
-                scoreText.text = _currentScore.ToString("N0");
-            }
         }
 
         private void OnMusicVolumeChanged(float value)

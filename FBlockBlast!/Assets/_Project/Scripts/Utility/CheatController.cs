@@ -130,21 +130,17 @@ namespace NeonGalaxy.Utility
 
         private void TriggerGameOverCheat()
         {
-            Debug.Log("[CheatController] [3] Triggering Game Over");
+            Debug.Log("[CheatController] [3] Triggering Game Over (via Reviving)");
             
-            int currentScore = 0;
             if (_gameManager != null)
             {
-                FieldInfo scoreManagerField = typeof(GameManager).GetField("_scoreManager", BindingFlags.NonPublic | BindingFlags.Instance);
-                if (scoreManagerField != null)
-                {
-                    ScoreManager sm = scoreManagerField.GetValue(_gameManager) as ScoreManager;
-                    if (sm != null) currentScore = sm.TotalScore;
-                }
+                // Goes through Reviving state first (shows continue popup), then game over
+                _gameManager.TransitionState(NeonGalaxy.Data.GameState.Reviving);
             }
-
-            // Force state to game over logic
-            GameEvents.InvokeGameOver(currentScore);
+            else
+            {
+                Debug.LogWarning("[CheatController] GameManager not found. Cannot trigger Game Over.");
+            }
         }
 
         private void TriggerLevelUpCheat()

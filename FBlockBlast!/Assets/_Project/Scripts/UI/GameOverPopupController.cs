@@ -40,6 +40,7 @@ namespace NeonGalaxy.UI
         public void Show(int finalScore, int bestScore, bool isNewBest)
         {
             gameObject.SetActive(true);
+            transform.localScale = Vector3.one; // FIX: Prevent invisible popup on second open
 
             if (newBestBadge != null)
             {
