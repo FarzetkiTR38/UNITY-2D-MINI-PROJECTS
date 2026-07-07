@@ -101,8 +101,9 @@ namespace NeonGalaxy.Core
 
             if (resultsScreen != null)
             {
-                resultsScreen.OnRetryClicked -= HandleRetryGame;
-                resultsScreen.OnHomeClicked -= HandleQuitToHome;
+                resultsScreen.OnContinueWithAd -= HandleContinueWithAd;
+                resultsScreen.OnContinueWithGems -= HandleContinueWithGems;
+                resultsScreen.OnDeclined -= HandleContinueDeclined;
             }
 
             if (pausePopup != null)
@@ -152,8 +153,9 @@ namespace NeonGalaxy.Core
 
             if (resultsScreen != null)
             {
-                resultsScreen.OnRetryClicked += HandleRetryGame;
-                resultsScreen.OnHomeClicked += HandleQuitToHome;
+                resultsScreen.OnContinueWithAd += HandleContinueWithAd;
+                resultsScreen.OnContinueWithGems += HandleContinueWithGems;
+                resultsScreen.OnDeclined += HandleContinueDeclined;
             }
 
             if (pausePopup != null)
@@ -195,7 +197,7 @@ namespace NeonGalaxy.Core
             }
 
             if (gameOverPopup != null) gameOverPopup.Hide();
-            if (resultsScreen != null) resultsScreen.Hide();
+            if (resultsScreen != null) resultsScreen.HideImmediate();
             if (pausePopup != null) pausePopup.Hide();
 
             // Register total run count statistics
@@ -250,7 +252,7 @@ namespace NeonGalaxy.Core
                     break;
 
                 case GameState.Reviving:
-                    // Handled by AttemptRevive() coroutine
+                    HandleRevivingState();
                     break;
 
                 case GameState.Paused:
@@ -299,38 +301,50 @@ namespace NeonGalaxy.Core
                 }
                 else
                 {
-                    TransitionState(GameState.GameOver);
+                    // Show continue popup before game over
+                    TransitionState(GameState.Reviving);
                 }
             }
         }
 
-        private void HandleGameOverState()
+        /// <summary>
+        /// Shows the "Continue Your Run?" popup before actual game over.
+        /// The player can watch an ad, spend gems, or decline.
+        /// </summary>
+        private void HandleRevivingState()
         {
             touchInputController.IsInputEnabled = false;
             pieceTrayController.SetInteractable(false);
 
             int finalScore = _scoreManager.TotalScore;
-            bool isNewBest = SaveHighScore(finalScore);
 
-            // Show results screen (full Sprint 4 version) or fallback to simple popup
             if (resultsScreen != null)
             {
-                // Ad policy check — show interstitial before results if appropriate
-                var adPolicyManager = Boot.ServiceLocator.Get<AdPolicyManager>();
-                adPolicyManager?.OnGameOverTriggered(() =>
-                {
-                    resultsScreen.Show(finalScore, GetHighScore(), isNewBest,
-                                       _runLinesCleared, _runBestCombo);
-                });
-
-                // If no ad policy manager, show results immediately
-                if (adPolicyManager == null)
-                {
-                    resultsScreen.Show(finalScore, GetHighScore(), isNewBest,
-                                       _runLinesCleared, _runBestCombo);
-                }
+                resultsScreen.Show(finalScore, GetHighScore());
             }
-            else if (gameOverPopup != null)
+            else
+            {
+                // No results screen available — go straight to game over
+                TransitionState(GameState.GameOver);
+            }
+        }
+
+        /// <summary>
+        /// Final game over state. Shows game over popup and fires the event.
+        /// </summary>
+        private void HandleGameOverState()
+        {
+            touchInputController.IsInputEnabled = false;
+            pieceTrayController.SetInteractable(false);
+
+            // Hide the continue popup if it's still visible
+            if (resultsScreen != null)
+                resultsScreen.HideImmediate();
+
+            int finalScore = _scoreManager.TotalScore;
+            bool isNewBest = SaveHighScore(finalScore);
+
+            if (gameOverPopup != null)
             {
                 gameOverPopup.Show(finalScore, GetHighScore(), isNewBest);
             }
@@ -430,30 +444,17 @@ namespace NeonGalaxy.Core
             SceneLoader.LoadScene(Constants.SCENE_HOME);
         }
 
-        // ── Revive System ────────────────────────────────────────
+        // ── Continue / Revive System ─────────────────────────────
 
         /// <summary>
-        /// Returns true if the player is eligible for a revive this run.
+        /// Called when the player chooses to watch an ad from the continue popup.
         /// </summary>
-        private bool CanRevive()
-        {
-            if (_revivesUsedThisRun >= Constants.MAX_REVIVES_PER_RUN)
-                return false;
-
-            var adService = Boot.ServiceLocator.Get<IAdService>();
-            return adService != null && adService.IsRewardedAdReady;
-        }
-
-        /// <summary>
-        /// Offers the player a rewarded ad to revive.
-        /// If accepted: clears the N fullest rows, refreshes the board, and resumes play.
-        /// If declined: transitions to GameOver.
-        /// </summary>
-        private void AttemptRevive()
+        private void HandleContinueWithAd()
         {
             var adService = Boot.ServiceLocator.Get<IAdService>();
             if (adService == null)
             {
+                Debug.LogWarning("[GameManager] No ad service available. Proceeding to Game Over.");
                 TransitionState(GameState.GameOver);
                 return;
             }
@@ -462,29 +463,72 @@ namespace NeonGalaxy.Core
             {
                 if (success)
                 {
-                    _revivesUsedThisRun++;
-
-                    // Clear the fullest rows to make room
-                    int rowsToClear = Constants.REVIVE_ROWS_TO_CLEAR;
-                    _boardModel.ClearFullestRows(rowsToClear);
-                    boardController.RefreshBoard(_boardModel);
+                    ExecuteRevive();
 
                     // Notify ad policy that a rewarded ad was watched
                     var adPolicyManager = Boot.ServiceLocator.Get<Meta.AdPolicyManager>();
                     adPolicyManager?.OnRewardedAdWatched();
 
-                    Debug.Log($"[GameManager] Revive successful! Cleared {rowsToClear} rows.");
-
-                    // Resume play — re-check if pieces can now be placed
-                    TransitionState(GameState.CheckGameOver);
+                    Debug.Log("[GameManager] Continue via ad successful!");
                 }
                 else
                 {
-                    // Player declined or ad failed — proceed to game over
-                    Debug.Log("[GameManager] Revive declined. Proceeding to Game Over.");
+                    Debug.Log("[GameManager] Ad failed or cancelled. Proceeding to Game Over.");
                     TransitionState(GameState.GameOver);
                 }
             });
+        }
+
+        /// <summary>
+        /// Called when the player chooses to spend gems from the continue popup.
+        /// </summary>
+        private void HandleContinueWithGems()
+        {
+            int gemCost = resultsScreen != null ? resultsScreen.GetGemCost() : 50;
+
+            var currencyManager = Boot.ServiceLocator.Get<Meta.CurrencyManager>();
+            if (currencyManager != null && currencyManager.SpendGems(gemCost))
+            {
+                ExecuteRevive();
+                Debug.Log($"[GameManager] Continue via gems successful! Spent {gemCost} gems.");
+            }
+            else
+            {
+                Debug.LogWarning($"[GameManager] Not enough gems to continue. Need {gemCost}.");
+                // Re-enable buttons so the player can choose another option
+                // The resultsScreen countdown is already stopped, so we just proceed to game over
+                TransitionState(GameState.GameOver);
+            }
+        }
+
+        /// <summary>
+        /// Called when the player declines or the countdown expires.
+        /// </summary>
+        private void HandleContinueDeclined()
+        {
+            Debug.Log("[GameManager] Player declined to continue. Proceeding to Game Over.");
+            TransitionState(GameState.GameOver);
+        }
+
+        /// <summary>
+        /// Executes the revive logic: clears the fullest rows, refreshes board, and resumes play.
+        /// </summary>
+        private void ExecuteRevive()
+        {
+            _revivesUsedThisRun++;
+
+            // Hide the continue popup
+            if (resultsScreen != null)
+                resultsScreen.HideImmediate();
+
+            // Clear the entire board
+            _boardModel.Reset();
+            boardController.RefreshBoard(_boardModel);
+
+            Debug.Log("[GameManager] Revive executed! Board fully cleared.");
+
+            // Resume play — re-check if pieces can now be placed
+            TransitionState(GameState.CheckGameOver);
         }
 
         private void HandleScorePopupRequested(int score, Vector3 worldPos)
