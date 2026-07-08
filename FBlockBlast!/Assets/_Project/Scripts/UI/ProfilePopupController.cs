@@ -131,6 +131,11 @@ namespace NeonGalaxy.UI
         public void Show()
         {
             if (_isVisible) return;
+            
+            // FIX: Ensure the GameObject is active so Coroutines can run!
+            // This prevents the error if the developer disabled the prefab in the scene.
+            gameObject.SetActive(true);
+
             _isVisible = true;
 
             _hasUnsavedChanges = false;
@@ -156,6 +161,9 @@ namespace NeonGalaxy.UI
             SetFieldReadOnly(usernameInputField, true);
             SetFieldReadOnly(displayNameInputField, true);
             SetFieldReadOnly(emailInputField, true);
+
+            // If the gameobject is already inactive (e.g. forced disabled), don't start coroutine
+            if (!gameObject.activeInHierarchy) return;
 
             if (_animationCoroutine != null) StopCoroutine(_animationCoroutine);
             _animationCoroutine = StartCoroutine(AnimateFadeOut());
@@ -511,6 +519,9 @@ namespace NeonGalaxy.UI
         {
             yield return AnimateFade(1f, 0f, animationDuration);
             if (popupPanel != null) popupPanel.SetActive(false);
+            
+            // FIX: Disable the root GameObject to keep hierarchy clean after closing
+            gameObject.SetActive(false);
         }
 
         // ── Utility ─────────────────────────────────────────────

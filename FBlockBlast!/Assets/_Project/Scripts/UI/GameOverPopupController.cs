@@ -15,6 +15,8 @@ namespace NeonGalaxy.UI
         [Header("UI Fields")]
         [SerializeField] private TextMeshProUGUI finalScoreText;
         [SerializeField] private TextMeshProUGUI bestScoreText;
+        [SerializeField] private TextMeshProUGUI xpEarnedText;
+        [SerializeField] private TextMeshProUGUI goldEarnedText;
         [SerializeField] private GameObject newBestBadge;
 
         [Header("Buttons")]
@@ -37,7 +39,7 @@ namespace NeonGalaxy.UI
         /// Activates and populates the popup data.
         /// Starts a visual count-up score animation.
         /// </summary>
-        public void Show(int finalScore, int bestScore, bool isNewBest)
+        public void Show(int finalScore, int bestScore, bool isNewBest, int xpEarned, int goldEarned)
         {
             gameObject.SetActive(true);
             transform.localScale = Vector3.one; // FIX: Prevent invisible popup on second open
@@ -49,7 +51,17 @@ namespace NeonGalaxy.UI
 
             if (bestScoreText != null)
             {
-                bestScoreText.text = $"BEST SCORE: {bestScore}";
+                bestScoreText.text = bestScore.ToString("N0");
+            }
+
+            if (xpEarnedText != null)
+            {
+                xpEarnedText.text = xpEarned.ToString("N0");
+            }
+
+            if (goldEarnedText != null)
+            {
+                goldEarnedText.text = goldEarned.ToString("N0");
             }
 
             if (finalScoreText != null)
@@ -85,10 +97,10 @@ namespace NeonGalaxy.UI
                 // Cubic ease-out count up
                 float ease = 1f - Mathf.Pow(1f - t, 3);
                 int currentVal = Mathf.RoundToInt(Mathf.Lerp(0, targetScore, ease));
-                finalScoreText.text = currentVal.ToString();
+                finalScoreText.text = currentVal.ToString("N0");
                 yield return null;
             }
-            finalScoreText.text = targetScore.ToString();
+            finalScoreText.text = targetScore.ToString("N0");
         }
     }
 }

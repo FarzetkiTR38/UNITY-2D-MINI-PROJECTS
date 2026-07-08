@@ -24,6 +24,9 @@ namespace NeonGalaxy.Services
                 { Constants.IAP_COINS_500,    "$0.99" },
                 { Constants.IAP_COINS_1500,   "$2.99" },
                 { Constants.IAP_COINS_5000,   "$7.99" },
+                { Constants.IAP_GEMS_100,     "$0.99" },
+                { Constants.IAP_GEMS_500,     "$3.99" },
+                { Constants.IAP_GEMS_1500,    "$9.99" },
             };
 
             Debug.Log("[MockIAPService] Initialized with mock prices.");

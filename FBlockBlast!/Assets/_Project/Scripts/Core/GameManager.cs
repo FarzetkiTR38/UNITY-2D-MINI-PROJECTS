@@ -344,9 +344,28 @@ namespace NeonGalaxy.Core
             int finalScore = _scoreManager.TotalScore;
             bool isNewBest = SaveHighScore(finalScore);
 
+            // --- PROGRESSION (XP) ---
+            int xpEarned = 0;
+            if (Boot.ServiceLocator.Has<ProgressionManager>())
+            {
+                var progressionManager = Boot.ServiceLocator.Get<ProgressionManager>();
+                var result = progressionManager.ProcessRunResult(finalScore);
+                xpEarned = result.XPEarned;
+            }
+
+            // --- GOLD (COINS) EARNING ---
+            // 1 million score = 10,000 gold -> score / 100
+            int goldEarned = finalScore / 100;
+            if (_saveService != null && goldEarned > 0)
+            {
+                _saveService.Data.coins += goldEarned;
+                _saveService.MarkDirty();
+                _saveService.Save();
+            }
+
             if (gameOverPopup != null)
             {
-                gameOverPopup.Show(finalScore, GetHighScore(), isNewBest);
+                gameOverPopup.Show(finalScore, GetHighScore(), isNewBest, xpEarned, goldEarned);
             }
 
             GameEvents.InvokeGameOver(finalScore);
