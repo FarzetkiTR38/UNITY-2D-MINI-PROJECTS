@@ -43,6 +43,9 @@ namespace NeonGalaxy.Utility
         public const string IAP_COINS_500 = "ngp_coins_500";
         public const string IAP_COINS_1500 = "ngp_coins_1500";
         public const string IAP_COINS_5000 = "ngp_coins_5000";
+        public const string IAP_GEMS_100 = "com.neongalaxy.gems100";
+        public const string IAP_GEMS_500 = "com.neongalaxy.gems500";
+        public const string IAP_GEMS_1500 = "com.neongalaxy.gems1500";
 
         // ── Revive ───────────────────────────────────────────────
         public const int REVIVE_ROWS_TO_CLEAR = 2;
