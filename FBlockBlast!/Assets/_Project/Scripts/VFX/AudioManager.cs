@@ -41,6 +41,9 @@ namespace NeonGalaxy.VFX
         private float _masterVolume = 1.0f;
         private int _currentCombo;
 
+        private List<AudioClip> _shuffledPlaylist = new List<AudioClip>();
+        private int _currentPlaylistIndex = 0;
+
         // ── Initialization ──────────────────────────────────────
 
         private void Awake()
@@ -100,13 +103,12 @@ namespace NeonGalaxy.VFX
         {
             if (config == null) return;
 
-            if (scene.name == Constants.SCENE_HOME)
+            if (scene.name == Constants.SCENE_HOME || scene.name == Constants.SCENE_GAMEPLAY)
             {
-                PlayMusic(config.homeMusic);
-            }
-            else if (scene.name == Constants.SCENE_GAMEPLAY)
-            {
-                PlayMusic(config.gameplayMusic);
+                if (_shuffledPlaylist.Count == 0 || (!musicSource.isPlaying && _shuffledPlaylist.Count > 0))
+                {
+                    PlayPlaylist();
+                }
             }
             else if (scene.name == Constants.SCENE_BOOT)
             {
@@ -120,7 +122,7 @@ namespace NeonGalaxy.VFX
             if (musicSource == null)
             {
                 musicSource = gameObject.AddComponent<AudioSource>();
-                musicSource.loop = true;
+                musicSource.loop = false; // Playlist handles looping
                 musicSource.playOnAwake = false;
             }
 
@@ -207,8 +209,57 @@ namespace NeonGalaxy.VFX
             }
         }
 
+        public void PlayPlaylist()
+        {
+            if (config == null || config.backgroundMusicPlaylist == null || config.backgroundMusicPlaylist.Length == 0) return;
+            
+            _shuffledPlaylist = new List<AudioClip>(config.backgroundMusicPlaylist);
+            ShuffleList(_shuffledPlaylist);
+            _currentPlaylistIndex = 0;
+            
+            PlayNextInPlaylist();
+        }
+
+        private void PlayNextInPlaylist()
+        {
+            if (_shuffledPlaylist.Count == 0) return;
+            
+            if (_currentPlaylistIndex >= _shuffledPlaylist.Count)
+            {
+                ShuffleList(_shuffledPlaylist);
+                _currentPlaylistIndex = 0;
+            }
+            
+            musicSource.clip = _shuffledPlaylist[_currentPlaylistIndex];
+            musicSource.volume = _musicVolume;
+            musicSource.loop = false;
+            musicSource.Play();
+            
+            _currentPlaylistIndex++;
+        }
+
+        private void ShuffleList(List<AudioClip> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                AudioClip temp = list[i];
+                int randomIndex = Random.Range(i, list.Count);
+                list[i] = list[randomIndex];
+                list[randomIndex] = temp;
+            }
+        }
+
+        private void Update()
+        {
+            // If playlist is active, music stopped playing, and the music source is active
+            if (_shuffledPlaylist.Count > 0 && !musicSource.isPlaying && musicSource.clip != null)
+            {
+                PlayNextInPlaylist();
+            }
+        }
+
         /// <summary>
-        /// Starts playing background music.
+        /// Starts playing background music (Legacy for single tracks).
         /// </summary>
         public void PlayMusic(AudioClip clip)
         {
@@ -219,6 +270,7 @@ namespace NeonGalaxy.VFX
 
             musicSource.clip = clip;
             musicSource.volume = _musicVolume;
+            musicSource.loop = true;
             musicSource.Play();
         }
 
@@ -228,6 +280,7 @@ namespace NeonGalaxy.VFX
         public void StopMusic()
         {
             musicSource.Stop();
+            _shuffledPlaylist.Clear();
         }
 
         /// <summary>
