@@ -42,10 +42,8 @@ namespace NeonGalaxy.Data
         public AudioClip purchaseSuccess;
 
         [Header("Music")]
-        [Tooltip("Main gameplay background music loop. Should be ambient cosmic synth.")]
-        public AudioClip gameplayMusic;
-        [Tooltip("Home screen background music loop.")]
-        public AudioClip homeMusic;
+        [Tooltip("List of music tracks to play in a randomized order in the background.")]
+        public AudioClip[] backgroundMusicPlaylist;
 
         [Header("Pitch Variation")]
         [Tooltip("Random pitch variation for gameplay SFX (e.g., 0.05 = ±5%).")]

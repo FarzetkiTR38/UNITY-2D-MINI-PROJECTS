@@ -45,7 +45,6 @@ namespace NeonGalaxy.UI
 
         private void Awake()
         {
-            if (panelRoot != null) panelRoot.SetActive(false);
 
             if (confirmButton != null)
                 confirmButton.onClick.AddListener(OnConfirmClicked);
@@ -75,6 +74,9 @@ namespace NeonGalaxy.UI
 
             if (panelRoot != null) panelRoot.SetActive(true);
             if (canvasGroup != null) canvasGroup.alpha = 1f;
+            
+            // Play sound if AudioManager is available
+            NeonGalaxy.VFX.AudioManager.Instance?.PlayUINavigate();
         }
 
         /// <summary>
@@ -83,6 +85,9 @@ namespace NeonGalaxy.UI
         public void Hide()
         {
             if (panelRoot != null) panelRoot.SetActive(false);
+            
+            // Play sound if AudioManager is available
+            NeonGalaxy.VFX.AudioManager.Instance?.PlayUIBack();
         }
 
         // ── Grid Population ──────────────────────────────────────

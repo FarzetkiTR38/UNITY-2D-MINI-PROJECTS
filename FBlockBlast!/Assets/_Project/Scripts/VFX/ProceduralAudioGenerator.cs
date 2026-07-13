@@ -43,8 +43,14 @@ namespace NeonGalaxy.VFX
             if (config.coinEarned == null) config.coinEarned = GenerateCoin(987.77f, 1318.51f, 0.25f, "Proc_CoinEarned"); // B5 to E6
             if (config.purchaseSuccess == null) config.purchaseSuccess = GenerateFanfare(new float[] { 523.25f, 783.99f, 1046.50f }, 0.5f, "Proc_PurchaseSuccess");
 
-            if (config.gameplayMusic == null) config.gameplayMusic = GenerateCosmicDrone(6.0f, "Proc_GameplayMusic");
-            if (config.homeMusic == null) config.homeMusic = GenerateCosmicDrone(8.0f, "Proc_HomeMusic");
+            if (config.backgroundMusicPlaylist == null || config.backgroundMusicPlaylist.Length == 0)
+            {
+                config.backgroundMusicPlaylist = new AudioClip[]
+                {
+                    GenerateCosmicDrone(8.0f, "Proc_Music_1"),
+                    GenerateCosmicDrone(6.0f, "Proc_Music_2")
+                };
+            }
         }
 
         // ── Audio Generation Helpers ─────────────────────────────────────
