@@ -22,6 +22,7 @@ namespace NeonGalaxy.Data
         public int guestNumber = -1;               // -1 = not yet assigned
         public string profileAvatarId = "default"; // Built-in avatar ID or "custom"
         public string customAvatarPath = "";        // Local path for gallery-picked photo
+        public bool hasCompletedTutorial = false;
         public int playerLevel = 0;
         public int totalXP = 0;
         public int bestScore = 0;

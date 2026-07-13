@@ -56,6 +56,12 @@ namespace NeonGalaxy.Core
         private int _revivesUsedThisRun;
 
         public GameState CurrentState => _currentState;
+        public BoardModel BoardModel => _boardModel;
+
+        public void SetBatchGenerator(IBatchGenerator newGenerator)
+        {
+            _batchGenerator = newGenerator;
+        }
 
         private void Awake()
         {
@@ -134,7 +140,17 @@ namespace NeonGalaxy.Core
             _boardModel = new BoardModel(boardConfig);
             _comboManager = new ComboManager(comboConfig);
             _scoreManager = new ScoreManager(scoreConfig, _comboManager);
-            _batchGenerator = new ComboFriendlyBatchGenerator();
+            
+            if (_saveService != null && !_saveService.Data.hasCompletedTutorial)
+            {
+                _batchGenerator = new NeonGalaxy.Generation.TutorialBatchGenerator();
+                // We will also enable the TutorialController later in StartGame
+            }
+            else
+            {
+                _batchGenerator = new ComboFriendlyBatchGenerator();
+            }
+
             _gameOverDetector = new GameOverDetector();
 
             // Initialize rendering boards

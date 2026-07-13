@@ -71,6 +71,10 @@ namespace NeonGalaxy.Utility
                 UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
                 Debug.Log("[CheatController] [0] Scene Reloaded");
             }
+            if (keyboard.tKey.wasPressedThisFrame)
+            {
+                ResetTutorialCheat();
+            }
         }
 
         private void AddScoreCheat(int amount)
@@ -200,6 +204,38 @@ namespace NeonGalaxy.Utility
             {
                 Time.timeScale = 3f;
                 Debug.Log("[CheatController] [9] Fast Forward (3x)");
+            }
+        }
+        private void ResetTutorialCheat()
+        {
+            SaveService ss = null;
+
+            // Try via ServiceLocator first
+            if (Boot.ServiceLocator.Has<SaveService>())
+            {
+                ss = Boot.ServiceLocator.Get<SaveService>();
+            }
+            else if (_gameManager != null)
+            {
+                // Fallback: reflection from GameManager
+                FieldInfo saveServiceField = typeof(GameManager).GetField("_saveService", BindingFlags.NonPublic | BindingFlags.Instance);
+                if (saveServiceField != null)
+                    ss = saveServiceField.GetValue(_gameManager) as SaveService;
+            }
+
+            if (ss != null && ss.Data != null)
+            {
+                ss.Data.hasCompletedTutorial = false;
+                ss.Save();
+                Debug.Log("[CheatController] [T] Tutorial sıfırlandı! Sahne yeniden yükleniyor...");
+
+                // Reload scene so TutorialController picks it up fresh
+                UnityEngine.SceneManagement.SceneManager.LoadScene(
+                    UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            }
+            else
+            {
+                Debug.LogWarning("[CheatController] [T] SaveService bulunamadı. Tutorial sıfırlanamadı.");
             }
         }
     }

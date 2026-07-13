@@ -10418,6 +10418,7 @@ GameObject:
   - component: {fileID: 1692211397}
   - component: {fileID: 1692211399}
   - component: {fileID: 1692211400}
+  - component: {fileID: 1692211401}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -10543,6 +10544,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScreenshotCapture
   superSize: 3
+--- !u!114 &1692211401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1692211393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92948cca48e53074daa03bf4f235cc94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NeonGalaxy.Core.TutorialController
+  gameManager: {fileID: 1692211394}
+  boardController: {fileID: 609850124}
+  tutorialOverlayPrefab: {fileID: 58743611670794826, guid: ded8b2107c32f7541932484507bb5f60, type: 3}
 --- !u!1 &1709408309
 GameObject:
   m_ObjectHideFlags: 0
