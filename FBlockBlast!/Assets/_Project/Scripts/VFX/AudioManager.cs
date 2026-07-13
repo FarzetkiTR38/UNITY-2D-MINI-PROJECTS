@@ -6,6 +6,9 @@ using NeonGalaxy.Data;
 using NeonGalaxy.Boot;
 using NeonGalaxy.Services;
 using NeonGalaxy.Utility;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 namespace NeonGalaxy.VFX
 {
@@ -209,6 +212,34 @@ namespace NeonGalaxy.VFX
             }
         }
 
+        /// <summary>
+        /// Plays the UI Navigation (Open panel) sound.
+        /// </summary>
+        public void PlayUINavigate()
+        {
+            if (config != null && config.uiNavigate != null)
+            {
+                uiSource.clip = config.uiNavigate;
+                uiSource.volume = _sfxVolume;
+                uiSource.pitch = 1f;
+                uiSource.Play();
+            }
+        }
+
+        /// <summary>
+        /// Plays the UI Back (Close panel) sound.
+        /// </summary>
+        public void PlayUIBack()
+        {
+            if (config != null && config.uiBack != null)
+            {
+                uiSource.clip = config.uiBack;
+                uiSource.volume = _sfxVolume;
+                uiSource.pitch = 1f;
+                uiSource.Play();
+            }
+        }
+
         public void PlayPlaylist()
         {
             if (config == null || config.backgroundMusicPlaylist == null || config.backgroundMusicPlaylist.Length == 0) return;
@@ -255,6 +286,30 @@ namespace NeonGalaxy.VFX
             if (_shuffledPlaylist.Count > 0 && !musicSource.isPlaying && musicSource.clip != null)
             {
                 PlayNextInPlaylist();
+            }
+
+            // Global UI Click Sound Detection
+            if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && EventSystem.current != null)
+            {
+                PointerEventData pointerData = new PointerEventData(EventSystem.current)
+                {
+                    position = Mouse.current.position.ReadValue()
+                };
+
+                var results = new List<RaycastResult>();
+                EventSystem.current.RaycastAll(pointerData, results);
+
+                foreach (var result in results)
+                {
+                    var button = result.gameObject.GetComponentInParent<Button>();
+                    var toggle = result.gameObject.GetComponentInParent<Toggle>();
+
+                    if ((button != null && button.interactable) || (toggle != null && toggle.interactable))
+                    {
+                        PlayUIClick();
+                        break;
+                    }
+                }
             }
         }
 

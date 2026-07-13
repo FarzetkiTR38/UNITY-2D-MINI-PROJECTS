@@ -45,11 +45,6 @@ namespace NeonGalaxy.Data
         [Tooltip("List of music tracks to play in a randomized order in the background.")]
         public AudioClip[] backgroundMusicPlaylist;
 
-        [Tooltip("Main gameplay background music loop (legacy, use playlist instead).")]
-        public AudioClip gameplayMusic;
-        [Tooltip("Home screen background music loop (legacy, use playlist instead).")]
-        public AudioClip homeMusic;
-
         [Header("Pitch Variation")]
         [Tooltip("Random pitch variation for gameplay SFX (e.g., 0.05 = ±5%).")]
         [Range(0f, 0.2f)]

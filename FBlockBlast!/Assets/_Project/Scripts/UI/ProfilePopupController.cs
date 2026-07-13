@@ -137,6 +137,7 @@ namespace NeonGalaxy.UI
             gameObject.SetActive(true);
 
             _isVisible = true;
+            NeonGalaxy.VFX.AudioManager.Instance?.PlayUINavigate();
 
             _hasUnsavedChanges = false;
             HideFeedback();
@@ -156,6 +157,7 @@ namespace NeonGalaxy.UI
         {
             if (!_isVisible) return;
             _isVisible = false;
+            NeonGalaxy.VFX.AudioManager.Instance?.PlayUIBack();
 
             // Reset fields to readonly
             SetFieldReadOnly(usernameInputField, true);
@@ -299,6 +301,7 @@ namespace NeonGalaxy.UI
 
         private void OnChangeProfilePictureClicked()
         {
+            NeonGalaxy.VFX.AudioManager.Instance?.PlayUIClick();
             Debug.Log("[ProfileSettings] Change profile picture clicked.");
             if (avatarSelectionPanel != null)
                 avatarSelectionPanel.Show();
@@ -306,6 +309,7 @@ namespace NeonGalaxy.UI
 
         private async void OnGoogleLinkClicked()
         {
+            NeonGalaxy.VFX.AudioManager.Instance?.PlayUIClick();
             var profileManager = ServiceLocator.Get<ProfileManager>();
             if (profileManager == null) return;
 
@@ -332,6 +336,7 @@ namespace NeonGalaxy.UI
 
         private async void OnDiscordLinkClicked()
         {
+            NeonGalaxy.VFX.AudioManager.Instance?.PlayUIClick();
             var profileManager = ServiceLocator.Get<ProfileManager>();
             if (profileManager == null) return;
 
@@ -358,6 +363,7 @@ namespace NeonGalaxy.UI
 
         private async void OnEmailLinkClicked()
         {
+            NeonGalaxy.VFX.AudioManager.Instance?.PlayUIClick();
             var profileManager = ServiceLocator.Get<ProfileManager>();
             if (profileManager == null) return;
 
@@ -395,6 +401,7 @@ namespace NeonGalaxy.UI
 
         private void OnSaveChangesClicked()
         {
+            NeonGalaxy.VFX.AudioManager.Instance?.PlayUIClick();
             var profileManager = ServiceLocator.Get<ProfileManager>();
             if (profileManager == null) return;
 

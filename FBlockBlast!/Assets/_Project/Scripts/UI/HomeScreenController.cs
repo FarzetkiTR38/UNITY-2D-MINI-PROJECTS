@@ -130,7 +130,7 @@ namespace NeonGalaxy.UI
             OpenPanel(settingsPanel);
         }
 
-        private void OnShopClicked()
+        public void OnShopClicked()
         {
             Debug.Log("[HomeScreen] Shop button clicked.");
             OpenPanel(shopPanel);
@@ -153,14 +153,22 @@ namespace NeonGalaxy.UI
         {
             CloseAllPanels();
             if (mainPanel != null) mainPanel.SetActive(false);
-            if (panel != null) panel.SetActive(true);
+            if (panel != null)
+            {
+                panel.SetActive(true);
+                NeonGalaxy.VFX.AudioManager.Instance?.PlayUINavigate();
+            }
         }
 
         public void OnBackClicked()
         {
             Debug.Log("[HomeScreen] Back button clicked.");
             CloseAllPanels();
-            if (mainPanel != null) mainPanel.SetActive(true);
+            if (mainPanel != null)
+            {
+                mainPanel.SetActive(true);
+                NeonGalaxy.VFX.AudioManager.Instance?.PlayUIBack();
+            }
         }
 
         private void CloseAllPanels()

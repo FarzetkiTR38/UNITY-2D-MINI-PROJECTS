@@ -59,6 +59,7 @@ namespace NeonGalaxy.UI
 
         private void OpenURL(string url)
         {
+            NeonGalaxy.VFX.AudioManager.Instance?.PlayUIClick();
             if (string.IsNullOrEmpty(url)) return;
             
             Debug.Log($"[CreditsUI] Opening URL: {url}");
