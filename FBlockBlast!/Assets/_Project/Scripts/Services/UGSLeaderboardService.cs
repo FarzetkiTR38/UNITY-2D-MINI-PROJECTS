@@ -152,7 +152,7 @@ namespace NeonGalaxy.Services
                 {
                     foreach (var entry in scoresResponse.Results)
                     {
-                        var leaderboardEntry = new LeaderboardEntry
+                        var leaderboardEntry = new NeonGalaxy.Data.LeaderboardEntry
                         {
                             rank = entry.Rank + 1, // UGS is 0-indexed, we display 1-indexed
                             playerName = !string.IsNullOrEmpty(entry.PlayerName)
@@ -183,7 +183,7 @@ namespace NeonGalaxy.Services
 
                         if (playerScore != null)
                         {
-                            newCachedData.playerEntry = new LeaderboardEntry
+                            newCachedData.playerEntry = new NeonGalaxy.Data.LeaderboardEntry
                             {
                                 rank = playerScore.Rank + 1,
                                 playerName = !string.IsNullOrEmpty(playerScore.PlayerName)

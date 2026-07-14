@@ -72,15 +72,15 @@ namespace NeonGalaxy.Boot
 
             // ── Layer 2: Monetization Services ───────────────────
 
-            // Ad Service (mock for now — replace with real SDK wrapper later)
-            IAdService adService = new MockAdService();
+            // Ad Service (Real Unity Ads)
+            IAdService adService = new UnityAdService();
             ServiceLocator.Register(adService);
-            Debug.Log("[BootManager] IAdService (Mock) registered.");
+            Debug.Log("[BootManager] IAdService (UnityAds) registered.");
 
-            // IAP Service (mock for now — replace with Unity IAP wrapper later)
-            IIAPService iapService = new MockIAPService();
+            // IAP Service (Real Unity Purchasing)
+            IIAPService iapService = new UnityIAPService();
             ServiceLocator.Register(iapService);
-            Debug.Log("[BootManager] IIAPService (Mock) registered.");
+            Debug.Log("[BootManager] IIAPService (UnityIAP) registered.");
 
             // ── Layer 3: Meta Managers ───────────────────────────
 
