@@ -4,6 +4,8 @@ using UnityEngine.Purchasing;
 using UnityEngine.Purchasing.Extension;
 using NeonGalaxy.Utility;
 
+#pragma warning disable CS0618 // Disable obsolete warnings for IAP v4 API
+
 namespace NeonGalaxy.Services
 {
     /// <summary>
@@ -183,3 +185,4 @@ namespace NeonGalaxy.Services
         }
     }
 }
+#pragma warning restore CS0618

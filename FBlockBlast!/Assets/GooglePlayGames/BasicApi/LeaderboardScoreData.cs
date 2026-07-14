@@ -1,4 +1,5 @@
-﻿// <copyright file="LeaderboardScoreData.cs" company="Google Inc.">
+#pragma warning disable CS0618
+// <copyright file="LeaderboardScoreData.cs" company="Google Inc.">
 // Copyright (C) 2015 Google Inc. All Rights Reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");

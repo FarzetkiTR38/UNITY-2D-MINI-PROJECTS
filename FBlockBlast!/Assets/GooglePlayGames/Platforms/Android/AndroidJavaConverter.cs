@@ -1,3 +1,4 @@
+#pragma warning disable CS0618
 // <copyright file="AndroidTokenClient.cs" company="Google Inc.">
 // Copyright (C) 2015 Google Inc.
 //

@@ -1,3 +1,4 @@
+#pragma warning disable CS0618
 // <copyright file="GPGSAndroidSetupUI.cs" company="Google Inc.">
 // Copyright (C) Google Inc. All Rights Reserved.
 //
