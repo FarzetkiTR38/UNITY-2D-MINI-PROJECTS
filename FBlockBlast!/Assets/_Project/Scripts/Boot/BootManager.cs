@@ -3,6 +3,7 @@ using NeonGalaxy.Services;
 using NeonGalaxy.Meta;
 using NeonGalaxy.Data;
 using NeonGalaxy.Utility;
+using Unity.Services.Core;
 
 namespace NeonGalaxy.Boot
 {
@@ -40,11 +41,24 @@ namespace NeonGalaxy.Boot
             }
 
             DontDestroyOnLoad(gameObject);
-            Initialize();
+            InitializeAsync();
         }
 
-        private void Initialize()
+        private async void InitializeAsync()
         {
+            _status = "Initializing UGS...";
+            Debug.Log("[BootManager] Starting UGS initialization...");
+            
+            try 
+            {
+                await UnityServices.InitializeAsync();
+                Debug.Log("[BootManager] Unity Gaming Services Initialized.");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogException(e);
+            }
+
             _status = "Initializing services...";
             Debug.Log("[BootManager] Starting initialization...");
 
@@ -96,13 +110,14 @@ namespace NeonGalaxy.Boot
             Debug.Log("[BootManager] AdPolicyManager registered.");
 
             // Profile Manager
-            IAuthService authService = new MockAuthService();
-            ServiceLocator.Register(authService);
-            Debug.Log("[BootManager] IAuthService (Mock) registered.");
+            var authService = new UGSAuthService();
+            await authService.SignInAnonymouslyAsync();
+            ServiceLocator.Register<IAuthService>(authService);
+            Debug.Log("[BootManager] UGSAuthService registered.");
 
-            ICloudSaveService cloudSaveService = new MockCloudSaveService();
+            ICloudSaveService cloudSaveService = new UGSCloudSaveService();
             ServiceLocator.Register(cloudSaveService);
-            Debug.Log("[BootManager] ICloudSaveService (Mock) registered.");
+            Debug.Log("[BootManager] UGSCloudSaveService registered.");
 
             var profileManager = new ProfileManager(saveService, authService, cloudSaveService, avatarRegistry);
             profileManager.InitializeGuestProfile();

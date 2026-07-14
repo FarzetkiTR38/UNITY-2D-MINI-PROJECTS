@@ -293,7 +293,16 @@ namespace NeonGalaxy.UI
 
         private void OnFieldDeselected(TMP_InputField field)
         {
-            // When user clicks away, make field readonly again
+            // Unity UI Hatasını (EventSystem) önlemek için interactable değişimini 1 kare (frame) geciktiriyoruz.
+            if (gameObject.activeInHierarchy)
+            {
+                StartCoroutine(DelaySetFieldReadOnly(field));
+            }
+        }
+
+        private IEnumerator DelaySetFieldReadOnly(TMP_InputField field)
+        {
+            yield return null; // 1 kare bekle
             SetFieldReadOnly(field, true);
         }
 
