@@ -385,6 +385,20 @@ namespace NeonGalaxy.Core
             }
 
             GameEvents.InvokeGameOver(finalScore);
+
+            // --- LEADERBOARD SUBMISSION ---
+            if (Boot.ServiceLocator.Has<ILeaderboardService>())
+            {
+                var leaderboard = Boot.ServiceLocator.Get<ILeaderboardService>();
+                _ = leaderboard.SubmitScoreAsync(finalScore);
+            }
+
+            // --- CLOUD SYNC (Offline Fallback) ---
+            if (Boot.ServiceLocator.Has<ProfileManager>())
+            {
+                var profileManager = Boot.ServiceLocator.Get<ProfileManager>();
+                _ = profileManager.SyncWithCloud();
+            }
         }
 
         private void HandlePieceDropped(PieceInstance piece, Vector2Int gridPos, int slotIndex)

@@ -89,6 +89,17 @@ namespace NeonGalaxy.Services
         {
             Debug.Log("[UGSAuthService] Google Sign-In via Google Play Games requested.");
             
+#if UNITY_EDITOR
+            Debug.Log("[UGSAuthService] UNITY_EDITOR detected. Returning mock Google Auth Result.");
+            await Task.Delay(500); // Simulate network delay
+            return new AuthResult 
+            { 
+                Success = true, 
+                ProviderId = "google", 
+                DisplayName = "GoogleEditorUser",
+                Email = "editor@test.com"
+            };
+#else
             var tcs = new TaskCompletionSource<AuthResult>();
 
             try
@@ -148,13 +159,14 @@ namespace NeonGalaxy.Services
             }
 
             return await tcs.Task;
+#endif
         }
 
         public async Task<AuthResult> SignInWithDiscordAsync()
         {
-            Debug.LogWarning("[UGSAuthService] Discord backend not implemented yet. Returning mock success.");
-            await Task.Delay(1000);
-            return new AuthResult { Success = true, ProviderId = "discord", DisplayName = "DiscordPlayer" };
+            Debug.LogWarning("[UGSAuthService] Discord backend is cancelled. Returning coming soon message.");
+            await Task.Delay(500);
+            return AuthResult.Failed("Discord bağlama yakında eklenecek!");
         }
 
         public async Task<AuthResult> LinkEmailAsync(string email, string password)

@@ -42,6 +42,9 @@ namespace NeonGalaxy.UI
         [Header("Editable Fields — Email")]
         [SerializeField] private TMP_InputField emailInputField;
         [SerializeField] private Button emailEditButton;
+        
+        [Header("Editable Fields — Password (Optional/Hidden in MVP)")]
+        [SerializeField] private TMP_InputField passwordInputField;
 
         [Header("Linked Accounts — Google")]
         [SerializeField] private Button googleLinkButton;
@@ -109,6 +112,7 @@ namespace NeonGalaxy.UI
             SetFieldReadOnly(usernameInputField, true);
             SetFieldReadOnly(displayNameInputField, true);
             SetFieldReadOnly(emailInputField, true);
+            SetFieldReadOnly(passwordInputField, true);
 
             HideFeedback();
         }
@@ -163,6 +167,7 @@ namespace NeonGalaxy.UI
             SetFieldReadOnly(usernameInputField, true);
             SetFieldReadOnly(displayNameInputField, true);
             SetFieldReadOnly(emailInputField, true);
+            SetFieldReadOnly(passwordInputField, true);
 
             // If the gameobject is already inactive (e.g. forced disabled), don't start coroutine
             if (!gameObject.activeInHierarchy) return;
@@ -212,6 +217,8 @@ namespace NeonGalaxy.UI
                 displayNameInputField.characterLimit = Constants.DISPLAY_NAME_MAX_LENGTH;
             if (emailInputField != null)
                 emailInputField.characterLimit = Constants.EMAIL_MAX_LENGTH;
+            if (passwordInputField != null)
+                passwordInputField.characterLimit = 30; // UGS max 30 chars
 
             // Linked account states
             RefreshLinkedAccountUI("google", profileManager, googleConnectImage, googleLinkedImage);
@@ -393,12 +400,16 @@ namespace NeonGalaxy.UI
                     return;
                 }
 
+                // Get password if field exists, otherwise use a default valid password for MVP
+                string password = passwordInputField != null && !string.IsNullOrEmpty(passwordInputField.text) 
+                    ? passwordInputField.text 
+                    : "Player#1234!";
+
                 Debug.Log("[ProfileSettings] Linking Email account...");
                 ShowFeedback("E-posta bağlanıyor...", Color.white);
 
                 // In production, a password prompt popup would appear here.
-                // For MVP/mock, we pass an empty password.
-                bool success = await profileManager.LinkEmailAccount(email, "");
+                bool success = await profileManager.LinkEmailAccount(email, password);
                 if (success)
                     ShowFeedback("E-posta hesabı bağlandı!", Color.green);
                 else
@@ -460,6 +471,7 @@ namespace NeonGalaxy.UI
                 SetFieldReadOnly(usernameInputField, true);
                 SetFieldReadOnly(displayNameInputField, true);
                 SetFieldReadOnly(emailInputField, true);
+                SetFieldReadOnly(passwordInputField, true);
             }
             else
             {
