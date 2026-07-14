@@ -126,10 +126,10 @@ namespace NeonGalaxy.Boot
 
             // ── Layer 4: Online Services ─────────────────────────
 
-            // Leaderboard Service (mock for now — replace with UGS implementation later)
-            ILeaderboardService leaderboardService = new MockLeaderboardService(saveService);
+            // Leaderboard Service (real UGS implementation)
+            ILeaderboardService leaderboardService = new UGSLeaderboardService(saveService);
             ServiceLocator.Register(leaderboardService);
-            Debug.Log("[BootManager] ILeaderboardService (Mock) registered.");
+            Debug.Log("[BootManager] ILeaderboardService (UGS) registered.");
 
             // Async authentication (fire-and-forget, UI handles state)
             _ = leaderboardService.AuthenticateAsync();
