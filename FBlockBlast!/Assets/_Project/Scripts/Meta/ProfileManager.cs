@@ -6,6 +6,8 @@ using NeonGalaxy.Data;
 using NeonGalaxy.Services;
 using NeonGalaxy.Core;
 using NeonGalaxy.Utility;
+using Unity.Services.Core;
+using Unity.Services.Authentication;
 
 namespace NeonGalaxy.Meta
 {
@@ -103,6 +105,10 @@ namespace NeonGalaxy.Meta
             _saveService.Save();
 
             Debug.Log($"[ProfileManager] Guest profile initialized: {data.playerName}");
+            
+            // Liderlik tablosu (Leaderboard) için UGS sistemindeki ismi de güncelliyoruz!
+            _ = UpdateUGSPlayerNameAsync(data.playerName);
+            
             GameEvents.InvokeProfileUpdated();
         }
 
@@ -148,6 +154,10 @@ namespace NeonGalaxy.Meta
             _saveService.Save();
 
             Debug.Log($"[ProfileManager] Player name changed to: {trimmed}");
+            
+            // Liderlik tablosu için ismi güncelle
+            _ = UpdateUGSPlayerNameAsync(trimmed);
+            
             GameEvents.InvokeProfileUpdated();
             return true;
         }
@@ -422,6 +432,9 @@ namespace NeonGalaxy.Meta
 
             Debug.Log($"[ProfileManager] Google account linked: {result.Email}");
             GameEvents.InvokeProfileUpdated();
+
+            // Ayrıca UGS asıl oyuncu adını Google'daki adıyla değiştir (Liderlik tablosunda gerçek isim görünsün)
+            _ = UpdateUGSPlayerNameAsync(result.DisplayName);
 
             // Trigger cloud sync after linking
             _ = SyncWithCloud();
@@ -745,6 +758,30 @@ namespace NeonGalaxy.Meta
             }
 
             return null;
+        }
+
+        // ══════════════════════════════════════════════════════════
+        // UGS LEADERBOARD NAME SYNC
+        // ══════════════════════════════════════════════════════════
+        
+        /// <summary>
+        /// Sadece lokal kaydı değil, liderlik tablosu için UGS sunucusundaki 
+        /// Player Name (Oyuncu Adı) verisini de günceller.
+        /// </summary>
+        private async Task UpdateUGSPlayerNameAsync(string newName)
+        {
+            if (UnityServices.State == ServicesInitializationState.Initialized && AuthenticationService.Instance.IsSignedIn)
+            {
+                try
+                {
+                    await AuthenticationService.Instance.UpdatePlayerNameAsync(newName);
+                    Debug.Log($"[ProfileManager] UGS PlayerName güncellendi: {newName}");
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[ProfileManager] UGS PlayerName güncellenirken hata: {ex.Message}");
+                }
+            }
         }
     }
 }
