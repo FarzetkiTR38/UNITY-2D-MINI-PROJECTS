@@ -22,6 +22,10 @@ namespace NeonGalaxy.Data
         [Tooltip("Flat bonus points awarded when a single placement clears both a row and a column.")]
         public int novaCrossBonus = 500;
 
+        [Header("Board Clear")]
+        [Tooltip("Flat bonus points awarded when the entire board is completely cleared.")]
+        public int boardClearBonus = 500;
+
         [Header("Combo Multiplier")]
         [Tooltip("Multiplier values indexed by combo count (0, 1, 2, ...). Index beyond array uses overflow formula.")]
         public float[] comboMultiplierTable = new float[]

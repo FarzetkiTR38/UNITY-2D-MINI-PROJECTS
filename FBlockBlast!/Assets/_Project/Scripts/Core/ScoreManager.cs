@@ -21,6 +21,20 @@ namespace NeonGalaxy.Core
             _scoreConfig = scoreConfig;
             _comboManager = comboManager;
             Reset();
+            GameEvents.OnBoardCleared += HandleBoardCleared;
+        }
+
+        public void Cleanup()
+        {
+            GameEvents.OnBoardCleared -= HandleBoardCleared;
+        }
+
+        private void HandleBoardCleared()
+        {
+            if (_scoreConfig == null) return;
+            TotalScore += _scoreConfig.boardClearBonus;
+            GameEvents.InvokeScoreChanged(TotalScore);
+            GameEvents.InvokeScorePopupRequested(_scoreConfig.boardClearBonus, Vector3.zero);
         }
 
         /// <summary>

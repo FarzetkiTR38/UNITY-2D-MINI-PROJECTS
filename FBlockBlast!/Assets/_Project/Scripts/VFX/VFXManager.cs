@@ -173,11 +173,11 @@ namespace NeonGalaxy.VFX
                 SpawnSweepLine(cols[i], false);
             }
 
-            // ── Screen flash for line clears (subtle) ──
-            if (screenFlash != null)
-            {
-                screenFlash.Flash(config.lineClearFlashColor, config.flashDuration);
-            }
+            // ── Screen Flash (Removed per user request) ──
+            // if (screenFlash != null)
+            // {
+            //     screenFlash.Flash(config.lineClearFlashColor, config.flashDuration);
+            // }
 
             // ── Brief hit-stop for impact feel ──
             TriggerHitStop(config.hitStopDuration, config.hitStopTimeScale);
@@ -231,11 +231,11 @@ namespace NeonGalaxy.VFX
                 Destroy(ps.gameObject, ps.main.duration + ps.main.startLifetime.constantMax);
             }
 
-            // ── Strong screen flash for Nova Cross (premium) ──
-            if (screenFlash != null)
-            {
-                screenFlash.Flash(config.novaCrossFlashColor, config.flashDuration * 2f);
-            }
+            // ── Screen flash for Nova Cross (Removed per user request) ──
+            // if (screenFlash != null)
+            // {
+            //     screenFlash.Flash(config.novaCrossFlashColor, config.flashDuration * 2f);
+            // }
 
             // ── Strong camera shake ──
             TriggerShake(config.novaCrossShakeIntensity, config.shakeDuration * 1.5f);
@@ -249,7 +249,10 @@ namespace NeonGalaxy.VFX
         {
             if (config == null) return;
 
-            Vector3 center = GetWorldPosFromGrid(new Vector2Int(4, 4));
+            // 8x8 tahtanın tam merkezi (3,3) ile (4,4) hücrelerinin tam ortasıdır.
+            Vector3 p1 = GetWorldPosFromGrid(new Vector2Int(3, 3));
+            Vector3 p2 = GetWorldPosFromGrid(new Vector2Int(4, 4));
+            Vector3 center = (p1 + p2) * 0.5f;
 
             // ── Supernova particle explosion ──
             if (config.useProceduralFallback && _boardClearProceduralPrefab != null)
@@ -273,11 +276,11 @@ namespace NeonGalaxy.VFX
                 Destroy(ps.gameObject, maxDuration + 1f);
             }
 
-            // ── MEGA screen flash ──
-            if (screenFlash != null)
-            {
-                screenFlash.MegaFlash(config.boardClearFlashColor, 0.6f);
-            }
+            // ── MEGA screen flash (Removed per user request) ──
+            // if (screenFlash != null)
+            // {
+            //     screenFlash.MegaFlash(config.boardClearFlashColor, 0.6f);
+            // }
 
             // ── Strong camera shake ──
             TriggerShake(config.boardClearShakeIntensity, config.shakeDuration * 2.5f);

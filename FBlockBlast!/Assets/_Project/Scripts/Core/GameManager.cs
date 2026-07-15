@@ -91,6 +91,7 @@ namespace NeonGalaxy.Core
         private void OnDestroy()
         {
             GameEvents.OnGameStateChanged -= HandleGameStateChanged;
+            _scoreManager?.Cleanup();
 
             // Unsubscribe to prevent memory leaks across scene updates
             if (touchInputController != null)
