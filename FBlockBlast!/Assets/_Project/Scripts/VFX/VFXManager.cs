@@ -9,6 +9,11 @@ namespace NeonGalaxy.VFX
     /// Central VFX coordinator. Listens to GameEvents and spawns visual effects.
     /// Manages particle pools, screen flash, camera shake, and hit-stop.
     /// 
+    /// Now supports 3-tier effect intensity:
+    /// - Standard line clear: per-cell burst + sweep line + subtle flash
+    /// - Nova Cross: cross shockwave + zoom punch + strong glow
+    /// - Board Full Clear: supernova explosion + mega shockwave + screen distortion
+    /// 
     /// Art direction: "satisfying line clears, combo escalation feedback,
     /// Nova Cross premium effect, not visually noisy."
     /// </summary>
@@ -25,6 +30,12 @@ namespace NeonGalaxy.VFX
         private VFXPool _placementPool;
         private VFXPool _lineClearPool;
         private VFXPool _comboPool;
+        private VFXPool _cellBurstPool;
+        private VFXPool _sweepLinePool;
+
+        // One-shot instances (not pooled due to complexity/rarity)
+        private ParticleSystem _novaCrossProceduralPrefab;
+        private ParticleSystem _boardClearProceduralPrefab;
 
         private Vector3 _cameraOriginalPos;
         private Coroutine _shakeCoroutine;
@@ -42,6 +53,7 @@ namespace NeonGalaxy.VFX
         private void Start()
         {
             InitializePools();
+            InitializeProceduralFallbacks();
         }
 
         private void OnEnable()
@@ -51,6 +63,8 @@ namespace NeonGalaxy.VFX
             GameEvents.OnNovaCross += HandleNovaCross;
             GameEvents.OnComboUpdated += HandleComboUpdated;
             GameEvents.OnGameOver += HandleGameOver;
+            GameEvents.OnCellClearing += HandleCellClearing;
+            GameEvents.OnBoardCleared += HandleBoardCleared;
         }
 
         private void OnDisable()
@@ -60,6 +74,8 @@ namespace NeonGalaxy.VFX
             GameEvents.OnNovaCross -= HandleNovaCross;
             GameEvents.OnComboUpdated -= HandleComboUpdated;
             GameEvents.OnGameOver -= HandleGameOver;
+            GameEvents.OnCellClearing -= HandleCellClearing;
+            GameEvents.OnBoardCleared -= HandleBoardCleared;
         }
 
         private void Update()
@@ -68,6 +84,8 @@ namespace NeonGalaxy.VFX
             _placementPool?.RecycleFinished();
             _lineClearPool?.RecycleFinished();
             _comboPool?.RecycleFinished();
+            _cellBurstPool?.RecycleFinished();
+            _sweepLinePool?.RecycleFinished();
         }
 
         // ── Initialization ──────────────────────────────────────
@@ -79,11 +97,45 @@ namespace NeonGalaxy.VFX
             if (config.placementVFXPrefab != null)
                 _placementPool = new VFXPool(config.placementVFXPrefab, transform, config.placementPoolSize);
 
-            if (config.lineClearVFXPrefab != null)
+            // If procedural fallback is ON, ignore the placeholder prefab for line clear
+            if (config.lineClearVFXPrefab != null && !config.useProceduralFallback)
                 _lineClearPool = new VFXPool(config.lineClearVFXPrefab, transform, config.lineClearPoolSize);
 
             if (config.comboVFXPrefab != null)
                 _comboPool = new VFXPool(config.comboVFXPrefab, transform, config.comboPoolSize);
+        }
+
+        /// <summary>
+        /// Creates procedural particle systems when config prefab slots are empty.
+        /// This ensures effects always work even without imported assets.
+        /// </summary>
+        private void InitializeProceduralFallbacks()
+        {
+            if (config == null) return;
+            Debug.Log($"[VFXManager] InitializeProceduralFallbacks: useProceduralFallback = {config.useProceduralFallback}");
+
+            // Cell Burst pool (always procedural — these are new)
+            var cellBurstPrefab = LineClearVFXFactory.CreateCellBurstPS(transform, config);
+            _cellBurstPool = new VFXPool(cellBurstPrefab, transform, config.cellBurstPoolSize);
+            Debug.Log($"[VFXManager] Cell Burst Pool Created: Size={config.cellBurstPoolSize}, PrefabValid={cellBurstPrefab != null}");
+
+            // Sweep Line pool (always procedural — these are new)
+            var sweepLinePrefab = LineClearVFXFactory.CreateSweepLinePS(transform, config);
+            _sweepLinePool = new VFXPool(sweepLinePrefab, transform, config.sweepLinePoolSize);
+            Debug.Log($"[VFXManager] Sweep Line Pool Created: Size={config.sweepLinePoolSize}, PrefabValid={sweepLinePrefab != null}");
+
+            // Enhanced Line Clear (force if fallback enabled and we skipped prefab loading)
+            if (_lineClearPool == null)
+            {
+                var lineClearPrefab = LineClearVFXFactory.CreateEnhancedLineClearPS(transform);
+                _lineClearPool = new VFXPool(lineClearPrefab, transform, config.lineClearPoolSize);
+            }
+
+            // Nova Cross procedural prefab (always generate if fallback enabled)
+            _novaCrossProceduralPrefab = LineClearVFXFactory.CreateNovaCrossPS(transform);
+
+            // Board Clear procedural prefab (always generate if fallback enabled)
+            _boardClearProceduralPrefab = LineClearVFXFactory.CreateBoardClearPS(transform, config);
         }
 
         // ── Event Handlers ──────────────────────────────────────
@@ -103,49 +155,135 @@ namespace NeonGalaxy.VFX
         {
             if (config == null) return;
 
-            // Spawn line clear particles along cleared rows/columns
+            // ── Spawn line clear particles along cleared rows/columns ──
             for (int i = 0; i < rowCount; i++)
             {
                 Vector3 worldPos = GetWorldPosFromGrid(new Vector2Int(4, rows[i])); // Center of row
                 _lineClearPool?.Get(worldPos);
+
+                // Sweep line effect along the row
+                SpawnSweepLine(rows[i], true);
             }
             for (int i = 0; i < colCount; i++)
             {
                 Vector3 worldPos = GetWorldPosFromGrid(new Vector2Int(cols[i], 4)); // Center of column
                 _lineClearPool?.Get(worldPos);
+
+                // Sweep line effect along the column
+                SpawnSweepLine(cols[i], false);
             }
 
-            // Screen flash for line clears (subtle)
+            // ── Screen flash for line clears (subtle) ──
             if (screenFlash != null)
             {
                 screenFlash.Flash(config.lineClearFlashColor, config.flashDuration);
             }
 
-            // Brief hit-stop for impact feel
+            // ── Brief hit-stop for impact feel ──
             TriggerHitStop(config.hitStopDuration, config.hitStopTimeScale);
+        }
+
+        /// <summary>
+        /// Spawns a per-cell particle burst at the clearing cell's position.
+        /// Color matches the block being destroyed for visual coherence.
+        /// </summary>
+        private void HandleCellClearing(Vector3 worldPos, Color cellColor)
+        {
+            if (config == null) return;
+
+            // Neon-enhanced color: increase brightness for additive glow
+            Color neonColor = new Color(
+                Mathf.Min(cellColor.r * 1.3f, 1f),
+                Mathf.Min(cellColor.g * 1.3f, 1f),
+                Mathf.Min(cellColor.b * 1.3f, 1f),
+                1f
+            );
+
+            var ps = _cellBurstPool?.Get(worldPos, neonColor);
+            Debug.Log($"[VFXManager] HandleCellClearing at {worldPos}, Color {neonColor}. ParticleSystem retrieved: {ps != null}");
         }
 
         private void HandleNovaCross()
         {
             if (config == null) return;
 
-            // Premium Nova Cross effect
-            if (config.novaCrossVFXPrefab != null)
+            Vector3 center = GetWorldPosFromGrid(new Vector2Int(4, 4));
+
+            // ── Premium Nova Cross: use procedural if enabled, otherwise prefab ──
+            if (config.useProceduralFallback && _novaCrossProceduralPrefab != null)
             {
-                Vector3 center = GetWorldPosFromGrid(new Vector2Int(4, 4));
+                // Spawn a copy of the procedural prefab
+                var ps = Instantiate(_novaCrossProceduralPrefab, center, Quaternion.identity, transform);
+                ps.gameObject.SetActive(true);
+                ps.Play(true);
+                // Play all child particle systems (ring shockwave, etc.)
+                foreach (var child in ps.GetComponentsInChildren<ParticleSystem>())
+                {
+                    if (child != ps) child.Play(true);
+                }
+                float maxDuration = GetMaxDuration(ps);
+                Destroy(ps.gameObject, maxDuration + 1f);
+            }
+            else if (config.novaCrossVFXPrefab != null)
+            {
                 var ps = Instantiate(config.novaCrossVFXPrefab, center, Quaternion.identity, transform);
                 ps.Play(true);
                 Destroy(ps.gameObject, ps.main.duration + ps.main.startLifetime.constantMax);
             }
 
-            // Strong screen flash for Nova Cross (premium)
+            // ── Strong screen flash for Nova Cross (premium) ──
             if (screenFlash != null)
             {
                 screenFlash.Flash(config.novaCrossFlashColor, config.flashDuration * 2f);
             }
 
-            // Strong camera shake
+            // ── Strong camera shake ──
             TriggerShake(config.novaCrossShakeIntensity, config.shakeDuration * 1.5f);
+        }
+
+        /// <summary>
+        /// Handles the MEGA board clear celebration.
+        /// Supernova explosion + mega shockwave + sparkle rain + screen distortion.
+        /// </summary>
+        private void HandleBoardCleared()
+        {
+            if (config == null) return;
+
+            Vector3 center = GetWorldPosFromGrid(new Vector2Int(4, 4));
+
+            // ── Supernova particle explosion ──
+            if (config.useProceduralFallback && _boardClearProceduralPrefab != null)
+            {
+                var ps = Instantiate(_boardClearProceduralPrefab, center, Quaternion.identity, transform);
+                ps.gameObject.SetActive(true);
+                ps.Play(true);
+                // Play all child particle systems (shockwave ring, sparkle rain, etc.)
+                foreach (var child in ps.GetComponentsInChildren<ParticleSystem>())
+                {
+                    if (child != ps) child.Play(true);
+                }
+                float maxDuration = GetMaxDuration(ps);
+                Destroy(ps.gameObject, maxDuration + 1f);
+            }
+            else if (config.boardClearVFXPrefab != null)
+            {
+                var ps = Instantiate(config.boardClearVFXPrefab, center, Quaternion.identity, transform);
+                ps.Play(true);
+                float maxDuration = GetMaxDuration(ps);
+                Destroy(ps.gameObject, maxDuration + 1f);
+            }
+
+            // ── MEGA screen flash ──
+            if (screenFlash != null)
+            {
+                screenFlash.MegaFlash(config.boardClearFlashColor, 0.6f);
+            }
+
+            // ── Strong camera shake ──
+            TriggerShake(config.boardClearShakeIntensity, config.shakeDuration * 2.5f);
+
+            // ── Extended hit-stop for dramatic impact ──
+            TriggerHitStop(config.hitStopDuration * 2f, config.hitStopTimeScale);
         }
 
         private void HandleComboUpdated(int comboLevel)
@@ -175,6 +313,55 @@ namespace NeonGalaxy.VFX
 
             // Strong camera shake
             TriggerShake(config.gameOverShakeIntensity, config.shakeDuration * 2f);
+        }
+
+        // ── Sweep Line ──────────────────────────────────────────
+
+        /// <summary>
+        /// Spawns a sweep line particle that travels across the cleared line.
+        /// For rows: starts at left, moves right.
+        /// For columns: starts at bottom, moves up.
+        /// </summary>
+        private void SpawnSweepLine(int lineIndex, bool isRow)
+        {
+            if (_sweepLinePool == null || config == null) return;
+
+            Vector3 startPos, endPos;
+
+            if (isRow)
+            {
+                startPos = GetWorldPosFromGrid(new Vector2Int(0, lineIndex));
+                endPos = GetWorldPosFromGrid(new Vector2Int(7, lineIndex));
+            }
+            else
+            {
+                startPos = GetWorldPosFromGrid(new Vector2Int(lineIndex, 0));
+                endPos = GetWorldPosFromGrid(new Vector2Int(lineIndex, 7));
+            }
+
+            var ps = _sweepLinePool.Get(startPos);
+            if (ps != null)
+            {
+                StartCoroutine(SweepLineRoutine(ps, startPos, endPos, config.sweepLineDuration));
+            }
+        }
+
+        private IEnumerator SweepLineRoutine(ParticleSystem ps, Vector3 start, Vector3 end, float duration)
+        {
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                // Ease-out for accelerating start
+                t = 1f - (1f - t) * (1f - t);
+                ps.transform.position = Vector3.Lerp(start, end, t);
+                yield return null;
+            }
+
+            ps.transform.position = end;
+            // Let the pool's RecycleFinished handle returning when emission stops
         }
 
         // ── Camera Shake ────────────────────────────────────────
@@ -250,6 +437,21 @@ namespace NeonGalaxy.VFX
             float y = -halfHeight + gridPos.y * totalCell + cellSize / 2f;
 
             return new Vector3(x, y, 0f);
+        }
+
+        /// <summary>
+        /// Gets the maximum duration across a ParticleSystem and all its children.
+        /// Used to calculate safe Destroy timing for instantiated effects.
+        /// </summary>
+        private float GetMaxDuration(ParticleSystem root)
+        {
+            float max = 0f;
+            foreach (var ps in root.GetComponentsInChildren<ParticleSystem>())
+            {
+                float dur = ps.main.duration + ps.main.startLifetime.constantMax;
+                if (dur > max) max = dur;
+            }
+            return max;
         }
     }
 }

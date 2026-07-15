@@ -1,3 +1,4 @@
+#pragma warning disable CS0618
 // <copyright file="DummyClient.cs" company="Google Inc.">
 // Copyright (C) 2014 Google Inc. All Rights Reserved.
 //

@@ -190,14 +190,14 @@ namespace NeonGalaxy.Services
             }
         }
 
-        public async Task<bool> SignOutAsync()
+        public Task<bool> SignOutAsync()
         {
             if (IsSignedIn)
             {
                 AuthenticationService.Instance.SignOut();
-                return true;
+                return Task.FromResult(true);
             }
-            return false;
+            return Task.FromResult(false);
         }
 
         public async Task<bool> SignOutProviderAsync(string providerId)

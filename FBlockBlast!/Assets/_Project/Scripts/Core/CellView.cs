@@ -118,6 +118,9 @@ namespace NeonGalaxy.Core
             }
             transform.localScale = _originalScale * punchScale;
 
+            // Fire per-cell VFX event at the peak of the punch (most impactful moment)
+            GameEvents.InvokeCellClearing(transform.position, baseColor);
+
             // Phase 2: Shrink and Fade Out
             elapsed = 0f;
             while (elapsed < fadeDuration)

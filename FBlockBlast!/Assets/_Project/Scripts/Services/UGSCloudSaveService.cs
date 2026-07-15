@@ -78,7 +78,7 @@ namespace NeonGalaxy.Services
 
             try
             {
-                await CloudSaveService.Instance.Data.Player.DeleteAsync(key);
+                await CloudSaveService.Instance.Data.Player.DeleteAsync(key, new Unity.Services.CloudSave.Models.Data.Player.DeleteOptions());
                 Debug.Log($"[UGSCloudSaveService] Deleted cloud save for key: {key}");
                 return true;
             }

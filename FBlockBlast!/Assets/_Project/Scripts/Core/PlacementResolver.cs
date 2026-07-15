@@ -66,6 +66,12 @@ namespace NeonGalaxy.Core
                 // Update data model by clearing the full lines
                 board.ClearLines(result.ClearedRows, result.RowCount, result.ClearedCols, result.ColCount);
 
+                // Check if the board is now completely empty → MEGA celebration
+                if (board.CountOccupied() == 0)
+                {
+                    GameEvents.InvokeBoardCleared();
+                }
+
                 // Synchronize board visuals again (cleared cells revert to empty grid background)
                 view.RefreshBoard(board);
             }

@@ -59,6 +59,19 @@ namespace NeonGalaxy.Core
         public static event Action<PieceInstance[]> OnNewBatchReady;
 
         /// <summary>
+        /// Fired for each individual cell as it begins its clear animation.
+        /// Used by VFXManager to spawn per-cell particle bursts.
+        /// Args: world position, cell color.
+        /// </summary>
+        public static event Action<Vector3, Color> OnCellClearing;
+
+        /// <summary>
+        /// Fired when the board is completely cleared after a line clear.
+        /// Triggers the mega supernova celebration VFX.
+        /// </summary>
+        public static event Action OnBoardCleared;
+
+        /// <summary>
         /// Fired when the game ends (no valid placements remain).
         /// Args: final score.
         /// </summary>
@@ -154,6 +167,12 @@ namespace NeonGalaxy.Core
         public static void InvokeNewBatchReady(PieceInstance[] batch)
             => OnNewBatchReady?.Invoke(batch);
 
+        public static void InvokeCellClearing(Vector3 worldPos, Color color)
+            => OnCellClearing?.Invoke(worldPos, color);
+
+        public static void InvokeBoardCleared()
+            => OnBoardCleared?.Invoke();
+
         public static void InvokeGameOver(int finalScore)
             => OnGameOver?.Invoke(finalScore);
 
@@ -201,6 +220,8 @@ namespace NeonGalaxy.Core
             OnScoreChanged = null;
             OnBatchComplete = null;
             OnNewBatchReady = null;
+            OnCellClearing = null;
+            OnBoardCleared = null;
             OnGameOver = null;
             OnGameStateChanged = null;
             OnLevelUp = null;
