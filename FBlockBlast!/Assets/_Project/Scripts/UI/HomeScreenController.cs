@@ -22,6 +22,8 @@ namespace NeonGalaxy.UI
         [Header("Currency")]
         [SerializeField] private TextMeshProUGUI coinText;
         [SerializeField] private TextMeshProUGUI gemText;
+        [SerializeField] private TextMeshProUGUI shopcoinText;
+        [SerializeField] private TextMeshProUGUI shopgemText;
 
         [Header("Buttons")]
         [SerializeField] private Button playButton;
@@ -84,6 +86,12 @@ namespace NeonGalaxy.UI
                 
                 if (gemText != null)
                     gemText.text = currencyManager.GetGemBalance().ToString("N0");
+                
+                if (shopcoinText != null)
+                    shopcoinText.text = currencyManager.GetBalance().ToString("N0");
+                
+                if (shopgemText != null)
+                    shopgemText.text = currencyManager.GetGemBalance().ToString("N0");
             }
         }
 

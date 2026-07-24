@@ -73,32 +73,11 @@ namespace NeonGalaxy.Meta
                 return;
             }
 
-            // Try server-side unique number first
-            int guestNumber = -1;
-
-            if (_cloudSaveService != null && _cloudSaveService.IsAvailable)
-            {
-                try
-                {
-                    guestNumber = await _cloudSaveService.GetNextGuestNumberAsync();
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogWarning($"[ProfileManager] Server guest number failed, using local fallback: {ex.Message}");
-                }
-            }
-
-            // Fallback: local counter via PlayerPrefs
-            if (guestNumber < 0)
-            {
-                guestNumber = PlayerPrefs.GetInt(Constants.GUEST_COUNTER_PREF_KEY, 0) + 1;
-                PlayerPrefs.SetInt(Constants.GUEST_COUNTER_PREF_KEY, guestNumber);
-                PlayerPrefs.Save();
-                Debug.Log($"[ProfileManager] Using local fallback guest number: {guestNumber}");
-            }
+            // Generate a random 5-digit number for Guest IDs
+            int guestNumber = UnityEngine.Random.Range(10000, 100000);
 
             data.guestNumber = guestNumber;
-            data.playerName = $"Guest{guestNumber}";
+            data.playerName = $"GUEST{guestNumber}";
             data.profileAvatarId = Constants.DEFAULT_AVATAR_ID;
 
             _saveService.MarkDirty();
@@ -560,7 +539,7 @@ namespace NeonGalaxy.Meta
             if (!success) return false;
 
             var data = _saveService.Data;
-            data.playerName = $"Guest{data.guestNumber}";
+            data.playerName = $"GUEST{data.guestNumber}";
             data.linkedProviderId = "";
             data.linkedProviderDisplayName = "";
             data.linkedProviderEmail = "";

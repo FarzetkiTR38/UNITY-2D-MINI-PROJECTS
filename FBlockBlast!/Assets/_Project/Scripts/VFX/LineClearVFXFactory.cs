@@ -323,7 +323,7 @@ namespace NeonGalaxy.VFX
             var ps = go.AddComponent<ParticleSystem>();
             var renderer = go.GetComponent<ParticleSystemRenderer>();
 
-            int particleCount = config != null ? config.boardClearParticleCount : 120;
+            int particleCount = (config != null ? config.boardClearParticleCount : 120) * 3; // Triple particle count for massive area
 
             // Main Module — supernova burst
             var main = ps.main;
@@ -331,11 +331,11 @@ namespace NeonGalaxy.VFX
             main.duration = 1.5f;
             main.loop = false;
             main.startLifetime = new ParticleSystem.MinMaxCurve(0.5f, 1.5f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(3f, 12f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.3f, 1.0f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(1f, 5f); // Slower speed since they spawn everywhere
+            main.startSize = new ParticleSystem.MinMaxCurve(1.5f, 3.0f); // Massive particles
             main.maxParticles = particleCount + 50;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
-            main.gravityModifier = 0.5f;
+            main.gravityModifier = 0.2f;
             main.startRotation = new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f);
 
             // Rainbow neon color palette
@@ -367,11 +367,11 @@ namespace NeonGalaxy.VFX
                 new ParticleSystem.Burst(0.35f, (short)burst3)
             });
 
-            // Shape — sphere for radial explosion
+            // Shape — box spanning the entire 8x8 board
             var shape = ps.shape;
             shape.enabled = true;
             shape.shapeType = ParticleSystemShapeType.Sphere;
-            shape.radius = 0.5f;
+            shape.scale = new Vector3(4f, 4f, 1f);
 
             // Size Over Lifetime — expand then shrink
             var sizeOverLifetime = ps.sizeOverLifetime;

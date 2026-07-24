@@ -75,6 +75,24 @@ namespace NeonGalaxy.Utility
             {
                 ResetTutorialCheat();
             }
+
+            // --- VFX Testing Cheats ---
+            if (keyboard.f1Key.wasPressedThisFrame)
+            {
+                TestCellBurstCheat();
+            }
+            if (keyboard.f2Key.wasPressedThisFrame)
+            {
+                TestLineClearRowCheat();
+            }
+            if (keyboard.f3Key.wasPressedThisFrame)
+            {
+                TestLineClearColCheat();
+            }
+            if (keyboard.f4Key.wasPressedThisFrame)
+            {
+                TestBoardClearCheat();
+            }
         }
 
         private void AddScoreCheat(int amount)
@@ -237,6 +255,37 @@ namespace NeonGalaxy.Utility
             {
                 Debug.LogWarning("[CheatController] [T] SaveService bulunamadı. Tutorial sıfırlanamadı.");
             }
+        }
+
+        // ── VFX Test Methods ────────────────────────────────────
+
+        private void TestCellBurstCheat()
+        {
+            Debug.Log("[CheatController] [F1] Testing Cell Burst VFX");
+            // Random position near center
+            Vector3 pos = new Vector3(UnityEngine.Random.Range(2f, 5f), UnityEngine.Random.Range(2f, 5f), 0f);
+            Color rndColor = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value, 1f);
+            GameEvents.InvokeCellClearing(pos, rndColor);
+        }
+
+        private void TestLineClearRowCheat()
+        {
+            Debug.Log("[CheatController] [F2] Testing Row Line Clear VFX");
+            int rndRow = UnityEngine.Random.Range(0, 8);
+            GameEvents.InvokeLinesCleared(new int[] { rndRow }, 1, new int[0], 0);
+        }
+
+        private void TestLineClearColCheat()
+        {
+            Debug.Log("[CheatController] [F3] Testing Column Line Clear VFX");
+            int rndCol = UnityEngine.Random.Range(0, 8);
+            GameEvents.InvokeLinesCleared(new int[0], 0, new int[] { rndCol }, 1);
+        }
+
+        private void TestBoardClearCheat()
+        {
+            Debug.Log("[CheatController] [F4] Testing Board Clear (Supernova) VFX");
+            GameEvents.InvokeBoardCleared();
         }
     }
 }

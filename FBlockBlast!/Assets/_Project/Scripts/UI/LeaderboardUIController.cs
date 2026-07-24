@@ -72,6 +72,7 @@ namespace NeonGalaxy.UI
 
         private IEnumerator FetchLeaderboardRoutine()
         {
+            ClearUI();
             SetLoading(true);
 
             var service = ServiceLocator.Get<ILeaderboardService>();
@@ -115,19 +116,7 @@ namespace NeonGalaxy.UI
         {
             if (entryListParent == null || entryPrefab == null) return;
 
-            // Clear existing entries
-            foreach (Transform child in entryListParent)
-            {
-                Destroy(child.gameObject);
-            }
-
-            // Reset top 3 texts
-            if (firstPlayerNameText != null) firstPlayerNameText.text = "---";
-            if (firstPlayerScoreText != null) firstPlayerScoreText.text = "0";
-            if (secondPlayerNameText != null) secondPlayerNameText.text = "---";
-            if (secondPlayerScoreText != null) secondPlayerScoreText.text = "0";
-            if (thirdPlayerNameText != null) thirdPlayerNameText.text = "---";
-            if (thirdPlayerScoreText != null) thirdPlayerScoreText.text = "0";
+            ClearUI();
 
             if (data == null || data.entries == null || data.entries.Count == 0)
             {
@@ -206,6 +195,24 @@ namespace NeonGalaxy.UI
         {
             if (statusText != null)
                 statusText.text = message;
+        }
+
+        private void ClearUI()
+        {
+            if (entryListParent != null)
+            {
+                foreach (Transform child in entryListParent)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+
+            if (firstPlayerNameText != null) firstPlayerNameText.text = "---";
+            if (firstPlayerScoreText != null) firstPlayerScoreText.text = "0";
+            if (secondPlayerNameText != null) secondPlayerNameText.text = "---";
+            if (secondPlayerScoreText != null) secondPlayerScoreText.text = "0";
+            if (thirdPlayerNameText != null) thirdPlayerNameText.text = "---";
+            if (thirdPlayerScoreText != null) thirdPlayerScoreText.text = "0";
         }
 
         // ── Button Handlers ──────────────────────────────────────
