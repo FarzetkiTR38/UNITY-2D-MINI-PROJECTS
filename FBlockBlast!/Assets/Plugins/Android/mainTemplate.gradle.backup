@@ -3,13 +3,6 @@ apply from: '../shared/keepUnitySymbols.gradle'
 apply from: '../shared/common.gradle'
 **APPLY_PLUGINS**
 
-configurations.all {
-    // Kotlin 1.8+ merged jdk7/jdk8 into kotlin-stdlib.
-    // Exclude old separate artifacts to prevent duplicate classes.
-    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
-    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
-}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 // Android Resolver Dependencies Start
@@ -19,7 +12,7 @@ dependencies {
 
 // Android Resolver Exclusions Start
 android {
-  packaging {
+  packagingOptions {
       exclude ('/lib/armeabi/*' + '*')
       exclude ('/lib/armeabi-v7a/*' + '*')
       exclude ('/lib/mips/*' + '*')
