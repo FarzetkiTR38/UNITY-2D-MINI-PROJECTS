@@ -152,12 +152,16 @@ namespace NeonGalaxy.Services
                 {
                     foreach (var entry in scoresResponse.Results)
                     {
+                        string rawName = !string.IsNullOrEmpty(entry.PlayerName)
+                                ? entry.PlayerName
+                                : $"Player_{entry.PlayerId[..6]}";
+                        
+                        string cleanName = rawName.Contains("#") ? rawName.Split('#')[0] : rawName;
+
                         var leaderboardEntry = new NeonGalaxy.Data.LeaderboardEntry
                         {
                             rank = entry.Rank + 1, // UGS is 0-indexed, we display 1-indexed
-                            playerName = !string.IsNullOrEmpty(entry.PlayerName)
-                                ? entry.PlayerName
-                                : $"Player_{entry.PlayerId[..6]}",
+                            playerName = cleanName,
                             playerId = entry.PlayerId,
                             score = (int)entry.Score
                         };
