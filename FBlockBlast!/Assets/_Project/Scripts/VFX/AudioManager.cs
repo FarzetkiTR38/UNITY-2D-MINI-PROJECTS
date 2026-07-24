@@ -280,6 +280,8 @@ namespace NeonGalaxy.VFX
             }
         }
 
+        private readonly List<RaycastResult> _raycastResults = new List<RaycastResult>();
+
         private void Update()
         {
             // If playlist is active, music stopped playing, and the music source is active
@@ -296,11 +298,12 @@ namespace NeonGalaxy.VFX
                     position = Mouse.current.position.ReadValue()
                 };
 
-                var results = new List<RaycastResult>();
-                EventSystem.current.RaycastAll(pointerData, results);
+                _raycastResults.Clear();
+                EventSystem.current.RaycastAll(pointerData, _raycastResults);
 
-                foreach (var result in results)
+                for (int i = 0; i < _raycastResults.Count; i++)
                 {
+                    var result = _raycastResults[i];
                     var button = result.gameObject.GetComponentInParent<Button>();
                     var toggle = result.gameObject.GetComponentInParent<Toggle>();
 
