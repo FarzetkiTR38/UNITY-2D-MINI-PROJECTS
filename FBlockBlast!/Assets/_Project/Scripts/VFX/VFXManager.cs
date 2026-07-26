@@ -33,9 +33,9 @@ namespace NeonGalaxy.VFX
         private VFXPool _cellBurstPool;
         private VFXPool _sweepLinePool;
 
-        // One-shot instances (not pooled due to complexity/rarity)
-        private ParticleSystem _novaCrossProceduralPrefab;
-        private ParticleSystem _boardClearProceduralPrefab;
+        // Previously one-shot, now pooled for performance
+        private VFXPool _novaCrossPool;
+        private VFXPool _boardClearPool;
 
         private Vector3 _cameraOriginalPos;
         private Coroutine _shakeCoroutine;
@@ -86,6 +86,8 @@ namespace NeonGalaxy.VFX
             _comboPool?.RecycleFinished();
             _cellBurstPool?.RecycleFinished();
             _sweepLinePool?.RecycleFinished();
+            _novaCrossPool?.RecycleFinished();
+            _boardClearPool?.RecycleFinished();
         }
 
         // ── Initialization ──────────────────────────────────────
@@ -103,6 +105,12 @@ namespace NeonGalaxy.VFX
 
             if (config.comboVFXPrefab != null)
                 _comboPool = new VFXPool(config.comboVFXPrefab, transform, config.comboPoolSize);
+
+            if (config.novaCrossVFXPrefab != null && !config.useProceduralFallback)
+                _novaCrossPool = new VFXPool(config.novaCrossVFXPrefab, transform, 2);
+
+            if (config.boardClearVFXPrefab != null && !config.useProceduralFallback)
+                _boardClearPool = new VFXPool(config.boardClearVFXPrefab, transform, 1);
         }
 
         /// <summary>
@@ -132,10 +140,12 @@ namespace NeonGalaxy.VFX
             }
 
             // Nova Cross procedural prefab (always generate if fallback enabled)
-            _novaCrossProceduralPrefab = LineClearVFXFactory.CreateNovaCrossPS(transform);
+            var novaCrossPrefab = LineClearVFXFactory.CreateNovaCrossPS(transform);
+            _novaCrossPool = new VFXPool(novaCrossPrefab, transform, 2);
 
             // Board Clear procedural prefab (always generate if fallback enabled)
-            _boardClearProceduralPrefab = LineClearVFXFactory.CreateBoardClearPS(transform, config);
+            var boardClearPrefab = LineClearVFXFactory.CreateBoardClearPS(transform, config);
+            _boardClearPool = new VFXPool(boardClearPrefab, transform, 1);
         }
 
         // ── Event Handlers ──────────────────────────────────────
@@ -209,27 +219,8 @@ namespace NeonGalaxy.VFX
 
             Vector3 center = GetWorldPosFromGrid(new Vector2Int(4, 4));
 
-            // ── Premium Nova Cross: use procedural if enabled, otherwise prefab ──
-            if (config.useProceduralFallback && _novaCrossProceduralPrefab != null)
-            {
-                // Spawn a copy of the procedural prefab
-                var ps = Instantiate(_novaCrossProceduralPrefab, center, Quaternion.identity, transform);
-                ps.gameObject.SetActive(true);
-                ps.Play(true);
-                // Play all child particle systems (ring shockwave, etc.)
-                foreach (var child in ps.GetComponentsInChildren<ParticleSystem>())
-                {
-                    if (child != ps) child.Play(true);
-                }
-                float maxDuration = GetMaxDuration(ps);
-                Destroy(ps.gameObject, maxDuration + 1f);
-            }
-            else if (config.novaCrossVFXPrefab != null)
-            {
-                var ps = Instantiate(config.novaCrossVFXPrefab, center, Quaternion.identity, transform);
-                ps.Play(true);
-                Destroy(ps.gameObject, ps.main.duration + ps.main.startLifetime.constantMax);
-            }
+            // ── Premium Nova Cross: now pooled for performance ──
+            _novaCrossPool?.Get(center);
 
             // ── Screen flash for Nova Cross (Removed per user request) ──
             // if (screenFlash != null)
@@ -254,27 +245,8 @@ namespace NeonGalaxy.VFX
             Vector3 p2 = GetWorldPosFromGrid(new Vector2Int(4, 4));
             Vector3 center = (p1 + p2) * 0.5f;
 
-            // ── Supernova particle explosion ──
-            if (config.useProceduralFallback && _boardClearProceduralPrefab != null)
-            {
-                var ps = Instantiate(_boardClearProceduralPrefab, center, Quaternion.identity, transform);
-                ps.gameObject.SetActive(true);
-                ps.Play(true);
-                // Play all child particle systems (shockwave ring, sparkle rain, etc.)
-                foreach (var child in ps.GetComponentsInChildren<ParticleSystem>())
-                {
-                    if (child != ps) child.Play(true);
-                }
-                float maxDuration = GetMaxDuration(ps);
-                Destroy(ps.gameObject, maxDuration + 1f);
-            }
-            else if (config.boardClearVFXPrefab != null)
-            {
-                var ps = Instantiate(config.boardClearVFXPrefab, center, Quaternion.identity, transform);
-                ps.Play(true);
-                float maxDuration = GetMaxDuration(ps);
-                Destroy(ps.gameObject, maxDuration + 1f);
-            }
+            // ── Supernova particle explosion (Pooled) ──
+            _boardClearPool?.Get(center);
 
             // ── MEGA screen flash (Removed per user request) ──
             // if (screenFlash != null)

@@ -93,25 +93,28 @@ namespace NeonGalaxy.VFX
             _available.Enqueue(ps);
         }
 
+        private readonly List<ParticleSystem> _toReturnCache = new List<ParticleSystem>();
+
         /// <summary>
         /// Checks active particles and returns any that have finished playing.
         /// Call this periodically (e.g., in Update) to auto-return finished effects.
         /// </summary>
         public void RecycleFinished()
         {
-            var toReturn = new List<ParticleSystem>();
+            _toReturnCache.Clear();
             foreach (var ps in _active)
             {
                 if (ps == null || (!ps.isPlaying && !ps.isEmitting))
                 {
-                    toReturn.Add(ps);
+                    _toReturnCache.Add(ps);
                 }
             }
 
-            for (int i = 0; i < toReturn.Count; i++)
+            for (int i = 0; i < _toReturnCache.Count; i++)
             {
-                Return(toReturn[i]);
+                Return(_toReturnCache[i]);
             }
+            _toReturnCache.Clear();
         }
 
         /// <summary>
@@ -119,11 +122,17 @@ namespace NeonGalaxy.VFX
         /// </summary>
         public void ReturnAll()
         {
-            var allActive = new List<ParticleSystem>(_active);
-            for (int i = 0; i < allActive.Count; i++)
+            _toReturnCache.Clear();
+            foreach (var ps in _active)
             {
-                Return(allActive[i]);
+                _toReturnCache.Add(ps);
             }
+
+            for (int i = 0; i < _toReturnCache.Count; i++)
+            {
+                Return(_toReturnCache[i]);
+            }
+            _toReturnCache.Clear();
         }
 
         private ParticleSystem CreateInstance()
