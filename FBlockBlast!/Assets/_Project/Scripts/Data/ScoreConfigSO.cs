@@ -71,9 +71,9 @@ namespace NeonGalaxy.Data
 
         /// <summary>
         /// Returns the combo multiplier for the given combo count.
-        /// Uses the lookup table for low values, linear formula for high values, capped.
+        /// Uses the lookup table for low values, linear formula for high values, conditionally capped.
         /// </summary>
-        public float GetComboMultiplier(int combo)
+        public float GetComboMultiplier(int combo, bool applyLimit = true)
         {
             if (combo < 0) return 1.0f;
 
@@ -82,7 +82,8 @@ namespace NeonGalaxy.Data
 
             int overflow = combo - (comboMultiplierTable.Length - 1);
             float multiplier = comboOverflowBase + overflow * comboOverflowStep;
-            return Mathf.Min(multiplier, comboMultiplierCap);
+            
+            return applyLimit ? Mathf.Min(multiplier, comboMultiplierCap) : multiplier;
         }
 
         /// <summary>

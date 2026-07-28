@@ -23,8 +23,13 @@ namespace NeonGalaxy.Input
         private bool _isDragging;
 
         // Smooth drag interpolation
+        private bool _useSmoothDrag = true;
         private float _dragSmoothSpeed = 14f;
         private Vector3 _currentDragPosition;
+
+        // Drag sensitivity multiplier
+        private float _dragMultiplier = 1f;
+        private Vector3 _startTouchPos;
 
         public bool IsDragging => _isDragging;
         public PieceView DraggingPiece => _draggingPiece;
@@ -62,6 +67,23 @@ namespace NeonGalaxy.Input
         }
 
         /// <summary>
+        /// Toggles whether dragging uses smooth interpolation or instant snapping.
+        /// </summary>
+        public void SetUseSmoothDrag(bool useSmooth)
+        {
+            _useSmoothDrag = useSmooth;
+        }
+
+        /// <summary>
+        /// Sets the multiplier for drag sensitivity. 
+        /// 1 = 1:1 movement, >1 = faster piece movement relative to finger.
+        /// </summary>
+        public void SetDragMultiplier(float multiplier)
+        {
+            _dragMultiplier = Mathf.Max(0.1f, multiplier);
+        }
+
+        /// <summary>
         /// Initiates the drag action for a specified PieceView.
         /// </summary>
         public void BeginDrag(PieceView pieceView, Vector3 touchWorldPos)
@@ -70,6 +92,7 @@ namespace NeonGalaxy.Input
 
             _draggingPiece = pieceView;
             _isDragging = true;
+            _startTouchPos = touchWorldPos;
 
             // Calculate the initial target position
             Vector3 targetPos = touchWorldPos + _fingerOffset - _draggingPiece.VisualCenterOffset;
@@ -93,15 +116,28 @@ namespace NeonGalaxy.Input
         {
             if (!_isDragging || _draggingPiece == null) return;
 
-            // Calculate raw target position
-            Vector3 rawTargetPos = touchWorldPos + _fingerOffset - _draggingPiece.VisualCenterOffset;
+            // Apply sensitivity multiplier to drag delta
+            Vector3 touchDelta = touchWorldPos - _startTouchPos;
+            Vector3 scaledTouchPos = _startTouchPos + (touchDelta * _dragMultiplier);
 
-            // Smooth lerp the piece position toward the target for a softer feel
-            _currentDragPosition = Vector3.Lerp(
-                _currentDragPosition, 
-                rawTargetPos, 
-                Time.deltaTime * _dragSmoothSpeed
-            );
+            // Calculate raw target position
+            Vector3 rawTargetPos = scaledTouchPos + _fingerOffset - _draggingPiece.VisualCenterOffset;
+
+            if (_useSmoothDrag)
+            {
+                // Smooth lerp the piece position toward the target for a softer feel
+                _currentDragPosition = Vector3.Lerp(
+                    _currentDragPosition, 
+                    rawTargetPos, 
+                    Time.deltaTime * _dragSmoothSpeed
+                );
+            }
+            else
+            {
+                // Instant snap
+                _currentDragPosition = rawTargetPos;
+            }
+            
             _draggingPiece.transform.position = _currentDragPosition;
 
             // Use the smoothed position for grid snapping so preview doesn't jitter

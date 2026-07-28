@@ -13,6 +13,8 @@ namespace NeonGalaxy.Core
     {
         private readonly ScoreConfigSO _scoreConfig;
         private readonly ComboManager _comboManager;
+        
+        private bool _limitComboMultiplier = true;
 
         public int TotalScore { get; private set; }
 
@@ -27,6 +29,11 @@ namespace NeonGalaxy.Core
         public void Cleanup()
         {
             GameEvents.OnBoardCleared -= HandleBoardCleared;
+        }
+
+        public void SetLimitComboMultiplier(bool limit)
+        {
+            _limitComboMultiplier = limit;
         }
 
         private void HandleBoardCleared()
@@ -71,7 +78,7 @@ namespace NeonGalaxy.Core
                 int novaBonus = result.NovaCross ? _scoreConfig.novaCrossBonus : 0;
                 
                 // Read combo multiplier from the ScoreConfigSO using the current combo level
-                float comboMultiplier = _scoreConfig.GetComboMultiplier(_comboManager.CurrentCombo);
+                float comboMultiplier = _scoreConfig.GetComboMultiplier(_comboManager.CurrentCombo, _limitComboMultiplier);
 
                 clearScore = Mathf.RoundToInt((clearBase + novaBonus) * comboMultiplier);
             }
@@ -99,7 +106,7 @@ namespace NeonGalaxy.Core
             if (batchBonusBase > 0)
             {
                 // Multiplied by active combo multiplier
-                float comboMultiplier = _scoreConfig.GetComboMultiplier(_comboManager.CurrentCombo);
+                float comboMultiplier = _scoreConfig.GetComboMultiplier(_comboManager.CurrentCombo, _limitComboMultiplier);
                 int finalBatchBonus = Mathf.RoundToInt(batchBonusBase * comboMultiplier);
 
                 TotalScore += finalBatchBonus;

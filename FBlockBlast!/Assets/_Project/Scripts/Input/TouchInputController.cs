@@ -69,6 +69,22 @@ namespace NeonGalaxy.Input
             _dragDropHandler.SetDragSmoothSpeed(dragSmoothSpeed);
         }
 
+        public void SetDragMultiplier(float multiplier)
+        {
+            if (_dragDropHandler != null)
+            {
+                _dragDropHandler.SetDragMultiplier(multiplier);
+            }
+        }
+
+        public void SetUseSmoothDrag(bool useSmooth)
+        {
+            if (_dragDropHandler != null)
+            {
+                _dragDropHandler.SetUseSmoothDrag(useSmooth);
+            }
+        }
+
         private void Update()
         {
             if (!_isInputEnabled || _boardModel == null || _dragDropHandler == null)

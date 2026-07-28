@@ -5,6 +5,7 @@ using NeonGalaxy.Meta;
 using NeonGalaxy.Data;
 using NeonGalaxy.Utility;
 using Unity.Services.Core;
+using UnityEngine.Networking;
 
 namespace NeonGalaxy.Boot
 {
@@ -36,6 +37,13 @@ namespace NeonGalaxy.Boot
         [SerializeField, Tooltip("Delay (seconds) after bar reaches 100% before fade-out begins.")]
         private float postCompleteDelay = 0.5f;
 
+        [Header("Version Check (Forced Update)")]
+        [SerializeField, Tooltip("URL to the JSON file hosted on GitHub Gist (raw URL) or any server.")]
+        private string versionCheckUrl = "";
+        
+        [SerializeField, Tooltip("Reference to the popup shown when an update is required.")]
+        private NeonGalaxy.UI.ForcedUpdatePopup forcedUpdatePopup;
+
         [Header("Status")]
         [SerializeField, Tooltip("Shows initialization progress in inspector.")]
 #pragma warning disable 0414
@@ -62,6 +70,16 @@ namespace NeonGalaxy.Boot
             // ── Step 0: Start ────────────────────────────────────
             ReportProgress(0f, "Starting...");
             await Awaitable.NextFrameAsync();
+
+            // ── Step 0.5: Version Check (Forced Update) ──────────
+            bool requiresUpdate = await CheckForUpdatesAsync();
+            if (requiresUpdate)
+            {
+                // Stop boot process completely if update is required
+                _status = "Update required. Boot halted.";
+                Debug.Log("[BootManager] Forced update required. Halting boot sequence.");
+                return;
+            }
 
             // ── Step 1: UGS Initialize ───────────────────────────
             _status = "Initializing UGS...";
@@ -304,6 +322,99 @@ namespace NeonGalaxy.Boot
 
             // Cleanup
             ServiceLocator.Clear();
+        }
+
+        // ── Version Check Logic ─────────────────────────────────
+
+        [System.Serializable]
+        private class VersionCheckData
+        {
+            public string minVersion;
+            public string storeUrl;
+        }
+
+        private async Awaitable<bool> CheckForUpdatesAsync()
+        {
+            if (string.IsNullOrEmpty(versionCheckUrl))
+            {
+                Debug.Log("[BootManager] Version check URL is empty. Skipping update check.");
+                return false;
+            }
+
+            _status = "Checking for updates...";
+            Debug.Log("[BootManager] Checking for updates...");
+
+            using (UnityWebRequest webRequest = UnityWebRequest.Get(versionCheckUrl))
+            {
+                var asyncOp = webRequest.SendWebRequest();
+                while (!asyncOp.isDone)
+                {
+                    await Awaitable.NextFrameAsync();
+                }
+
+                if (webRequest.result == UnityWebRequest.Result.ConnectionError || 
+                    webRequest.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    Debug.LogWarning($"[BootManager] Version check failed: {webRequest.error}. Allowing boot to continue.");
+                    return false; // Fail open (allow playing offline)
+                }
+
+                string json = webRequest.downloadHandler.text;
+                try
+                {
+                    VersionCheckData data = JsonUtility.FromJson<VersionCheckData>(json);
+                    
+                    if (IsVersionLower(Application.version, data.minVersion))
+                    {
+                        Debug.LogWarning($"[BootManager] Update required! Current: {Application.version}, Min Required: {data.minVersion}");
+                        
+                        // Show the unclosable update popup
+                        if (forcedUpdatePopup != null)
+                        {
+                            forcedUpdatePopup.Show(data.storeUrl);
+                        }
+                        else
+                        {
+                            Debug.LogError("[BootManager] ForcedUpdatePopup reference is missing!");
+                        }
+
+                        return true;
+                    }
+                    
+                    Debug.Log($"[BootManager] Version is up to date (Current: {Application.version}, Min: {data.minVersion})");
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"[BootManager] Failed to parse version check JSON: {e.Message}");
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns true if currentVersion is lower than minVersion.
+        /// Compares versions like "1.0.0" and "1.1.0".
+        /// </summary>
+        private bool IsVersionLower(string currentVersion, string minVersion)
+        {
+            if (string.IsNullOrEmpty(currentVersion) || string.IsNullOrEmpty(minVersion)) return false;
+
+            string[] currentParts = currentVersion.Split('.');
+            string[] minParts = minVersion.Split('.');
+
+            int length = Mathf.Max(currentParts.Length, minParts.Length);
+
+            for (int i = 0; i < length; i++)
+            {
+                int currentPart = i < currentParts.Length && int.TryParse(currentParts[i], out int c) ? c : 0;
+                int minPart = i < minParts.Length && int.TryParse(minParts[i], out int m) ? m : 0;
+
+                if (currentPart < minPart) return true;
+                if (currentPart > minPart) return false;
+            }
+
+            return false; // They are equal
         }
     }
 }

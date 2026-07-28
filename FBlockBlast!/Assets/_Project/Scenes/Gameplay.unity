@@ -676,7 +676,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3960,6 +3960,8 @@ MonoBehaviour:
   boardController: {fileID: 609850124}
   pieceTrayController: {fileID: 1692040855}
   fingerOffset: {x: 0, y: 0, z: 0}
+  pickupRadius: 1.2
+  dragSmoothSpeed: 14
 --- !u!4 &613345721
 Transform:
   m_ObjectHideFlags: 0
@@ -10491,6 +10493,9 @@ MonoBehaviour:
   piecePool: {fileID: 11400000, guid: b340a9a39d652f34b8685fe8ffe4364f, type: 2}
   scoreConfig: {fileID: 11400000, guid: e29be50d513ae4247963edc005c9779d, type: 2}
   comboConfig: {fileID: 11400000, guid: 01dc3d59f52bc7c4bab3c093ecc36323, type: 2}
+  limitComboMultiplier: 0
+  useSmoothDrag: 1
+  dragSensitivityMultiplier: 1.45
   boardController: {fileID: 609850124}
   pieceTrayController: {fileID: 1692040855}
   touchInputController: {fileID: 613345720}
@@ -12765,7 +12770,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
