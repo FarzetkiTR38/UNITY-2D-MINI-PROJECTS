@@ -19,6 +19,11 @@ namespace NeonGalaxy.Core
         [SerializeField] private float dragScale = 0.9f;
         [SerializeField] private float animDuration = 0.15f;
 
+        [Header("Touch Softness")]
+        [Tooltip("Extra padding added to each side of the collider (world units). " +
+                 "Makes pieces easier to grab without touching them exactly.")]
+        [SerializeField] private float colliderPadding = 0.4f;
+
         public float TrayScale => trayScale;
         public Vector3 VisualCenterOffset { get; private set; }
 
@@ -83,7 +88,11 @@ namespace NeonGalaxy.Core
             }
 
             // Dynamically calculate and configure the BoxCollider2D bounds for touch detection
-            _collider.size = new Vector2(bounds.width * totalCell, bounds.height * totalCell);
+            // Add padding to make the touch target larger and more forgiving
+            _collider.size = new Vector2(
+                bounds.width * totalCell + colliderPadding * 2f,
+                bounds.height * totalCell + colliderPadding * 2f
+            );
             _collider.offset = new Vector2(
                 (bounds.x + (bounds.width - 1f) / 2f) * totalCell,
                 (bounds.y + (bounds.height - 1f) / 2f) * totalCell

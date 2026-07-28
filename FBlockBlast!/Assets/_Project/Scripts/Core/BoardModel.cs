@@ -168,6 +168,27 @@ namespace NeonGalaxy.Core
             PlacePiece(piece.CellOffsets, boardRow, boardCol, piece.ColorIndex);
         }
 
+        /// <summary>
+        /// Simulates placing a piece to predict which rows and columns would be cleared.
+        /// </summary>
+        public void PredictClears(PieceInstance piece, int boardRow, int boardCol, out int[] fullRows, out int rowCount, out int[] fullCols, out int colCount)
+        {
+            // Temporarily place the piece
+            PlacePiece(piece, boardRow, boardCol);
+
+            // Find full lines
+            FindFullLines(out fullRows, out rowCount, out fullCols, out colCount);
+
+            // Remove the piece (undo simulation)
+            for (int i = 0; i < piece.CellOffsets.Length; i++)
+            {
+                int r = boardRow + piece.CellOffsets[i].y;
+                int c = boardCol + piece.CellOffsets[i].x;
+                _cells[r, c] = false;
+                _colors[r, c] = 0;
+            }
+        }
+
         // ── Line Detection & Clearing ────────────────────────────
 
         /// <summary>
