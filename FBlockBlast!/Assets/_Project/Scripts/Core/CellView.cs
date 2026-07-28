@@ -21,7 +21,8 @@ namespace NeonGalaxy.Core
         [SerializeField] private float fadeDuration = 0.2f;
 
         private Vector3 _originalScale;
-        private Color _originalBlockColor;
+        private Color _currentBlockColor;
+        private Sprite _currentBlockSprite;
         private Coroutine _activeAnimation;
 
         private void Awake()
@@ -29,7 +30,6 @@ namespace NeonGalaxy.Core
             _originalScale = transform.localScale;
             if (blockRenderer != null)
             {
-                _originalBlockColor = blockRenderer.color;
                 blockRenderer.gameObject.SetActive(false);
             }
         }
@@ -45,8 +45,13 @@ namespace NeonGalaxy.Core
             if (blockRenderer != null)
             {
                 blockRenderer.gameObject.SetActive(true);
-                if (sprite != null) blockRenderer.sprite = sprite;
-                blockRenderer.color = new Color(tintColor.r, tintColor.g, tintColor.b, 1.0f);
+                if (sprite != null) 
+                {
+                    blockRenderer.sprite = sprite;
+                    _currentBlockSprite = sprite;
+                }
+                _currentBlockColor = new Color(tintColor.r, tintColor.g, tintColor.b, 1.0f);
+                blockRenderer.color = _currentBlockColor;
             }
         }
 
@@ -61,6 +66,43 @@ namespace NeonGalaxy.Core
             if (blockRenderer != null)
             {
                 blockRenderer.gameObject.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// Temporarily changes the cell's color and sprite to create a glowing highlight effect.
+        /// </summary>
+        public void SetHighlight(Sprite highlightSprite, Color color, float brightnessBoost = 1.35f)
+        {
+            if (blockRenderer != null && blockRenderer.gameObject.activeSelf)
+            {
+                if (highlightSprite != null)
+                {
+                    blockRenderer.sprite = highlightSprite;
+                }
+                
+                // Boost RGB directly for an HDR-like glowing effect
+                blockRenderer.color = new Color(
+                    color.r * brightnessBoost,
+                    color.g * brightnessBoost,
+                    color.b * brightnessBoost,
+                    1f
+                );
+            }
+        }
+
+        /// <summary>
+        /// Restores the cell's original block color and sprite.
+        /// </summary>
+        public void ClearHighlight()
+        {
+            if (blockRenderer != null && blockRenderer.gameObject.activeSelf)
+            {
+                if (_currentBlockSprite != null)
+                {
+                    blockRenderer.sprite = _currentBlockSprite;
+                }
+                blockRenderer.color = _currentBlockColor;
             }
         }
 

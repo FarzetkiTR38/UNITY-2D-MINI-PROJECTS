@@ -132,6 +132,24 @@ namespace NeonGalaxy.Input
             {
                 _ghostPreview.UpdatePosition(clampedGridPos, canPlace);
             }
+
+            // --- Clear Prediction & Hover Highlight ---
+            if (canPlace)
+            {
+                _boardModel.PredictClears(_draggingPiece.Piece, rawGridPos.y, rawGridPos.x, out int[] fullRows, out int rowCount, out int[] fullCols, out int colCount);
+                if (rowCount > 0 || colCount > 0)
+                {
+                    _boardController.HighlightLines(fullRows, rowCount, fullCols, colCount, _draggingPiece.Piece.ColorIndex);
+                }
+                else
+                {
+                    _boardController.ClearHighlights();
+                }
+            }
+            else
+            {
+                _boardController.ClearHighlights();
+            }
         }
 
         /// <summary>
@@ -149,6 +167,9 @@ namespace NeonGalaxy.Input
             Vector2Int gridPos = Vector2Int.zero;
 
             Vector3 targetPos = _draggingPiece.transform.position;
+
+            // Clear any active clear preview highlights
+            _boardController.ClearHighlights();
 
             // Hide ghost preview instantly
             if (_ghostPreview != null)
@@ -190,6 +211,8 @@ namespace NeonGalaxy.Input
         public void CancelDrag()
         {
             if (!_isDragging || _draggingPiece == null) return;
+
+            _boardController.ClearHighlights();
 
             if (_ghostPreview != null)
             {

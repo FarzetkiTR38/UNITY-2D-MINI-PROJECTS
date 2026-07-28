@@ -160,6 +160,57 @@ namespace NeonGalaxy.Core
         }
 
         /// <summary>
+        /// Highlights the existing blocks in the specified rows and columns to preview a clear.
+        /// </summary>
+        public void HighlightLines(int[] rows, int rowCount, int[] cols, int colCount, int colorIndex)
+        {
+            ClearHighlights(); // Ensure no left-over highlights
+            
+            BlockSkin skin = config.GetBlockSkin(colorIndex);
+            var cellsToHighlight = new HashSet<Vector2Int>();
+            
+            for (int i = 0; i < rowCount; i++)
+            {
+                for (int c = 0; c < _width; c++)
+                    cellsToHighlight.Add(new Vector2Int(c, rows[i]));
+            }
+            
+            for (int i = 0; i < colCount; i++)
+            {
+                for (int r = 0; r < _height; r++)
+                    cellsToHighlight.Add(new Vector2Int(cols[i], r));
+            }
+
+            foreach (var pos in cellsToHighlight)
+            {
+                CellView cell = GetCellView(pos.y, pos.x);
+                if (cell != null)
+                {
+                    cell.SetHighlight(skin.sprite, skin.tintColor);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Reverts any temporary clear highlights.
+        /// </summary>
+        public void ClearHighlights()
+        {
+            if (_cellViews == null) return;
+            for (int r = 0; r < _height; r++)
+            {
+                for (int c = 0; c < _width; c++)
+                {
+                    CellView cell = _cellViews[r, c];
+                    if (cell != null)
+                    {
+                        cell.ClearHighlight();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Triggers visual clear animations for the specified rows and columns.
         /// Sweeps row clear left-to-right, column clear bottom-to-top, and Nova Cross outward.
         /// </summary>
