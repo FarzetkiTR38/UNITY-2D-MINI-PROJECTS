@@ -10,6 +10,9 @@ namespace NeonGalaxy.Input
     /// Captures touch/mouse input on mobile and desktop platforms.
     /// Initiates and updates drag-and-drop operations using DragDropHandler.
     /// Notifies GameManager upon successful piece drop.
+    /// 
+    /// Uses a proximity-based pickup system so the player doesn't need to
+    /// touch exactly on the piece — touching near it is enough.
     /// </summary>
     public class TouchInputController : MonoBehaviour
     {
@@ -20,6 +23,16 @@ namespace NeonGalaxy.Input
 
         [Header("Settings")]
         [SerializeField] private Vector3 fingerOffset = new Vector3(0f, 1.5f, 0f);
+
+        [Header("Pickup Softness")]
+        [Tooltip("World-space radius around the touch point to detect a piece. " +
+                 "Larger = more forgiving pickup. 0 = exact touch required.")]
+        [SerializeField] private float pickupRadius = 1.2f;
+
+        [Header("Drag Smoothness")]
+        [Tooltip("How smoothly the piece follows the finger. Higher = snappier, Lower = softer. " +
+                 "20+ is near-instant. 6-10 feels very smooth and soft.")]
+        [SerializeField] private float dragSmoothSpeed = 14f;
 
         /// <summary>
         /// Fired when a piece is successfully dropped on the board.
@@ -53,6 +66,7 @@ namespace NeonGalaxy.Input
             _boardModel = boardModel;
             _dragDropHandler = new DragDropHandler(boardController, _boardModel, pieceTrayController, ghostPreview);
             _dragDropHandler.SetFingerOffset(fingerOffset);
+            _dragDropHandler.SetDragSmoothSpeed(dragSmoothSpeed);
         }
 
         private void Update()
@@ -79,15 +93,11 @@ namespace NeonGalaxy.Input
             if (pointer.press.wasPressedThisFrame)
             {
                 Vector3 touchWorldPos = GetTouchWorldPosition();
-                RaycastHit2D hit = Physics2D.Raycast(touchWorldPos, Vector2.zero);
+                PieceView pieceView = FindClosestPiece(touchWorldPos);
 
-                if (hit.collider != null)
+                if (pieceView != null)
                 {
-                    PieceView pieceView = hit.collider.GetComponent<PieceView>();
-                    if (pieceView != null)
-                    {
-                        _dragDropHandler.BeginDrag(pieceView, touchWorldPos);
-                    }
+                    _dragDropHandler.BeginDrag(pieceView, touchWorldPos);
                 }
             }
             // Update Drag
@@ -111,6 +121,48 @@ namespace NeonGalaxy.Input
                     OnPieceDropped?.Invoke(pieceInstance, gridPos, slotIndex);
                 }
             }
+        }
+
+        /// <summary>
+        /// Finds the closest PieceView within pickupRadius of the given world position.
+        /// Uses OverlapCircleAll instead of a single Raycast for a forgiving touch area.
+        /// </summary>
+        private PieceView FindClosestPiece(Vector3 touchWorldPos)
+        {
+            // First try exact hit (zero-radius raycast) — this is instant and most precise
+            RaycastHit2D exactHit = Physics2D.Raycast(touchWorldPos, Vector2.zero);
+            if (exactHit.collider != null)
+            {
+                PieceView directPiece = exactHit.collider.GetComponent<PieceView>();
+                if (directPiece != null) return directPiece;
+            }
+
+            // If no exact hit, search within pickup radius for nearby pieces
+            if (pickupRadius <= 0f) return null;
+
+            Collider2D[] hits = Physics2D.OverlapCircleAll(touchWorldPos, pickupRadius);
+            if (hits == null || hits.Length == 0) return null;
+
+            PieceView closest = null;
+            float closestDist = float.MaxValue;
+
+            foreach (Collider2D col in hits)
+            {
+                PieceView pv = col.GetComponent<PieceView>();
+                if (pv == null) continue;
+
+                // Use the distance to the collider's closest point for accuracy
+                Vector2 closestPoint = col.ClosestPoint(touchWorldPos);
+                float dist = Vector2.Distance(touchWorldPos, closestPoint);
+
+                if (dist < closestDist)
+                {
+                    closestDist = dist;
+                    closest = pv;
+                }
+            }
+
+            return closest;
         }
 
         private Vector3 GetTouchWorldPosition()

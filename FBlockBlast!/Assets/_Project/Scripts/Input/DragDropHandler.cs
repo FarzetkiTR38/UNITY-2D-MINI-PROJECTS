@@ -8,6 +8,8 @@ namespace NeonGalaxy.Input
     /// Coordinates the drag-and-drop state machine for puzzle pieces.
     /// Manages finger offsets, checks grid placement validity, and updates the ghost preview.
     /// This is a pure C# class (non-MonoBehaviour) to keep input logic clean and testable.
+    /// 
+    /// Supports smooth (lerped) drag movement for a softer, more polished game feel.
     /// </summary>
     public class DragDropHandler
     {
@@ -19,6 +21,10 @@ namespace NeonGalaxy.Input
         private PieceView _draggingPiece;
         private Vector3 _fingerOffset;
         private bool _isDragging;
+
+        // Smooth drag interpolation
+        private float _dragSmoothSpeed = 14f;
+        private Vector3 _currentDragPosition;
 
         public bool IsDragging => _isDragging;
         public PieceView DraggingPiece => _draggingPiece;
@@ -47,6 +53,15 @@ namespace NeonGalaxy.Input
         }
 
         /// <summary>
+        /// Sets the smooth interpolation speed for drag movement.
+        /// Higher values = snappier, lower values = softer.
+        /// </summary>
+        public void SetDragSmoothSpeed(float speed)
+        {
+            _dragSmoothSpeed = Mathf.Max(1f, speed);
+        }
+
+        /// <summary>
         /// Initiates the drag action for a specified PieceView.
         /// </summary>
         public void BeginDrag(PieceView pieceView, Vector3 touchWorldPos)
@@ -55,6 +70,10 @@ namespace NeonGalaxy.Input
 
             _draggingPiece = pieceView;
             _isDragging = true;
+
+            // Calculate the initial target position
+            Vector3 targetPos = touchWorldPos + _fingerOffset - _draggingPiece.VisualCenterOffset;
+            _currentDragPosition = targetPos;
 
             // Lift and scale up the piece view (offsetting by visual center so it centers horizontally on the touch point)
             _draggingPiece.AnimatePickup(touchWorldPos, _fingerOffset - _draggingPiece.VisualCenterOffset);
@@ -67,18 +86,29 @@ namespace NeonGalaxy.Input
         }
 
         /// <summary>
-        /// Updates the dragging piece's position and refreshes placement validity overlays.
+        /// Updates the dragging piece's position with smooth interpolation
+        /// and refreshes placement validity overlays.
         /// </summary>
         public void UpdateDrag(Vector3 touchWorldPos)
         {
             if (!_isDragging || _draggingPiece == null) return;
 
-            // Update piece position directly under the finger (plus offset, minus visual center offset)
-            Vector3 targetPos = touchWorldPos + _fingerOffset - _draggingPiece.VisualCenterOffset;
-            _draggingPiece.transform.position = targetPos;
+            // Calculate raw target position
+            Vector3 rawTargetPos = touchWorldPos + _fingerOffset - _draggingPiece.VisualCenterOffset;
+
+            // Smooth lerp the piece position toward the target for a softer feel
+            _currentDragPosition = Vector3.Lerp(
+                _currentDragPosition, 
+                rawTargetPos, 
+                Time.deltaTime * _dragSmoothSpeed
+            );
+            _draggingPiece.transform.position = _currentDragPosition;
+
+            // Use the smoothed position for grid snapping so preview doesn't jitter
+            Vector3 posForGrid = _currentDragPosition;
 
             // Get raw grid position (which can be out of bounds)
-            _boardController.WorldToGrid(targetPos, out Vector2Int rawGridPos);
+            _boardController.WorldToGrid(posForGrid, out Vector2Int rawGridPos);
 
             // Clamp grid position to board boundaries for visual preview snapping
             int boardWidth = 8;
