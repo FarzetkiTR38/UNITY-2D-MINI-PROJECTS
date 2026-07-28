@@ -26,6 +26,16 @@ namespace NeonGalaxy.Core
         [SerializeField] private ScoreConfigSO scoreConfig;
         [SerializeField] private ComboConfigSO comboConfig;
 
+        [Header("Combo Limits")]
+        [Tooltip("If true, the combo multiplier is capped at the maximum value in ScoreConfig (5.0x). If false, it grows infinitely by 0.1x per combo.")]
+        [SerializeField] private bool limitComboMultiplier = true;
+
+        [Header("Gameplay Feel")]
+        [Tooltip("When enabled, the piece smoothly follows the finger with a slight delay. When disabled, it instantly snaps to the finger position.")]
+        [SerializeField] private bool useSmoothDrag = true;
+        [Tooltip("Multiplies the drag distance. 1 = 1:1 with finger, 1.5 = piece moves 50% faster than finger.")]
+        [SerializeField] [Range(1f, 3f)] private float dragSensitivityMultiplier = 1.5f;
+
         [Header("Scene Controller References")]
         [SerializeField] private BoardController boardController;
         [SerializeField] private PieceTrayController pieceTrayController;
@@ -156,6 +166,7 @@ namespace NeonGalaxy.Core
             _boardModel = new BoardModel(boardConfig);
             _comboManager = new ComboManager(comboConfig);
             _scoreManager = new ScoreManager(scoreConfig, _comboManager);
+            _scoreManager.SetLimitComboMultiplier(limitComboMultiplier);
             
             if (_saveService != null && !_saveService.Data.hasCompletedTutorial)
             {
@@ -172,6 +183,8 @@ namespace NeonGalaxy.Core
             // Initialize rendering boards
             boardController.Initialize(boardConfig);
             touchInputController.Initialize(_boardModel, ghostPreviewController);
+            touchInputController.SetDragMultiplier(dragSensitivityMultiplier);
+            touchInputController.SetUseSmoothDrag(useSmoothDrag);
 
             // Connect event listeners
             touchInputController.OnPieceDropped += HandlePieceDropped;
