@@ -280,6 +280,51 @@ namespace NeonGalaxy.Core
             return new BoardBitmask(mask);
         }
 
+        // ── State Export / Import (Save System) ──────────────────
+
+        /// <summary>
+        /// Exports the board state to flat arrays for serialization.
+        /// Arrays are indexed as [row * Width + col].
+        /// </summary>
+        public void ExportState(out bool[] occupied, out int[] colors)
+        {
+            int total = Height * Width;
+            occupied = new bool[total];
+            colors = new int[total];
+
+            for (int r = 0; r < Height; r++)
+            {
+                for (int c = 0; c < Width; c++)
+                {
+                    int idx = r * Width + c;
+                    occupied[idx] = _cells[r, c];
+                    colors[idx] = _colors[r, c];
+                }
+            }
+        }
+
+        /// <summary>
+        /// Imports board state from flat arrays (deserialization).
+        /// Resets the board first, then applies the saved state.
+        /// </summary>
+        public void ImportState(bool[] occupied, int[] colors)
+        {
+            Reset();
+
+            if (occupied == null || colors == null) return;
+
+            int total = Height * Width;
+            int len = Mathf.Min(occupied.Length, total);
+
+            for (int i = 0; i < len; i++)
+            {
+                int r = i / Width;
+                int c = i % Width;
+                _cells[r, c] = occupied[i];
+                _colors[r, c] = colors[i];
+            }
+        }
+
         // ── Board Reset ──────────────────────────────────────────
 
         /// <summary>

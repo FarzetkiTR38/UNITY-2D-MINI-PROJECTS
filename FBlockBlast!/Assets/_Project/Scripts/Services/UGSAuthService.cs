@@ -104,50 +104,48 @@ namespace NeonGalaxy.Services
 
             try
             {
-                // Play Games v10.15 için yapılandırma (Server Auth Code istiyoruz)
-                var config = new GooglePlayGames.BasicApi.PlayGamesClientConfiguration.Builder()
-                    .RequestServerAuthCode(false)
-                    .Build();
-                PlayGamesPlatform.InitializeInstance(config);
+                // Play Games v11 (v2 SDK) yapılandırması
                 PlayGamesPlatform.Activate();
 
-                PlayGamesPlatform.Instance.Authenticate(async (bool success) =>
+                PlayGamesPlatform.Instance.Authenticate((SignInStatus status) =>
                 {
-                    if (success)
+                    if (status == SignInStatus.Success)
                     {
                         Debug.Log("[UGSAuthService] Google Play Games giriş başarılı.");
                         
-                        string authCode = PlayGamesPlatform.Instance.GetServerAuthCode();
-                        
-                        if (string.IsNullOrEmpty(authCode))
+                        // UGS'ye bağlanmak için Server Auth Code istiyoruz
+                        PlayGamesPlatform.Instance.RequestServerSideAccess(true, async (string authCode) =>
                         {
-                            Debug.LogError("[UGSAuthService] Google Play Games'ten Auth Code alınamadı!");
-                            tcs.SetResult(AuthResult.Failed("Auth code is null or empty."));
-                            return;
-                        }
-
-                        try
-                        {
-                            // Alınan kodu Unity Gaming Services'e bağla
-                            await AuthenticationService.Instance.LinkWithGooglePlayGamesAsync(authCode);
-                            Debug.Log("[UGSAuthService] UGS ile Google Play Games başarıyla bağlandı!");
-                            
-                            tcs.SetResult(new AuthResult
+                            if (string.IsNullOrEmpty(authCode))
                             {
-                                Success = true,
-                                ProviderId = "google",
-                                DisplayName = PlayGamesPlatform.Instance.GetUserDisplayName()
-                            });
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.LogError($"[UGSAuthService] UGS Bağlantı Hatası: {ex.Message}");
-                            tcs.SetResult(AuthResult.Failed(ex.Message));
-                        }
+                                Debug.LogError("[UGSAuthService] Google Play Games'ten Auth Code alınamadı!");
+                                tcs.SetResult(AuthResult.Failed("Auth code is null or empty."));
+                                return;
+                            }
+
+                            try
+                            {
+                                // Alınan kodu Unity Gaming Services'e bağla
+                                await AuthenticationService.Instance.LinkWithGooglePlayGamesAsync(authCode);
+                                Debug.Log("[UGSAuthService] UGS ile Google Play Games başarıyla bağlandı!");
+                                
+                                tcs.SetResult(new AuthResult
+                                {
+                                    Success = true,
+                                    ProviderId = "google",
+                                    DisplayName = PlayGamesPlatform.Instance.GetUserDisplayName()
+                                });
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.LogError($"[UGSAuthService] UGS Bağlantı Hatası: {ex.Message}");
+                                tcs.SetResult(AuthResult.Failed(ex.Message));
+                            }
+                        });
                     }
                     else
                     {
-                        Debug.LogError($"[UGSAuthService] Google Play Games giriş başarısız.");
+                        Debug.LogError($"[UGSAuthService] Google Play Games giriş başarısız. Durum: {status}");
                         tcs.SetResult(AuthResult.Failed("Play Games sign-in failed."));
                     }
                 });
