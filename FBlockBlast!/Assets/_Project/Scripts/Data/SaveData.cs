@@ -22,7 +22,7 @@ namespace NeonGalaxy.Data
         public int guestNumber = -1;               // -1 = not yet assigned
         public string profileAvatarId = "default"; // Built-in avatar ID or "custom"
         public string customAvatarPath = "";        // Local path for gallery-picked photo
-        public bool hasCompletedTutorial = false;
+        public bool hasCompletedTutorial = true;
         public int playerLevel = 0;
         public int totalXP = 0;
         public int bestScore = 0;
@@ -87,6 +87,13 @@ namespace NeonGalaxy.Data
         // ── Ad Policy State ──────────────────────────────────────
         public int gamesPlayedSinceLastInterstitial = 0;
         public long lastInterstitialTimestamp = 0;
+
+        // ── Active Run State ─────────────────────────────────────
+        /// <summary>
+        /// Snapshot of the in-progress gameplay run. Allows resuming
+        /// from where the player left off if the app is killed/minimized.
+        /// </summary>
+        public RunStateData activeRun = new RunStateData();
 
         /// <summary>
         /// Creates a deep copy of this save data.

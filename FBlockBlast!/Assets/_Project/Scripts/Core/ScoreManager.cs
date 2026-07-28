@@ -46,6 +46,14 @@ namespace NeonGalaxy.Core
         }
 
         /// <summary>
+        /// Restores the total score from a saved run snapshot.
+        /// </summary>
+        public void RestoreScore(int score)
+        {
+            TotalScore = score;
+        }
+
+        /// <summary>
         /// Handles placement scoring, updates the total, and triggers score popup requests.
         /// </summary>
         public void OnPiecePlaced(PieceInstance piece, PlacementResult result, Vector3 worldPos)

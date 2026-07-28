@@ -40,6 +40,25 @@ namespace NeonGalaxy.Data
             return total;
         }
 
+        /// <summary>
+        /// Finds a piece definition by its pieceId string.
+        /// Used by the save/resume system to resolve serialized piece IDs
+        /// back into ScriptableObject references.
+        /// Returns null if not found.
+        /// </summary>
+        public PieceDefinitionSO FindByPieceId(string pieceId)
+        {
+            if (string.IsNullOrEmpty(pieceId) || pieces == null) return null;
+
+            for (int i = 0; i < pieces.Count; i++)
+            {
+                if (pieces[i] != null && pieces[i].pieceId == pieceId)
+                    return pieces[i];
+            }
+
+            return null;
+        }
+
 #if UNITY_EDITOR
         private void OnValidate()
         {

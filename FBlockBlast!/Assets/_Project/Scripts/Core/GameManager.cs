@@ -55,6 +55,12 @@ namespace NeonGalaxy.Core
         private int _runBestCombo;
         private int _revivesUsedThisRun;
 
+        /// <summary>
+        /// When true, the Game Over popup's Home button will navigate to the lobby
+        /// instead of staying on the gameplay scene. Set by HandleQuitToHome().
+        /// </summary>
+        private bool _quitToHomeAfterGameOver;
+
         public GameState CurrentState => _currentState;
         public BoardModel BoardModel => _boardModel;
 
@@ -72,7 +78,16 @@ namespace NeonGalaxy.Core
         {
             InitializeSaveService();
             InitializeCoreGameplay();
-            StartGame();
+
+            // Check for a saved in-progress run to resume
+            if (_saveService != null && _saveService.Data.activeRun.hasActiveRun)
+            {
+                ResumeFromSavedState();
+            }
+            else
+            {
+                StartGame();
+            }
         }
 
         private void OnEnable()
@@ -194,6 +209,7 @@ namespace NeonGalaxy.Core
         public void StartGame()
         {
             Time.timeScale = 1f;
+            _quitToHomeAfterGameOver = false;
 
             _boardModel.Reset();
             _comboManager.Reset();
@@ -216,6 +232,9 @@ namespace NeonGalaxy.Core
             if (gameOverPopup != null) gameOverPopup.Hide();
             if (resultsScreen != null) resultsScreen.HideImmediate();
             if (pausePopup != null) pausePopup.Hide();
+
+            // Clear any previously saved run state (fresh start)
+            ClearRunState();
 
             // Register total run count statistics
             if (_saveService != null)
@@ -358,6 +377,9 @@ namespace NeonGalaxy.Core
             if (resultsScreen != null)
                 resultsScreen.HideImmediate();
 
+            // Clear saved run state — the run is over
+            ClearRunState();
+
             int finalScore = _scoreManager.TotalScore;
             bool isNewBest = SaveHighScore(finalScore);
 
@@ -442,6 +464,9 @@ namespace NeonGalaxy.Core
                 }
             ));
 
+            // Auto-save run state after each placement
+            SaveRunState();
+
             TransitionState(GameState.CheckGameOver);
         }
 
@@ -485,13 +510,30 @@ namespace NeonGalaxy.Core
 
         private void HandleRetryGame()
         {
+            ClearRunState();
+            _quitToHomeAfterGameOver = false;
             StartGame();
         }
 
         private void HandleQuitToHome()
         {
             Time.timeScale = 1f;
-            SceneLoader.LoadScene(Constants.SCENE_HOME);
+
+            // If already in Game Over state (popup is showing), go to lobby
+            if (_currentState == GameState.GameOver)
+            {
+                ClearRunState();
+                SceneLoader.LoadScene(Constants.SCENE_HOME);
+                return;
+            }
+
+            // Pause menu → Home: trigger the full Game Over flow first
+            // so the player receives XP, gold, and sees the results
+            if (pausePopup != null) pausePopup.Hide();
+
+            _quitToHomeAfterGameOver = true;
+            ClearRunState();
+            TransitionState(GameState.GameOver);
         }
 
         // ── Continue / Revive System ─────────────────────────────
@@ -621,6 +663,164 @@ namespace NeonGalaxy.Core
                 return true;
             }
             return false;
+        }
+
+        // ── Run State Save / Resume System ────────────────────────
+
+        /// <summary>
+        /// Saves the current run state to disk. Called after each placement
+        /// and when the app is paused/quit.
+        /// </summary>
+        private void SaveRunState()
+        {
+            if (_saveService == null) return;
+            if (_currentState == GameState.GameOver) return;
+
+            var run = _saveService.Data.activeRun;
+            run.hasActiveRun = true;
+
+            // Board state
+            _boardModel.ExportState(out run.cellOccupied, out run.cellColors);
+
+            // Score & combo
+            run.totalScore = _scoreManager.TotalScore;
+            run.currentCombo = _comboManager.CurrentCombo;
+            run.batchLinesCleared = _comboManager.BatchLinesCleared;
+            run.batchHadNovaCross = _comboManager.BatchHadNovaCross;
+
+            // Run stats
+            run.runLinesCleared = _runLinesCleared;
+            run.runBestCombo = _runBestCombo;
+            run.revivesUsedThisRun = _revivesUsedThisRun;
+
+            // Tray pieces
+            for (int i = 0; i < 3; i++)
+            {
+                PieceView pv = pieceTrayController.GetPieceView(i);
+                if (pv != null && pv.Piece != null)
+                {
+                    run.trayPieceDefinitionIds[i] = pv.Piece.Definition.pieceId;
+                    run.trayPieceColorIndices[i] = pv.Piece.ColorIndex;
+                    run.trayPiecePlaced[i] = pv.Piece.IsPlaced;
+                }
+                else
+                {
+                    run.trayPieceDefinitionIds[i] = "";
+                    run.trayPieceColorIndices[i] = 0;
+                    run.trayPiecePlaced[i] = true;
+                }
+            }
+
+            _saveService.MarkDirty();
+            _saveService.Save();
+
+            Debug.Log("[GameManager] Run state saved.");
+        }
+
+        /// <summary>
+        /// Clears the saved run state (game over, retry, or quit to home).
+        /// </summary>
+        private void ClearRunState()
+        {
+            if (_saveService == null) return;
+
+            _saveService.Data.activeRun.Clear();
+            _saveService.MarkDirty();
+            _saveService.Save();
+
+            Debug.Log("[GameManager] Run state cleared.");
+        }
+
+        /// <summary>
+        /// Resumes gameplay from a previously saved run state.
+        /// Restores board, score, combo, tray pieces, and transitions to PieceSelection.
+        /// </summary>
+        private void ResumeFromSavedState()
+        {
+            Time.timeScale = 1f;
+            _quitToHomeAfterGameOver = false;
+
+            var run = _saveService.Data.activeRun;
+
+            // Restore board state
+            _boardModel.ImportState(run.cellOccupied, run.cellColors);
+            boardController.RefreshBoard(_boardModel);
+
+            // Restore score & combo
+            _scoreManager.RestoreScore(run.totalScore);
+            _comboManager.RestoreState(run.currentCombo, run.batchLinesCleared, run.batchHadNovaCross);
+
+            // Restore run stats
+            _runLinesCleared = run.runLinesCleared;
+            _runBestCombo = run.runBestCombo;
+            _revivesUsedThisRun = run.revivesUsedThisRun;
+
+            // Restore tray pieces
+            pieceTrayController.ClearTray();
+            var restoredBatch = new List<PieceInstance>();
+            bool allPlaced = true;
+
+            for (int i = 0; i < 3; i++)
+            {
+                if (!string.IsNullOrEmpty(run.trayPieceDefinitionIds[i]) && !run.trayPiecePlaced[i])
+                {
+                    var def = piecePool.FindByPieceId(run.trayPieceDefinitionIds[i]);
+                    if (def != null)
+                    {
+                        var piece = new PieceInstance(def, run.trayPieceColorIndices[i]);
+                        restoredBatch.Add(piece);
+                        allPlaced = false;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[GameManager] Could not find piece definition '{run.trayPieceDefinitionIds[i]}' for resume. Skipping.");
+                    }
+                }
+            }
+
+            // Update HUD
+            if (hudController != null)
+            {
+                hudController.UpdateBestScore(GetHighScore());
+                GameEvents.InvokeScoreChanged(run.totalScore);
+                GameEvents.InvokeComboUpdated(run.currentCombo);
+            }
+
+            if (gameOverPopup != null) gameOverPopup.Hide();
+            if (resultsScreen != null) resultsScreen.HideImmediate();
+            if (pausePopup != null) pausePopup.Hide();
+
+            Debug.Log($"[GameManager] Resuming saved run. Score: {run.totalScore}, Combo: {run.currentCombo}, Remaining pieces: {restoredBatch.Count}");
+
+            if (allPlaced || restoredBatch.Count == 0)
+            {
+                // All tray pieces were placed — generate a new batch
+                TransitionState(GameState.WaitingForBatch);
+            }
+            else
+            {
+                // Spawn the remaining pieces and let the player continue
+                GameEvents.InvokeNewBatchReady(restoredBatch.ToArray());
+                TransitionState(GameState.PieceSelection);
+            }
+        }
+
+        // ── Application Lifecycle (Auto-save) ────────────────────
+
+        private void OnApplicationPause(bool paused)
+        {
+            if (paused && _currentState != GameState.GameOver)
+            {
+                SaveRunState();
+            }
+        }
+
+        private void OnApplicationQuit()
+        {
+            if (_currentState != GameState.GameOver)
+            {
+                SaveRunState();
+            }
         }
     }
 }

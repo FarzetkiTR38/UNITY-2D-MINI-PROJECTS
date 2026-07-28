@@ -33,6 +33,16 @@ namespace NeonGalaxy.Core
         }
 
         /// <summary>
+        /// Restores combo state from a saved run snapshot.
+        /// </summary>
+        public void RestoreState(int combo, int batchLines, bool batchNova)
+        {
+            CurrentCombo = combo;
+            BatchLinesCleared = batchLines;
+            BatchHadNovaCross = batchNova;
+        }
+
+        /// <summary>
         /// Accumulates line clear statistics for the current placement.
         /// </summary>
         public void OnPlacementResolved(PlacementResult result)
