@@ -134,10 +134,10 @@ namespace NeonGalaxy.Core
         /// <summary>
         /// Scales the piece up to its full size and lifts it slightly when picked up.
         /// </summary>
-        public void AnimatePickup(Vector3 touchWorldPos, Vector3 offset)
+        public void AnimatePickup()
         {
             StopActiveAnimation();
-            _activeAnimation = StartCoroutine(ScaleRoutine(Vector3.one * dragScale, touchWorldPos + offset));
+            _activeAnimation = StartCoroutine(ScaleRoutine(Vector3.one * dragScale));
         }
 
         /// <summary>
@@ -158,10 +158,9 @@ namespace NeonGalaxy.Core
             _activeAnimation = StartCoroutine(PlacedRoutine(onComplete));
         }
 
-        private IEnumerator ScaleRoutine(Vector3 targetScale, Vector3 targetPosition)
+        private IEnumerator ScaleRoutine(Vector3 targetScale)
         {
             Vector3 startScale = transform.localScale;
-            Vector3 startPos = transform.position;
             float elapsed = 0f;
 
             while (elapsed < animDuration)
@@ -172,12 +171,10 @@ namespace NeonGalaxy.Core
                 float ease = 1f - Mathf.Pow(1f - t, 3);
 
                 transform.localScale = Vector3.Lerp(startScale, targetScale, ease);
-                transform.position = Vector3.Lerp(startPos, targetPosition, ease);
                 yield return null;
             }
 
             transform.localScale = targetScale;
-            transform.position = targetPosition;
             _activeAnimation = null;
         }
 

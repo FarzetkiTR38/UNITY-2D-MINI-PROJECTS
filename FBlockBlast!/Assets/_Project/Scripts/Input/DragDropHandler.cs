@@ -98,8 +98,11 @@ namespace NeonGalaxy.Input
             Vector3 targetPos = touchWorldPos + _fingerOffset - _draggingPiece.VisualCenterOffset;
             _currentDragPosition = targetPos;
 
-            // Lift and scale up the piece view (offsetting by visual center so it centers horizontally on the touch point)
-            _draggingPiece.AnimatePickup(touchWorldPos, _fingerOffset - _draggingPiece.VisualCenterOffset);
+            // Instantly snap the piece to the target position
+            _draggingPiece.transform.position = _currentDragPosition;
+
+            // Scale up the piece view
+            _draggingPiece.AnimatePickup();
 
             // Show ghost preview overlay if available
             if (_ghostPreview != null && _draggingPiece.Piece != null)
