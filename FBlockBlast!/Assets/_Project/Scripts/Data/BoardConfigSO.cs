@@ -17,6 +17,16 @@ namespace NeonGalaxy.Data
         public Color tintColor;
     }
 
+    [Serializable]
+    public struct BlockSkinPalette
+    {
+        [Tooltip("The unique ID matching the CosmeticItemSO itemId (e.g., 'default', 'skin1').")]
+        public string skinId;
+
+        [Tooltip("The 6 block variants for this skin.")]
+        public BlockSkin[] blocks;
+    }
+
     /// <summary>
     /// Configuration for the puzzle board: dimensions, visual sizing, and block skin palette.
     /// Create instances via: Create → NeonGalaxy → Board Config.
@@ -39,16 +49,26 @@ namespace NeonGalaxy.Data
         public float cellSpacing = 0.05f;
 
         [Header("Block Skins")]
-        [Tooltip("Sprite + tint for each block color. Index matches the color ID assigned to pieces.")]
-        public BlockSkin[] blockSkins = new BlockSkin[]
+        [Tooltip("Define multiple skins here. The 'skinId' must match the CosmeticItemSO itemId.")]
+        public BlockSkinPalette[] skinPalettes = new BlockSkinPalette[]
         {
-            new BlockSkin { sprite = null, tintColor = Color.white },  // 0: Cyan / Electric Blue
-            new BlockSkin { sprite = null, tintColor = Color.white },  // 1: Purple / Violet
-            new BlockSkin { sprite = null, tintColor = Color.white },  // 2: Hot Pink / Magenta
-            new BlockSkin { sprite = null, tintColor = Color.white },  // 3: Neon Green
-            new BlockSkin { sprite = null, tintColor = Color.white },  // 4: Orange / Amber
-            new BlockSkin { sprite = null, tintColor = Color.white },  // 5: Neon Yellow
+            new BlockSkinPalette
+            {
+                skinId = "default",
+                blocks = new BlockSkin[]
+                {
+                    new BlockSkin { sprite = null, tintColor = Color.white },
+                    new BlockSkin { sprite = null, tintColor = Color.white },
+                    new BlockSkin { sprite = null, tintColor = Color.white },
+                    new BlockSkin { sprite = null, tintColor = Color.white },
+                    new BlockSkin { sprite = null, tintColor = Color.white },
+                    new BlockSkin { sprite = null, tintColor = Color.white }
+                }
+            }
         };
+
+        [NonSerialized]
+        private string _activeSkinId = "default";
 
         /// <summary>
         /// Total number of cells on the board.
@@ -56,15 +76,56 @@ namespace NeonGalaxy.Data
         public int TotalCells => width * height;
 
         /// <summary>
-        /// Returns the BlockSkin at the given color index, clamped to valid range.
+        /// The number of colors available in the active skin palette.
+        /// </summary>
+        public int ActiveColorCount
+        {
+            get
+            {
+                if (skinPalettes == null || skinPalettes.Length == 0) return 0;
+                foreach (var palette in skinPalettes)
+                {
+                    if (palette.skinId == _activeSkinId)
+                    {
+                        return palette.blocks != null ? palette.blocks.Length : 0;
+                    }
+                }
+                return skinPalettes[0].blocks != null ? skinPalettes[0].blocks.Length : 0;
+            }
+        }
+
+        /// <summary>
+        /// Sets the currently active skin ID (usually called at boot/start).
+        /// </summary>
+        public void SetActiveSkin(string skinId)
+        {
+            _activeSkinId = skinId;
+        }
+
+        /// <summary>
+        /// Returns the BlockSkin at the given color index for the currently active skin.
         /// </summary>
         public BlockSkin GetBlockSkin(int index)
         {
-            if (blockSkins == null || blockSkins.Length == 0)
+            if (skinPalettes == null || skinPalettes.Length == 0)
                 return new BlockSkin { sprite = null, tintColor = Color.white };
 
-            int safeIndex = Mathf.Clamp(index, 0, blockSkins.Length - 1);
-            return blockSkins[safeIndex];
+            // Find the active palette
+            BlockSkinPalette activePalette = skinPalettes[0]; // fallback to first
+            foreach (var palette in skinPalettes)
+            {
+                if (palette.skinId == _activeSkinId)
+                {
+                    activePalette = palette;
+                    break;
+                }
+            }
+
+            if (activePalette.blocks == null || activePalette.blocks.Length == 0)
+                return new BlockSkin { sprite = null, tintColor = Color.white };
+
+            int safeIndex = Mathf.Clamp(index, 0, activePalette.blocks.Length - 1);
+            return activePalette.blocks[safeIndex];
         }
 
 #if UNITY_EDITOR

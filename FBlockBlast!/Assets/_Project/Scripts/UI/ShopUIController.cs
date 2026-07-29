@@ -18,15 +18,23 @@ namespace NeonGalaxy.UI
     public class ShopUIController : MonoBehaviour
     {
         [Header("Product Registry")]
-        [SerializeField] private ShopProductSO[] products;
+        [SerializeField] private ShopProductSO[] currencyProducts;
+        [SerializeField] private ShopProductSO[] blockSkinProducts;
 
         [Header("UI Elements")]
-        [SerializeField] private Transform productListParent;
+        [SerializeField] private Transform currencyProductListParent;
+        [SerializeField] private Transform blockSkinProductListParent;
         [SerializeField] private GameObject productCardPrefab;
         [UnityEngine.Serialization.FormerlySerializedAs("coinBalanceText")]
         [SerializeField] private TextMeshProUGUI coinText;
         [UnityEngine.Serialization.FormerlySerializedAs("gemBalanceText")]
         [SerializeField] private TextMeshProUGUI gemText;
+
+        [Header("Categories")]
+        [SerializeField] private GameObject goldGemPanel;
+        [SerializeField] private GameObject blockSkinsPanel;
+        [SerializeField] private Button goldGemTabButton;
+        [SerializeField] private Button blockSkinsTabButton;
 
         [Header("Limited Offer (Starter Pack)")]
         [SerializeField] private ShopProductSO limitedOfferProduct;
@@ -53,10 +61,20 @@ namespace NeonGalaxy.UI
             {
                 limitedOfferButton.onClick.AddListener(() => OnProductPurchaseClicked(limitedOfferProduct));
             }
+
+            if (goldGemTabButton != null)
+            {
+                goldGemTabButton.onClick.AddListener(ShowGoldGemCategory);
+            }
+            if (blockSkinsTabButton != null)
+            {
+                blockSkinsTabButton.onClick.AddListener(ShowBlockSkinsCategory);
+            }
         }
 
         private void OnEnable()
         {
+            ShowGoldGemCategory();
             RefreshUI();
             GameEvents.OnCoinBalanceChanged += HandleCoinBalanceChanged;
             GameEvents.OnGemBalanceChanged += HandleGemBalanceChanged;
@@ -66,6 +84,26 @@ namespace NeonGalaxy.UI
         {
             GameEvents.OnCoinBalanceChanged -= HandleCoinBalanceChanged;
             GameEvents.OnGemBalanceChanged -= HandleGemBalanceChanged;
+        }
+
+        // ── Category Navigation ──────────────────────────────────
+        
+        public void ShowGoldGemCategory()
+        {
+            if (goldGemPanel != null) goldGemPanel.SetActive(true);
+            if (blockSkinsPanel != null) blockSkinsPanel.SetActive(false);
+            
+            if (goldGemTabButton != null) goldGemTabButton.interactable = false;
+            if (blockSkinsTabButton != null) blockSkinsTabButton.interactable = true;
+        }
+
+        public void ShowBlockSkinsCategory()
+        {
+            if (goldGemPanel != null) goldGemPanel.SetActive(false);
+            if (blockSkinsPanel != null) blockSkinsPanel.SetActive(true);
+            
+            if (goldGemTabButton != null) goldGemTabButton.interactable = true;
+            if (blockSkinsTabButton != null) blockSkinsTabButton.interactable = false;
         }
 
         // ── UI Refresh ───────────────────────────────────────────
@@ -91,18 +129,6 @@ namespace NeonGalaxy.UI
 
         private void PopulateProductList()
         {
-            if (productListParent == null || productCardPrefab == null) return;
-
-            // Clear existing cards
-            foreach (Transform child in productListParent)
-            {
-                Destroy(child.gameObject);
-            }
-
-            // Sort products by order
-            var sortedProducts = new List<ShopProductSO>(products);
-            sortedProducts.Sort((a, b) => a.sortOrder.CompareTo(b.sortOrder));
-
             var iapService = ServiceLocator.Get<IIAPService>();
 
             // Setup Limited Offer Price if available
@@ -111,18 +137,44 @@ namespace NeonGalaxy.UI
                 limitedOfferPriceText.text = GetPriceString(limitedOfferProduct, iapService);
             }
 
-            foreach (var product in sortedProducts)
+            // Populate Currency Products
+            if (currencyProductListParent != null && productCardPrefab != null && currencyProducts != null)
             {
-                if (product != null && product.productType != ShopProductType.StarterPack)
+                foreach (Transform child in currencyProductListParent) Destroy(child.gameObject);
+                
+                var sortedCurrency = new List<ShopProductSO>(currencyProducts);
+                sortedCurrency.Sort((a, b) => a.sortOrder.CompareTo(b.sortOrder));
+                
+                foreach (var product in sortedCurrency)
                 {
-                    CreateProductCard(product, iapService);
+                    if (product != null && product.productType != ShopProductType.StarterPack)
+                    {
+                        CreateProductCard(product, iapService, currencyProductListParent);
+                    }
+                }
+            }
+
+            // Populate Block Skin Products
+            if (blockSkinProductListParent != null && productCardPrefab != null && blockSkinProducts != null)
+            {
+                foreach (Transform child in blockSkinProductListParent) Destroy(child.gameObject);
+                
+                var sortedSkins = new List<ShopProductSO>(blockSkinProducts);
+                sortedSkins.Sort((a, b) => a.sortOrder.CompareTo(b.sortOrder));
+                
+                foreach (var product in sortedSkins)
+                {
+                    if (product != null && product.productType != ShopProductType.StarterPack)
+                    {
+                        CreateProductCard(product, iapService, blockSkinProductListParent);
+                    }
                 }
             }
         }
 
-        private void CreateProductCard(ShopProductSO product, IIAPService iapService)
+        private void CreateProductCard(ShopProductSO product, IIAPService iapService, Transform parent)
         {
-            var cardGO = Instantiate(productCardPrefab, productListParent);
+            var cardGO = Instantiate(productCardPrefab, parent);
             cardGO.SetActive(true);
 
             // Find common UI components in the prefab (Order: Name, Description/Amount, Price, Badge)
@@ -147,15 +199,66 @@ namespace NeonGalaxy.UI
 
             // Handle Ownership (Non-consumable)
             bool isOwned = false;
-            if (iapService != null && product.productType == ShopProductType.RemoveAds)
+            var cosmeticManager = ServiceLocator.Get<CosmeticManager>();
+            var saveService = ServiceLocator.Get<SaveService>();
+            bool inPurchasedList = saveService != null && saveService.Data.purchasedProductIds.Contains(product.productId);
+
+            if (product.productType == ShopProductType.RemoveAds)
             {
-                isOwned = iapService.IsProductOwned(product.iapProductId);
+                isOwned = (iapService != null && iapService.IsProductOwned(product.iapProductId)) || inPurchasedList;
+            }
+            else if (product.productType == ShopProductType.CosmeticPack || product.productType == ShopProductType.StarterPack)
+            {
+                if (product.productType == ShopProductType.CosmeticPack && product.includedCosmetics != null && product.includedCosmetics.Length > 0)
+                {
+                    isOwned = cosmeticManager != null && cosmeticManager.IsUnlocked(product.includedCosmetics[0].itemId);
+                }
+                else
+                {
+                    isOwned = inPurchasedList;
+                }
             }
 
             if (isOwned)
             {
-                if (texts.Length >= 3) texts[2].text = "✅ Owned";
-                if (button != null) button.interactable = false;
+                if (product.productType == ShopProductType.CosmeticPack && product.includedCosmetics != null && product.includedCosmetics.Length > 0)
+                {
+                    string cosmeticId = product.includedCosmetics[0].itemId;
+                    var category = product.includedCosmetics[0].category;
+                    bool isEquipped = cosmeticManager != null && cosmeticManager.GetEquipped(category) == cosmeticId;
+
+                    if (isEquipped)
+                    {
+                        if (texts.Length >= 3) texts[2].text = "✅ Seçili";
+                        if (button != null) button.interactable = false;
+                    }
+                    else
+                    {
+                        if (texts.Length >= 3) texts[2].text = "Kuşan (Equip)";
+                        if (button != null)
+                        {
+                            button.interactable = true;
+                            button.onClick.AddListener(() =>
+                            {
+                                cosmeticManager?.Equip(category, cosmeticId);
+                                
+                                // Refresh game pieces if playing
+                                var gameManager = FindObjectOfType<GameManager>();
+                                if (gameManager != null)
+                                {
+                                    gameManager.ApplyEquippedSkin();
+                                }
+
+                                RefreshUI();
+                            });
+                        }
+                    }
+                }
+                else
+                {
+                    if (texts.Length >= 3) texts[2].text = "✅ Owned";
+                    if (button != null) button.interactable = false;
+                }
             }
             else if (button != null)
             {

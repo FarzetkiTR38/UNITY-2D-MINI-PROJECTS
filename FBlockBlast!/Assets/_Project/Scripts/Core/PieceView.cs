@@ -60,6 +60,8 @@ namespace NeonGalaxy.Core
             // Set the tray scale instantly
             transform.localScale = Vector3.one * trayScale;
 
+
+
             float totalCell = cellSize + cellSpacing;
 
             // Calculate the bounds to find the visual center offset of the piece relative to pivot (0,0)
@@ -98,6 +100,18 @@ namespace NeonGalaxy.Core
                 (bounds.y + (bounds.height - 1f) / 2f) * totalCell
             );
             _collider.enabled = true;
+        }
+
+        public void UpdateSkin(Sprite blockSprite, Color tintColor)
+        {
+            foreach (var renderer in _blockRenderers)
+            {
+                if (renderer != null)
+                {
+                    renderer.sprite = blockSprite;
+                    renderer.color = tintColor;
+                }
+            }
         }
 
         /// <summary>

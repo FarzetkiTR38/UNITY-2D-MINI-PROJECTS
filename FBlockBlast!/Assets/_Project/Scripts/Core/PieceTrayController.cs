@@ -63,6 +63,19 @@ namespace NeonGalaxy.Core
             }
         }
 
+        public void RefreshTrayVisuals()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                PieceView view = _activePieceViews[i];
+                if (view != null && view.Piece != null && !view.Piece.IsPlaced)
+                {
+                    BlockSkin skin = boardConfig.GetBlockSkin(view.Piece.ColorIndex);
+                    view.UpdateSkin(skin.sprite, skin.tintColor);
+                }
+            }
+        }
+
         /// <summary>
         /// Clears all slots in the tray.
         /// </summary>

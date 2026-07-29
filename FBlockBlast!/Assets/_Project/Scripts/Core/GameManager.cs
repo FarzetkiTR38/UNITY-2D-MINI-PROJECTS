@@ -160,8 +160,45 @@ namespace NeonGalaxy.Core
             }
         }
 
+
+
+        public void ApplyEquippedSkin()
+        {
+            if (Boot.ServiceLocator.Has<CosmeticManager>())
+            {
+                var cosmeticManager = Boot.ServiceLocator.Get<CosmeticManager>();
+                string activeSkinId = cosmeticManager.GetEquipped(CosmeticCategory.BlockSkin);
+                
+                if (!string.IsNullOrEmpty(activeSkinId))
+                {
+                    boardConfig.SetActiveSkin(activeSkinId);
+                }
+            }
+
+            if (boardController != null && _boardModel != null)
+            {
+                boardController.RefreshBoard(_boardModel);
+            }
+            if (pieceTrayController != null)
+            {
+                pieceTrayController.RefreshTrayVisuals();
+            }
+        }
+
         private void InitializeCoreGameplay()
         {
+            // Apply equipped block skin to board config
+            if (Boot.ServiceLocator.Has<CosmeticManager>())
+            {
+                var cosmeticManager = Boot.ServiceLocator.Get<CosmeticManager>();
+                string activeSkinId = cosmeticManager.GetEquipped(CosmeticCategory.BlockSkin);
+                
+                if (!string.IsNullOrEmpty(activeSkinId))
+                {
+                    boardConfig.SetActiveSkin(activeSkinId);
+                }
+            }
+
             // Create data instances
             _boardModel = new BoardModel(boardConfig);
             _comboManager = new ComboManager(comboConfig);
@@ -312,7 +349,7 @@ namespace NeonGalaxy.Core
 
         private void GenerateAndSetNewBatch()
         {
-            int colorPaletteCount = boardConfig.blockSkins.Length;
+            int colorPaletteCount = boardConfig.ActiveColorCount;
             PieceInstance[] batch = _batchGenerator.GenerateBatch(_boardModel, piecePool, colorPaletteCount);
 
             // Spawns pieces visually in the tray
