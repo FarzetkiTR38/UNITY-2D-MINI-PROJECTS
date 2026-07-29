@@ -229,12 +229,12 @@ namespace NeonGalaxy.UI
 
                     if (isEquipped)
                     {
-                        if (texts.Length >= 3) texts[2].text = "✅ Seçili";
+                        if (texts.Length >= 3) texts[2].text = "Selected";
                         if (button != null) button.interactable = false;
                     }
                     else
                     {
-                        if (texts.Length >= 3) texts[2].text = "Kuşan (Equip)";
+                        if (texts.Length >= 3) texts[2].text = "Equip";
                         if (button != null)
                         {
                             button.interactable = true;
@@ -256,7 +256,7 @@ namespace NeonGalaxy.UI
                 }
                 else
                 {
-                    if (texts.Length >= 3) texts[2].text = "✅ Owned";
+                    if (texts.Length >= 3) texts[2].text = "Owned";
                     if (button != null) button.interactable = false;
                 }
             }
@@ -394,7 +394,7 @@ namespace NeonGalaxy.UI
         private string GetPriceString(ShopProductSO product, IIAPService iapService)
         {
             if (product.gemCost > 0) return $"💎 {product.gemCost}";
-            if (product.coinCost > 0) return $"🪙 {product.coinCost}";
+            if (product.coinCost > 0) return $"💰 {product.coinCost}";
 
             if (iapService != null && !string.IsNullOrEmpty(product.iapProductId))
             {
