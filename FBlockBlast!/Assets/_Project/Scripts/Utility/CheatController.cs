@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using NeonGalaxy.Core;
 using NeonGalaxy.Services;
+using NeonGalaxy.Meta;
+
 
 namespace NeonGalaxy.Utility
 {
@@ -74,6 +76,10 @@ namespace NeonGalaxy.Utility
             if (keyboard.tKey.wasPressedThisFrame)
             {
                 ResetTutorialCheat();
+            }
+            if (keyboard.cKey.wasPressedThisFrame)
+            {
+                ResetCosmeticsCheat();
             }
 
             // --- VFX Testing Cheats ---
@@ -254,6 +260,55 @@ namespace NeonGalaxy.Utility
             else
             {
                 Debug.LogWarning("[CheatController] [T] SaveService bulunamadı. Tutorial sıfırlanamadı.");
+            }
+        }
+
+        private void ResetCosmeticsCheat()
+        {
+            SaveService ss = null;
+
+            if (Boot.ServiceLocator.Has<SaveService>())
+            {
+                ss = Boot.ServiceLocator.Get<SaveService>();
+            }
+            else if (_gameManager != null)
+            {
+                FieldInfo saveServiceField = typeof(GameManager).GetField("_saveService", BindingFlags.NonPublic | BindingFlags.Instance);
+                if (saveServiceField != null)
+                    ss = saveServiceField.GetValue(_gameManager) as SaveService;
+            }
+
+            if (ss != null && ss.Data != null)
+            {
+                ss.Data.unlockedCosmeticIds.Clear();
+                ss.Data.purchasedProductIds.Clear();
+                ss.Data.equippedBoardSkin = "default";
+                ss.Data.equippedBlockSkin = "default";
+                ss.Data.equippedFrame = "default";
+                ss.Data.equippedTitle = "default";
+
+                if (Boot.ServiceLocator.Has<CosmeticManager>())
+                {
+                    var cm = Boot.ServiceLocator.Get<CosmeticManager>();
+                    MethodInfo ensureMethod = typeof(CosmeticManager).GetMethod("EnsureDefaultItemsUnlocked", BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (ensureMethod != null)
+                    {
+                        ensureMethod.Invoke(cm, null);
+                    }
+                }
+
+                ss.Save();
+
+                if (Boot.ServiceLocator.Has<CosmeticManager>())
+                {
+                    // Optionally call refresh, but simplest is to reload scene
+                    Debug.Log("[CheatController] [C] Tüm kozmetikler ve satın alımlar sıfırlandı! Sahne yenileniyor...");
+                    UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[CheatController] [C] SaveService bulunamadı. Kozmetikler sıfırlanamadı.");
             }
         }
 
