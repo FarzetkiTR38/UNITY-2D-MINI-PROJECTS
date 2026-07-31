@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEngine;
 using NeonGalaxy.Core;
 using NeonGalaxy.Data;
+using NeonGalaxy.Services;
+using NeonGalaxy.Boot;
 
 namespace NeonGalaxy.VFX
 {
@@ -77,6 +79,8 @@ namespace NeonGalaxy.VFX
 
         private void HandlePiecePlaced(PieceInstance piece, Vector2Int pos)
         {
+            TriggerVibration();
+            
             // Subtle board shake for tactile feedback
             if (boardTransform != null)
             {
@@ -107,6 +111,8 @@ namespace NeonGalaxy.VFX
 
         private void HandleNovaCross()
         {
+            TriggerVibration();
+            
             // Camera zoom punch for premium feel
             if (mainCamera != null)
             {
@@ -119,6 +125,8 @@ namespace NeonGalaxy.VFX
 
         private void HandleGameOver(int finalScore)
         {
+            TriggerVibration();
+            
             // Dramatic slow-motion effect
             StartCoroutine(GameOverSlowMotionRoutine());
         }
@@ -168,6 +176,18 @@ namespace NeonGalaxy.VFX
             Time.timeScale = gameOverSlowMoScale;
             yield return new WaitForSecondsRealtime(gameOverSlowMoDuration);
             Time.timeScale = 1f;
+        }
+
+        private void TriggerVibration()
+        {
+            if (ServiceLocator.Has<SaveService>())
+            {
+                var saveService = ServiceLocator.Get<SaveService>();
+                if (saveService != null && saveService.Data.vibrationEnabled)
+                {
+                    Handheld.Vibrate();
+                }
+            }
         }
     }
 }

@@ -398,8 +398,11 @@ namespace NeonGalaxy.UI
 
             if (iapService != null && !string.IsNullOrEmpty(product.iapProductId))
             {
-                return iapService.GetLocalizedPrice(product.iapProductId);
+                string localizedPrice = iapService.GetLocalizedPrice(product.iapProductId);
+                // Eğer fiyatın içinde ₺ işareti (veya bilinmeyen sembol) varsa onu silip sonuna TL ekler
+                return localizedPrice.Replace("₺", "").Trim() + " TL";
             }
+
 
             return "$1.99"; // Fallback preview
         }
