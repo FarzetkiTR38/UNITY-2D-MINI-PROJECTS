@@ -11,16 +11,16 @@ namespace NeonGalaxy.Services
     public class UnityAdService : IAdService, IUnityAdsInitializationListener, IUnityAdsLoadListener, IUnityAdsShowListener
     {
 #if UNITY_IOS
-        private const string GAME_ID = "4934124"; // Replace with your iOS Game ID
+        private const string GAME_ID = "6166175"; // Replace with your iOS Game ID
         private const string REWARDED_AD_UNIT_ID = "Rewarded_iOS";
         private const string INTERSTITIAL_AD_UNIT_ID = "Interstitial_iOS";
 #else
-        private const string GAME_ID = "4934125"; // Replace with your Android Game ID
+        private const string GAME_ID = "6166174"; // Replace with your Android Game ID
         private const string REWARDED_AD_UNIT_ID = "Rewarded_Android";
         private const string INTERSTITIAL_AD_UNIT_ID = "Interstitial_Android";
 #endif
 
-        private const bool TEST_MODE = true; // Set to false for production
+        private const bool TEST_MODE = false; // Set to false for production
 
         private bool _isRewardedReady;
         private bool _isInterstitialReady;

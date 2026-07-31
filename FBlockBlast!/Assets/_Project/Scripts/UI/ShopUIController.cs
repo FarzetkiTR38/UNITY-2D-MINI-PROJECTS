@@ -393,8 +393,8 @@ namespace NeonGalaxy.UI
 
         private string GetPriceString(ShopProductSO product, IIAPService iapService)
         {
-            if (product.gemCost > 0) return $"💎 {product.gemCost}";
-            if (product.coinCost > 0) return $"💰 {product.coinCost}";
+            if (product.gemCost > 0) return $"{product.gemCost} GEM";
+            if (product.coinCost > 0) return $"{product.coinCost} GOLD";
 
             if (iapService != null && !string.IsNullOrEmpty(product.iapProductId))
             {
