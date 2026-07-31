@@ -387,8 +387,15 @@ namespace NeonGalaxy.Core
                 }
                 else
                 {
-                    // Show continue popup before game over
-                    TransitionState(GameState.Reviving);
+                    // Show continue popup if revives are available, else go straight to game over
+                    if (_revivesUsedThisRun < Constants.MAX_REVIVES_PER_RUN)
+                    {
+                        TransitionState(GameState.Reviving);
+                    }
+                    else
+                    {
+                        TransitionState(GameState.GameOver);
+                    }
                 }
             }
         }
