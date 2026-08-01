@@ -133,16 +133,12 @@ namespace ArrowSwarm.Arrow
             // Check if the collider belongs to a mob (component check)
             // Mob damage is handled by the Mob system (Phase 3)
             // Arrow sends its damage value via the collision
-            
-            // TODO: Uncomment in Phase 3 when Mob system is implemented
-            /*
             var mob = other.GetComponent<ArrowSwarm.Mob.Mob>();
             if (mob != null)
             {
                 mob.TakeDamage(_arrow.GetDamage());
                 LogDebug($"Hit mob! Damage={_arrow.GetDamage()}");
             }
-            */
         }
 
         /// <summary>

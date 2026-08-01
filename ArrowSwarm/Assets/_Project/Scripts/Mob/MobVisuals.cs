@@ -1,0 +1,135 @@
+namespace ArrowSwarm.Mob
+{
+    using TMPro;
+    using UnityEngine;
+
+    /// <summary>
+    /// Manages mob visual representation: sprite selection,
+    /// HP text display, damage shake animation, and death effect.
+    /// </summary>
+    public class MobVisuals : MonoBehaviour
+    {
+        [SerializeField] private SpriteRenderer _spriteRenderer;
+        [SerializeField] private TextMeshPro _hpText;
+        [SerializeField] private Sprite[] _mobVariants; // 5 visual variants
+        [SerializeField] private float _shakeIntensity = 0.1f;
+        [SerializeField] private float _shakeDuration = 0.15f;
+
+        private Vector3 _originalLocalPosition;
+        private MobHealth _health;
+        private bool _isShaking;
+
+        private void Awake()
+        {
+            _health = GetComponent<MobHealth>();
+            if (_spriteRenderer == null)
+            {
+                _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            }
+        }
+
+        /// <summary>
+        /// Sets up mob visuals with a random variant and initial HP display.
+        /// </summary>
+        public void Initialize(int hp)
+        {
+            // Random visual variant
+            if (_mobVariants != null && _mobVariants.Length > 0)
+            {
+                _spriteRenderer.sprite = _mobVariants[Random.Range(0, _mobVariants.Length)];
+            }
+
+            UpdateHPDisplay(hp);
+            _originalLocalPosition = _spriteRenderer.transform.localPosition;
+
+            // Subscribe to health events
+            if (_health != null)
+            {
+                _health.OnDamageTaken += HandleDamageTaken;
+            }
+        }
+
+        /// <summary>
+        /// Updates the HP text display.
+        /// </summary>
+        public void UpdateHPDisplay(int currentHP)
+        {
+            if (_hpText != null)
+            {
+                _hpText.text = currentHP.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Plays the death visual effect.
+        /// </summary>
+        public void PlayDeathEffect()
+        {
+            // Particle effects added in Phase 8
+            // For now, just disable the sprite
+        }
+
+        /// <summary>
+        /// Resets visuals for pool reuse.
+        /// </summary>
+        public void ResetVisuals()
+        {
+            _isShaking = false;
+            if (_spriteRenderer != null)
+            {
+                _spriteRenderer.transform.localPosition = _originalLocalPosition;
+                _spriteRenderer.color = Color.white;
+            }
+            if (_health != null)
+            {
+                _health.OnDamageTaken -= HandleDamageTaken;
+            }
+        }
+
+        /// <summary>
+        /// Updates the facing direction of the mob sprite.
+        /// </summary>
+        public void UpdateFacingDirection(Vector2 direction)
+        {
+            if (_spriteRenderer == null || direction == Vector2.zero) return;
+
+            // Flip sprite based on horizontal direction
+            if (direction.x < -0.1f)
+            {
+                _spriteRenderer.flipX = true;
+            }
+            else if (direction.x > 0.1f)
+            {
+                _spriteRenderer.flipX = false;
+            }
+        }
+
+        private void HandleDamageTaken(int damage, int remainingHP)
+        {
+            UpdateHPDisplay(remainingHP);
+            if (!_isShaking)
+            {
+                StartCoroutine(ShakeCoroutine());
+            }
+        }
+
+        private System.Collections.IEnumerator ShakeCoroutine()
+        {
+            _isShaking = true;
+            float elapsed = 0f;
+            WaitForEndOfFrame waitFrame = new WaitForEndOfFrame();
+
+            while (elapsed < _shakeDuration)
+            {
+                float offsetX = Random.Range(-_shakeIntensity, _shakeIntensity);
+                float offsetY = Random.Range(-_shakeIntensity, _shakeIntensity);
+                _spriteRenderer.transform.localPosition = _originalLocalPosition + new Vector3(offsetX, offsetY, 0);
+                elapsed += Time.deltaTime;
+                yield return waitFrame;
+            }
+
+            _spriteRenderer.transform.localPosition = _originalLocalPosition;
+            _isShaking = false;
+        }
+    }
+}
