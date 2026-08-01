@@ -65,10 +65,14 @@ namespace ArrowSwarm.UI
 
         private void OnWatchAd()
         {
-            // Ad system handled in Phase 7
-            // For now, just grant the tip directly (mock)
-            DataManager.Instance?.ModifyTipCount(1);
-            Hide();
+            ArrowSwarm.Ads.MockAdService.Instance?.ShowRewardedAd(success =>
+            {
+                if (success)
+                {
+                    DataManager.Instance?.ModifyTipCount(1);
+                    Hide();
+                }
+            });
         }
 
         private void OnDestroy()

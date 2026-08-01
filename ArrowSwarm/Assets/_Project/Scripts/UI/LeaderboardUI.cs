@@ -44,29 +44,25 @@ namespace ArrowSwarm.UI
 
         private void LoadLeaderboardData()
         {
-            // Mock data — will be replaced with ICloudService in Phase 7
             if (_noInternetText != null) _noInternetText.gameObject.SetActive(false);
 
-            // Show mock entries
-            string[] mockNames = { "ProPlayer", "ArrowKing", "SwarmMaster", "PathFinder",
-                                   "GridLord", "MobSlayer", "QuickShot", "TipMaster",
-                                   "LevelCrusher", "BugHunter" };
-            int[] mockLevels = { 892, 756, 643, 521, 478, 412, 367, 298, 245, 189 };
-
-            for (int i = 0; i < _rankTexts.Length && i < mockNames.Length; i++)
+            ArrowSwarm.Data.MockCloudService.Instance?.LoadLeaderboard(entries =>
             {
-                if (_rankTexts[i] != null)
+                for (int i = 0; i < _rankTexts.Length && i < entries.Count; i++)
                 {
-                    _rankTexts[i].text = $"#{i + 1}  {mockNames[i]}  Lv.{mockLevels[i]}";
+                    if (_rankTexts[i] != null)
+                    {
+                        _rankTexts[i].text = $"#{i + 1}  {entries[i].PlayerName}  Lv.{entries[i].HighestLevel}";
+                    }
                 }
-            }
 
-            if (_playerRankText != null)
-            {
-                int playerLevel = DataManager.Instance?.PlayerData?.currentLevel ?? 1;
-                string playerName = DataManager.Instance?.PlayerData?.playerName ?? "Player";
-                _playerRankText.text = $"You: {playerName}  Lv.{playerLevel}";
-            }
+                if (_playerRankText != null)
+                {
+                    int playerLevel = DataManager.Instance?.PlayerData?.currentLevel ?? 1;
+                    string playerName = DataManager.Instance?.PlayerData?.playerName ?? "Player";
+                    _playerRankText.text = $"You: {playerName}  Lv.{playerLevel}";
+                }
+            });
         }
 
         private void OnDestroy()

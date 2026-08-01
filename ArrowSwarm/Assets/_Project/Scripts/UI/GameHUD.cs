@@ -96,8 +96,7 @@ namespace ArrowSwarm.UI
 
         private void OnTipClicked()
         {
-            // Tip system handled in Phase 7
-            // TipManager.Instance?.UseTip();
+            ArrowSwarm.Tips.TipManager.Instance?.UseTip();
         }
 
         private void OnDestroy()
