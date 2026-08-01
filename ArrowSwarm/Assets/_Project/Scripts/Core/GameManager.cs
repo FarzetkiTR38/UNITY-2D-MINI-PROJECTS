@@ -78,6 +78,14 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
+        /// Called when an arrow is fired successfully.
+        /// </summary>
+        public void HandleArrowFired()
+        {
+            OnArrowFired?.Invoke();
+        }
+
+        /// <summary>
         /// Called when the player makes a wrong click (blocked arrow).
         /// Reduces lives by 1 and checks for game over.
         /// </summary>
