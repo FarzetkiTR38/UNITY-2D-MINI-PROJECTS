@@ -431,7 +431,7 @@ Klasik "Block Blast" oyun mekaniklerine dayalı 2D bulmaca oyunudur. Oyuncu, alt
 - 🛑 **Oyun Bitişi Algılama (Game Over Detector):** Tepside kalan parçaların tahtada hiçbir yere sığmadığı anı tespit ederek oyunu sonlandıran sistem.  
 
 📸 **Görseller:**  
-![Ekran Görüntüsü 1](gorseller/blockblast1.png) — daha sonra yüklenecektir.  
+![Ekran Görüntüsü 1](https://github.com/FarzetkiTR38/UNITY-2D-MINI-PROJECTS/blob/main/FBlockBlast!/Screenshots/game_ss_2026-07-08_12-00-50.png) — daha sonra yüklenecektir.  
 
 ![Ekran Görüntüsü 2](gorseller/blockblast2.png) — daha sonra yüklenecektir.  
 
