@@ -42,6 +42,12 @@ namespace ArrowSwarm.Core
         /// <summary>Fired when arrow count changes (fired, total).</summary>
         public static event Action<int, int> OnArrowCountChanged;
 
+        private void Start()
+        {
+            // Auto-load level when GameScene starts
+            LoadLevel();
+        }
+
         /// <summary>
         /// Called when GameScene loads. Generates and starts the current level.
         /// </summary>
