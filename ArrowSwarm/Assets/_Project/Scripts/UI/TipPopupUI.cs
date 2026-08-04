@@ -17,6 +17,16 @@ namespace ArrowSwarm.UI
         [SerializeField] private Button _closeButton;
         [SerializeField] private float _fadeSpeed = 5f;
 
+        private void OnEnable()
+        {
+            ArrowSwarm.Tips.TipManager.OnNoTipsAvailable += Show;
+        }
+
+        private void OnDisable()
+        {
+            ArrowSwarm.Tips.TipManager.OnNoTipsAvailable -= Show;
+        }
+
         private void Start()
         {
             _watchAdButton?.onClick.AddListener(OnWatchAd);
