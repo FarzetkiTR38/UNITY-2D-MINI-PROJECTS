@@ -33,24 +33,31 @@ namespace ArrowSwarm.Path
         public static event Action OnPathInitialized;
 
         /// <summary>
-        /// Initializes the path from MapData.
+        /// Initializes the path as a rectangle perfectly wrapping the grid.
         /// </summary>
         public void InitializePath(MapData mapData)
         {
-            _spawnPoint = mapData.SpawnPoint;
-            _finishPoint = mapData.FinishPoint;
-
             _waypoints.Clear();
+            float s = mapData.PointSpacing;
+            Vector2 o = mapData.GridOrigin;
+            
+            // Grid coordinates for the path (wrap around the grid)
+            _spawnPoint = new Vector2(-1 * s, mapData.GridHeight * s) + o; // Top-Left
+            Vector2 tr = new Vector2(mapData.GridWidth * s, mapData.GridHeight * s) + o; // Top-Right
+            Vector2 br = new Vector2(mapData.GridWidth * s, -1 * s) + o; // Bottom-Right
+            Vector2 bl = new Vector2(-1 * s, -1 * s) + o; // Bottom-Left
+            
+            _finishPoint = _spawnPoint;
+            
             _waypoints.Add(_spawnPoint);
-            for (int i = 0; i < mapData.PathWaypoints.Count; i++)
-            {
-                _waypoints.Add(mapData.PathWaypoints[i]);
-            }
-            _waypoints.Add(_finishPoint);
+            _waypoints.Add(tr); // Go Right
+            _waypoints.Add(br); // Go Down
+            _waypoints.Add(bl); // Go Left
+            _waypoints.Add(_finishPoint); // Go Up to finish
 
             CalculateTotalLength();
             OnPathInitialized?.Invoke();
-            LogDebug($"Path initialized: {_waypoints.Count} waypoints, Length={_totalPathLength:F1}");
+            LogDebug($"Path initialized as Rectangle: {_waypoints.Count} waypoints, Length={_totalPathLength:F1}");
         }
 
         /// <summary>

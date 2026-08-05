@@ -4,7 +4,7 @@ namespace ArrowSwarm.Core
     using UnityEngine;
 
     /// <summary>
-    /// ScriptableObject that defines a map's layout: grid dimensions,
+    /// ScriptableObject that defines a map's layout: point grid dimensions,
     /// path waypoints, spawn/finish points, and visual properties.
     /// 5 different MapData assets will be created (one per map theme).
     /// </summary>
@@ -15,10 +15,10 @@ namespace ArrowSwarm.Core
         [SerializeField] private string _mapName;
         [SerializeField] private int _mapIndex;
 
-        [Header("Grid Configuration")]
+        [Header("Point Grid Configuration")]
         [SerializeField] private int _gridWidth = 6;
         [SerializeField] private int _gridHeight = 8;
-        [SerializeField] private float _cellSize = 0.8f;
+        [SerializeField] private float _pointSpacing = 0.8f;
         [SerializeField] private Vector2 _gridOrigin = Vector2.zero;
 
         [Header("Path")]
@@ -40,16 +40,16 @@ namespace ArrowSwarm.Core
         /// <summary>Index of this map (0-4).</summary>
         public int MapIndex => _mapIndex;
 
-        /// <summary>Grid width in columns.</summary>
+        /// <summary>Grid width in point columns.</summary>
         public int GridWidth => _gridWidth;
 
-        /// <summary>Grid height in rows.</summary>
+        /// <summary>Grid height in point rows.</summary>
         public int GridHeight => _gridHeight;
 
-        /// <summary>Size of each grid cell in world units.</summary>
-        public float CellSize => _cellSize;
+        /// <summary>Distance between adjacent points in world units.</summary>
+        public float PointSpacing => _pointSpacing;
 
-        /// <summary>Bottom-left origin of the grid in world space.</summary>
+        /// <summary>Bottom-left origin point of the grid in world space.</summary>
         public Vector2 GridOrigin => _gridOrigin;
 
         /// <summary>Ordered path waypoints (counter-clockwise).</summary>
@@ -67,7 +67,7 @@ namespace ArrowSwarm.Core
         /// <summary>Color used to render the mob path.</summary>
         public Color PathColor => _pathColor;
 
-        /// <summary>Color used to render grid lines.</summary>
+        /// <summary>Color used to render grid dots/lines.</summary>
         public Color GridLineColor => _gridLineColor;
 
         /// <summary>Top gradient color for the background.</summary>
@@ -77,8 +77,12 @@ namespace ArrowSwarm.Core
         public Color BackgroundGradientBottom => _backgroundGradientBottom;
 
         /// <summary>
-        /// Total number of cells in this map's grid.
+        /// Total number of points in this map's grid.
         /// </summary>
-        public int TotalCells => _gridWidth * _gridHeight;
+        public int TotalPoints => _gridWidth * _gridHeight;
+
+        // --- Backward Compatibility ---
+        /// <summary>Cell size — maps to PointSpacing for backward compatibility.</summary>
+        public float CellSize => _pointSpacing;
     }
 }

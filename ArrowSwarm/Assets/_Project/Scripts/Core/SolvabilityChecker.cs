@@ -2,29 +2,38 @@ namespace ArrowSwarm.Core
 {
     using System.Collections.Generic;
     using ArrowSwarm.Arrow;
+    using ArrowSwarm.Utils;
     using UnityEngine;
 
     /// <summary>
     /// Static utility class that validates whether a generated level is solvable.
-    /// Runs a simulation: iteratively finds and "fires" all arrows that have clear paths.
+    /// Runs a simulation: iteratively finds and "fires" all arrows whose heads
+    /// are on the grid edge AND facing outward.
     /// Also checks winability (total arrow damage vs total mob HP).
     /// </summary>
     public static class SolvabilityChecker
     {
         /// <summary>
-        /// Data structure representing an arrow's placement for simulation.
+        /// Data structure representing a multi-point arrow placement for simulation.
         /// </summary>
         public struct ArrowPlacement
         {
-            public Vector2Int Position;
-            public ArrowDirection Direction;
-            public int Weight;
+            /// <summary>All grid points this arrow occupies. First = head, last = tail.</summary>
+            public List<Vector2Int> PathPoints;
 
-            public ArrowPlacement(Vector2Int pos, ArrowDirection dir, int weight)
+            /// <summary>Direction the arrow head faces.</summary>
+            public ArrowDirection HeadDirection;
+
+            /// <summary>Weight = number of segments = PathPoints.Count - 1.</summary>
+            public int Weight => Mathf.Max(1, PathPoints.Count - 1);
+
+            /// <summary>The head (tip) point of the arrow.</summary>
+            public Vector2Int HeadPoint => PathPoints[0];
+
+            public ArrowPlacement(List<Vector2Int> pathPoints, ArrowDirection headDir)
             {
-                Position = pos;
-                Direction = dir;
-                Weight = weight;
+                PathPoints = pathPoints;
+                HeadDirection = headDir;
             }
         }
 
@@ -37,21 +46,16 @@ namespace ArrowSwarm.Core
             public bool IsWinnable;
             public int TotalArrowDamage;
             public int TotalMobHP;
-            public int FiringSteps; // How many iterations it took
+            public int FiringSteps;
 
             public bool IsValid => IsSolvable && IsWinnable;
         }
 
         /// <summary>
         /// Checks if the given arrow configuration is solvable.
-        /// All arrows must be fireable through iterative clearing.
+        /// An arrow can fire if its head is on the grid edge AND facing outward.
+        /// Firing removes all its occupied points from the grid.
         /// </summary>
-        /// <param name="arrows">List of arrow placements to validate.</param>
-        /// <param name="gridWidth">Grid width.</param>
-        /// <param name="gridHeight">Grid height.</param>
-        /// <param name="totalMobHP">Total HP of all mobs in the level.</param>
-        /// <param name="winabilityRatio">Minimum ratio of arrow damage to mob HP.</param>
-        /// <returns>SolvabilityResult with details.</returns>
         public static SolvabilityResult Check(
             List<ArrowPlacement> arrows,
             int gridWidth, int gridHeight,
@@ -68,21 +72,20 @@ namespace ArrowSwarm.Core
             result.TotalArrowDamage = totalDamage;
             result.TotalMobHP = totalMobHP;
 
-            // Build grid simulation
-            bool[,] occupied = new bool[gridWidth, gridHeight];
+            // Build occupied point set for simulation
+            HashSet<Vector2Int> occupied = new HashSet<Vector2Int>();
             List<ArrowPlacement> remaining = new List<ArrowPlacement>(arrows);
 
             for (int i = 0; i < remaining.Count; i++)
             {
-                var a = remaining[i];
-                if (a.Position.x >= 0 && a.Position.x < gridWidth &&
-                    a.Position.y >= 0 && a.Position.y < gridHeight)
+                var points = remaining[i].PathPoints;
+                for (int j = 0; j < points.Count; j++)
                 {
-                    occupied[a.Position.x, a.Position.y] = true;
+                    occupied.Add(points[j]);
                 }
             }
 
-            // Iteratively fire arrows with clear paths
+            // Iteratively fire arrows whose heads face outward from the edge
             int steps = 0;
             bool progress = true;
 
@@ -94,10 +97,14 @@ namespace ArrowSwarm.Core
                 for (int i = remaining.Count - 1; i >= 0; i--)
                 {
                     ArrowPlacement arrow = remaining[i];
-                    if (IsPathClearSim(arrow.Position, arrow.Direction, occupied, gridWidth, gridHeight))
+                    if (CanFireSim(arrow, gridWidth, gridHeight, occupied))
                     {
-                        // Fire this arrow — remove from grid
-                        occupied[arrow.Position.x, arrow.Position.y] = false;
+                        // Fire: remove all points from occupied
+                        var points = arrow.PathPoints;
+                        for (int j = 0; j < points.Count; j++)
+                        {
+                            occupied.Remove(points[j]);
+                        }
                         remaining.RemoveAt(i);
                         progress = true;
                     }
@@ -119,39 +126,25 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Checks if the path from a position in the given direction
-        /// is clear in the simulation grid.
+        /// Checks if an arrow can be fired in the simulation.
+        /// Condition: Path must be clear to the edge of the grid.
         /// </summary>
-        private static bool IsPathClearSim(
-            Vector2Int from, ArrowDirection direction,
-            bool[,] occupied, int gridWidth, int gridHeight)
+        private static bool CanFireSim(
+            ArrowPlacement arrow, int gridWidth, int gridHeight, HashSet<Vector2Int> occupied)
         {
-            Vector2Int step = DirectionToStep(direction);
-            Vector2Int current = from + step;
-
-            while (current.x >= 0 && current.x < gridWidth &&
-                   current.y >= 0 && current.y < gridHeight)
+            Vector2Int current = arrow.HeadPoint;
+            Vector2Int step = ArrowSwarm.Grid.GridManager.DirectionToVector(arrow.HeadDirection);
+            
+            current += step;
+            while (current.IsInBounds(gridWidth, gridHeight))
             {
-                if (occupied[current.x, current.y])
+                if (occupied.Contains(current))
                 {
                     return false;
                 }
                 current += step;
             }
-
             return true;
-        }
-
-        private static Vector2Int DirectionToStep(ArrowDirection direction)
-        {
-            return direction switch
-            {
-                ArrowDirection.Up => Vector2Int.up,
-                ArrowDirection.Down => Vector2Int.down,
-                ArrowDirection.Left => Vector2Int.left,
-                ArrowDirection.Right => Vector2Int.right,
-                _ => Vector2Int.zero
-            };
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]

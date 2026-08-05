@@ -1,187 +1,213 @@
 namespace ArrowSwarm.Grid
 {
     using System;
+    using System.Collections.Generic;
+
     using ArrowSwarm.Core;
     using ArrowSwarm.Utils;
     using UnityEngine;
 
     /// <summary>
-    /// Manages the game grid — creates cells, tracks arrow placement,
-    /// and provides grid-related queries (e.g., is path clear).
+    /// Manages the point-based game grid. Creates points at intersections,
+    /// tracks arrow placement across multiple points, and provides
+    /// edge-based queries for arrow click validation.
     /// </summary>
     public class GridManager : Singleton<GridManager>
     {
-        private GridCell[,] _cells;
+        private GridPoint[,] _points;
         private int _width;
         private int _height;
-        private float _cellSize;
+        private float _pointSpacing;
         private Vector2 _origin;
 
-        /// <summary>Grid width (columns).</summary>
+        /// <summary>Grid width (number of point columns).</summary>
         public int Width => _width;
 
-        /// <summary>Grid height (rows).</summary>
+        /// <summary>Grid height (number of point rows).</summary>
         public int Height => _height;
 
-        /// <summary>Cell size in world units.</summary>
-        public float CellSize => _cellSize;
+        /// <summary>Distance between adjacent points in world units.</summary>
+        public float PointSpacing => _pointSpacing;
 
-        /// <summary>Grid origin (bottom-left corner) in world space.</summary>
+        /// <summary>Grid origin (bottom-left point) in world space.</summary>
         public Vector2 Origin => _origin;
 
         /// <summary>Fired when the grid is initialized.</summary>
         public static event Action<int, int> OnGridInitialized;
 
-        /// <summary>Fired when a cell's occupancy changes.</summary>
-        public static event Action<Vector2Int, bool> OnCellOccupancyChanged;
+        /// <summary>Fired when a point's occupancy changes.</summary>
+        public static event Action<Vector2Int, bool> OnPointOccupancyChanged;
 
         /// <summary>
-        /// Initializes the grid from MapData.
+        /// Initializes the point grid from MapData.
         /// </summary>
         public void InitializeGrid(MapData mapData)
         {
             _width = mapData.GridWidth;
             _height = mapData.GridHeight;
-            _cellSize = mapData.CellSize;
+            _pointSpacing = mapData.PointSpacing;
             _origin = mapData.GridOrigin;
 
-            _cells = new GridCell[_width, _height];
+            _points = new GridPoint[_width, _height];
 
             for (int x = 0; x < _width; x++)
             {
                 for (int y = 0; y < _height; y++)
                 {
                     Vector2Int gridPos = new Vector2Int(x, y);
-                    Vector2 worldPos = gridPos.GridToWorld(_cellSize, _origin);
-                    _cells[x, y] = new GridCell(gridPos, worldPos);
+                    Vector2 worldPos = gridPos.PointToWorld(_pointSpacing, _origin);
+                    _points[x, y] = new GridPoint(gridPos, worldPos);
                 }
             }
 
             OnGridInitialized?.Invoke(_width, _height);
-            LogDebug($"Grid initialized: {_width}x{_height}, CellSize={_cellSize}");
+            LogDebug($"Grid initialized: {_width}x{_height}, Spacing={_pointSpacing}");
         }
 
         /// <summary>
-        /// Gets the cell at the given grid position. Returns null if out of bounds.
+        /// Gets the point at the given grid position. Returns null if out of bounds.
         /// </summary>
-        public GridCell GetCell(int x, int y)
+        public GridPoint GetPoint(int x, int y)
         {
             if (x < 0 || x >= _width || y < 0 || y >= _height) return null;
-            return _cells[x, y];
+            return _points[x, y];
         }
 
         /// <summary>
-        /// Gets the cell at the given grid position.
+        /// Gets the point at the given grid position.
         /// </summary>
-        public GridCell GetCell(Vector2Int pos)
+        public GridPoint GetPoint(Vector2Int pos)
         {
-            return GetCell(pos.x, pos.y);
+            return GetPoint(pos.x, pos.y);
         }
 
         /// <summary>
-        /// Places an arrow in the specified cell.
+        /// Places an arrow across multiple points on the grid.
+        /// All points in the arrow's path are marked as occupied.
         /// </summary>
-        public void PlaceArrow(Vector2Int pos, Arrow.Arrow arrow)
+        public void PlaceArrowOnPoints(List<Vector2Int> pathPoints, ArrowSwarm.Arrow.Arrow arrow)
         {
-            GridCell cell = GetCell(pos);
-            if (cell == null) return;
+            if (pathPoints == null) return;
 
-            cell.IsOccupied = true;
-            cell.OccupyingArrow = arrow;
-            OnCellOccupancyChanged?.Invoke(pos, true);
+            for (int i = 0; i < pathPoints.Count; i++)
+            {
+                GridPoint point = GetPoint(pathPoints[i]);
+                if (point == null) continue;
+
+                point.IsOccupied = true;
+                point.OccupyingArrow = arrow;
+                OnPointOccupancyChanged?.Invoke(pathPoints[i], true);
+            }
         }
 
         /// <summary>
-        /// Removes an arrow from the specified cell.
+        /// Removes an arrow from all its occupied points.
         /// </summary>
-        public void RemoveArrow(Vector2Int pos)
+        public void RemoveArrowFromPoints(List<Vector2Int> pathPoints)
         {
-            GridCell cell = GetCell(pos);
-            if (cell == null) return;
+            if (pathPoints == null) return;
 
-            cell.Clear();
-            OnCellOccupancyChanged?.Invoke(pos, false);
+            for (int i = 0; i < pathPoints.Count; i++)
+            {
+                GridPoint point = GetPoint(pathPoints[i]);
+                if (point == null) continue;
+
+                point.Clear();
+                OnPointOccupancyChanged?.Invoke(pathPoints[i], false);
+            }
         }
 
         /// <summary>
-        /// Checks if the path from a grid position in the given direction
-        /// is clear (no other arrows blocking) all the way to the grid edge.
+        /// Checks if a specific point is occupied by an arrow.
         /// </summary>
-        public bool IsPathClear(Vector2Int from, Arrow.ArrowDirection direction)
+        public bool IsPointOccupied(Vector2Int pos)
         {
-            Vector2Int step = DirectionToVector(direction);
-            Vector2Int current = from + step;
+            GridPoint point = GetPoint(pos);
+            return point != null && point.IsOccupied;
+        }
 
+        /// <summary>
+        /// Checks if a point is on the edge of the grid.
+        /// </summary>
+        public bool IsEdgePoint(Vector2Int pos)
+        {
+            return pos.IsEdge(_width, _height);
+        }
+
+        /// <summary>
+        /// Checks if an arrow's path is clear in the direction it faces,
+        /// all the way to the grid edge. (No other arrows blocking it)
+        /// </summary>
+        public bool IsPathClear(Vector2Int headPoint, ArrowSwarm.Arrow.ArrowDirection headDir)
+        {
+            Vector2Int step = DirectionToVector(headDir);
+            Vector2Int current = headPoint + step;
+            
             while (current.IsInBounds(_width, _height))
             {
-                GridCell cell = GetCell(current);
-                if (cell != null && cell.IsOccupied)
+                GridPoint point = GetPoint(current);
+                if (point != null && point.IsOccupied)
                 {
                     return false;
                 }
                 current += step;
             }
-
             return true;
         }
 
         /// <summary>
-        /// Converts a world position to the nearest grid cell.
-        /// Returns null if out of bounds.
+        /// Gets the world position of a grid exit point (on the surrounding enemy path rectangle).
         /// </summary>
-        public GridCell WorldToCell(Vector2 worldPos)
+        public Vector2 GetGridExitPoint(Vector2Int headPoint, ArrowSwarm.Arrow.ArrowDirection direction)
         {
-            Vector2Int gridPos = worldPos.WorldToGrid(_cellSize, _origin);
-            return GetCell(gridPos);
+            Vector2Int exit = headPoint;
+            switch(direction)
+            {
+                case ArrowSwarm.Arrow.ArrowDirection.Up: exit.y = _height; break;
+                case ArrowSwarm.Arrow.ArrowDirection.Down: exit.y = -1; break;
+                case ArrowSwarm.Arrow.ArrowDirection.Left: exit.x = -1; break;
+                case ArrowSwarm.Arrow.ArrowDirection.Right: exit.x = _width; break;
+            }
+            return exit.PointToWorld(_pointSpacing, _origin);
         }
 
         /// <summary>
-        /// Clears all cells, removing all arrow references.
+        /// Converts a world position to the nearest grid point.
+        /// Returns null if out of bounds.
+        /// </summary>
+        public GridPoint WorldToPoint(Vector2 worldPos)
+        {
+            Vector2Int gridPos = worldPos.WorldToPoint(_pointSpacing, _origin);
+            return GetPoint(gridPos);
+        }
+
+        /// <summary>
+        /// Clears all points, removing all arrow references.
         /// </summary>
         public void ClearGrid()
         {
-            if (_cells == null) return;
+            if (_points == null) return;
 
             for (int x = 0; x < _width; x++)
             {
                 for (int y = 0; y < _height; y++)
                 {
-                    _cells[x, y].Clear();
+                    _points[x, y].Clear();
                 }
             }
         }
 
         /// <summary>
-        /// Gets the world position where an arrow exits the grid
-        /// from a given position in a given direction.
-        /// </summary>
-        public Vector2 GetGridExitPoint(Vector2Int from, Arrow.ArrowDirection direction)
-        {
-            Vector2Int step = DirectionToVector(direction);
-            Vector2Int current = from;
-
-            while ((current + step).IsInBounds(_width, _height))
-            {
-                current += step;
-            }
-
-            // One step beyond the grid edge
-            Vector2 exitWorld = current.GridToWorld(_cellSize, _origin);
-            exitWorld += new Vector2(step.x, step.y) * _cellSize;
-            return exitWorld;
-        }
-
-        /// <summary>
         /// Converts an ArrowDirection to a Vector2Int step.
         /// </summary>
-        public static Vector2Int DirectionToVector(Arrow.ArrowDirection direction)
+        public static Vector2Int DirectionToVector(ArrowSwarm.Arrow.ArrowDirection direction)
         {
             return direction switch
             {
-                Arrow.ArrowDirection.Up => Vector2Int.up,
-                Arrow.ArrowDirection.Down => Vector2Int.down,
-                Arrow.ArrowDirection.Left => Vector2Int.left,
-                Arrow.ArrowDirection.Right => Vector2Int.right,
+                ArrowSwarm.Arrow.ArrowDirection.Up => Vector2Int.up,
+                ArrowSwarm.Arrow.ArrowDirection.Down => Vector2Int.down,
+                ArrowSwarm.Arrow.ArrowDirection.Left => Vector2Int.left,
+                ArrowSwarm.Arrow.ArrowDirection.Right => Vector2Int.right,
                 _ => Vector2Int.zero
             };
         }

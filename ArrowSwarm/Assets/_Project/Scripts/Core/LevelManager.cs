@@ -53,7 +53,10 @@ namespace ArrowSwarm.Core
         /// </summary>
         public void LoadLevel()
         {
-            int level = DataManager.Instance?.PlayerData?.currentLevel ?? 1;
+            DataManager.Instance?.SetCurrentLevel(1); // FORCE LEVEL 1
+            int level = ArrowSwarm.Debug.DebugManager.Instance != null 
+                ? ArrowSwarm.Debug.DebugManager.Instance.GetEffectiveLevel() 
+                : (DataManager.Instance?.PlayerData?.currentLevel ?? 1);
             LoadLevel(level);
         }
 
@@ -143,18 +146,21 @@ namespace ArrowSwarm.Core
         {
             MapData map = _currentLevelData.Map;
 
-            // Initialize Grid
+            // Initialize Grid (point-based)
             GridManager.Instance.InitializeGrid(map);
 
             // Initialize Path
             PathManager.Instance.InitializePath(map);
 
+            // Fit Camera to Map
+            ArrowSwarm.Camera.CameraController.Instance?.FitToMap(map);
+
             // Initialize Pools
             ArrowSpawner.Instance.InitializePool();
             MobSpawner.Instance.InitializePool();
 
-            // Spawn Arrows
-            ArrowSpawner.Instance.SpawnArrows(_currentParams, map);
+            // Spawn Arrows with pre-generated multi-point placements
+            ArrowSpawner.Instance.SpawnArrows(_currentLevelData.ArrowPlacements, map);
 
             // Start Mob Spawning
             MobSpawner.Instance.StartSpawning(_currentParams);

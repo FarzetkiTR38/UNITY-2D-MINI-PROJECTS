@@ -6,6 +6,7 @@ namespace ArrowSwarm.Core
     /// Static utility class containing all difficulty scaling formulas.
     /// Takes a level number and returns calculated parameters.
     /// Pure functions — no state, no side effects.
+    /// Weight now represents arrow segment count (path length).
     /// </summary>
     public static class DifficultyCalculator
     {
@@ -20,25 +21,30 @@ namespace ArrowSwarm.Core
 
         /// <summary>
         /// Calculates the number of arrows for a given level.
-        /// Starts at ~15, grows with tier, capped at 80% of grid area.
+        /// Considers point grid capacity (each arrow uses weight+1 points).
         /// </summary>
         public static int GetArrowCount(int level, int gridWidth, int gridHeight)
         {
-            int tier = GetDifficultyTier(level);
-            int maxCells = Mathf.FloorToInt(gridWidth * gridHeight * 0.8f);
-            int calculated = Mathf.FloorToInt(15 + tier * 1.5f);
-            return Mathf.Min(maxCells, calculated);
+            int totalPoints = gridWidth * gridHeight;
+            int avgWeight = GetMinWeight(level) + (GetMaxWeight(level) - GetMinWeight(level)) / 2;
+            int avgPointsPerArrow = avgWeight + 1;
+            
+            // Target fill ratio: starts at 75% for level 1, goes up to 95% at high levels
+            float fillRatio = Mathf.Min(0.95f, 0.75f + (level * 0.02f));
+            int maxArrows = Mathf.FloorToInt((totalPoints * fillRatio) / avgPointsPerArrow);
+            
+            return Mathf.Max(5, maxArrows);
         }
 
         /// <summary>
-        /// Calculates the chance that an arrow faces "outward" (clear path to grid edge).
+        /// Calculates the chance that an arrow faces "outward" (edge, clear to fire).
         /// Higher values = easier (more arrows can fire directly).
         /// </summary>
         public static float GetOutwardChance(int level)
         {
             int tier = GetDifficultyTier(level);
-            float chance = 0.65f - (tier - 1) * 0.01f;
-            return Mathf.Max(0.20f, chance);
+            float chance = 0.70f - (tier - 1) * 0.01f;
+            return Mathf.Max(0.25f, chance);
         }
 
         /// <summary>
@@ -82,21 +88,23 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Calculates the minimum arrow weight for a given level.
+        /// Calculates the minimum arrow weight (segment count) for a given level.
+        /// Weight 1 = arrow spans 2 points, Weight 2 = 3 points, etc.
         /// </summary>
         public static int GetMinWeight(int level)
         {
             int tier = GetDifficultyTier(level);
-            return Mathf.Min(5, 1 + Mathf.FloorToInt(tier / 20f));
+            return Mathf.Min(3, 1 + Mathf.FloorToInt(tier / 15f));
         }
 
         /// <summary>
-        /// Calculates the maximum arrow weight for a given level.
+        /// Calculates the maximum arrow weight (segment count) for a given level.
+        /// Starts at 2, gradually increases to allow longer, more complex arrows.
         /// </summary>
         public static int GetMaxWeight(int level)
         {
             int tier = GetDifficultyTier(level);
-            return Mathf.Min(10, 3 + Mathf.FloorToInt(tier / 10f));
+            return Mathf.Min(8, 2 + Mathf.FloorToInt(tier / 5f));
         }
 
         /// <summary>
@@ -163,10 +171,10 @@ namespace ArrowSwarm.Core
         /// <summary>Total number of mobs to spawn.</summary>
         public int TotalMobs;
 
-        /// <summary>Minimum arrow weight (damage).</summary>
+        /// <summary>Minimum arrow weight (segment count).</summary>
         public int MinWeight;
 
-        /// <summary>Maximum arrow weight (damage).</summary>
+        /// <summary>Maximum arrow weight (segment count).</summary>
         public int MaxWeight;
 
         /// <summary>

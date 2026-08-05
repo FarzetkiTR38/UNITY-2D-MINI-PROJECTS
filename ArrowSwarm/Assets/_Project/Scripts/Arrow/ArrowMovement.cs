@@ -1,126 +1,85 @@
 namespace ArrowSwarm.Arrow
 {
-    using System.Collections.Generic;
     using ArrowSwarm.Core;
+    using ArrowSwarm.Grid;
+    using ArrowSwarm.Utils;
     using UnityEngine;
 
     /// <summary>
-    /// Handles arrow movement after firing:
-    /// 1. Moves from grid position to grid edge (straight line).
-    /// 2. Follows the path toward spawn point (against mob direction).
-    /// Damages mobs along the way via trigger collisions.
+    /// Handles arrow movement after firing.
+    /// The arrow head moves from its head point outward through the grid exit,
+    /// damaging mobs via trigger collisions along the way.
     /// </summary>
     [RequireComponent(typeof(Arrow))]
     public class ArrowMovement : MonoBehaviour
     {
         private Arrow _arrow;
+        private ArrowSwarm.Path.PathFollower _pathFollower;
         private float _speed;
-        private bool _isMoving;
-        private int _currentWaypointIndex;
-
-        // Movement phases
-        private enum MovePhase { GridExit, PathFollow, Done }
-        private MovePhase _phase = MovePhase.Done;
-
-        private Vector2 _targetPosition;
-        private List<Vector2> _pathWaypoints;
 
         /// <summary>Whether the arrow is currently in motion.</summary>
-        public bool IsMoving => _isMoving;
+        public bool IsMoving => _pathFollower != null && _pathFollower.IsFollowing;
 
         private void Awake()
         {
             _arrow = GetComponent<Arrow>();
+            _pathFollower = GetComponent<ArrowSwarm.Path.PathFollower>();
+            if (_pathFollower == null)
+            {
+                _pathFollower = gameObject.AddComponent<ArrowSwarm.Path.PathFollower>();
+            }
         }
 
         /// <summary>
-        /// Starts the arrow movement toward the grid exit point, then along the path.
+        /// Starts the arrow movement. It flies straight to the grid exit, 
+        /// then follows the enemy path in reverse.
         /// </summary>
-        public void StartMovement(ArrowDirection direction, Vector2 gridExitPoint)
+        public void StartMovement(Arrow arrow, Vector2 gridExitPoint)
         {
             _speed = GameManager.Instance?.Config?.ArrowMoveSpeed ?? 15f;
-            _targetPosition = gridExitPoint;
-            _phase = MovePhase.GridExit;
-            _isMoving = true;
 
-            LogDebug($"Movement started. Phase=GridExit, Target={gridExitPoint}");
-        }
+            GridManager grid = GridManager.Instance;
+            Vector2 headWorld = arrow.HeadPoint.PointToWorld(grid.PointSpacing, grid.Origin);
+            transform.position = new Vector3(headWorld.x, headWorld.y, 0f);
 
-        /// <summary>
-        /// Sets the path waypoints for the arrow to follow after exiting the grid.
-        /// Waypoints should be ordered from the grid exit toward the spawn point.
-        /// </summary>
-        public void SetPathWaypoints(List<Vector2> waypoints)
-        {
-            _pathWaypoints = waypoints;
-        }
-
-        private void Update()
-        {
-            if (!_isMoving) return;
-
-            switch (_phase)
+            // Initial rotation
+            float zRotation = arrow.HeadDirection switch
             {
-                case MovePhase.GridExit:
-                    MoveToward(_targetPosition);
-                    if (HasReachedTarget(_targetPosition))
-                    {
-                        TransitionToPathFollow();
-                    }
-                    break;
+                ArrowDirection.Up => 0f,
+                ArrowDirection.Right => -90f,
+                ArrowDirection.Down => 180f,
+                ArrowDirection.Left => 90f,
+                _ => 0f
+            };
+            transform.rotation = Quaternion.Euler(0, 0, zRotation);
 
-                case MovePhase.PathFollow:
-                    if (_pathWaypoints == null || _currentWaypointIndex >= _pathWaypoints.Count)
-                    {
-                        CompleteMovement();
-                        break;
-                    }
-                    MoveToward(_pathWaypoints[_currentWaypointIndex]);
-                    if (HasReachedTarget(_pathWaypoints[_currentWaypointIndex]))
-                    {
-                        _currentWaypointIndex++;
-                        if (_currentWaypointIndex >= _pathWaypoints.Count)
-                        {
-                            CompleteMovement();
-                        }
-                    }
-                    break;
-            }
+            // Build full path
+            var waypoints = new System.Collections.Generic.List<Vector2>();
+            waypoints.Add(headWorld);
+            
+            // Add reverse enemy path
+            var reversePath = ArrowSwarm.Path.PathManager.Instance.GetArrowPathWaypoints(gridExitPoint);
+            waypoints.AddRange(reversePath);
+
+            _pathFollower.OnPathEnd -= CompleteMovement;
+            _pathFollower.OnPathEnd += CompleteMovement;
+            
+            _pathFollower.OnDirectionChanged -= RotateArrow;
+            _pathFollower.OnDirectionChanged += RotateArrow;
+
+            _pathFollower.StartFollowing(waypoints, _speed);
         }
 
-        private void MoveToward(Vector2 target)
+        private void RotateArrow(Vector2 dir)
         {
-            Vector2 currentPos = transform.position;
-            Vector2 newPos = Vector2.MoveTowards(currentPos, target, _speed * Time.deltaTime);
-            transform.position = newPos;
-        }
-
-        private bool HasReachedTarget(Vector2 target)
-        {
-            return Vector2.Distance(transform.position, target) < 0.05f;
-        }
-
-        private void TransitionToPathFollow()
-        {
-            _phase = MovePhase.PathFollow;
-            _currentWaypointIndex = 0;
-
-            // Path waypoints will be set by PathManager when arrow exits grid
-            // If no waypoints available, complete immediately
-            if (_pathWaypoints == null || _pathWaypoints.Count == 0)
-            {
-                CompleteMovement();
-            }
-
-            LogDebug("Phase=PathFollow");
+            if (dir == Vector2.zero) return;
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f; // -90 offset because arrow sprite points UP
+            transform.rotation = Quaternion.Euler(0, 0, angle);
         }
 
         private void CompleteMovement()
         {
-            _phase = MovePhase.Done;
-            _isMoving = false;
             _arrow.OnPathComplete();
-            LogDebug("Movement completed.");
         }
 
         /// <summary>
@@ -128,16 +87,12 @@ namespace ArrowSwarm.Arrow
         /// </summary>
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (!_isMoving) return;
+            if (!IsMoving) return;
 
-            // Check if the collider belongs to a mob (component check)
-            // Mob damage is handled by the Mob system (Phase 3)
-            // Arrow sends its damage value via the collision
             var mob = other.GetComponent<ArrowSwarm.Mob.Mob>();
             if (mob != null)
             {
                 mob.TakeDamage(_arrow.GetDamage());
-                LogDebug($"Hit mob! Damage={_arrow.GetDamage()}");
             }
         }
 
@@ -146,10 +101,13 @@ namespace ArrowSwarm.Arrow
         /// </summary>
         public void ResetMovement()
         {
-            _isMoving = false;
-            _phase = MovePhase.Done;
-            _currentWaypointIndex = 0;
-            _pathWaypoints = null;
+            if (_pathFollower != null)
+            {
+                _pathFollower.StopFollowing();
+                _pathFollower.OnPathEnd -= CompleteMovement;
+                _pathFollower.OnDirectionChanged -= RotateArrow;
+                _pathFollower.ResetFollower();
+            }
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]

@@ -1,28 +1,35 @@
 namespace ArrowSwarm.Arrow
 {
+    using System.Collections.Generic;
     using ArrowSwarm.Core;
+    using ArrowSwarm.Grid;
+    using ArrowSwarm.Utils;
     using UnityEngine;
 
     /// <summary>
-    /// Manages the visual representation of an arrow:
-    /// color based on weight, size scaling, idle pulse animation,
-    /// fire effect, blocked effect, and rainbow mode.
+    /// Manages the visual representation of a multi-point arrow:
+    /// draws a LineRenderer through path points, places an arrowhead sprite
+    /// at the head point, handles color based on weight, rainbow mode,
+    /// pulse animation, fire/blocked effects.
     /// </summary>
     [RequireComponent(typeof(Arrow))]
-    [RequireComponent(typeof(SpriteRenderer))]
     public class ArrowVisuals : MonoBehaviour
     {
+        [SerializeField] private float _lineWidth = 0.08f;
+        [SerializeField] private float _headSize = 0.2f;
         [SerializeField] private float _pulseSpeed = 2f;
         [SerializeField] private float _pulseAmount = 0.05f;
-        [SerializeField] private float _baseSizeMin = 0.6f;
-        [SerializeField] private float _baseSizeMax = 1.2f;
 
-        private SpriteRenderer _spriteRenderer;
         private Arrow _arrow;
-        private Vector3 _baseScale;
+        private LineRenderer _lineRenderer;
+        private SpriteRenderer _headRenderer;
+        private Transform _headTransform;
+        private BoxCollider2D _boxCollider;
         private float _pulseTimer;
         private bool _isPulsing;
         private bool _isRainbow;
+        private float _baseLineWidth;
+        private Vector3 _baseHeadScale;
 
         // Cached rainbow colors
         private static readonly Color[] RainbowColors = new Color[]
@@ -36,19 +43,87 @@ namespace ArrowSwarm.Arrow
 
         private void Awake()
         {
-            _spriteRenderer = GetComponent<SpriteRenderer>();
             _arrow = GetComponent<Arrow>();
+            
+            // Hide the old big arrow sprite from the prefab
+            var oldSprite = GetComponent<SpriteRenderer>();
+            if (oldSprite != null) oldSprite.enabled = false;
+            
+            // Ensure we have a BoxCollider2D for accurate path click detection
+            _boxCollider = GetComponent<BoxCollider2D>();
+            if (_boxCollider == null)
+            {
+                _boxCollider = gameObject.AddComponent<BoxCollider2D>();
+            }
+            
+            EnsureLineRenderer();
+            EnsureHeadSprite();
         }
 
         /// <summary>
-        /// Sets up arrow visuals based on direction, weight, and rainbow state.
+        /// Sets up arrow visuals: draws path with LineRenderer and positions arrowhead.
         /// </summary>
-        public void SetupVisuals(ArrowDirection direction, int weight, bool isRainbow)
+        public void SetupVisuals(Arrow arrow)
         {
-            _isRainbow = isRainbow;
+            _isRainbow = arrow.IsRainbow;
+            EnsureLineRenderer();
+            EnsureHeadSprite();
 
-            // Rotation based on direction
-            float zRotation = direction switch
+            // Get world positions for all path points
+            GridManager grid = GridManager.Instance;
+            IReadOnlyList<Vector2Int> pathPoints = arrow.PathPoints;
+            float spacing = grid.PointSpacing;
+            Vector2 origin = grid.Origin;
+
+            // Position the arrow at the head point for click detection
+            Vector2 headWorldPos = arrow.HeadPoint.PointToWorld(spacing, origin);
+            transform.position = new Vector3(headWorldPos.x, headWorldPos.y, 0f);
+
+            // Add BoxCollider2D based on path
+            if (_boxCollider == null) _boxCollider = gameObject.AddComponent<BoxCollider2D>();
+
+            if (pathPoints.Count == 1)
+            {
+                _boxCollider.size = new Vector2(grid.PointSpacing * 0.8f, grid.PointSpacing * 0.8f);
+                _boxCollider.offset = Vector2.zero;
+            }
+            else
+            {
+                // Find min/max local points
+                Vector2 min = Vector2.positiveInfinity;
+                Vector2 max = Vector2.negativeInfinity;
+                
+                foreach (var p in pathPoints)
+                {
+                    Vector2 localPos = p.PointToWorld(spacing, origin) - (Vector2)transform.position;
+                    min = Vector2.Min(min, localPos);
+                    max = Vector2.Max(max, localPos);
+                }
+                
+                Vector2 size = max - min;
+                // Add padding so it has thickness
+                size.x += grid.PointSpacing * 0.7f;
+                size.y += grid.PointSpacing * 0.7f;
+                
+                _boxCollider.size = size;
+                _boxCollider.offset = (min + max) / 2f;
+            }
+
+            // Setup LineRenderer path
+            _lineRenderer.positionCount = pathPoints.Count;
+
+            for (int i = 0; i < pathPoints.Count; i++)
+            {
+                Vector2 worldPos = pathPoints[i].PointToWorld(spacing, origin);
+                _lineRenderer.SetPosition(i, new Vector3(worldPos.x, worldPos.y, 0f));
+            }
+
+            _baseLineWidth = _lineWidth;
+            _lineRenderer.startWidth = _lineWidth;
+            _lineRenderer.endWidth = _lineWidth;
+
+            // Setup arrowhead sprite rotation based on direction
+            float zRotation = arrow.HeadDirection switch
             {
                 ArrowDirection.Up => 0f,
                 ArrowDirection.Right => -90f,
@@ -56,26 +131,45 @@ namespace ArrowSwarm.Arrow
                 ArrowDirection.Left => 90f,
                 _ => 0f
             };
-            transform.rotation = Quaternion.Euler(0, 0, zRotation);
-
-            // Size based on weight (1-10 mapped to baseSizeMin-baseSizeMax)
-            float size = Mathf.Lerp(_baseSizeMin, _baseSizeMax, (weight - 1) / 9f);
-            _baseScale = Vector3.one * size;
-            transform.localScale = _baseScale;
+            _headTransform.position = new Vector3(headWorldPos.x, headWorldPos.y, -0.1f);
+            _headTransform.rotation = Quaternion.Euler(0, 0, zRotation);
+            _baseHeadScale = Vector3.one * _headSize;
+            _headTransform.localScale = _baseHeadScale;
 
             // Color based on weight or rainbow
-            if (isRainbow)
+            Color arrowColor;
+            if (_isRainbow)
             {
-                _spriteRenderer.color = RainbowColors[0];
+                arrowColor = RainbowColors[0];
             }
             else
             {
-                Color color = GameManager.Instance?.Config?.GetArrowColor(weight) ?? Color.white;
-                _spriteRenderer.color = color;
+                arrowColor = GameManager.Instance?.Config?.GetArrowColor(arrow.Weight) ?? Color.white;
             }
 
+            _lineRenderer.startColor = arrowColor;
+            _lineRenderer.endColor = arrowColor.WithAlpha(0.6f);
+            _headRenderer.color = arrowColor;
+
             _isPulsing = true;
-            _pulseTimer = Random.Range(0f, Mathf.PI * 2f); // Random phase offset
+            _pulseTimer = Random.Range(0f, Mathf.PI * 2f);
+
+            _lineRenderer.enabled = true;
+            _headRenderer.enabled = true;
+        }
+
+        /// <summary>
+        /// Enables or disables rainbow mode visuals.
+        /// </summary>
+        public void SetRainbowMode(bool rainbow)
+        {
+            _isRainbow = rainbow;
+
+            if (rainbow)
+            {
+                _pulseSpeed = 4f;
+                _pulseAmount = 0.1f;
+            }
         }
 
         private void Update()
@@ -95,7 +189,14 @@ namespace ArrowSwarm.Arrow
         {
             _pulseTimer += Time.deltaTime * _pulseSpeed;
             float scale = 1f + Mathf.Sin(_pulseTimer) * _pulseAmount;
-            transform.localScale = _baseScale * scale;
+            float width = _baseLineWidth * scale;
+            _lineRenderer.startWidth = width;
+            _lineRenderer.endWidth = width;
+
+            if (_headTransform != null)
+            {
+                _headTransform.localScale = _baseHeadScale * scale;
+            }
         }
 
         private void UpdateRainbowColor()
@@ -104,16 +205,21 @@ namespace ArrowSwarm.Arrow
             int index = Mathf.FloorToInt(t);
             int nextIndex = (index + 1) % RainbowColors.Length;
             float lerp = t - index;
-            _spriteRenderer.color = Color.Lerp(RainbowColors[index], RainbowColors[nextIndex], lerp);
+            Color color = Color.Lerp(RainbowColors[index], RainbowColors[nextIndex], lerp);
+
+            _lineRenderer.startColor = color;
+            _lineRenderer.endColor = color.WithAlpha(0.6f);
+            _headRenderer.color = color;
         }
 
         /// <summary>
-        /// Plays the fire visual effect (stops pulse, could add trail).
+        /// Plays the fire visual effect (stops pulse, hides line, keeps head moving).
         /// </summary>
         public void PlayFireEffect()
         {
             _isPulsing = false;
-            // Trail and particle effects will be added in Phase 8
+            _lineRenderer.enabled = false;
+            // Head sprite stays visible during movement — it's the "flying arrow"
         }
 
         /// <summary>
@@ -121,7 +227,6 @@ namespace ArrowSwarm.Arrow
         /// </summary>
         public void PlayBlockedEffect()
         {
-            // Flash red briefly then return to normal color
             StartCoroutine(FlashColor(Color.red, 0.2f));
         }
 
@@ -152,22 +257,140 @@ namespace ArrowSwarm.Arrow
             _pulseTimer = 0f;
             _pulseAmount = 0.05f;
             _pulseSpeed = 2f;
-            transform.localScale = Vector3.one;
-            transform.rotation = Quaternion.identity;
-            if (_spriteRenderer != null)
+
+            if (_lineRenderer != null)
             {
-                _spriteRenderer.color = Color.white;
+                _lineRenderer.positionCount = 0;
+                _lineRenderer.enabled = false;
             }
+
+            if (_headTransform != null)
+            {
+                _headTransform.localScale = Vector3.one * _headSize;
+                _headTransform.rotation = Quaternion.identity;
+            }
+
+            if (_headRenderer != null)
+            {
+                _headRenderer.color = Color.white;
+                _headRenderer.enabled = false;
+            }
+        }
+
+        private void EnsureLineRenderer()
+        {
+            if (_lineRenderer != null) return;
+
+            _lineRenderer = GetComponent<LineRenderer>();
+            if (_lineRenderer == null)
+            {
+                _lineRenderer = gameObject.AddComponent<LineRenderer>();
+            }
+
+            _lineRenderer.useWorldSpace = true;
+            _lineRenderer.sortingOrder = 5;
+            _lineRenderer.textureMode = LineTextureMode.Stretch;
+            _lineRenderer.numCapVertices = 4;
+            _lineRenderer.numCornerVertices = 4;
+
+            // Use default sprite material
+            if (_lineRenderer.material == null || _lineRenderer.material.name.Contains("Default"))
+            {
+                _lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            }
+        }
+
+        private void EnsureHeadSprite()
+        {
+            if (_headTransform != null) return;
+
+            // Look for existing child named "ArrowHead"
+            _headTransform = transform.Find("ArrowHead");
+            if (_headTransform == null)
+            {
+                var headObj = new GameObject("ArrowHead");
+                headObj.transform.SetParent(transform, false);
+                _headTransform = headObj.transform;
+            }
+
+            _headRenderer = _headTransform.GetComponent<SpriteRenderer>();
+            if (_headRenderer == null)
+            {
+                _headRenderer = _headTransform.gameObject.AddComponent<SpriteRenderer>();
+            }
+
+            // Use existing sprite or create triangle
+            if (_headRenderer.sprite == null)
+            {
+                _headRenderer.sprite = CreateArrowHeadSprite();
+            }
+
+            _headRenderer.sortingOrder = 6;
+        }
+
+        /// <summary>
+        /// Creates a simple triangle sprite for the arrow head.
+        /// </summary>
+        private static Sprite _cachedArrowHead;
+
+        private static Sprite CreateArrowHeadSprite()
+        {
+            if (_cachedArrowHead != null) return _cachedArrowHead;
+
+            int size = 32;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+
+            // Clear to transparent
+            Color[] clear = new Color[size * size];
+            for (int i = 0; i < clear.Length; i++) clear[i] = Color.clear;
+            texture.SetPixels(clear);
+
+            // Draw a triangle pointing up
+            for (int y = 0; y < size; y++)
+            {
+                float progress = (float)y / size;
+                int halfWidth = Mathf.FloorToInt(size * 0.5f * (1f - progress));
+                int center = size / 2;
+
+                for (int x = center - halfWidth; x <= center + halfWidth; x++)
+                {
+                    if (x >= 0 && x < size)
+                    {
+                        texture.SetPixel(x, y, Color.white);
+                    }
+                }
+            }
+
+            texture.Apply();
+            texture.filterMode = FilterMode.Bilinear;
+
+            _cachedArrowHead = Sprite.Create(
+                texture,
+                new Rect(0, 0, size, size),
+                new Vector2(0.5f, 0.5f),
+                size
+            );
+
+            return _cachedArrowHead;
         }
 
         private System.Collections.IEnumerator FlashColor(Color flashColor, float duration)
         {
-            Color originalColor = _spriteRenderer.color;
-            _spriteRenderer.color = flashColor;
+            Color originalLineStart = _lineRenderer.startColor;
+            Color originalLineEnd = _lineRenderer.endColor;
+            Color originalHead = _headRenderer.color;
+
+            _lineRenderer.startColor = flashColor;
+            _lineRenderer.endColor = flashColor;
+            _headRenderer.color = flashColor;
+
             yield return new WaitForSeconds(duration);
+
             if (!_arrow.IsFired)
             {
-                _spriteRenderer.color = originalColor;
+                _lineRenderer.startColor = originalLineStart;
+                _lineRenderer.endColor = originalLineEnd;
+                _headRenderer.color = originalHead;
             }
         }
     }
