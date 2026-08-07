@@ -53,6 +53,9 @@ namespace ArrowSwarm.Core
             {
                 Debug.LogError("[ArrowSwarm] GameManager: GameConfig is not assigned!");
             }
+            
+            // Initialize global input manager
+            var inputMgr = InputManager.Instance;
         }
 
         /// <summary>
