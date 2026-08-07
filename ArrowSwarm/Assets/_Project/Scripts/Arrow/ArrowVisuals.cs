@@ -25,6 +25,7 @@ namespace ArrowSwarm.Arrow
         private SpriteRenderer _headRenderer;
         private Transform _headTransform;
         private BoxCollider2D _boxCollider;
+        private TrailRenderer _trailRenderer;
         private float _pulseTimer;
         private bool _isPulsing;
         private bool _isRainbow;
@@ -58,6 +59,7 @@ namespace ArrowSwarm.Arrow
             
             EnsureLineRenderer();
             EnsureHeadSprite();
+            EnsureTrailRenderer();
         }
 
         /// <summary>
@@ -68,6 +70,7 @@ namespace ArrowSwarm.Arrow
             _isRainbow = arrow.IsRainbow;
             EnsureLineRenderer();
             EnsureHeadSprite();
+            EnsureTrailRenderer();
 
             // Get world positions for all path points
             GridManager grid = GridManager.Instance;
@@ -156,6 +159,12 @@ namespace ArrowSwarm.Arrow
 
             _lineRenderer.enabled = true;
             _headRenderer.enabled = true;
+            
+            if (_trailRenderer != null)
+            {
+                _trailRenderer.enabled = false; // Disabled until fired
+                _trailRenderer.Clear();
+            }
         }
 
         /// <summary>
@@ -210,6 +219,12 @@ namespace ArrowSwarm.Arrow
             _lineRenderer.startColor = color;
             _lineRenderer.endColor = color.WithAlpha(0.6f);
             _headRenderer.color = color;
+            
+            if (_trailRenderer != null && _trailRenderer.enabled)
+            {
+                _trailRenderer.startColor = color;
+                _trailRenderer.endColor = color.WithAlpha(0f);
+            }
         }
 
         /// <summary>
@@ -219,7 +234,13 @@ namespace ArrowSwarm.Arrow
         {
             _isPulsing = false;
             _lineRenderer.enabled = false;
-            // Head sprite stays visible during movement — it's the "flying arrow"
+            
+            if (_trailRenderer != null)
+            {
+                _trailRenderer.enabled = true;
+                _trailRenderer.startColor = _headRenderer.color;
+                _trailRenderer.endColor = _headRenderer.color.WithAlpha(0f);
+            }
         }
 
         /// <summary>
@@ -275,6 +296,12 @@ namespace ArrowSwarm.Arrow
                 _headRenderer.color = Color.white;
                 _headRenderer.enabled = false;
             }
+            
+            if (_trailRenderer != null)
+            {
+                _trailRenderer.enabled = false;
+                _trailRenderer.Clear();
+            }
         }
 
         private void EnsureLineRenderer()
@@ -326,6 +353,29 @@ namespace ArrowSwarm.Arrow
             }
 
             _headRenderer.sortingOrder = 6;
+        }
+
+        private void EnsureTrailRenderer()
+        {
+            if (_trailRenderer != null) return;
+
+            _trailRenderer = GetComponent<TrailRenderer>();
+            if (_trailRenderer == null)
+            {
+                _trailRenderer = gameObject.AddComponent<TrailRenderer>();
+            }
+
+            _trailRenderer.time = 0.5f;
+            _trailRenderer.startWidth = _lineWidth * 1.5f;
+            _trailRenderer.endWidth = 0f;
+            _trailRenderer.sortingOrder = 4;
+            
+            if (_trailRenderer.material == null || _trailRenderer.material.name.Contains("Default"))
+            {
+                _trailRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            }
+            
+            _trailRenderer.enabled = false;
         }
 
         /// <summary>
