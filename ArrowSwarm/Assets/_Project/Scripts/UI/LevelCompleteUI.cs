@@ -18,6 +18,11 @@ namespace ArrowSwarm.UI
         [SerializeField] private Button _mainMenuButton;
         [SerializeField] private float _fadeSpeed = 3f;
 
+        [Header("Stars")]
+        [SerializeField] private GameObject[] _stars = new GameObject[3]; // Drag 3 star images here in Editor
+        [SerializeField] private Color _activeStarColor = Color.yellow;
+        [SerializeField] private Color _inactiveStarColor = new Color(0.2f, 0.2f, 0.2f, 0.5f);
+
         private void OnEnable()
         {
             GameManager.OnLevelWon += Show;
@@ -40,6 +45,28 @@ namespace ArrowSwarm.UI
             int level = Data.DataManager.Instance?.PlayerData?.currentLevel ?? 1;
             if (_titleText != null) _titleText.text = "LEVEL COMPLETE!";
             if (_levelText != null) _levelText.text = $"Level {level} Cleared";
+
+            // Update stars based on remaining lives
+            int currentLives = GameManager.Instance != null ? GameManager.Instance.CurrentLives : 3;
+            // 3 lives = 3 stars, 2 lives = 2 stars, 1 life = 1 star.
+            int starsEarned = Mathf.Clamp(currentLives, 0, 3);
+
+            for (int i = 0; i < _stars.Length; i++)
+            {
+                if (_stars[i] != null)
+                {
+                    Image starImage = _stars[i].GetComponent<Image>();
+                    if (starImage != null)
+                    {
+                        starImage.color = i < starsEarned ? _activeStarColor : _inactiveStarColor;
+                    }
+                    else
+                    {
+                        // Fallback if no Image component, just enable/disable the GameObject
+                        _stars[i].SetActive(i < starsEarned);
+                    }
+                }
+            }
 
             _canvasGroup.interactable = true;
             _canvasGroup.blocksRaycasts = true;
