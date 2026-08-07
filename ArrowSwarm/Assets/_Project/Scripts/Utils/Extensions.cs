@@ -33,33 +33,43 @@ namespace ArrowSwarm.Utils
         }
 
         /// <summary>
-        /// Converts a Vector2Int grid position to world position using cell size and origin.
+        /// Converts a grid point position to world position.
+        /// Points sit at exact grid intersections (no half-cell offset).
         /// </summary>
-        public static Vector2 GridToWorld(this Vector2Int gridPos, float cellSize, Vector2 origin)
+        public static Vector2 PointToWorld(this Vector2Int pointPos, float pointSpacing, Vector2 origin)
         {
             return new Vector2(
-                origin.x + gridPos.x * cellSize + cellSize * 0.5f,
-                origin.y + gridPos.y * cellSize + cellSize * 0.5f
+                origin.x + pointPos.x * pointSpacing,
+                origin.y + pointPos.y * pointSpacing
             );
         }
 
         /// <summary>
-        /// Converts a world position to the nearest grid position.
+        /// Converts a world position to the nearest grid point position.
         /// </summary>
-        public static Vector2Int WorldToGrid(this Vector2 worldPos, float cellSize, Vector2 origin)
+        public static Vector2Int WorldToPoint(this Vector2 worldPos, float pointSpacing, Vector2 origin)
         {
             return new Vector2Int(
-                Mathf.FloorToInt((worldPos.x - origin.x) / cellSize),
-                Mathf.FloorToInt((worldPos.y - origin.y) / cellSize)
+                Mathf.RoundToInt((worldPos.x - origin.x) / pointSpacing),
+                Mathf.RoundToInt((worldPos.y - origin.y) / pointSpacing)
             );
         }
 
         /// <summary>
-        /// Checks if a grid position is within bounds.
+        /// Checks if a grid point position is within bounds.
         /// </summary>
         public static bool IsInBounds(this Vector2Int pos, int width, int height)
         {
             return pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height;
+        }
+
+        /// <summary>
+        /// Checks if a grid point is on the edge of the grid.
+        /// Edge means x==0, x==width-1, y==0, or y==height-1.
+        /// </summary>
+        public static bool IsEdge(this Vector2Int pos, int width, int height)
+        {
+            return pos.x == 0 || pos.x == width - 1 || pos.y == 0 || pos.y == height - 1;
         }
     }
 }

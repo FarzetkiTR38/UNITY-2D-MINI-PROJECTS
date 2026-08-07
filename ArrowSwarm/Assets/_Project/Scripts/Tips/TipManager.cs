@@ -10,7 +10,8 @@ namespace ArrowSwarm.Tips
 
     /// <summary>
     /// Manages the tip (hint) system. When activated, highlights the best
-    /// arrow to fire — the one with clear path and highest potential damage.
+    /// arrow to fire — the one whose head is on the edge facing outward
+    /// with the highest weight.
     /// </summary>
     public class TipManager : Singleton<TipManager>
     {
@@ -53,11 +54,11 @@ namespace ArrowSwarm.Tips
             // Highlight the arrow
             _highlighter?.Highlight(bestArrow);
 
-            LogDebug($"Tip used! Highlighted arrow at {bestArrow.GridPosition}. Tips remaining: {data.tipCount}");
+            LogDebug($"Tip used! Highlighted arrow at {bestArrow.HeadPoint}. Tips remaining: {data.tipCount}");
         }
 
         /// <summary>
-        /// Finds the best arrow to fire: must have clear path,
+        /// Finds the best arrow to fire: head must be on grid edge facing outward,
         /// and among those, picks the one with highest weight.
         /// </summary>
         private Arrow FindBestArrow()
@@ -73,10 +74,10 @@ namespace ArrowSwarm.Tips
                 Arrow arrow = activeArrows[i];
                 if (arrow.IsFired) continue;
 
-                bool pathClear = GridManager.Instance.IsPathClear(
-                    arrow.GridPosition, arrow.Direction);
+                bool canFire = GridManager.Instance.IsPathClear(
+                    arrow.HeadPoint, arrow.HeadDirection);
 
-                if (pathClear && arrow.Weight > bestWeight)
+                if (canFire && arrow.Weight > bestWeight)
                 {
                     best = arrow;
                     bestWeight = arrow.Weight;

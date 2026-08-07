@@ -1,16 +1,18 @@
 namespace ArrowSwarm.Grid
 {
     using ArrowSwarm.Core;
+    using ArrowSwarm.Utils;
     using UnityEngine;
 
     /// <summary>
-    /// Draws the grid lines visually using a LineRenderer or GL.
+    /// Draws the point grid visually using small dot sprites at each intersection.
     /// Subscribes to GridManager events to know when to draw.
     /// </summary>
     public class GridVisualizer : MonoBehaviour
     {
-        [SerializeField] private float _lineWidth = 0.02f;
-        [SerializeField] private Material _lineMaterial;
+        [SerializeField] private float _dotSize = 0.08f;
+        [SerializeField] private Color _dotColor = new Color(0.3f, 0.3f, 0.5f, 0.5f);
+        [SerializeField] private Color _edgeDotColor = new Color(0.4f, 0.4f, 0.6f, 0.7f);
         [SerializeField] private int _sortingOrder = -1;
 
         private GridManager _gridManager;
@@ -28,15 +30,15 @@ namespace ArrowSwarm.Grid
         private void HandleGridInitialized(int width, int height)
         {
             _gridManager = GridManager.Instance;
-            DrawGrid();
+            DrawPointGrid();
         }
 
         /// <summary>
-        /// Creates line renderers for all grid lines.
+        /// Creates dot sprites at every grid intersection point.
         /// </summary>
-        private void DrawGrid()
+        private void DrawPointGrid()
         {
-            // Clear existing lines
+            // Clear existing dots
             foreach (Transform child in transform)
             {
                 Destroy(child.gameObject);
@@ -44,59 +46,71 @@ namespace ArrowSwarm.Grid
 
             int width = _gridManager.Width;
             int height = _gridManager.Height;
-            float cellSize = _gridManager.CellSize;
+            float spacing = _gridManager.PointSpacing;
             Vector2 origin = _gridManager.Origin;
 
-            MapData mapData = GameManager.Instance?.Config?.GetMapForLevel(
-                Data.DataManager.Instance?.PlayerData?.currentLevel ?? 1);
-            Color lineColor = mapData != null ? mapData.GridLineColor
-                : new Color(0.16f, 0.16f, 0.29f, 1f);
-
-            // Vertical lines
-            for (int x = 0; x <= width; x++)
+            for (int x = 0; x < width; x++)
             {
-                CreateLine(
-                    new Vector2(origin.x + x * cellSize, origin.y),
-                    new Vector2(origin.x + x * cellSize, origin.y + height * cellSize),
-                    lineColor, $"VLine_{x}"
-                );
-            }
+                for (int y = 0; y < height; y++)
+                {
+                    Vector2Int pos = new Vector2Int(x, y);
+                    Vector2 worldPos = pos.PointToWorld(spacing, origin);
+                    bool isEdge = pos.IsEdge(width, height);
 
-            // Horizontal lines
-            for (int y = 0; y <= height; y++)
-            {
-                CreateLine(
-                    new Vector2(origin.x, origin.y + y * cellSize),
-                    new Vector2(origin.x + width * cellSize, origin.y + y * cellSize),
-                    lineColor, $"HLine_{y}"
-                );
+                    CreateDot(worldPos, isEdge, $"Dot_{x}_{y}");
+                }
             }
         }
 
-        private void CreateLine(Vector2 start, Vector2 end, Color color, string name)
+        private void CreateDot(Vector2 position, bool isEdge, string name)
         {
-            var lineObj = new GameObject(name);
-            lineObj.transform.SetParent(transform, false);
+            var dotObj = new GameObject(name);
+            dotObj.transform.SetParent(transform, false);
+            dotObj.transform.position = new Vector3(position.x, position.y, 0f);
 
-            var lr = lineObj.AddComponent<LineRenderer>();
-            lr.positionCount = 2;
-            lr.SetPosition(0, start);
-            lr.SetPosition(1, end);
-            lr.startWidth = _lineWidth;
-            lr.endWidth = _lineWidth;
-            lr.startColor = color;
-            lr.endColor = color;
-            lr.sortingOrder = _sortingOrder;
-            lr.useWorldSpace = true;
+            var sr = dotObj.AddComponent<SpriteRenderer>();
+            sr.sprite = CreateCircleSprite();
+            sr.color = isEdge ? _edgeDotColor : _dotColor;
+            sr.sortingOrder = _sortingOrder;
+            dotObj.transform.localScale = Vector3.one * _dotSize;
+        }
 
-            if (_lineMaterial != null)
+        /// <summary>
+        /// Creates a simple circle texture for dot sprites.
+        /// Cached after first creation.
+        /// </summary>
+        private static Sprite _cachedCircleSprite;
+
+        private static Sprite CreateCircleSprite()
+        {
+            if (_cachedCircleSprite != null) return _cachedCircleSprite;
+
+            int size = 32;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            float center = size * 0.5f;
+            float radius = center - 1f;
+
+            for (int x = 0; x < size; x++)
             {
-                lr.material = _lineMaterial;
+                for (int y = 0; y < size; y++)
+                {
+                    float dist = Vector2.Distance(new Vector2(x, y), new Vector2(center, center));
+                    float alpha = dist <= radius ? 1f : 0f;
+                    texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
+                }
             }
-            else
-            {
-                lr.material = new Material(Shader.Find("Sprites/Default"));
-            }
+
+            texture.Apply();
+            texture.filterMode = FilterMode.Bilinear;
+
+            _cachedCircleSprite = Sprite.Create(
+                texture,
+                new Rect(0, 0, size, size),
+                new Vector2(0.5f, 0.5f),
+                size
+            );
+
+            return _cachedCircleSprite;
         }
     }
 }

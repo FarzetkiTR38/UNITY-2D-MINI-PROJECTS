@@ -12,8 +12,7 @@ namespace ArrowSwarm.Mob
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private TextMeshPro _hpText;
         [SerializeField] private Sprite[] _mobVariants; // 5 visual variants
-        [SerializeField] private float _shakeIntensity = 0.1f;
-        [SerializeField] private float _shakeDuration = 0.15f;
+        [SerializeField] private float _flashDuration = 0.5f;
 
         private Vector3 _originalLocalPosition;
         private MobHealth _health;
@@ -109,26 +108,30 @@ namespace ArrowSwarm.Mob
             UpdateHPDisplay(remainingHP);
             if (!_isShaking)
             {
-                StartCoroutine(ShakeCoroutine());
+                StartCoroutine(FlashCoroutine());
             }
         }
 
-        private System.Collections.IEnumerator ShakeCoroutine()
+        private System.Collections.IEnumerator FlashCoroutine()
         {
             _isShaking = true;
             float elapsed = 0f;
             WaitForEndOfFrame waitFrame = new WaitForEndOfFrame();
+            
+            // Set color to red
+            Color originalColor = Color.white; // Or whatever default is
+            _spriteRenderer.color = Color.red;
 
-            while (elapsed < _shakeDuration)
+            while (elapsed < _flashDuration)
             {
-                float offsetX = Random.Range(-_shakeIntensity, _shakeIntensity);
-                float offsetY = Random.Range(-_shakeIntensity, _shakeIntensity);
-                _spriteRenderer.transform.localPosition = _originalLocalPosition + new Vector3(offsetX, offsetY, 0);
+                // Fade color back to original during flash
+                _spriteRenderer.color = Color.Lerp(Color.red, originalColor, elapsed / _flashDuration);
+                
                 elapsed += Time.deltaTime;
                 yield return waitFrame;
             }
 
-            _spriteRenderer.transform.localPosition = _originalLocalPosition;
+            _spriteRenderer.color = originalColor;
             _isShaking = false;
         }
     }

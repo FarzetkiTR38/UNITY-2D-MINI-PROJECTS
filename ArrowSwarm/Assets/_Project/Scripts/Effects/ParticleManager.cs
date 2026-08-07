@@ -25,14 +25,12 @@ namespace ArrowSwarm.Effects
         private void OnEnable()
         {
             Arrow.OnArrowFiredEvent += HandleArrowFired;
-            Mob.OnMobKilled += HandleMobKilled;
             GameManager.OnLevelWon += HandleLevelWon;
         }
 
         private void OnDisable()
         {
             Arrow.OnArrowFiredEvent -= HandleArrowFired;
-            Mob.OnMobKilled -= HandleMobKilled;
             GameManager.OnLevelWon -= HandleLevelWon;
         }
 
@@ -87,13 +85,7 @@ namespace ArrowSwarm.Effects
             }
         }
 
-        private void HandleMobKilled(Mob mob)
-        {
-            if (_mobDeathPrefab != null)
-            {
-                SpawnEffect(_mobDeathPrefab, mob.transform.position);
-            }
-        }
+
 
         private void HandleLevelWon()
         {

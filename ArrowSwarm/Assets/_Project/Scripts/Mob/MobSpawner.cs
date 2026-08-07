@@ -78,15 +78,15 @@ namespace ArrowSwarm.Mob
             StopSpawning();
             ClearAllMobs();
 
-            _totalToSpawn = levelParams.TotalMobs;
+            _totalToSpawn = int.MaxValue; // Infinite spawning
             _spawnedCount = 0;
             _killedCount = 0;
             _finishedCount = 0;
 
-            float delay = GameManager.Instance?.Config?.MobSpawnDelay ?? 2.5f;
+            float delay = 1.25f; // Start quickly
             _spawnCoroutine = StartCoroutine(SpawnRoutine(levelParams, delay));
 
-            LogDebug($"Spawn started. Total={_totalToSpawn}, Interval={levelParams.SpawnInterval}s, Delay={delay}s");
+            LogDebug($"Infinite spawn started. Delay={delay}s");
         }
 
         /// <summary>
@@ -131,22 +131,38 @@ namespace ArrowSwarm.Mob
         {
             yield return new WaitForSeconds(initialDelay);
 
-            WaitForSeconds spawnWait = new WaitForSeconds(levelParams.SpawnInterval);
+            // Askeri düzen (sıralı ve sık) için sabit kısa bir aralık
+            WaitForSeconds spawnWait = new WaitForSeconds(0.85f);
 
-            while (_spawnedCount < _totalToSpawn)
+            while (true)
             {
+                // Only spawn if playing
+                if (GameManager.Instance != null && GameManager.Instance.CurrentState != GameState.Playing)
+                {
+                    yield return new WaitForSeconds(1f);
+                    continue;
+                }
+
                 SpawnSingleMob(levelParams);
                 yield return spawnWait;
             }
-
-            _spawnCoroutine = null;
-            LogDebug("All mobs spawned.");
         }
 
         private void SpawnSingleMob(LevelParams levelParams)
         {
             Mob mob = _mobPool.Get();
-            mob.Initialize(_spawnedCount, levelParams.MobHP, levelParams.MobSpeed);
+            
+            // Can ölçeği (HP Scaling): 3'erli gruplar halinde artıyor
+            int groupIndex = _spawnedCount / 3;
+            int hp = 5;
+            if (groupIndex == 1) hp = 7;
+            else if (groupIndex == 2) hp = 10;
+            else if (groupIndex > 2) hp = 10 + (groupIndex - 2) * 4;
+
+            // Daha yavaş sabit hız
+            float speed = 1f;
+
+            mob.Initialize(_spawnedCount, hp, speed);
             _activeMobs.Add(mob);
             _spawnedCount++;
         }
@@ -155,29 +171,18 @@ namespace ArrowSwarm.Mob
         {
             _killedCount++;
             RemoveMob(mob);
-            CheckAllMobsHandled();
         }
 
         private void HandleMobFinished(Mob mob)
         {
             _finishedCount++;
             RemoveMob(mob);
-            CheckAllMobsHandled();
         }
 
         private void RemoveMob(Mob mob)
         {
             _activeMobs.Remove(mob);
             _mobPool.Release(mob);
-        }
-
-        private void CheckAllMobsHandled()
-        {
-            if (_spawnedCount >= _totalToSpawn && _activeMobs.Count == 0)
-            {
-                OnAllMobsHandled?.Invoke();
-                LogDebug("All mobs handled!");
-            }
         }
 
         protected override void OnDestroy()

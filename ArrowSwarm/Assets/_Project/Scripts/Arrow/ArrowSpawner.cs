@@ -8,8 +8,8 @@ namespace ArrowSwarm.Arrow
     using UnityEngine;
 
     /// <summary>
-    /// Spawns and places arrows on the grid using object pooling.
-    /// Handles direction assignment based on difficulty parameters.
+    /// Spawns and places multi-point arrows on the grid using object pooling.
+    /// Manages rainbow promotion: when only 1 arrow remains, it becomes rainbow.
     /// </summary>
     public class ArrowSpawner : Singleton<ArrowSpawner>
     {
@@ -73,41 +73,39 @@ namespace ArrowSwarm.Arrow
         }
 
         /// <summary>
-        /// Spawns arrows on the grid based on level parameters.
+        /// Spawns arrows on the grid based on pre-generated placements.
+        /// Each placement contains a multi-point path and head direction.
         /// </summary>
-        public void SpawnArrows(LevelParams levelParams, MapData mapData)
+        public void SpawnArrows(List<SolvabilityChecker.ArrowPlacement> placements, MapData mapData)
         {
             ClearAllArrows();
 
             GridManager grid = GridManager.Instance;
-            int arrowCount = levelParams.ArrowCount;
+            float spacing = grid.PointSpacing;
+            Vector2 origin = grid.Origin;
 
-            // Generate random positions
-            List<Vector2Int> positions = GenerateRandomPositions(
-                mapData.GridWidth, mapData.GridHeight, arrowCount);
-
-            // Place arrows
-            for (int i = 0; i < positions.Count; i++)
+            for (int i = 0; i < placements.Count; i++)
             {
-                Vector2Int pos = positions[i];
-                bool isLast = (i == positions.Count - 1);
-
-                ArrowDirection direction = DetermineDirection(
-                    pos, mapData.GridWidth, mapData.GridHeight, levelParams.OutwardChance);
-                int weight = UnityEngine.Random.Range(levelParams.MinWeight, levelParams.MaxWeight + 1);
+                var placement = placements[i];
 
                 Arrow arrow = _arrowPool.Get();
-                arrow.transform.position = pos.GridToWorld(mapData.CellSize, mapData.GridOrigin);
-                arrow.Initialize(pos, direction, weight, isLast);
 
-                grid.PlaceArrow(pos, arrow);
+                // Position at head point
+                Vector2 headWorld = placement.PathPoints[0].PointToWorld(spacing, origin);
+                arrow.transform.position = new Vector3(headWorld.x, headWorld.y, 0f);
+
+                // Initialize with path data (rainbow = false initially)
+                arrow.Initialize(placement.PathPoints, placement.HeadDirection, false);
+
+                // Register on grid
+                grid.PlaceArrowOnPoints(placement.PathPoints, arrow);
                 _activeArrows.Add(arrow);
             }
 
             // Subscribe to arrow fire events
             Arrow.OnArrowFiredEvent += HandleArrowFired;
 
-            LogDebug($"Spawned {positions.Count} arrows. MinW={levelParams.MinWeight}, MaxW={levelParams.MaxWeight}");
+            LogDebug($"Spawned {placements.Count} multi-point arrows.");
         }
 
         /// <summary>
@@ -126,69 +124,35 @@ namespace ArrowSwarm.Arrow
 
         private void HandleArrowFired(Arrow arrow)
         {
-            if (RemainingArrows <= 0)
+            int remaining = RemainingArrows;
+
+            if (remaining <= 0)
             {
                 OnAllArrowsFired?.Invoke();
                 GameManager.Instance.HandleAllArrowsFired();
                 LogDebug("All arrows fired!");
             }
+            else if (remaining == 1)
+            {
+                // Promote last remaining arrow to rainbow
+                PromoteLastArrowToRainbow();
+            }
         }
 
-        private List<Vector2Int> GenerateRandomPositions(int width, int height, int count)
+        /// <summary>
+        /// Finds the last unfired arrow and promotes it to rainbow.
+        /// </summary>
+        private void PromoteLastArrowToRainbow()
         {
-            List<Vector2Int> allPositions = new List<Vector2Int>();
-            for (int x = 0; x < width; x++)
+            for (int i = 0; i < _activeArrows.Count; i++)
             {
-                for (int y = 0; y < height; y++)
+                if (!_activeArrows[i].IsFired)
                 {
-                    allPositions.Add(new Vector2Int(x, y));
+                    _activeArrows[i].SetRainbow(true);
+                    LogDebug($"Arrow at {_activeArrows[i].HeadPoint} promoted to RAINBOW!");
+                    break;
                 }
             }
-
-            // Fisher-Yates shuffle
-            for (int i = allPositions.Count - 1; i > 0; i--)
-            {
-                int j = UnityEngine.Random.Range(0, i + 1);
-                (allPositions[i], allPositions[j]) = (allPositions[j], allPositions[i]);
-            }
-
-            count = Mathf.Min(count, allPositions.Count);
-            return allPositions.GetRange(0, count);
-        }
-
-        private ArrowDirection DetermineDirection(Vector2Int pos, int gridWidth, int gridHeight, float outwardChance)
-        {
-            if (UnityEngine.Random.value < outwardChance)
-            {
-                // Try to face outward (toward nearest edge)
-                return GetOutwardDirection(pos, gridWidth, gridHeight);
-            }
-            else
-            {
-                // Random direction
-                return (ArrowDirection)UnityEngine.Random.Range(0, 4);
-            }
-        }
-
-        private ArrowDirection GetOutwardDirection(Vector2Int pos, int gridWidth, int gridHeight)
-        {
-            // Find distances to each edge
-            int distLeft = pos.x;
-            int distRight = gridWidth - 1 - pos.x;
-            int distDown = pos.y;
-            int distUp = gridHeight - 1 - pos.y;
-
-            // Find minimum distance — face toward nearest edge
-            int minDist = Mathf.Min(distLeft, Mathf.Min(distRight, Mathf.Min(distDown, distUp)));
-
-            // Collect all directions with minimum distance
-            List<ArrowDirection> candidates = new List<ArrowDirection>(4);
-            if (distLeft == minDist) candidates.Add(ArrowDirection.Left);
-            if (distRight == minDist) candidates.Add(ArrowDirection.Right);
-            if (distDown == minDist) candidates.Add(ArrowDirection.Down);
-            if (distUp == minDist) candidates.Add(ArrowDirection.Up);
-
-            return candidates[UnityEngine.Random.Range(0, candidates.Count)];
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
