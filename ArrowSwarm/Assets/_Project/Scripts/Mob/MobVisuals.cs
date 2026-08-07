@@ -12,8 +12,7 @@ namespace ArrowSwarm.Mob
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private TextMeshPro _hpText;
         [SerializeField] private Sprite[] _mobVariants; // 5 visual variants
-        [SerializeField] private float _shakeIntensity = 0.1f;
-        [SerializeField] private float _shakeDuration = 0.15f;
+        [SerializeField] private float _flashDuration = 0.5f;
 
         private Vector3 _originalLocalPosition;
         private MobHealth _health;
@@ -123,10 +122,10 @@ namespace ArrowSwarm.Mob
             Color originalColor = Color.white; // Or whatever default is
             _spriteRenderer.color = Color.red;
 
-            while (elapsed < _shakeDuration)
+            while (elapsed < _flashDuration)
             {
                 // Fade color back to original during flash
-                _spriteRenderer.color = Color.Lerp(Color.red, originalColor, elapsed / _shakeDuration);
+                _spriteRenderer.color = Color.Lerp(Color.red, originalColor, elapsed / _flashDuration);
                 
                 elapsed += Time.deltaTime;
                 yield return waitFrame;
