@@ -109,34 +109,29 @@ namespace ArrowSwarm.Mob
             UpdateHPDisplay(remainingHP);
             if (!_isShaking)
             {
-                StartCoroutine(ShakeAndFlashCoroutine());
+                StartCoroutine(FlashCoroutine());
             }
         }
 
-        private System.Collections.IEnumerator ShakeAndFlashCoroutine()
+        private System.Collections.IEnumerator FlashCoroutine()
         {
             _isShaking = true;
             float elapsed = 0f;
             WaitForEndOfFrame waitFrame = new WaitForEndOfFrame();
             
             // Set color to red
-            Color originalColor = _spriteRenderer.color;
+            Color originalColor = Color.white; // Or whatever default is
             _spriteRenderer.color = Color.red;
 
             while (elapsed < _shakeDuration)
             {
-                float offsetX = Random.Range(-_shakeIntensity, _shakeIntensity);
-                float offsetY = Random.Range(-_shakeIntensity, _shakeIntensity);
-                _spriteRenderer.transform.localPosition = _originalLocalPosition + new Vector3(offsetX, offsetY, 0);
-                
-                // Fade color back to original during shake
+                // Fade color back to original during flash
                 _spriteRenderer.color = Color.Lerp(Color.red, originalColor, elapsed / _shakeDuration);
                 
                 elapsed += Time.deltaTime;
                 yield return waitFrame;
             }
 
-            _spriteRenderer.transform.localPosition = _originalLocalPosition;
             _spriteRenderer.color = originalColor;
             _isShaking = false;
         }
