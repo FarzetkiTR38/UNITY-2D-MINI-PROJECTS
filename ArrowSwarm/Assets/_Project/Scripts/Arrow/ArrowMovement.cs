@@ -28,6 +28,15 @@ namespace ArrowSwarm.Arrow
             {
                 _pathFollower = gameObject.AddComponent<ArrowSwarm.Path.PathFollower>();
             }
+
+            var rb = GetComponent<Rigidbody2D>();
+            if (rb == null)
+            {
+                rb = gameObject.AddComponent<Rigidbody2D>();
+            }
+            rb.bodyType = RigidbodyType2D.Kinematic;
+            // No need to simulate if we just want trigger callbacks
+            rb.simulated = true;
         }
 
         /// <summary>

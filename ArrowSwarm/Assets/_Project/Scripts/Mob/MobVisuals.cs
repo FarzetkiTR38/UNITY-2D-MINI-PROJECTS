@@ -109,26 +109,35 @@ namespace ArrowSwarm.Mob
             UpdateHPDisplay(remainingHP);
             if (!_isShaking)
             {
-                StartCoroutine(ShakeCoroutine());
+                StartCoroutine(ShakeAndFlashCoroutine());
             }
         }
 
-        private System.Collections.IEnumerator ShakeCoroutine()
+        private System.Collections.IEnumerator ShakeAndFlashCoroutine()
         {
             _isShaking = true;
             float elapsed = 0f;
             WaitForEndOfFrame waitFrame = new WaitForEndOfFrame();
+            
+            // Set color to red
+            Color originalColor = _spriteRenderer.color;
+            _spriteRenderer.color = Color.red;
 
             while (elapsed < _shakeDuration)
             {
                 float offsetX = Random.Range(-_shakeIntensity, _shakeIntensity);
                 float offsetY = Random.Range(-_shakeIntensity, _shakeIntensity);
                 _spriteRenderer.transform.localPosition = _originalLocalPosition + new Vector3(offsetX, offsetY, 0);
+                
+                // Fade color back to original during shake
+                _spriteRenderer.color = Color.Lerp(Color.red, originalColor, elapsed / _shakeDuration);
+                
                 elapsed += Time.deltaTime;
                 yield return waitFrame;
             }
 
             _spriteRenderer.transform.localPosition = _originalLocalPosition;
+            _spriteRenderer.color = originalColor;
             _isShaking = false;
         }
     }
