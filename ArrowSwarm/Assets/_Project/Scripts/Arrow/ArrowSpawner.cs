@@ -22,6 +22,8 @@ namespace ArrowSwarm.Arrow
         /// <summary>List of currently active (placed) arrows.</summary>
         public IReadOnlyList<Arrow> ActiveArrows => _activeArrows;
 
+        private int _movingArrowsCount = 0;
+
         /// <summary>Number of arrows remaining (not yet fired).</summary>
         public int RemainingArrows
         {
@@ -104,7 +106,9 @@ namespace ArrowSwarm.Arrow
 
             // Subscribe to arrow fire events
             Arrow.OnArrowFiredEvent += HandleArrowFired;
+            Arrow.OnArrowCompleted += HandleArrowCompleted;
 
+            _movingArrowsCount = 0;
             LogDebug($"Spawned {placements.Count} multi-point arrows.");
         }
 
@@ -114,28 +118,46 @@ namespace ArrowSwarm.Arrow
         public void ClearAllArrows()
         {
             Arrow.OnArrowFiredEvent -= HandleArrowFired;
+            Arrow.OnArrowCompleted -= HandleArrowCompleted;
 
             for (int i = _activeArrows.Count - 1; i >= 0; i--)
             {
                 _arrowPool.Release(_activeArrows[i]);
             }
             _activeArrows.Clear();
+            _movingArrowsCount = 0;
         }
 
         private void HandleArrowFired(Arrow arrow)
         {
+            _movingArrowsCount++;
             int remaining = RemainingArrows;
 
-            if (remaining <= 0)
-            {
-                OnAllArrowsFired?.Invoke();
-                GameManager.Instance.HandleAllArrowsFired();
-                LogDebug("All arrows fired!");
-            }
-            else if (remaining == 1)
+            if (remaining == 1)
             {
                 // Promote last remaining arrow to rainbow
                 PromoteLastArrowToRainbow();
+            }
+            
+            CheckWinCondition();
+        }
+
+        private void HandleArrowCompleted(Arrow arrow)
+        {
+            _movingArrowsCount--;
+            CheckWinCondition();
+        }
+
+        private void CheckWinCondition()
+        {
+            if (RemainingArrows <= 0 && _movingArrowsCount <= 0)
+            {
+                // Unsubscribe to avoid multiple triggers
+                Arrow.OnArrowCompleted -= HandleArrowCompleted;
+                
+                OnAllArrowsFired?.Invoke();
+                GameManager.Instance.HandleAllArrowsFired();
+                LogDebug("All arrows fired AND finished moving!");
             }
         }
 

@@ -3,6 +3,7 @@ namespace ArrowSwarm.Path
     using System;
     using System.Collections.Generic;
     using ArrowSwarm.Core;
+    using ArrowSwarm.Grid;
     using ArrowSwarm.Utils;
     using UnityEngine;
 
@@ -38,8 +39,8 @@ namespace ArrowSwarm.Path
         public void InitializePath(MapData mapData)
         {
             _waypoints.Clear();
-            float s = mapData.PointSpacing;
-            Vector2 o = mapData.GridOrigin;
+            float s = GridManager.Instance.PointSpacing;
+            Vector2 o = GridManager.Instance.Origin;
             
             // Grid coordinates for the path (wrap around the grid)
             _spawnPoint = new Vector2(-1 * s, mapData.GridHeight * s) + o; // Top-Left

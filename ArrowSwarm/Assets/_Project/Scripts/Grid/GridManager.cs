@@ -45,8 +45,32 @@ namespace ArrowSwarm.Grid
         {
             _width = mapData.GridWidth;
             _height = mapData.GridHeight;
-            _pointSpacing = mapData.PointSpacing;
-            _origin = mapData.GridOrigin;
+
+            // Dynamically calculate PointSpacing and Origin to perfectly center on screen
+            UnityEngine.Camera cam = UnityEngine.Camera.main;
+            float screenHeight = cam.orthographicSize * 2f;
+            float screenWidth = screenHeight * cam.aspect;
+
+            // Padding for path and UI (Path needs 1 extra unit around grid)
+            float paddingX = 2.0f; // Path left/right + small margin
+            float paddingY = 4.0f; // Path top/bottom + UI margin (top UI, bottom UI)
+
+            float availableWidth = screenWidth - paddingX;
+            float availableHeight = screenHeight - paddingY;
+
+            // Max point spacing to fit both dimensions
+            float spacingX = availableWidth / Mathf.Max(1, _width - 1);
+            float spacingY = availableHeight / Mathf.Max(1, _height - 1);
+            _pointSpacing = Mathf.Min(spacingX, spacingY);
+
+            // Cap the point spacing so small grids aren't gigantic
+            _pointSpacing = Mathf.Min(_pointSpacing, 1.2f);
+
+            // Calculate origin to center perfectly around (0, -0.5f) to leave more room for top UI
+            float totalWidth = (_width - 1) * _pointSpacing;
+            float totalHeight = (_height - 1) * _pointSpacing;
+            
+            _origin = new Vector2(-totalWidth / 2f, (-totalHeight / 2f) - 0.5f);
 
             _points = new GridPoint[_width, _height];
 
