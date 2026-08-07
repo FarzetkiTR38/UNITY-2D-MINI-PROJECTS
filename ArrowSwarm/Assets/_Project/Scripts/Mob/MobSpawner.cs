@@ -19,7 +19,6 @@ namespace ArrowSwarm.Mob
         private ObjectPool<Mob> _mobPool;
         private readonly List<Mob> _activeMobs = new List<Mob>();
         private Coroutine _spawnCoroutine;
-        private int _totalToSpawn;
         private int _spawnedCount;
         private int _killedCount;
         private int _finishedCount;
@@ -32,9 +31,6 @@ namespace ArrowSwarm.Mob
 
         /// <summary>Number of mobs killed.</summary>
         public int KilledCount => _killedCount;
-
-        /// <summary>Fired when all mobs are either killed or finished.</summary>
-        public static event Action OnAllMobsHandled;
 
         protected override void OnSingletonAwake()
         {
@@ -78,7 +74,6 @@ namespace ArrowSwarm.Mob
             StopSpawning();
             ClearAllMobs();
 
-            _totalToSpawn = int.MaxValue; // Infinite spawning
             _spawnedCount = 0;
             _killedCount = 0;
             _finishedCount = 0;

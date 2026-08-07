@@ -94,7 +94,8 @@ namespace ArrowSwarm.Core
         public static int GetMinWeight(int level)
         {
             int tier = GetDifficultyTier(level);
-            return Mathf.Min(3, 1 + Mathf.FloorToInt(tier / 15f));
+            // Ensure minimum weight is at least 2 in later levels, maxing out at 4.
+            return Mathf.Min(4, 2 + Mathf.FloorToInt(tier / 10f));
         }
 
         /// <summary>
@@ -104,7 +105,8 @@ namespace ArrowSwarm.Core
         public static int GetMaxWeight(int level)
         {
             int tier = GetDifficultyTier(level);
-            return Mathf.Min(8, 2 + Mathf.FloorToInt(tier / 5f));
+            // Scales up to 10. (e.g. tier 1: max 4, tier 19: max 10)
+            return Mathf.Min(10, 3 + Mathf.FloorToInt(tier / 3f));
         }
 
         /// <summary>

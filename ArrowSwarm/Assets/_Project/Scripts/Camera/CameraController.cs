@@ -65,12 +65,16 @@ namespace ArrowSwarm.Camera
         /// </summary>
         public void FitToMap(MapData mapData)
         {
-            float mapWidth = mapData.GridWidth * mapData.CellSize + _padding * 2;
-            float mapHeight = mapData.GridHeight * mapData.CellSize + _padding * 2;
+            float spacing = ArrowSwarm.Grid.GridManager.Instance.PointSpacing;
+            Vector2 origin = ArrowSwarm.Grid.GridManager.Instance.Origin;
 
-            _mapCenter = mapData.GridOrigin + new Vector2(
-                mapData.GridWidth * mapData.CellSize * 0.5f,
-                mapData.GridHeight * mapData.CellSize * 0.5f);
+            float mapWidth = mapData.GridWidth * spacing + _padding * 2;
+            float mapHeight = mapData.GridHeight * spacing + _padding * 2;
+
+            float totalGridWidth = (mapData.GridWidth - 1) * spacing;
+            float totalGridHeight = (mapData.GridHeight - 1) * spacing;
+
+            _mapCenter = origin + new Vector2(totalGridWidth * 0.5f, totalGridHeight * 0.5f);
 
             _mapExtents = new Vector2(mapWidth * 0.5f, mapHeight * 0.5f);
 
