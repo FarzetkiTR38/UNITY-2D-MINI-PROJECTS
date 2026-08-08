@@ -88,33 +88,36 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Calculates the minimum arrow weight (segment count) for a given level.
-        /// Weight 1 = arrow spans 2 points, Weight 2 = 3 points, etc.
+        /// Calculates the minimum arrow weight for a given level.
+        /// Always 1 for maximum playability.
         /// </summary>
         public static int GetMinWeight(int level)
         {
-            int tier = GetDifficultyTier(level);
-            // Ensure minimum weight is at least 2 in later levels, maxing out at 4.
-            return Mathf.Min(4, 2 + Mathf.FloorToInt(tier / 10f));
+            return 1;
         }
 
         /// <summary>
-        /// Calculates the maximum arrow weight (segment count) for a given level.
-        /// Starts at 2, gradually increases to allow longer, more complex arrows.
+        /// Calculates the maximum arrow weight for a given level.
+        /// Level 1-5 (Tier 1) → Max 4
+        /// Level 6-10 (Tier 2) → Max 5
+        /// Level 11-15 (Tier 3) → Max 6
+        /// Level 16-20 (Tier 4) → Max 7
+        /// Level 21-25 (Tier 5) → Max 8
+        /// Scalable up to 10 for higher levels.
         /// </summary>
         public static int GetMaxWeight(int level)
         {
             int tier = GetDifficultyTier(level);
-            // Scales up to 10. (e.g. tier 1: max 4, tier 19: max 10)
-            return Mathf.Min(10, 3 + Mathf.FloorToInt(tier / 3f));
+            return Mathf.Min(10, 3 + tier);
         }
 
         /// <summary>
-        /// Calculates which map index to use for the given level (cyclic, 5 maps).
+        /// Calculates which map index to use for the given level.
+        /// 5 levels per map: Level 1-5 → Map 0, Level 6-10 → Map 1, etc.
         /// </summary>
         public static int GetMapIndex(int level)
         {
-            return (level - 1) % 5;
+            return ((level - 1) / 5) % 5;
         }
 
         /// <summary>

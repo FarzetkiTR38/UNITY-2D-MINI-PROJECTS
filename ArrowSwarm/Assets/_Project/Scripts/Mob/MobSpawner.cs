@@ -109,11 +109,15 @@ namespace ArrowSwarm.Mob
         {
             StopSpawning();
 
-            for (int i = _activeMobs.Count - 1; i >= 0; i--)
+            var mobsToDestroy = new List<Mob>(_activeMobs);
+            for (int i = mobsToDestroy.Count - 1; i >= 0; i--)
             {
-                Mob mob = _activeMobs[i];
-                mob.TakeDamage(9999); // Force kill
+                if (mobsToDestroy[i] != null && mobsToDestroy[i].gameObject.activeSelf)
+                {
+                    mobsToDestroy[i].TakeDamage(9999); // Force kill
+                }
             }
+            _activeMobs.Clear();
         }
 
         /// <summary>
@@ -121,11 +125,18 @@ namespace ArrowSwarm.Mob
         /// </summary>
         public void ClearAllMobs()
         {
-            for (int i = _activeMobs.Count - 1; i >= 0; i--)
-            {
-                _mobPool.Release(_activeMobs[i]);
-            }
+            StopSpawning();
+
+            var mobsToClear = new List<Mob>(_activeMobs);
             _activeMobs.Clear();
+
+            for (int i = mobsToClear.Count - 1; i >= 0; i--)
+            {
+                if (mobsToClear[i] != null)
+                {
+                    _mobPool.Release(mobsToClear[i]);
+                }
+            }
         }
 
         private IEnumerator SpawnRoutine(LevelParams levelParams, float initialDelay)
