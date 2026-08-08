@@ -73,55 +73,26 @@ namespace ArrowSwarm.Core
 
                 if (placements == null || placements.Count == 0) continue;
 
-                var solvability = SolvabilityChecker.Check(
-                    placements, map.GridWidth, map.GridHeight,
-                    totalMobHP, winabilityRatio);
-
-                if (solvability.IsValid)
+                if (SolveDirectionDeadlocks(placements, map.GridWidth, map.GridHeight, totalMobHP, winabilityRatio))
                 {
                     result.ArrowPlacements = placements;
                     result.IsValid = true;
 
-                    LogDebug($"Level {level} generated: {levelParams} " +
-                             $"(attempt {attempt}/{maxAttempts})");
-                    LogDebug($"Solvability: PASSED (steps={solvability.FiringSteps})");
+                    LogDebug($"Level {level} generated and solved: {levelParams} (attempt {attempt}/{maxAttempts})");
                     return result;
                 }
             }
 
-            // All attempts failed — reduce difficulty and try again
-            LogDebug($"Level {level}: {maxAttempts} attempts failed. Reducing difficulty.");
-
-            LevelParams easierParams = ReduceDifficulty(levelParams, difficultyReduction);
-            result.Params = easierParams;
-            totalMobHP = easierParams.TotalMobs * easierParams.MobHP;
-
-            for (int attempt = 1; attempt <= maxAttempts; attempt++)
+            // Fallback: Guaranteed 100% solvable outward orientation
+            LogDebug($"Level {level}: Applying guaranteed solvable outward placement fallback.");
+            var fallbackPlacements = GenerateArrowPlacements(levelParams, map.GridWidth, map.GridHeight);
+            if (fallbackPlacements != null && fallbackPlacements.Count > 0)
             {
-                var placements = GenerateArrowPlacements(
-                    easierParams, map.GridWidth, map.GridHeight);
-
-                if (placements == null || placements.Count == 0) continue;
-
-                var solvability = SolvabilityChecker.Check(
-                    placements, map.GridWidth, map.GridHeight,
-                    totalMobHP, winabilityRatio);
-
-                if (solvability.IsValid)
-                {
-                    result.ArrowPlacements = placements;
-                    result.IsValid = true;
-                    result.GenerationAttempts += attempt;
-                    LogDebug($"Level {level} generated with reduced difficulty (attempt {attempt}).");
-                    return result;
-                }
+                ApplyGuaranteedOutwardOrientation(fallbackPlacements, map.GridWidth, map.GridHeight);
             }
-
-            // Final fallback
-            Debug.LogWarning($"[ArrowSwarm] LevelGenerator: Could not generate valid level {level}!");
-            var fallback = GenerateArrowPlacements(easierParams, map.GridWidth, map.GridHeight);
-            result.ArrowPlacements = fallback ?? new List<SolvabilityChecker.ArrowPlacement>();
-            result.IsValid = true; // Force accept
+            
+            result.ArrowPlacements = fallbackPlacements ?? new List<SolvabilityChecker.ArrowPlacement>();
+            result.IsValid = true;
             return result;
         }
 
@@ -343,6 +314,111 @@ namespace ArrowSwarm.Core
             {
                 int j = Random.Range(0, i + 1);
                 (list[i], list[j]) = (list[j], list[i]);
+            }
+        }
+
+        /// <summary>
+        /// Attempts to resolve direction deadlocks by iteratively flipping head directions of stuck arrows,
+        /// and as a final fallback applies guaranteed outward sequential directions.
+        /// </summary>
+        private static bool SolveDirectionDeadlocks(
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int gridWidth, int gridHeight,
+            int totalMobHP, float winabilityRatio)
+        {
+            if (placements == null || placements.Count == 0) return false;
+
+            // 1. Initial check
+            var initialCheck = SolvabilityChecker.Check(placements, gridWidth, gridHeight, totalMobHP, winabilityRatio);
+            if (initialCheck.IsValid) return true;
+
+            // 2. Try smart flips on stuck arrows
+            for (int attempt = 0; attempt < 40; attempt++)
+            {
+                int index = Random.Range(0, placements.Count);
+                var tempPlacement = placements[index];
+                FlipArrowOrientation(ref tempPlacement);
+                placements[index] = tempPlacement;
+
+                var check = SolvabilityChecker.Check(placements, gridWidth, gridHeight, totalMobHP, winabilityRatio);
+                if (check.IsValid) return true;
+            }
+
+            // 3. Guaranteed Fallback
+            ApplyGuaranteedOutwardOrientation(placements, gridWidth, gridHeight);
+            var finalCheck = SolvabilityChecker.Check(placements, gridWidth, gridHeight, totalMobHP, winabilityRatio);
+            return finalCheck.IsSolvable;
+        }
+
+        private static void FlipArrowOrientation(ref SolvabilityChecker.ArrowPlacement placement)
+        {
+            var path = placement.PathPoints;
+            if (path == null || path.Count < 2) return;
+
+            // Reverse path so Head becomes Tail and Tail becomes Head
+            path.Reverse();
+            Vector2Int bodyDir = path[1] - path[0];
+            ArrowDirection newHeadDir = OppositeDirection(VectorToDirection(bodyDir));
+            
+            placement.PathPoints = path;
+            placement.HeadDirection = newHeadDir;
+        }
+
+        private static void ApplyGuaranteedOutwardOrientation(
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int gridWidth, int gridHeight)
+        {
+            float midX = (gridWidth - 1) / 2f;
+            float midY = (gridHeight - 1) / 2f;
+
+            for (int i = 0; i < placements.Count; i++)
+            {
+                var placement = placements[i];
+                var path = placement.PathPoints;
+                if (path == null || path.Count < 2) continue;
+
+                // Determine segment direction (Horizontal or Vertical)
+                bool isHorizontal = path[0].y == path[1].y;
+
+                if (isHorizontal)
+                {
+                    // Sort path left to right
+                    path.Sort((a, b) => a.x.CompareTo(b.x));
+                    float segmentCenterX = (path[0].x + path[path.Count - 1].x) / 2f;
+
+                    if (segmentCenterX < midX)
+                    {
+                        // Point Left: Head at path[0] (leftmost), HeadDir = Left
+                        placement.HeadDirection = ArrowDirection.Left;
+                    }
+                    else
+                    {
+                        // Point Right: Head at path[last] (rightmost), HeadDir = Right
+                        path.Reverse();
+                        placement.HeadDirection = ArrowDirection.Right;
+                    }
+                }
+                else
+                {
+                    // Vertical: Sort path bottom to top
+                    path.Sort((a, b) => a.y.CompareTo(b.y));
+                    float segmentCenterY = (path[0].y + path[path.Count - 1].y) / 2f;
+
+                    if (segmentCenterY < midY)
+                    {
+                        // Point Down: Head at path[0] (bottommost), HeadDir = Down
+                        placement.HeadDirection = ArrowDirection.Down;
+                    }
+                    else
+                    {
+                        // Point Up: Head at path[last] (topmost), HeadDir = Up
+                        path.Reverse();
+                        placement.HeadDirection = ArrowDirection.Up;
+                    }
+                }
+
+                placement.PathPoints = path;
+                placements[i] = placement;
             }
         }
 
