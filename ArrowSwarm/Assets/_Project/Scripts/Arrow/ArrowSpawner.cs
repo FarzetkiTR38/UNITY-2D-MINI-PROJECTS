@@ -59,8 +59,14 @@ namespace ArrowSwarm.Arrow
         {
             if (_arrowPrefab == null)
             {
-                Debug.LogError("[ArrowSwarm] ArrowSpawner: Arrow prefab not assigned!");
-                return;
+#if UNITY_EDITOR
+                _arrowPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<Arrow>("Assets/_Project/Prefabs/Arrow.prefab");
+#endif
+                if (_arrowPrefab == null)
+                {
+                    Debug.LogError("[ArrowSwarm] ArrowSpawner: Arrow prefab not assigned!");
+                    return;
+                }
             }
 
             _arrowPool = new ObjectPool<Arrow>(
@@ -150,6 +156,7 @@ namespace ArrowSwarm.Arrow
 
         private void CheckWinCondition()
         {
+            LogDebug($"CheckWinCondition: Remaining={RemainingArrows}, Moving={_movingArrowsCount}");
             if (RemainingArrows <= 0 && _movingArrowsCount <= 0)
             {
                 // Unsubscribe to avoid multiple triggers

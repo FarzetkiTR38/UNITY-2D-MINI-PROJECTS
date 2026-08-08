@@ -30,6 +30,13 @@ namespace ArrowSwarm.UI
 
         private void Start()
         {
+            if (_canvasGroup == null)
+            {
+                _canvasGroup = GetComponent<CanvasGroup>();
+                if (_canvasGroup == null)
+                    _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+            }
+
             _retryButton?.onClick.AddListener(OnRetry);
             _mainMenuButton?.onClick.AddListener(OnMainMenu);
             Hide(instant: true);

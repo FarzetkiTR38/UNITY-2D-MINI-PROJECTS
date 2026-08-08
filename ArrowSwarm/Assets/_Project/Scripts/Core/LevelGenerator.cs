@@ -150,6 +150,8 @@ namespace ArrowSwarm.Core
                     for (int i = 0; i < rect.height; i++) path.Add(new Vector2Int(rect.x, rect.y + i));
                 }
 
+                if (path.Count < 2) continue;
+
                 if (Random.value > 0.5f)
                 {
                     path.Reverse();

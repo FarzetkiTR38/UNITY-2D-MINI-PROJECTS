@@ -85,6 +85,53 @@ namespace ArrowSwarm.Data
             NotifyAndSave();
         }
 
+        public int GetLevelStars(int level)
+        {
+            if (_playerData.levelStars == null) return 0;
+            
+            for (int i = 0; i < _playerData.levelStars.Count; i++)
+            {
+                if (_playerData.levelStars[i].level == level)
+                {
+                    return _playerData.levelStars[i].stars;
+                }
+            }
+            return 0;
+        }
+
+        public void SetLevelStars(int level, int stars)
+        {
+            if (_playerData.levelStars == null) 
+            {
+                _playerData.levelStars = new System.Collections.Generic.List<LevelStarData>();
+            }
+
+            stars = Mathf.Clamp(stars, 0, 3);
+            
+            bool found = false;
+            for (int i = 0; i < _playerData.levelStars.Count; i++)
+            {
+                if (_playerData.levelStars[i].level == level)
+                {
+                    if (stars > _playerData.levelStars[i].stars)
+                    {
+                        var data = _playerData.levelStars[i];
+                        data.stars = stars;
+                        _playerData.levelStars[i] = data;
+                    }
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                _playerData.levelStars.Add(new LevelStarData { level = level, stars = stars });
+            }
+
+            NotifyAndSave();
+        }
+
         /// <summary>
         /// Adds or removes tip tokens.
         /// </summary>

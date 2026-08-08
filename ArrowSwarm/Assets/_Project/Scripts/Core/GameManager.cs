@@ -51,7 +51,19 @@ namespace ArrowSwarm.Core
         {
             if (_gameConfig == null)
             {
-                Debug.LogError("[ArrowSwarm] GameManager: GameConfig is not assigned!");
+#if UNITY_EDITOR
+                string[] guids = UnityEditor.AssetDatabase.FindAssets("t:GameConfig");
+                if (guids.Length > 0)
+                {
+                    string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
+                    _gameConfig = UnityEditor.AssetDatabase.LoadAssetAtPath<GameConfig>(path);
+                    LogDebug("GameConfig automatically assigned via Editor fallback.");
+                }
+#endif
+                if (_gameConfig == null)
+                {
+                    Debug.LogError("[ArrowSwarm] GameManager: GameConfig is not assigned!");
+                }
             }
             
             // Initialize global input manager

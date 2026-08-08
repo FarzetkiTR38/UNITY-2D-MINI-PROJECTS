@@ -18,6 +18,9 @@ namespace ArrowSwarm.Data
         /// <summary>Number of available tip (hint) tokens.</summary>
         public int tipCount = 3;
 
+        /// <summary>Stars earned per level.</summary>
+        public System.Collections.Generic.List<LevelStarData> levelStars = new System.Collections.Generic.List<LevelStarData>();
+
         /// <summary>Last daily login date in yyyy-MM-dd format.</summary>
         public string lastDailyLoginDate = "";
 
@@ -43,6 +46,7 @@ namespace ArrowSwarm.Data
                 currentLevel = 1,
                 highestLevel = 1,
                 tipCount = 3,
+                levelStars = new System.Collections.Generic.List<LevelStarData>(),
                 lastDailyLoginDate = "",
                 musicVolume = 0.7f,
                 sfxVolume = 1.0f,
@@ -50,5 +54,12 @@ namespace ArrowSwarm.Data
                 playerId = Guid.NewGuid().ToString()
             };
         }
+    }
+
+    [Serializable]
+    public struct LevelStarData
+    {
+        public int level;
+        public int stars;
     }
 }
