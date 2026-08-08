@@ -47,8 +47,14 @@ namespace ArrowSwarm.Mob
         {
             if (_mobPrefab == null)
             {
-                Debug.LogError("[ArrowSwarm] MobSpawner: Mob prefab not assigned!");
-                return;
+#if UNITY_EDITOR
+                _mobPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<Mob>("Assets/_Project/Prefabs/Mob.prefab");
+#endif
+                if (_mobPrefab == null)
+                {
+                    Debug.LogError("[ArrowSwarm] MobSpawner: Mob prefab not assigned!");
+                    return;
+                }
             }
 
             _mobPool = new ObjectPool<Mob>(

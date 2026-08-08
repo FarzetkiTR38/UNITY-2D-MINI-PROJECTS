@@ -8,6 +8,7 @@ namespace ArrowSwarm.Core
     using ArrowSwarm.Path;
     using ArrowSwarm.Utils;
     using UnityEngine;
+    using UnityEngine.SceneManagement;
 
     /// <summary>
     /// Manages the level lifecycle: loading, generating, starting, and ending levels.
@@ -42,10 +43,34 @@ namespace ArrowSwarm.Core
         /// <summary>Fired when arrow count changes (fired, total).</summary>
         public static event Action<int, int> OnArrowCountChanged;
 
+        private void OnEnable()
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (scene.name == "GameScene")
+            {
+                LoadLevel();
+            }
+        }
+
         private void Start()
         {
-            // Auto-load level when GameScene starts
-            LoadLevel();
+            if (SceneManager.GetActiveScene().name == "GameScene")
+            {
+                // Only load if it wasn't already loaded by OnSceneLoaded
+                if (_currentLevelData.Map == null)
+                {
+                    LoadLevel();
+                }
+            }
         }
 
         /// <summary>
@@ -53,7 +78,6 @@ namespace ArrowSwarm.Core
         /// </summary>
         public void LoadLevel()
         {
-            DataManager.Instance?.SetCurrentLevel(1); // FORCE LEVEL 1
             int level = ArrowSwarm.Debug.DebugManager.Instance != null 
                 ? ArrowSwarm.Debug.DebugManager.Instance.GetEffectiveLevel() 
                 : (DataManager.Instance?.PlayerData?.currentLevel ?? 1);
@@ -65,6 +89,8 @@ namespace ArrowSwarm.Core
         /// </summary>
         public void LoadLevel(int level)
         {
+            CleanupLevel();
+            
             GameConfig config = GameManager.Instance?.Config;
             if (config == null)
             {
@@ -181,7 +207,10 @@ namespace ArrowSwarm.Core
 
         protected override void OnDestroy()
         {
-            CleanupLevel();
+            if (Instance == this)
+            {
+                CleanupLevel();
+            }
             base.OnDestroy();
         }
 

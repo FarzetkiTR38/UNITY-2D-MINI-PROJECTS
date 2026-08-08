@@ -24,13 +24,11 @@ namespace ArrowSwarm.Effects
 
         private void OnEnable()
         {
-            Arrow.OnArrowFiredEvent += HandleArrowFired;
             GameManager.OnLevelWon += HandleLevelWon;
         }
 
         private void OnDisable()
         {
-            Arrow.OnArrowFiredEvent -= HandleArrowFired;
             GameManager.OnLevelWon -= HandleLevelWon;
         }
 
@@ -73,16 +71,6 @@ namespace ArrowSwarm.Effects
 
             ps.Play();
             return ps;
-        }
-
-        private void HandleArrowFired(Arrow arrow)
-        {
-            var prefab = arrow.IsRainbow ? _rainbowTrailPrefab : _arrowTrailPrefab;
-            if (prefab != null)
-            {
-                Color arrowColor = GameManager.Instance?.Config?.GetArrowColor(arrow.Weight) ?? Color.white;
-                SpawnTrail(prefab, arrow.transform, arrowColor);
-            }
         }
 
 

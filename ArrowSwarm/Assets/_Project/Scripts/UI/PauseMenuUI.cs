@@ -19,6 +19,18 @@ namespace ArrowSwarm.UI
 
         private bool _isShowing;
 
+        private void Awake()
+        {
+            if (_canvasGroup == null)
+            {
+                _canvasGroup = GetComponent<CanvasGroup>();
+                if (_canvasGroup == null)
+                {
+                    _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+                }
+            }
+        }
+
         private void OnEnable()
         {
             GameManager.OnGameStateChanged += HandleStateChanged;

@@ -25,9 +25,20 @@ namespace ArrowSwarm.Effects
         private Vector3 _originalCameraPos;
         private bool _isShaking;
 
+        private UnityEngine.Camera MainCamera
+        {
+            get
+            {
+                if (_mainCamera == null)
+                {
+                    _mainCamera = UnityEngine.Camera.main;
+                }
+                return _mainCamera;
+            }
+        }
+
         protected override void OnSingletonAwake()
         {
-            _mainCamera = UnityEngine.Camera.main;
         }
 
         private void OnEnable()
@@ -57,7 +68,7 @@ namespace ArrowSwarm.Effects
         /// </summary>
         public void Shake(float intensity = 0.15f, float duration = 0.2f)
         {
-            if (_mainCamera == null || _isShaking) return;
+            if (MainCamera == null || _isShaking) return;
             StartCoroutine(ShakeRoutine(intensity, duration));
         }
 
@@ -92,20 +103,22 @@ namespace ArrowSwarm.Effects
 
         private System.Collections.IEnumerator ShakeRoutine(float intensity, float duration)
         {
+            if (MainCamera == null) yield break;
             _isShaking = true;
-            _originalCameraPos = _mainCamera.transform.position;
+            _originalCameraPos = MainCamera.transform.position;
             float elapsed = 0f;
 
             while (elapsed < duration)
             {
+                if (MainCamera == null) yield break;
                 float x = Random.Range(-intensity, intensity);
                 float y = Random.Range(-intensity, intensity);
-                _mainCamera.transform.position = _originalCameraPos + new Vector3(x, y, 0);
+                MainCamera.transform.position = _originalCameraPos + new Vector3(x, y, 0);
                 elapsed += Time.deltaTime;
                 yield return null;
             }
 
-            _mainCamera.transform.position = _originalCameraPos;
+            if (MainCamera != null) MainCamera.transform.position = _originalCameraPos;
             _isShaking = false;
         }
     }

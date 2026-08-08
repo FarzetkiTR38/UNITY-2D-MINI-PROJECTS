@@ -13,13 +13,24 @@ namespace ArrowSwarm.Core
     {
         private Camera _mainCamera;
 
+        private Camera MainCamera
+        {
+            get
+            {
+                if (_mainCamera == null)
+                {
+                    _mainCamera = Camera.main;
+                    if (_mainCamera == null)
+                    {
+                        _mainCamera = FindFirstObjectByType<Camera>();
+                    }
+                }
+                return _mainCamera;
+            }
+        }
+
         protected override void OnSingletonAwake()
         {
-            _mainCamera = Camera.main;
-            if (_mainCamera == null)
-            {
-                _mainCamera = FindFirstObjectByType<Camera>();
-            }
         }
 
         private void Update()
@@ -27,7 +38,7 @@ namespace ArrowSwarm.Core
             if (GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.Playing)
                 return;
 
-            if (_mainCamera == null) return;
+            if (MainCamera == null) return;
 
             // Handle Mouse Click
             var mouse = Mouse.current;
@@ -59,16 +70,21 @@ namespace ArrowSwarm.Core
 
         private void ProcessClick(Vector2 screenPosition)
         {
-            Vector2 worldPos = _mainCamera.ScreenToWorldPoint(screenPosition);
+            if (MainCamera == null) return;
+            Vector2 worldPos = MainCamera.ScreenToWorldPoint(screenPosition);
             
-            // Perform 2D Raycast
-            RaycastHit2D hit = Physics2D.Raycast(worldPos, Vector2.zero);
-            if (hit.collider != null)
+            // Perform 2D Raycast All to hit arrow even if overlapping other colliders
+            RaycastHit2D[] hits = Physics2D.RaycastAll(worldPos, Vector2.zero);
+            for (int i = 0; i < hits.Length; i++)
             {
-                var arrow = hit.collider.GetComponentInParent<ArrowSwarm.Arrow.Arrow>();
-                if (arrow != null)
+                if (hits[i].collider != null)
                 {
-                    arrow.OnPlayerClick();
+                    var arrow = hits[i].collider.GetComponentInParent<ArrowSwarm.Arrow.Arrow>();
+                    if (arrow != null)
+                    {
+                        arrow.OnPlayerClick();
+                        break;
+                    }
                 }
             }
         }

@@ -15,12 +15,14 @@ namespace ArrowSwarm.UI
         [Header("UI References")]
         [SerializeField] private Button _playButton;
         [SerializeField] private Button _leaderboardButton;
+        [SerializeField] private Button _levelsButton;
         [SerializeField] private Button _settingsButton;
         [SerializeField] private TextMeshProUGUI _levelText;
         [SerializeField] private TextMeshProUGUI _titleText;
 
         [Header("Panels")]
         [SerializeField] private GameObject _leaderboardPanel;
+        [SerializeField] private GameObject _levelsPanel;
         [SerializeField] private GameObject _settingsPanel;
 
         [Header("Animation")]
@@ -52,6 +54,7 @@ namespace ArrowSwarm.UI
         {
             _playButton?.onClick.AddListener(OnPlayClicked);
             _leaderboardButton?.onClick.AddListener(OnLeaderboardClicked);
+            _levelsButton?.onClick.AddListener(OnLevelsClicked);
             _settingsButton?.onClick.AddListener(OnSettingsClicked);
         }
 
@@ -63,6 +66,11 @@ namespace ArrowSwarm.UI
         private void OnLeaderboardClicked()
         {
             _leaderboardPanel?.SetActive(true);
+        }
+
+        private void OnLevelsClicked()
+        {
+            _levelsPanel?.SetActive(true);
         }
 
         private void OnSettingsClicked()
@@ -91,6 +99,7 @@ namespace ArrowSwarm.UI
         {
             _playButton?.onClick.RemoveListener(OnPlayClicked);
             _leaderboardButton?.onClick.RemoveListener(OnLeaderboardClicked);
+            _levelsButton?.onClick.RemoveListener(OnLevelsClicked);
             _settingsButton?.onClick.RemoveListener(OnSettingsClicked);
         }
     }

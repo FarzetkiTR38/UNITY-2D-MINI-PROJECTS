@@ -46,23 +46,25 @@ namespace ArrowSwarm.UI
         {
             if (_noInternetText != null) _noInternetText.gameObject.SetActive(false);
 
-            ArrowSwarm.Data.MockCloudService.Instance?.LoadLeaderboard(entries =>
+            var entries = LeaderboardManager.Instance?.GetTopPlayers(_rankTexts.Length);
+            if (entries != null)
             {
                 for (int i = 0; i < _rankTexts.Length && i < entries.Count; i++)
                 {
                     if (_rankTexts[i] != null)
                     {
-                        _rankTexts[i].text = $"#{i + 1}  {entries[i].PlayerName}  Lv.{entries[i].HighestLevel}";
+                        string colorHex = entries[i].IsPlayer ? "#FFD700" : "#FFFFFF"; // Gold color for player
+                        _rankTexts[i].text = $"<color={colorHex}>#{i + 1}  {entries[i].PlayerName}  Lv.{entries[i].HighestLevel} ({entries[i].TotalStars}★)</color>";
                     }
                 }
+            }
 
-                if (_playerRankText != null)
-                {
-                    int playerLevel = DataManager.Instance?.PlayerData?.currentLevel ?? 1;
-                    string playerName = DataManager.Instance?.PlayerData?.playerName ?? "Player";
-                    _playerRankText.text = $"You: {playerName}  Lv.{playerLevel}";
-                }
-            });
+            if (_playerRankText != null)
+            {
+                int playerRank = LeaderboardManager.Instance?.GetPlayerRank() ?? 999;
+                string playerName = DataManager.Instance?.PlayerData?.playerName ?? "Player";
+                _playerRankText.text = $"You: {playerName} - Rank: #{playerRank}";
+            }
         }
 
         private void OnDestroy()
