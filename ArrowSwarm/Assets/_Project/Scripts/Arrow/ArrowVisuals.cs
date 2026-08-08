@@ -317,8 +317,8 @@ namespace ArrowSwarm.Arrow
             _lineRenderer.useWorldSpace = true;
             _lineRenderer.sortingOrder = 5;
             _lineRenderer.textureMode = LineTextureMode.Stretch;
-            _lineRenderer.numCapVertices = 4;
-            _lineRenderer.numCornerVertices = 4;
+            _lineRenderer.numCapVertices = 8;
+            _lineRenderer.numCornerVertices = 8;
 
             // Use default sprite material
             if (_lineRenderer.material == null || _lineRenderer.material.name.Contains("Default"))

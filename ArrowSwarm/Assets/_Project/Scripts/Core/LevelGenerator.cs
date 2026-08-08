@@ -97,11 +97,174 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Generates multi-point straight arrow placements filling 100% of the grid.
-        /// Uses Binary Space Partitioning (BSP) to guarantee no 1-point arrows are left,
-        /// ensuring all arrows have a length of at least 2 points.
+        /// Generates multi-point organic maze arrow placements (Image 1 style).
+        /// All arrows are short/medium length (2-5 points) with frequent turns (L, Z, S shapes),
+        /// completely preventing rigid parallel mega-columns (Image 2 style).
         /// </summary>
         private static List<SolvabilityChecker.ArrowPlacement> GenerateArrowPlacements(
+            LevelParams levelParams, int gridWidth, int gridHeight)
+        {
+            return GenerateOrganicMazePlacements(levelParams, gridWidth, gridHeight);
+        }
+
+        private static List<SolvabilityChecker.ArrowPlacement> GenerateOrganicMazePlacements(
+            LevelParams levelParams, int gridWidth, int gridHeight)
+        {
+            var placements = new List<SolvabilityChecker.ArrowPlacement>();
+            bool[,] visited = new bool[gridWidth, gridHeight];
+            int totalPoints = gridWidth * gridHeight;
+            int visitedCount = 0;
+
+            // Cap max length per arrow to 5 points (weight 4) so no mega-arrows span the entire screen
+            int minLength = Mathf.Max(2, levelParams.MinWeight + 1);
+            int maxLength = Mathf.Min(5, levelParams.MaxWeight + 1);
+
+            while (visitedCount < totalPoints)
+            {
+                Vector2Int start = Vector2Int.zero;
+                bool found = false;
+
+                // Pick random unvisited start cell
+                for (int attempt = 0; attempt < 50; attempt++)
+                {
+                    int rx = Random.Range(0, gridWidth);
+                    int ry = Random.Range(0, gridHeight);
+                    if (!visited[rx, ry])
+                    {
+                        start = new Vector2Int(rx, ry);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    for (int x = 0; x < gridWidth && !found; x++)
+                    {
+                        for (int y = 0; y < gridHeight && !found; y++)
+                        {
+                            if (!visited[x, y])
+                            {
+                                start = new Vector2Int(x, y);
+                                found = true;
+                            }
+                        }
+                    }
+                }
+
+                if (!found) break;
+
+                List<Vector2Int> path = new List<Vector2Int>();
+                path.Add(start);
+                visited[start.x, start.y] = true;
+                visitedCount++;
+
+                int targetLength = Random.Range(minLength, maxLength + 1);
+                Vector2Int current = start;
+                Vector2Int currentDir = Vector2Int.zero;
+                int straightSteps = 0;
+
+                while (path.Count < targetLength)
+                {
+                    List<Vector2Int> validDirs = new List<Vector2Int>();
+                    Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+
+                    foreach (var d in dirs)
+                    {
+                        Vector2Int neighbor = current + d;
+                        if (neighbor.x >= 0 && neighbor.x < gridWidth &&
+                            neighbor.y >= 0 && neighbor.y < gridHeight &&
+                            !visited[neighbor.x, neighbor.y])
+                        {
+                            validDirs.Add(d);
+                        }
+                    }
+
+                    if (validDirs.Count == 0) break;
+
+                    // Force turn if we went straight for 2 steps
+                    List<Vector2Int> turnDirs = new List<Vector2Int>(validDirs);
+                    if (currentDir != Vector2Int.zero)
+                    {
+                        turnDirs.Remove(currentDir);
+                        turnDirs.Remove(-currentDir);
+                    }
+
+                    Vector2Int chosenDir;
+                    if (straightSteps >= 2 && turnDirs.Count > 0)
+                    {
+                        // Force a 90-degree turn
+                        chosenDir = turnDirs[Random.Range(0, turnDirs.Count)];
+                        straightSteps = 0;
+                    }
+                    else if (currentDir != Vector2Int.zero && validDirs.Contains(currentDir) && Random.value < 0.35f)
+                    {
+                        // 35% chance to stay straight, 65% chance to turn
+                        chosenDir = currentDir;
+                        straightSteps++;
+                    }
+                    else
+                    {
+                        // Turn
+                        chosenDir = validDirs[Random.Range(0, validDirs.Count)];
+                        straightSteps = 0;
+                    }
+
+                    current += chosenDir;
+                    currentDir = chosenDir;
+                    path.Add(current);
+                    visited[current.x, current.y] = true;
+                    visitedCount++;
+                }
+
+                // Attach isolated 1-point cells to adjacent existing paths
+                if (path.Count < 2)
+                {
+                    Vector2Int isolated = path[0];
+                    bool attached = false;
+
+                    for (int pIndex = 0; pIndex < placements.Count; pIndex++)
+                    {
+                        var existingPath = placements[pIndex].PathPoints;
+                        Vector2Int head = existingPath[0];
+                        Vector2Int tail = existingPath[existingPath.Count - 1];
+
+                        if (Vector2Int.Distance(isolated, head) == 1f && existingPath.Count < maxLength + 1)
+                        {
+                            existingPath.Insert(0, isolated);
+                            attached = true;
+                            break;
+                        }
+                        else if (Vector2Int.Distance(isolated, tail) == 1f && existingPath.Count < maxLength + 1)
+                        {
+                            existingPath.Add(isolated);
+                            attached = true;
+                            break;
+                        }
+                    }
+
+                    if (!attached && placements.Count > 0)
+                    {
+                        placements[0].PathPoints.Add(isolated);
+                    }
+                    continue;
+                }
+
+                if (Random.value > 0.5f)
+                {
+                    path.Reverse();
+                }
+
+                Vector2Int bodyDir = path[1] - path[0];
+                ArrowDirection headDir = OppositeDirection(VectorToDirection(bodyDir));
+
+                placements.Add(new SolvabilityChecker.ArrowPlacement(path, headDir));
+            }
+
+            return placements;
+        }
+
+        private static List<SolvabilityChecker.ArrowPlacement> GenerateMergedBSPPlacements(
             LevelParams levelParams, int gridWidth, int gridHeight)
         {
             var placements = new List<SolvabilityChecker.ArrowPlacement>();
@@ -109,24 +272,57 @@ namespace ArrowSwarm.Core
             
             PartitionGrid(0, 0, gridWidth, gridHeight, levelParams.MaxWeight + 1, pieces);
 
+            var paths = new List<List<Vector2Int>>();
             foreach (var rect in pieces)
             {
                 var path = new List<Vector2Int>();
-                if (rect.width > 1) // Horizontal
+                if (rect.width > 1)
                 {
                     for (int i = 0; i < rect.width; i++) path.Add(new Vector2Int(rect.x + i, rect.y));
                 }
-                else // Vertical
+                else
                 {
                     for (int i = 0; i < rect.height; i++) path.Add(new Vector2Int(rect.x, rect.y + i));
                 }
+                if (path.Count >= 2) paths.Add(path);
+            }
 
-                if (path.Count < 2) continue;
-
-                if (Random.value > 0.5f)
+            for (int i = 0; i < paths.Count; i++)
+            {
+                if (paths[i] == null) continue;
+                for (int j = i + 1; j < paths.Count; j++)
                 {
-                    path.Reverse();
+                    if (paths[j] == null) continue;
+
+                    if (paths[i].Count + paths[j].Count <= levelParams.MaxWeight + 1)
+                    {
+                        Vector2Int tailI = paths[i][paths[i].Count - 1];
+                        Vector2Int headJ = paths[j][0];
+                        Vector2Int tailJ = paths[j][paths[j].Count - 1];
+                        Vector2Int headI = paths[i][0];
+
+                        if (Vector2Int.Distance(tailI, headJ) == 1f)
+                        {
+                            paths[i].AddRange(paths[j]);
+                            paths[j] = null;
+                            break;
+                        }
+                        else if (Vector2Int.Distance(headI, tailJ) == 1f)
+                        {
+                            paths[j].AddRange(paths[i]);
+                            paths[i] = paths[j];
+                            paths[j] = null;
+                            break;
+                        }
+                    }
                 }
+            }
+
+            foreach (var path in paths)
+            {
+                if (path == null || path.Count < 2) continue;
+
+                if (Random.value > 0.5f) path.Reverse();
 
                 Vector2Int bodyDir = path[1] - path[0];
                 ArrowDirection headDir = OppositeDirection(VectorToDirection(bodyDir));
@@ -368,57 +564,104 @@ namespace ArrowSwarm.Core
             List<SolvabilityChecker.ArrowPlacement> placements,
             int gridWidth, int gridHeight)
         {
-            float midX = (gridWidth - 1) / 2f;
-            float midY = (gridHeight - 1) / 2f;
-
             for (int i = 0; i < placements.Count; i++)
             {
                 var placement = placements[i];
                 var path = placement.PathPoints;
                 if (path == null || path.Count < 2) continue;
 
-                // Determine segment direction (Horizontal or Vertical)
-                bool isHorizontal = path[0].y == path[1].y;
+                Vector2Int endA = path[0];
+                Vector2Int endB = path[path.Count - 1];
 
-                if (isHorizontal)
+                Vector2Int dirA = path[0] - path[1];
+                Vector2Int dirB = path[path.Count - 1] - path[path.Count - 2];
+
+                int stepsA = GetStepsToEdge(endA, dirA, gridWidth, gridHeight);
+                int stepsB = GetStepsToEdge(endB, dirB, gridWidth, gridHeight);
+
+                if (stepsB < stepsA)
                 {
-                    // Sort path left to right
-                    path.Sort((a, b) => a.x.CompareTo(b.x));
-                    float segmentCenterX = (path[0].x + path[path.Count - 1].x) / 2f;
-
-                    if (segmentCenterX < midX)
-                    {
-                        // Point Left: Head at path[0] (leftmost), HeadDir = Left
-                        placement.HeadDirection = ArrowDirection.Left;
-                    }
-                    else
-                    {
-                        // Point Right: Head at path[last] (rightmost), HeadDir = Right
-                        path.Reverse();
-                        placement.HeadDirection = ArrowDirection.Right;
-                    }
+                    path.Reverse();
+                    placement.HeadDirection = VectorToDirection(dirB);
                 }
                 else
                 {
-                    // Vertical: Sort path bottom to top
-                    path.Sort((a, b) => a.y.CompareTo(b.y));
-                    float segmentCenterY = (path[0].y + path[path.Count - 1].y) / 2f;
-
-                    if (segmentCenterY < midY)
-                    {
-                        // Point Down: Head at path[0] (bottommost), HeadDir = Down
-                        placement.HeadDirection = ArrowDirection.Down;
-                    }
-                    else
-                    {
-                        // Point Up: Head at path[last] (topmost), HeadDir = Up
-                        path.Reverse();
-                        placement.HeadDirection = ArrowDirection.Up;
-                    }
+                    placement.HeadDirection = VectorToDirection(dirA);
                 }
 
                 placement.PathPoints = path;
                 placements[i] = placement;
+            }
+
+            RemoveHeadToHeadConflicts(placements, gridWidth, gridHeight);
+        }
+
+        private static int GetStepsToEdge(Vector2Int pos, Vector2Int dir, int width, int height)
+        {
+            int steps = 0;
+            Vector2Int curr = pos + dir;
+            while (curr.IsInBounds(width, height))
+            {
+                steps++;
+                curr += dir;
+            }
+            return steps;
+        }
+
+        private static void RemoveHeadToHeadConflicts(
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int gridWidth, int gridHeight)
+        {
+            if (placements == null || placements.Count == 0) return;
+
+            Dictionary<Vector2Int, int> pointToArrowIndex = new Dictionary<Vector2Int, int>();
+            for (int i = 0; i < placements.Count; i++)
+            {
+                var pts = placements[i].PathPoints;
+                for (int j = 0; j < pts.Count; j++)
+                {
+                    pointToArrowIndex[pts[j]] = i;
+                }
+            }
+
+            for (int i = 0; i < placements.Count; i++)
+            {
+                var placementA = placements[i];
+                Vector2Int headA = placementA.HeadPoint;
+                Vector2Int stepA = ArrowSwarm.Grid.GridManager.DirectionToVector(placementA.HeadDirection);
+
+                Vector2Int currA = headA + stepA;
+                if (!currA.IsInBounds(gridWidth, gridHeight)) continue;
+
+                while (currA.IsInBounds(gridWidth, gridHeight))
+                {
+                    if (pointToArrowIndex.TryGetValue(currA, out int indexB) && indexB != i)
+                    {
+                        var placementB = placements[indexB];
+                        Vector2Int headB = placementB.HeadPoint;
+                        Vector2Int stepB = ArrowSwarm.Grid.GridManager.DirectionToVector(placementB.HeadDirection);
+
+                        Vector2Int currB = headB + stepB;
+                        bool bPointsToA = false;
+                        while (currB.IsInBounds(gridWidth, gridHeight))
+                        {
+                            if (pointToArrowIndex.TryGetValue(currB, out int target) && target == i)
+                            {
+                                bPointsToA = true;
+                                break;
+                            }
+                            currB += stepB;
+                        }
+
+                        if (bPointsToA)
+                        {
+                            FlipArrowOrientation(ref placementB);
+                            placements[indexB] = placementB;
+                        }
+                        break;
+                    }
+                    currA += stepA;
+                }
             }
         }
 
