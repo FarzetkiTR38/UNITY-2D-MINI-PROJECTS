@@ -22,6 +22,9 @@ namespace ArrowSwarm.UI
         [SerializeField] private TextMeshProUGUI _arrowCountText;
         [SerializeField] private Slider _zoomSlider;
 
+        [Header("Canvas Group")]
+        [SerializeField] private CanvasGroup _canvasGroup;
+
         [Header("Colors")]
         [SerializeField] private Color _heartActiveColor = new Color(0.91f, 0.27f, 0.37f);
         [SerializeField] private Color _heartInactiveColor = new Color(0.4f, 0.4f, 0.5f);
@@ -44,8 +47,20 @@ namespace ArrowSwarm.UI
 
         private void Start()
         {
+            if (_canvasGroup == null)
+            {
+                _canvasGroup = GetComponent<CanvasGroup>();
+                if (_canvasGroup == null)
+                    _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+            }
+
             _pauseButton?.onClick.AddListener(OnPauseClicked);
             _tipButton?.onClick.AddListener(OnTipClicked);
+
+            if (GameManager.Instance != null)
+            {
+                HandleStateChanged(GameManager.Instance.CurrentState);
+            }
         }
 
         private void HandleLevelReady(LevelParams levelParams)
@@ -85,8 +100,23 @@ namespace ArrowSwarm.UI
 
         private void HandleStateChanged(GameState state)
         {
-            // HUD visibility based on state
-            gameObject.SetActive(state == GameState.Playing || state == GameState.Paused);
+            // HUD visibility based on state using CanvasGroup
+            bool visible = (state == GameState.Playing || state == GameState.Paused);
+            SetHUDVisible(visible);
+        }
+
+        private void SetHUDVisible(bool visible)
+        {
+            if (_canvasGroup == null)
+            {
+                _canvasGroup = GetComponent<CanvasGroup>();
+                if (_canvasGroup == null)
+                    _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+            }
+
+            _canvasGroup.alpha = visible ? 1f : 0f;
+            _canvasGroup.interactable = visible;
+            _canvasGroup.blocksRaycasts = visible;
         }
 
         private void OnPauseClicked()

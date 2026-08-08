@@ -100,24 +100,31 @@ namespace ArrowSwarm.Core
         public MapData[] Maps => _maps;
 
         /// <summary>
-        /// Gets the map data for the given level number (cyclic: 5 maps).
+        /// Gets the map data for the given level number (5 levels per map, cyclic).
+        /// Level 1-5 → Map 0 (Forest), Level 6-10 → Map 1 (Ocean), etc.
         /// </summary>
         public MapData GetMapForLevel(int level)
         {
             if (_maps == null || _maps.Length == 0) return null;
-            int mapIndex = (level - 1) % _maps.Length;
+            int mapIndex = DifficultyCalculator.GetMapIndex(level) % _maps.Length;
             return _maps[mapIndex];
         }
 
         /// <summary>
-        /// Gets the arrow color based on weight value.
-        /// Weight 1-2 → index 0, Weight 3-4 → index 1, etc.
+        /// Gets a random arrow color from the color palette (independent of weight).
+        /// </summary>
+        public Color GetRandomArrowColor()
+        {
+            if (_arrowColors == null || _arrowColors.Length == 0) return Color.white;
+            return _arrowColors[Random.Range(0, _arrowColors.Length)];
+        }
+
+        /// <summary>
+        /// Legacy fallback for weight-based color.
         /// </summary>
         public Color GetArrowColor(int weight)
         {
-            if (_arrowColors == null || _arrowColors.Length == 0) return Color.white;
-            int index = Mathf.Clamp((weight - 1) / 2, 0, _arrowColors.Length - 1);
-            return _arrowColors[index];
+            return GetRandomArrowColor();
         }
     }
 }

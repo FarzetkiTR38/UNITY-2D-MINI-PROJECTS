@@ -139,7 +139,7 @@ namespace ArrowSwarm.Arrow
             _baseHeadScale = Vector3.one * _headSize;
             _headTransform.localScale = _baseHeadScale;
 
-            // Color based on weight or rainbow
+            // Random color from palette (independent of weight) or rainbow
             Color arrowColor;
             if (_isRainbow)
             {
@@ -147,7 +147,7 @@ namespace ArrowSwarm.Arrow
             }
             else
             {
-                arrowColor = GameManager.Instance?.Config?.GetArrowColor(arrow.Weight) ?? Color.white;
+                arrowColor = GameManager.Instance?.Config?.GetRandomArrowColor() ?? Color.white;
             }
 
             _lineRenderer.startColor = arrowColor;
@@ -317,8 +317,8 @@ namespace ArrowSwarm.Arrow
             _lineRenderer.useWorldSpace = true;
             _lineRenderer.sortingOrder = 5;
             _lineRenderer.textureMode = LineTextureMode.Stretch;
-            _lineRenderer.numCapVertices = 4;
-            _lineRenderer.numCornerVertices = 4;
+            _lineRenderer.numCapVertices = 8;
+            _lineRenderer.numCornerVertices = 8;
 
             // Use default sprite material
             if (_lineRenderer.material == null || _lineRenderer.material.name.Contains("Default"))
