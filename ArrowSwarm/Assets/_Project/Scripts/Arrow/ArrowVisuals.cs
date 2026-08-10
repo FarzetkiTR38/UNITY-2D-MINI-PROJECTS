@@ -125,7 +125,10 @@ namespace ArrowSwarm.Arrow
             _lineRenderer.startWidth = _lineWidth;
             _lineRenderer.endWidth = _lineWidth;
 
-            // Setup arrowhead sprite rotation based on direction
+            // Ensure parent transform has zero rotation so arrowhead is strictly orthogonal
+            transform.rotation = Quaternion.identity;
+
+            // Setup arrowhead sprite rotation based on direction (strict 0, 90, 180, 270)
             float zRotation = arrow.HeadDirection switch
             {
                 ArrowDirection.Up => 0f,
@@ -135,7 +138,7 @@ namespace ArrowSwarm.Arrow
                 _ => 0f
             };
             _headTransform.position = new Vector3(headWorldPos.x, headWorldPos.y, -0.1f);
-            _headTransform.rotation = Quaternion.Euler(0, 0, zRotation);
+            _headTransform.localRotation = Quaternion.Euler(0, 0, zRotation);
             _baseHeadScale = Vector3.one * _headSize;
             _headTransform.localScale = _baseHeadScale;
 
