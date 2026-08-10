@@ -334,17 +334,17 @@ namespace NeonGalaxy.UI
                 Debug.Log("[ProfileSettings] Unlinking Google account...");
                 bool success = await profileManager.UnlinkProvider("google");
                 if (success)
-                    ShowFeedback("Google bağlantısı kesildi.", Color.yellow);
+                    ShowFeedback("Google account unlinked.", Color.yellow);
             }
             else
             {
                 Debug.Log("[ProfileSettings] Linking Google account...");
-                ShowFeedback("Google'a bağlanılıyor...", Color.white);
+                ShowFeedback("Connecting to Google...", Color.white);
                 bool success = await profileManager.LinkGoogleAccount();
                 if (success)
-                    ShowFeedback("Google hesabı bağlandı!", Color.green);
+                    ShowFeedback("Google account linked!", Color.green);
                 else
-                    ShowFeedback("Google bağlantısı başarısız.", Color.red);
+                    ShowFeedback("Google connection failed.", Color.red);
             }
 
             RefreshContent();
@@ -361,17 +361,17 @@ namespace NeonGalaxy.UI
                 Debug.Log("[ProfileSettings] Unlinking Discord account...");
                 bool success = await profileManager.UnlinkProvider("discord");
                 if (success)
-                    ShowFeedback("Discord bağlantısı kesildi.", Color.yellow);
+                    ShowFeedback("Discord account unlinked.", Color.yellow);
             }
             else
             {
                 Debug.Log("[ProfileSettings] Linking Discord account...");
-                ShowFeedback("Discord'a bağlanılıyor...", Color.white);
+                ShowFeedback("Connecting to Discord...", Color.white);
                 bool success = await profileManager.LinkDiscordAccount();
                 if (success)
-                    ShowFeedback("Discord hesabı bağlandı!", Color.green);
+                    ShowFeedback("Discord account linked!", Color.green);
                 else
-                    ShowFeedback("Discord bağlantısı başarısız.", Color.red);
+                    ShowFeedback("Discord connection failed.", Color.red);
             }
 
             RefreshContent();
@@ -388,7 +388,7 @@ namespace NeonGalaxy.UI
                 Debug.Log("[ProfileSettings] Unlinking Email account...");
                 bool success = await profileManager.UnlinkProvider("email");
                 if (success)
-                    ShowFeedback("E-posta bağlantısı kesildi.", Color.yellow);
+                    ShowFeedback("Email account unlinked.", Color.yellow);
             }
             else
             {
@@ -396,7 +396,7 @@ namespace NeonGalaxy.UI
                 string email = emailInputField != null ? emailInputField.text.Trim() : "";
                 if (string.IsNullOrEmpty(email) || !email.Contains("@"))
                 {
-                    ShowFeedback("Lütfen önce geçerli bir e-posta adresi girin.", Color.red);
+                    ShowFeedback("Please enter a valid email address first.", Color.red);
                     return;
                 }
 
@@ -406,14 +406,14 @@ namespace NeonGalaxy.UI
                     : "Player#1234!";
 
                 Debug.Log("[ProfileSettings] Linking Email account...");
-                ShowFeedback("E-posta bağlanıyor...", Color.white);
+                ShowFeedback("Connecting Email...", Color.white);
 
                 // In production, a password prompt popup would appear here.
                 bool success = await profileManager.LinkEmailAccount(email, password);
                 if (success)
-                    ShowFeedback("E-posta hesabı bağlandı!", Color.green);
+                    ShowFeedback("Email account linked!", Color.green);
                 else
-                    ShowFeedback("E-posta bağlantısı başarısız.", Color.red);
+                    ShowFeedback("Email connection failed.", Color.red);
             }
 
             RefreshContent();
@@ -464,7 +464,7 @@ namespace NeonGalaxy.UI
             if (allSuccess)
             {
                 _hasUnsavedChanges = false;
-                ShowFeedback("Değişiklikler kaydedildi!", Color.green);
+                ShowFeedback("Changes saved successfully!", Color.green);
                 Debug.Log("[ProfileSettings] All changes saved successfully.");
 
                 // Make all fields readonly after save
@@ -475,7 +475,7 @@ namespace NeonGalaxy.UI
             }
             else
             {
-                ShowFeedback(firstError ?? "Kayıt sırasında hata oluştu.", Color.red);
+                ShowFeedback(firstError ?? "An error occurred while saving.", Color.red);
                 Debug.LogWarning($"[ProfileSettings] Save failed: {firstError}");
             }
         }

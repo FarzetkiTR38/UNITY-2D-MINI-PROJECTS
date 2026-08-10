@@ -13,6 +13,12 @@ namespace NeonGalaxy.Data
         public string playerName;
         public string playerId;
         public int score;
+        /// <summary>
+        /// URL or local path for the player's profile picture.
+        /// Empty string means default avatar should be used.
+        /// Phase-2: Will be populated from server for other players.
+        /// </summary>
+        public string avatarUrl = "";
     }
 
     /// <summary>

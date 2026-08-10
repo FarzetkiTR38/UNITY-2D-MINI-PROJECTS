@@ -173,6 +173,11 @@ namespace NeonGalaxy.Boot
             ServiceLocator.Register(profileManager);
             Debug.Log("[BootManager] ProfileManager registered.");
 
+            // Profile Picture Service (gallery picker + image processing)
+            var profilePictureService = new ProfilePictureService();
+            ServiceLocator.Register(profilePictureService);
+            Debug.Log("[BootManager] ProfilePictureService registered.");
+
             ReportProgress(0.80f, "Profile ready.");
             await Awaitable.NextFrameAsync();
 

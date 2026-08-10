@@ -105,5 +105,20 @@ namespace NeonGalaxy.Services
             Debug.Log($"[MockCloudSave] Guest number assigned: {current}");
             return current;
         }
+
+        public async Task<bool> SavePublicDataAsync(string key, string value)
+        {
+            await Task.Delay(100);
+            PlayerPrefs.SetString(PREFS_PREFIX + "pub_" + key, value);
+            PlayerPrefs.Save();
+            return true;
+        }
+
+        public async Task<string> LoadPublicDataForPlayerAsync(string playerId, string key)
+        {
+            await Task.Delay(100);
+            string prefKey = PREFS_PREFIX + "pub_" + key;
+            return PlayerPrefs.GetString(prefKey, "");
+        }
     }
 }

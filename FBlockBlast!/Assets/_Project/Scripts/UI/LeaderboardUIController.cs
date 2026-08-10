@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using NeonGalaxy.Boot;
 using NeonGalaxy.Services;
+using NeonGalaxy.Meta;
 using NeonGalaxy.Data;
 
 namespace NeonGalaxy.UI
@@ -31,6 +33,11 @@ namespace NeonGalaxy.UI
         [SerializeField] private TextMeshProUGUI thirdPlayerNameText;
         [SerializeField] private TextMeshProUGUI thirdPlayerScoreText;
 
+        [Header("Top 3 Avatars")]
+        [SerializeField] private Image firstPlayerAvatarImage;
+        [SerializeField] private Image secondPlayerAvatarImage;
+        [SerializeField] private Image thirdPlayerAvatarImage;
+        [SerializeField] private Sprite defaultLeaderboardAvatar; // Default avatar for players without custom picture
 
         [Header("Buttons")]
         [SerializeField] private Button refreshButton;
@@ -135,18 +142,21 @@ namespace NeonGalaxy.UI
                 {
                     if (firstPlayerNameText != null) firstPlayerNameText.text = entry.playerName;
                     if (firstPlayerScoreText != null) firstPlayerScoreText.text = entry.score.ToString("N0");
+                    SetLeaderboardAvatar(firstPlayerAvatarImage, entry, data);
                     continue; // Skip creating prefab for top 3
                 }
                 else if (i == 1)
                 {
                     if (secondPlayerNameText != null) secondPlayerNameText.text = entry.playerName;
                     if (secondPlayerScoreText != null) secondPlayerScoreText.text = entry.score.ToString("N0");
+                    SetLeaderboardAvatar(secondPlayerAvatarImage, entry, data);
                     continue; // Skip creating prefab for top 3
                 }
                 else if (i == 2)
                 {
                     if (thirdPlayerNameText != null) thirdPlayerNameText.text = entry.playerName;
                     if (thirdPlayerScoreText != null) thirdPlayerScoreText.text = entry.score.ToString("N0");
+                    SetLeaderboardAvatar(thirdPlayerAvatarImage, entry, data);
                     continue; // Skip creating prefab for top 3
                 }
 
@@ -178,8 +188,141 @@ namespace NeonGalaxy.UI
                         t.color = new Color(0.4f, 1f, 0.8f, 1f); // Neon cyan
                     }
                 }
+
+                // Set avatar for list entries (4th and beyond)
+                // Check for AvatarMask parent first, and pick the inner Image child inside it
+                Transform maskTransform = entryGO.transform.Find("AvatarMask")
+                                       ?? entryGO.transform.Find("Mask");
+
+                Image entryAvatarImage = null;
+
+                if (maskTransform != null)
+                {
+                    // If AvatarMask has a child (the actual photo image inside mask), pick the inner child
+                    if (maskTransform.childCount > 0)
+                    {
+                        entryAvatarImage = maskTransform.GetChild(0).GetComponent<Image>();
+                    }
+                    else
+                    {
+                        entryAvatarImage = maskTransform.GetComponent<Image>();
+                    }
+                }
+
+                // Fallback search if AvatarMask is not present
+                if (entryAvatarImage == null)
+                {
+                    Transform avatarChild = entryGO.transform.Find("AvatarImage")
+                                         ?? entryGO.transform.Find("Avatar")
+                                         ?? entryGO.transform.Find("ProfileImage")
+                                         ?? entryGO.transform.Find("Profile");
+
+                    entryAvatarImage = avatarChild != null 
+                        ? avatarChild.GetComponent<Image>() 
+                        : entryGO.GetComponentInChildren<Image>();
+                }
+
+                if (entryAvatarImage != null)
+                {
+                    SetLeaderboardAvatar(entryAvatarImage, entry, data);
+                }
             }
 
+        }
+
+        private readonly Dictionary<string, Sprite> _avatarCache = new Dictionary<string, Sprite>();
+
+        /// <summary>
+        /// Sets the avatar image for a leaderboard entry.
+        /// Shows current player's avatar directly, or fetches other players' public avatars from UGS Cloud Save.
+        /// </summary>
+        private void SetLeaderboardAvatar(Image avatarImage, LeaderboardEntry entry, CachedLeaderboard leaderboardData)
+        {
+            if (avatarImage == null || entry == null) return;
+
+            // Default fallback first
+            if (defaultLeaderboardAvatar != null)
+                avatarImage.sprite = defaultLeaderboardAvatar;
+
+            // Check if this is the current player
+            bool isCurrentPlayer = leaderboardData.playerEntry != null
+                                   && entry.playerId == leaderboardData.playerEntry.playerId;
+
+            if (isCurrentPlayer)
+            {
+                // Show current player's avatar (custom or built-in)
+                var profileManager = ServiceLocator.Get<ProfileManager>();
+                if (profileManager != null)
+                {
+                    var sprite = profileManager.GetCurrentAvatarSprite();
+                    if (sprite != null)
+                    {
+                        avatarImage.sprite = sprite;
+                        return;
+                    }
+                }
+            }
+
+            // For other players: check memory cache first
+            if (_avatarCache.TryGetValue(entry.playerId, out var cachedSprite))
+            {
+                if (cachedSprite != null)
+                {
+                    avatarImage.sprite = cachedSprite;
+                }
+                return;
+            }
+
+            // Async fetch other player's avatar from UGS Cloud Save
+            _ = LoadOtherPlayerAvatarAsync(avatarImage, entry.playerId);
+        }
+
+        private async Task LoadOtherPlayerAvatarAsync(Image avatarImage, string playerId)
+        {
+            if (string.IsNullOrEmpty(playerId) || avatarImage == null) return;
+
+            var cloudSaveService = ServiceLocator.Get<ICloudSaveService>();
+            if (cloudSaveService == null || !cloudSaveService.IsAvailable) return;
+
+            string payload = await cloudSaveService.LoadPublicDataForPlayerAsync(playerId, "public_avatar_data");
+            if (string.IsNullOrEmpty(payload))
+            {
+                _avatarCache[playerId] = null; // Mark as null to avoid repeated network calls
+                return;
+            }
+
+            Sprite loadedSprite = null;
+
+            if (payload.StartsWith("id:"))
+            {
+                // Built-in avatar ID
+                string avatarId = payload.Substring(3);
+                var profileManager = ServiceLocator.Get<ProfileManager>();
+                var registry = profileManager?.AvatarRegistry;
+                if (registry != null)
+                {
+                    loadedSprite = registry.GetAvatarSprite(avatarId);
+                }
+            }
+            else if (payload.StartsWith("data:"))
+            {
+                // Base64 custom avatar PNG data
+                string base64 = payload.Substring(5);
+                var pictureService = ServiceLocator.Get<ProfilePictureService>();
+                if (pictureService != null)
+                {
+                    loadedSprite = pictureService.Base64ToSprite(base64);
+                }
+            }
+
+            if (loadedSprite != null)
+            {
+                _avatarCache[playerId] = loadedSprite;
+                if (avatarImage != null)
+                {
+                    avatarImage.sprite = loadedSprite;
+                }
+            }
         }
 
         private void SetLoading(bool loading)

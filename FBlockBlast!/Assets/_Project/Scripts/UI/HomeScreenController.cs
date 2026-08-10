@@ -32,6 +32,8 @@ namespace NeonGalaxy.UI
         [SerializeField] private Button shopButton;
         [SerializeField] private Button creditsButton;
         [SerializeField] private Button profileAvatarButton;
+        [SerializeField] private Image profileAvatarButtonImage; // The Image on the top-right profile button
+        [SerializeField] private Sprite defaultProfileButtonSprite; // Default sprite when no custom avatar is set
 
         [Header("Popup Panels")]
         [SerializeField] private GameObject mainPanel;
@@ -56,12 +58,14 @@ namespace NeonGalaxy.UI
         {
             GameEvents.OnCoinBalanceChanged += HandleCoinBalanceChanged;
             GameEvents.OnGemBalanceChanged += HandleGemBalanceChanged;
+            GameEvents.OnProfileUpdated += RefreshProfileAvatarButton;
         }
 
         private void OnDisable()
         {
             GameEvents.OnCoinBalanceChanged -= HandleCoinBalanceChanged;
             GameEvents.OnGemBalanceChanged -= HandleGemBalanceChanged;
+            GameEvents.OnProfileUpdated -= RefreshProfileAvatarButton;
         }
 
         // ── UI Refresh ───────────────────────────────────────────
@@ -74,6 +78,9 @@ namespace NeonGalaxy.UI
 
             // Coins
             RefreshCoinDisplay();
+
+            // Top-right avatar button
+            RefreshProfileAvatarButton();
         }
 
         private void RefreshCoinDisplay()
@@ -199,6 +206,30 @@ namespace NeonGalaxy.UI
         {
             if (gemText != null)
                 gemText.text = newBalance.ToString("N0");
+        }
+
+        /// <summary>
+        /// Updates the top-right profile avatar button with the current avatar sprite.
+        /// If the player has a custom profile picture, show it; otherwise show the default sprite.
+        /// </summary>
+        private void RefreshProfileAvatarButton()
+        {
+            if (profileAvatarButtonImage == null) return;
+
+            var profileManager = ServiceLocator.Get<ProfileManager>();
+            if (profileManager != null)
+            {
+                var avatarSprite = profileManager.GetCurrentAvatarSprite();
+                if (avatarSprite != null)
+                {
+                    profileAvatarButtonImage.sprite = avatarSprite;
+                    return;
+                }
+            }
+
+            // Fallback to default sprite
+            if (defaultProfileButtonSprite != null)
+                profileAvatarButtonImage.sprite = defaultProfileButtonSprite;
         }
     }
 }

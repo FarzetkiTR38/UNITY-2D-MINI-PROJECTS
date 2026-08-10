@@ -43,15 +43,22 @@ namespace NeonGalaxy.Services
                 return;
             }
 
-            if (!Advertisement.isInitialized && !Advertisement.isShowing)
+            try
             {
-                Debug.Log($"[UnityAdService] Initializing with GameID: {GAME_ID}");
-                Advertisement.Initialize(GAME_ID, TEST_MODE, this);
+                if (!Advertisement.isInitialized && !Advertisement.isShowing)
+                {
+                    Debug.Log($"[UnityAdService] Initializing with GameID: {GAME_ID}");
+                    Advertisement.Initialize(GAME_ID, TEST_MODE, this);
+                }
+                else
+                {
+                    // Already initialized (e.g. domain reload disabled in editor)
+                    PreloadAds();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                // Already initialized (e.g. domain reload disabled in editor)
-                PreloadAds();
+                Debug.LogWarning($"[UnityAdService] Exception during Unity Ads initialization: {ex.Message}");
             }
         }
 
