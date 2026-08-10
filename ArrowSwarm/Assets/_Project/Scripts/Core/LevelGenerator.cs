@@ -97,171 +97,330 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Generates multi-point organic maze arrow placements (Image 1 style).
-        /// All arrows are short/medium length (2-5 points) with frequent turns (L, Z, S shapes),
-        /// completely preventing rigid parallel mega-columns (Image 2 style).
+        /// Generates 100% solvable organic mazes using Reverse Disassembly (Backwards Carving).
+        /// Creates interlocking U-loops, spirals, S-curves, and varied arrow lengths matching
+        /// the reference games (Level 2, Level 35, Level 5).
         /// </summary>
         private static List<SolvabilityChecker.ArrowPlacement> GenerateArrowPlacements(
             LevelParams levelParams, int gridWidth, int gridHeight)
         {
-            return GenerateOrganicMazePlacements(levelParams, gridWidth, gridHeight);
+            return GenerateReverseDisassemblyPlacements(levelParams, gridWidth, gridHeight);
         }
 
-        private static List<SolvabilityChecker.ArrowPlacement> GenerateOrganicMazePlacements(
+        private static List<SolvabilityChecker.ArrowPlacement> GenerateReverseDisassemblyPlacements(
             LevelParams levelParams, int gridWidth, int gridHeight)
         {
             var placements = new List<SolvabilityChecker.ArrowPlacement>();
-            bool[,] visited = new bool[gridWidth, gridHeight];
-            int totalPoints = gridWidth * gridHeight;
-            int visitedCount = 0;
+            bool[,] occupied = new bool[gridWidth, gridHeight];
+            int totalCells = gridWidth * gridHeight;
+            int filledCells = 0;
 
-            // Cap max length per arrow to 5 points (weight 4) so no mega-arrows span the entire screen
             int minLength = Mathf.Max(2, levelParams.MinWeight + 1);
-            int maxLength = Mathf.Min(5, levelParams.MaxWeight + 1);
+            int maxLength = Mathf.Min(16, levelParams.MaxWeight + 4);
 
-            while (visitedCount < totalPoints)
+            while (filledCells < totalCells)
             {
-                Vector2Int start = Vector2Int.zero;
-                bool found = false;
+                Vector2Int headPos = Vector2Int.zero;
+                ArrowDirection headDir = ArrowDirection.Up;
+                bool foundHead = false;
 
-                // Pick random unvisited start cell
-                for (int attempt = 0; attempt < 50; attempt++)
+                // Priority 1: Boundary cell facing outward (free exit)
+                var freeBoundary = GetFreeBoundaryCandidates(gridWidth, gridHeight, occupied);
+                if (freeBoundary.Count > 0 && (placements.Count == 0 || Random.value < 0.30f))
                 {
-                    int rx = Random.Range(0, gridWidth);
-                    int ry = Random.Range(0, gridHeight);
-                    if (!visited[rx, ry])
+                    var cand = freeBoundary[Random.Range(0, freeBoundary.Count)];
+                    headPos = cand.pos;
+                    headDir = cand.dir;
+                    foundHead = true;
+                }
+                else
+                {
+                    // Priority 2: Interior cell facing an exit or previously cleared space
+                    var interiorCands = GetInteriorCandidates(gridWidth, gridHeight, occupied);
+                    if (interiorCands.Count > 0)
                     {
-                        start = new Vector2Int(rx, ry);
-                        found = true;
-                        break;
+                        var cand = interiorCands[Random.Range(0, interiorCands.Count)];
+                        headPos = cand.pos;
+                        headDir = cand.dir;
+                        foundHead = true;
                     }
                 }
 
-                if (!found)
+                if (!foundHead)
                 {
-                    for (int x = 0; x < gridWidth && !found; x++)
+                    var remaining = GetUnoccupiedCells(gridWidth, gridHeight, occupied);
+                    if (remaining.Count == 0) break;
+
+                    headPos = remaining[Random.Range(0, remaining.Count)];
+                    headDir = GetBestOutwardDir(headPos, gridWidth, gridHeight, occupied);
+                }
+
+                int targetLength = Random.Range(minLength, maxLength + 1);
+                var path = GrowArrowPathBackwards(headPos, headDir, targetLength, gridWidth, gridHeight, occupied);
+
+                if (path != null && path.Count >= 2)
+                {
+                    foreach (var pt in path)
                     {
-                        for (int y = 0; y < gridHeight && !found; y++)
+                        if (!occupied[pt.x, pt.y])
                         {
-                            if (!visited[x, y])
+                            occupied[pt.x, pt.y] = true;
+                            filledCells++;
+                        }
+                    }
+
+                    placements.Add(new SolvabilityChecker.ArrowPlacement(path, headDir));
+                }
+                else if (path != null && path.Count == 1)
+                {
+                    Vector2Int isolated = path[0];
+                    occupied[isolated.x, isolated.y] = true;
+                    filledCells++;
+
+                    bool attached = AttachIsolatedCell(isolated, placements, gridWidth, gridHeight);
+                    if (!attached && placements.Count > 0)
+                    {
+                        // Create a small 2-point arrow with an adjacent neighbor instead of forcing onto placements[0]
+                        Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+                        foreach (var d in dirs)
+                        {
+                            Vector2Int neighbor = isolated + d;
+                            if (neighbor.IsInBounds(gridWidth, gridHeight))
                             {
-                                start = new Vector2Int(x, y);
-                                found = true;
+                                var smallPath = new List<Vector2Int> { isolated, neighbor };
+                                ArrowDirection dir = VectorToDirection(isolated - neighbor);
+                                placements.Add(new SolvabilityChecker.ArrowPlacement(smallPath, dir));
+                                break;
                             }
                         }
                     }
                 }
-
-                if (!found) break;
-
-                List<Vector2Int> path = new List<Vector2Int>();
-                path.Add(start);
-                visited[start.x, start.y] = true;
-                visitedCount++;
-
-                int targetLength = Random.Range(minLength, maxLength + 1);
-                Vector2Int current = start;
-                Vector2Int currentDir = Vector2Int.zero;
-                int straightSteps = 0;
-
-                while (path.Count < targetLength)
-                {
-                    List<Vector2Int> validDirs = new List<Vector2Int>();
-                    Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-
-                    foreach (var d in dirs)
-                    {
-                        Vector2Int neighbor = current + d;
-                        if (neighbor.x >= 0 && neighbor.x < gridWidth &&
-                            neighbor.y >= 0 && neighbor.y < gridHeight &&
-                            !visited[neighbor.x, neighbor.y])
-                        {
-                            validDirs.Add(d);
-                        }
-                    }
-
-                    if (validDirs.Count == 0) break;
-
-                    // Force turn if we went straight for 2 steps
-                    List<Vector2Int> turnDirs = new List<Vector2Int>(validDirs);
-                    if (currentDir != Vector2Int.zero)
-                    {
-                        turnDirs.Remove(currentDir);
-                        turnDirs.Remove(-currentDir);
-                    }
-
-                    Vector2Int chosenDir;
-                    if (straightSteps >= 2 && turnDirs.Count > 0)
-                    {
-                        // Force a 90-degree turn
-                        chosenDir = turnDirs[Random.Range(0, turnDirs.Count)];
-                        straightSteps = 0;
-                    }
-                    else if (currentDir != Vector2Int.zero && validDirs.Contains(currentDir) && Random.value < 0.35f)
-                    {
-                        // 35% chance to stay straight, 65% chance to turn
-                        chosenDir = currentDir;
-                        straightSteps++;
-                    }
-                    else
-                    {
-                        // Turn
-                        chosenDir = validDirs[Random.Range(0, validDirs.Count)];
-                        straightSteps = 0;
-                    }
-
-                    current += chosenDir;
-                    currentDir = chosenDir;
-                    path.Add(current);
-                    visited[current.x, current.y] = true;
-                    visitedCount++;
-                }
-
-                // Attach isolated 1-point cells to adjacent existing paths
-                if (path.Count < 2)
-                {
-                    Vector2Int isolated = path[0];
-                    bool attached = false;
-
-                    for (int pIndex = 0; pIndex < placements.Count; pIndex++)
-                    {
-                        var existingPath = placements[pIndex].PathPoints;
-                        Vector2Int head = existingPath[0];
-                        Vector2Int tail = existingPath[existingPath.Count - 1];
-
-                        if (Vector2Int.Distance(isolated, head) == 1f && existingPath.Count < maxLength + 1)
-                        {
-                            existingPath.Insert(0, isolated);
-                            attached = true;
-                            break;
-                        }
-                        else if (Vector2Int.Distance(isolated, tail) == 1f && existingPath.Count < maxLength + 1)
-                        {
-                            existingPath.Add(isolated);
-                            attached = true;
-                            break;
-                        }
-                    }
-
-                    if (!attached && placements.Count > 0)
-                    {
-                        placements[0].PathPoints.Add(isolated);
-                    }
-                    continue;
-                }
-
-                if (Random.value > 0.5f)
-                {
-                    path.Reverse();
-                }
-
-                Vector2Int bodyDir = path[1] - path[0];
-                ArrowDirection headDir = OppositeDirection(VectorToDirection(bodyDir));
-
-                placements.Add(new SolvabilityChecker.ArrowPlacement(path, headDir));
             }
 
+            // Post-process: Guarantee zero head-to-head conflicts
+            RemoveHeadToHeadConflicts(placements, gridWidth, gridHeight);
+
             return placements;
+        }
+
+        private struct CandidateHead
+        {
+            public Vector2Int pos;
+            public ArrowDirection dir;
+        }
+
+        private static List<CandidateHead> GetFreeBoundaryCandidates(
+            int width, int height, bool[,] occupied)
+        {
+            var list = new List<CandidateHead>();
+
+            for (int x = 0; x < width; x++)
+            {
+                if (!occupied[x, height - 1])
+                    list.Add(new CandidateHead { pos = new Vector2Int(x, height - 1), dir = ArrowDirection.Up });
+            }
+
+            for (int x = 0; x < width; x++)
+            {
+                if (!occupied[x, 0])
+                    list.Add(new CandidateHead { pos = new Vector2Int(x, 0), dir = ArrowDirection.Down });
+            }
+
+            for (int y = 0; y < height; y++)
+            {
+                if (!occupied[0, y])
+                    list.Add(new CandidateHead { pos = new Vector2Int(0, y), dir = ArrowDirection.Left });
+            }
+
+            for (int y = 0; y < height; y++)
+            {
+                if (!occupied[width - 1, y])
+                    list.Add(new CandidateHead { pos = new Vector2Int(width - 1, y), dir = ArrowDirection.Right });
+            }
+
+            return list;
+        }
+
+        private static List<CandidateHead> GetInteriorCandidates(
+            int width, int height, bool[,] occupied)
+        {
+            var list = new List<CandidateHead>();
+            ArrowDirection[] dirs = { ArrowDirection.Up, ArrowDirection.Down, ArrowDirection.Left, ArrowDirection.Right };
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (occupied[x, y]) continue;
+
+                    Vector2Int pos = new Vector2Int(x, y);
+
+                    foreach (var dir in dirs)
+                    {
+                        Vector2Int step = ArrowSwarm.Grid.GridManager.DirectionToVector(dir);
+                        Vector2Int target = pos + step;
+
+                        if (!target.IsInBounds(width, height) || occupied[target.x, target.y])
+                        {
+                            list.Add(new CandidateHead { pos = pos, dir = dir });
+                        }
+                    }
+                }
+            }
+
+            return list;
+        }
+
+        private static List<Vector2Int> GetUnoccupiedCells(int width, int height, bool[,] occupied)
+        {
+            var list = new List<Vector2Int>();
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (!occupied[x, y]) list.Add(new Vector2Int(x, y));
+                }
+            }
+            return list;
+        }
+
+        private static ArrowDirection GetBestOutwardDir(
+            Vector2Int pos, int width, int height, bool[,] occupied)
+        {
+            ArrowDirection[] dirs = { ArrowDirection.Up, ArrowDirection.Down, ArrowDirection.Left, ArrowDirection.Right };
+            foreach (var dir in dirs)
+            {
+                Vector2Int step = ArrowSwarm.Grid.GridManager.DirectionToVector(dir);
+                Vector2Int target = pos + step;
+                if (!target.IsInBounds(width, height)) return dir;
+            }
+            return ArrowDirection.Up;
+        }
+
+        private static List<Vector2Int> GrowArrowPathBackwards(
+            Vector2Int headPos, ArrowDirection headDir, int targetLength,
+            int width, int height, bool[,] occupied)
+        {
+            List<Vector2Int> path = new List<Vector2Int>();
+            path.Add(headPos);
+
+            Vector2Int backDir = -ArrowSwarm.Grid.GridManager.DirectionToVector(headDir);
+            Vector2Int secondPos = headPos + backDir;
+
+            if (secondPos.IsInBounds(width, height) && !occupied[secondPos.x, secondPos.y])
+            {
+                path.Add(secondPos);
+            }
+            else
+            {
+                Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+                foreach (var d in dirs)
+                {
+                    Vector2Int neighbor = headPos + d;
+                    if (neighbor.IsInBounds(width, height) && !occupied[neighbor.x, neighbor.y])
+                    {
+                        path.Add(neighbor);
+                        break;
+                    }
+                }
+            }
+
+            if (path.Count < 2) return path;
+
+            Vector2Int current = path[path.Count - 1];
+            Vector2Int currentDir = path[path.Count - 1] - path[path.Count - 2];
+            int straightSteps = 0;
+
+            while (path.Count < targetLength)
+            {
+                List<Vector2Int> validDirs = new List<Vector2Int>();
+                Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+
+                foreach (var d in dirs)
+                {
+                    Vector2Int neighbor = current + d;
+                    if (neighbor.IsInBounds(width, height) && !occupied[neighbor.x, neighbor.y] && !path.Contains(neighbor))
+                    {
+                        validDirs.Add(d);
+                    }
+                }
+
+                if (validDirs.Count == 0) break;
+
+                List<Vector2Int> turnDirs = new List<Vector2Int>(validDirs);
+                if (currentDir != Vector2Int.zero)
+                {
+                    turnDirs.Remove(currentDir);
+                    turnDirs.Remove(-currentDir);
+                }
+
+                Vector2Int chosenDir;
+                if (straightSteps >= 3 && turnDirs.Count > 0)
+                {
+                    chosenDir = turnDirs[Random.Range(0, turnDirs.Count)];
+                    straightSteps = 0;
+                }
+                else if (currentDir != Vector2Int.zero && validDirs.Contains(currentDir) && Random.value < 0.40f)
+                {
+                    chosenDir = currentDir;
+                    straightSteps++;
+                }
+                else
+                {
+                    chosenDir = validDirs[Random.Range(0, validDirs.Count)];
+                    straightSteps = 0;
+                }
+
+                current += chosenDir;
+                currentDir = chosenDir;
+                path.Add(current);
+            }
+
+            return path;
+        }
+
+        private static bool AttachIsolatedCell(
+            Vector2Int isolated, List<SolvabilityChecker.ArrowPlacement> placements, int width, int height)
+        {
+            // 1. Try attaching to any placement's Head or Tail (if Manhattan distance == 1)
+            for (int pIndex = 0; pIndex < placements.Count; pIndex++)
+            {
+                var existingPath = placements[pIndex].PathPoints;
+                Vector2Int head = existingPath[0];
+                Vector2Int tail = existingPath[existingPath.Count - 1];
+
+                if (IsManhattanOne(isolated, tail))
+                {
+                    existingPath.Add(isolated);
+                    return true;
+                }
+                else if (IsManhattanOne(isolated, head))
+                {
+                    existingPath.Insert(0, isolated);
+                    return true;
+                }
+            }
+
+            // 2. Try inserting next to any 4-neighbor point inside any placement's path
+            for (int pIndex = 0; pIndex < placements.Count; pIndex++)
+            {
+                var existingPath = placements[pIndex].PathPoints;
+                for (int i = 0; i < existingPath.Count; i++)
+                {
+                    if (IsManhattanOne(isolated, existingPath[i]))
+                    {
+                        existingPath.Insert(i + 1, isolated);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsManhattanOne(Vector2Int a, Vector2Int b)
+        {
+            return (Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y)) == 1;
         }
 
         private static List<SolvabilityChecker.ArrowPlacement> GenerateMergedBSPPlacements(

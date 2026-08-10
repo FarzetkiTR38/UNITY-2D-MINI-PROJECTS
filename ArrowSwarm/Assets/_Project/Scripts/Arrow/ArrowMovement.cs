@@ -82,8 +82,9 @@ namespace ArrowSwarm.Arrow
         private void RotateArrow(Vector2 dir)
         {
             if (dir == Vector2.zero) return;
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f; // -90 offset because arrow sprite points UP
-            transform.rotation = Quaternion.Euler(0, 0, angle);
+            float rawAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+            float snappedAngle = Mathf.Round(rawAngle / 90f) * 90f;
+            transform.rotation = Quaternion.Euler(0, 0, snappedAngle);
         }
 
         private void CompleteMovement()
@@ -110,6 +111,7 @@ namespace ArrowSwarm.Arrow
         /// </summary>
         public void ResetMovement()
         {
+            transform.rotation = Quaternion.identity;
             if (_pathFollower != null)
             {
                 _pathFollower.StopFollowing();
