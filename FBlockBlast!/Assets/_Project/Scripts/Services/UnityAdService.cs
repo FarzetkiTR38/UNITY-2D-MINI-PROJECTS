@@ -20,7 +20,11 @@ namespace NeonGalaxy.Services
         private const string INTERSTITIAL_AD_UNIT_ID = "Interstitial_Android";
 #endif
 
-        private const bool TEST_MODE = false; // Set to false for production
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        private const bool TEST_MODE = true; // Editor & Test builds will use Test Ads
+#else
+        private const bool TEST_MODE = false; // Release build will use real ads and earn revenue
+#endif
 
         private bool _isRewardedReady;
         private bool _isInterstitialReady;
