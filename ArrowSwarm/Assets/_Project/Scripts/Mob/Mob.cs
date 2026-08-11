@@ -29,11 +29,16 @@ namespace ArrowSwarm.Mob
         /// <summary>Fired when any mob reaches the finish (mob instance).</summary>
         public static event Action<Mob> OnMobFinished;
 
+        private void EnsureComponents()
+        {
+            if (_health == null) _health = GetComponent<MobHealth>() ?? gameObject.AddComponent<MobHealth>();
+            if (_movement == null) _movement = GetComponent<MobMovement>() ?? gameObject.AddComponent<MobMovement>();
+            if (_visuals == null) _visuals = GetComponent<MobVisuals>() ?? gameObject.AddComponent<MobVisuals>();
+        }
+
         private void Awake()
         {
-            _health = GetComponent<MobHealth>();
-            _movement = GetComponent<MobMovement>();
-            _visuals = GetComponent<MobVisuals>();
+            EnsureComponents();
         }
 
         /// <summary>
@@ -42,15 +47,20 @@ namespace ArrowSwarm.Mob
         public void Initialize(int id, int hp, float speed)
         {
             _mobId = id;
+            EnsureComponents();
 
-            _health.Initialize(hp);
+            _health?.Initialize(hp);
             _visuals?.Initialize(hp);
-            _movement.StartMoving(speed);
+            _movement?.StartMoving(speed);
 
             // Subscribe to events
-            _health.OnDeath += HandleDeath;
-            _movement.OnFinishReached += HandleFinishReached;
-            _movement.GetComponent<Path.PathFollower>().OnDirectionChanged += HandleDirectionChanged;
+            if (_health != null) _health.OnDeath += HandleDeath;
+            if (_movement != null)
+            {
+                _movement.OnFinishReached += HandleFinishReached;
+                var pf = _movement.GetComponent<Path.PathFollower>();
+                if (pf != null) pf.OnDirectionChanged += HandleDirectionChanged;
+            }
 
             LogDebug($"Mob #{id} initialized. HP={hp}, Speed={speed}");
         }

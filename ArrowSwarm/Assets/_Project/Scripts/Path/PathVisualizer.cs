@@ -9,11 +9,12 @@ namespace ArrowSwarm.Path
     /// </summary>
     public class PathVisualizer : MonoBehaviour
     {
-        [SerializeField] private float _lineWidth = 0.15f;
+        [SerializeField] private float _lineWidth = 0.25f;
         [SerializeField] private Material _pathMaterial;
-        [SerializeField] private int _sortingOrder = -2;
+        [SerializeField] private int _sortingOrder = -6;
 
         private LineRenderer _lineRenderer;
+        private static Material _sharedPathMaterial;
 
         private void OnEnable()
         {
@@ -43,8 +44,8 @@ namespace ArrowSwarm.Path
                 _lineRenderer = gameObject.AddComponent<LineRenderer>();
             }
 
-            // Get path color from current map
-            Color pathColor = new Color(0.2f, 0.27f, 0.4f, 1f);
+            // Get path color from current map (High contrast #8C7A68 default)
+            Color pathColor = new Color(0.55f, 0.48f, 0.41f, 1f);
             MapData mapData = GameManager.Instance?.Config?.GetMapForLevel(
                 Data.DataManager.Instance?.PlayerData?.currentLevel ?? 1);
             if (mapData != null)
@@ -67,11 +68,20 @@ namespace ArrowSwarm.Path
 
             if (_pathMaterial != null)
             {
-                _lineRenderer.material = _pathMaterial;
+                _lineRenderer.sharedMaterial = _pathMaterial;
             }
             else
             {
-                _lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+                if (_sharedPathMaterial == null)
+                {
+                    Shader shader = Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default") ?? Shader.Find("Sprites/Default");
+                    if (shader != null)
+                    {
+                        _sharedPathMaterial = new Material(shader);
+                        _sharedPathMaterial.mainTexture = Texture2D.whiteTexture;
+                    }
+                }
+                _lineRenderer.sharedMaterial = _sharedPathMaterial;
             }
 
             // Create spawn and finish markers

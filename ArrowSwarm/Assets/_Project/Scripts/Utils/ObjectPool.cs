@@ -47,13 +47,15 @@ namespace ArrowSwarm.Utils
         /// </summary>
         public T Get()
         {
-            T obj;
+            T obj = null;
 
-            if (_pool.Count > 0)
+            while (_pool.Count > 0)
             {
                 obj = _pool.Dequeue();
+                if (obj != null) break;
             }
-            else
+
+            if (obj == null)
             {
                 obj = CreateNewObject();
             }

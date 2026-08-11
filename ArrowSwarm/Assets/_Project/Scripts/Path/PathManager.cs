@@ -33,8 +33,13 @@ namespace ArrowSwarm.Path
         /// <summary>Fired when path is initialized.</summary>
         public static event Action OnPathInitialized;
 
+        [SerializeField] private float _pathOffsetMultiplier = 1.35f;
+
+        /// <summary>Multiplier defining how far the path wraps outside the grid points.</summary>
+        public float PathOffsetMultiplier => _pathOffsetMultiplier;
+
         /// <summary>
-        /// Initializes the path as a rectangle perfectly wrapping the grid.
+        /// Initializes the path as a rectangle wrapping around the grid with clean spacing offset.
         /// </summary>
         public void InitializePath(MapData mapData)
         {
@@ -42,11 +47,16 @@ namespace ArrowSwarm.Path
             float s = GridManager.Instance.PointSpacing;
             Vector2 o = GridManager.Instance.Origin;
             
-            // Grid coordinates for the path (wrap around the grid)
-            _spawnPoint = new Vector2(-1 * s, mapData.GridHeight * s) + o; // Top-Left
-            Vector2 tr = new Vector2(mapData.GridWidth * s, mapData.GridHeight * s) + o; // Top-Right
-            Vector2 br = new Vector2(mapData.GridWidth * s, -1 * s) + o; // Bottom-Right
-            Vector2 bl = new Vector2(-1 * s, -1 * s) + o; // Bottom-Left
+            float minX = -_pathOffsetMultiplier * s;
+            float maxX = (mapData.GridWidth - 1 + _pathOffsetMultiplier) * s;
+            float minY = -_pathOffsetMultiplier * s;
+            float maxY = (mapData.GridHeight - 1 + _pathOffsetMultiplier) * s;
+
+            // Rectangle path waypoints wrapping around the grid
+            _spawnPoint = new Vector2(minX, maxY) + o; // Top-Left
+            Vector2 tr = new Vector2(maxX, maxY) + o;  // Top-Right
+            Vector2 br = new Vector2(maxX, minY) + o;  // Bottom-Right
+            Vector2 bl = new Vector2(minX, minY) + o;  // Bottom-Left
             
             _finishPoint = _spawnPoint;
             

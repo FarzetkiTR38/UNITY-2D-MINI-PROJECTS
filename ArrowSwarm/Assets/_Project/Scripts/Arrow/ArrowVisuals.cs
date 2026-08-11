@@ -154,10 +154,10 @@ namespace ArrowSwarm.Arrow
             }
 
             _lineRenderer.startColor = arrowColor;
-            _lineRenderer.endColor = arrowColor.WithAlpha(0.6f);
+            _lineRenderer.endColor = arrowColor;
             _headRenderer.color = arrowColor;
 
-            _isPulsing = true;
+            _isPulsing = false; // Disable continuous idle pulsing for normal arrows
             _pulseTimer = Random.Range(0f, Mathf.PI * 2f);
 
             _lineRenderer.enabled = true;
@@ -176,11 +176,24 @@ namespace ArrowSwarm.Arrow
         public void SetRainbowMode(bool rainbow)
         {
             _isRainbow = rainbow;
+            _isPulsing = rainbow;
 
             if (rainbow)
             {
                 _pulseSpeed = 4f;
                 _pulseAmount = 0.1f;
+            }
+            else
+            {
+                if (_lineRenderer != null)
+                {
+                    _lineRenderer.startWidth = _baseLineWidth;
+                    _lineRenderer.endWidth = _baseLineWidth;
+                }
+                if (_headTransform != null)
+                {
+                    _headTransform.localScale = _baseHeadScale;
+                }
             }
         }
 
@@ -199,6 +212,7 @@ namespace ArrowSwarm.Arrow
 
         private void UpdatePulse()
         {
+            if (!_isPulsing) return;
             _pulseTimer += Time.deltaTime * _pulseSpeed;
             float scale = 1f + Mathf.Sin(_pulseTimer) * _pulseAmount;
             float width = _baseLineWidth * scale;
@@ -323,11 +337,27 @@ namespace ArrowSwarm.Arrow
             _lineRenderer.numCapVertices = 8;
             _lineRenderer.numCornerVertices = 8;
 
-            // Use default sprite material
-            if (_lineRenderer.material == null || _lineRenderer.material.name.Contains("Default"))
+            // Use default sprite / URP 2D material with solid white texture via sharedMaterial
+            if (_lineRenderer.sharedMaterial == null || _lineRenderer.sharedMaterial.name.Contains("Default") || _lineRenderer.sharedMaterial.mainTexture == null)
             {
-                _lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+                _lineRenderer.sharedMaterial = GetSharedLineMaterial();
             }
+        }
+
+        private static Material _sharedLineMaterial;
+
+        private static Material GetSharedLineMaterial()
+        {
+            if (_sharedLineMaterial == null)
+            {
+                Shader shader = Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default") ?? Shader.Find("Sprites/Default");
+                if (shader != null)
+                {
+                    _sharedLineMaterial = new Material(shader);
+                    _sharedLineMaterial.mainTexture = Texture2D.whiteTexture;
+                }
+            }
+            return _sharedLineMaterial;
         }
 
         private void EnsureHeadSprite()
@@ -373,9 +403,9 @@ namespace ArrowSwarm.Arrow
             _trailRenderer.endWidth = 0f;
             _trailRenderer.sortingOrder = 4;
             
-            if (_trailRenderer.material == null || _trailRenderer.material.name.Contains("Default"))
+            if (_trailRenderer.sharedMaterial == null || _trailRenderer.sharedMaterial.name.Contains("Default") || _trailRenderer.sharedMaterial.mainTexture == null)
             {
-                _trailRenderer.material = new Material(Shader.Find("Sprites/Default"));
+                _trailRenderer.sharedMaterial = GetSharedLineMaterial();
             }
             
             _trailRenderer.enabled = false;

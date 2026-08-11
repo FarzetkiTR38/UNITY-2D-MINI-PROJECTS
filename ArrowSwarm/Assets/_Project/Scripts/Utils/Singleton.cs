@@ -13,15 +13,19 @@ namespace ArrowSwarm.Utils
         private static bool _applicationIsQuitting;
 
         /// <summary>
+        /// True if a valid instance currently exists.
+        /// </summary>
+        public static bool HasInstance => _instance != null;
+
+        /// <summary>
         /// Global access point to the singleton instance.
         /// </summary>
         public static T Instance
         {
             get
             {
-                if (_applicationIsQuitting)
+                if (_applicationIsQuitting && !Application.isPlaying)
                 {
-                    Debug.LogWarning($"[ArrowSwarm] Singleton<{typeof(T).Name}> already destroyed. Returning null.");
                     return null;
                 }
 
@@ -31,7 +35,7 @@ namespace ArrowSwarm.Utils
                     {
                         _instance = FindFirstObjectByType<T>();
 
-                        if (_instance == null)
+                        if (_instance == null && Application.isPlaying)
                         {
                             var singletonObject = new GameObject($"[{typeof(T).Name}]");
                             _instance = singletonObject.AddComponent<T>();
@@ -45,6 +49,8 @@ namespace ArrowSwarm.Utils
 
         protected virtual void Awake()
         {
+            _applicationIsQuitting = false;
+
             if (_instance != null && _instance != this)
             {
                 Destroy(gameObject);

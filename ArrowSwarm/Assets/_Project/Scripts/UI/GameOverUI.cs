@@ -58,8 +58,15 @@ namespace ArrowSwarm.UI
         {
             _canvasGroup.interactable = false;
             _canvasGroup.blocksRaycasts = false;
-            if (instant) _canvasGroup.alpha = 0f;
-            else { StopAllCoroutines(); StartCoroutine(FadeTo(0f)); }
+            if (instant)
+            {
+                _canvasGroup.alpha = 0f;
+            }
+            else
+            {
+                StopAllCoroutines();
+                StartCoroutine(FadeTo(0f));
+            }
         }
 
         private System.Collections.IEnumerator FadeTo(float target)

@@ -37,6 +37,12 @@ namespace ArrowSwarm.Data
         protected override void OnSingletonAwake()
         {
             Load();
+            if (_playerData != null)
+            {
+                _playerData.currentLevel = 21;
+                _playerData.highestLevel = 21;
+                Save();
+            }
             CheckDailyLogin();
         }
 

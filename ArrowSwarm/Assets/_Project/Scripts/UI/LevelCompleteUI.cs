@@ -55,7 +55,6 @@ namespace ArrowSwarm.UI
 
             // Update stars based on remaining lives
             int currentLives = GameManager.Instance != null ? GameManager.Instance.CurrentLives : 3;
-            // 3 lives = 3 stars, 2 lives = 2 stars, 1 life = 1 star.
             int starsEarned = Mathf.Clamp(currentLives, 0, 3);
 
             for (int i = 0; i < _stars.Length; i++)
@@ -69,7 +68,6 @@ namespace ArrowSwarm.UI
                     }
                     else
                     {
-                        // Fallback if no Image component, just enable/disable the GameObject
                         _stars[i].SetActive(i < starsEarned);
                     }
                 }
@@ -85,8 +83,15 @@ namespace ArrowSwarm.UI
         {
             _canvasGroup.interactable = false;
             _canvasGroup.blocksRaycasts = false;
-            if (instant) _canvasGroup.alpha = 0f;
-            else { StopAllCoroutines(); StartCoroutine(FadeTo(0f)); }
+            if (instant)
+            {
+                _canvasGroup.alpha = 0f;
+            }
+            else
+            {
+                StopAllCoroutines();
+                StartCoroutine(FadeTo(0f));
+            }
         }
 
         private System.Collections.IEnumerator FadeTo(float target)

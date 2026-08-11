@@ -4,6 +4,7 @@ namespace ArrowSwarm.Grid
     using System.Collections.Generic;
 
     using ArrowSwarm.Core;
+    using ArrowSwarm.Path;
     using ArrowSwarm.Utils;
     using UnityEngine;
 
@@ -43,6 +44,9 @@ namespace ArrowSwarm.Grid
         /// </summary>
         public void InitializeGrid(MapData mapData)
         {
+            if (GetComponent<GridVisualizer>() == null) gameObject.AddComponent<GridVisualizer>();
+            if (GetComponent<MapContainerVisualizer>() == null) gameObject.AddComponent<MapContainerVisualizer>();
+
             _width = mapData.GridWidth;
             _height = mapData.GridHeight;
 
@@ -184,15 +188,28 @@ namespace ArrowSwarm.Grid
         /// </summary>
         public Vector2 GetGridExitPoint(Vector2Int headPoint, ArrowSwarm.Arrow.ArrowDirection direction)
         {
-            Vector2Int exit = headPoint;
-            switch(direction)
+            float s = _pointSpacing;
+            Vector2 headWorld = headPoint.PointToWorld(s, _origin);
+            float pathOffsetMult = PathManager.Instance?.PathOffsetMultiplier ?? 1.35f;
+
+            float gridMinX = _origin.x;
+            float gridMaxX = _origin.x + (_width - 1) * s;
+            float gridMinY = _origin.y;
+            float gridMaxY = _origin.y + (_height - 1) * s;
+
+            switch (direction)
             {
-                case ArrowSwarm.Arrow.ArrowDirection.Up: exit.y = _height; break;
-                case ArrowSwarm.Arrow.ArrowDirection.Down: exit.y = -1; break;
-                case ArrowSwarm.Arrow.ArrowDirection.Left: exit.x = -1; break;
-                case ArrowSwarm.Arrow.ArrowDirection.Right: exit.x = _width; break;
+                case ArrowSwarm.Arrow.ArrowDirection.Up:
+                    return new Vector2(headWorld.x, gridMaxY + pathOffsetMult * s);
+                case ArrowSwarm.Arrow.ArrowDirection.Down:
+                    return new Vector2(headWorld.x, gridMinY - pathOffsetMult * s);
+                case ArrowSwarm.Arrow.ArrowDirection.Left:
+                    return new Vector2(gridMinX - pathOffsetMult * s, headWorld.y);
+                case ArrowSwarm.Arrow.ArrowDirection.Right:
+                    return new Vector2(gridMaxX + pathOffsetMult * s, headWorld.y);
+                default:
+                    return headWorld;
             }
-            return exit.PointToWorld(_pointSpacing, _origin);
         }
 
         /// <summary>
