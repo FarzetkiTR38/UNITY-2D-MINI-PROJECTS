@@ -40,9 +40,14 @@ namespace ArrowSwarm.Core
 
             if (MainCamera == null) return;
 
-            // Handle Mouse Click
+            // Ignore clicks if the user was dragging/panning the camera
+            if (ArrowSwarm.Camera.CameraController.Instance != null &&
+                ArrowSwarm.Camera.CameraController.Instance.IsDragging)
+                return;
+
+            // Handle Mouse Click on button release (if not dragging)
             var mouse = Mouse.current;
-            if (mouse != null && mouse.leftButton.wasPressedThisFrame)
+            if (mouse != null && mouse.leftButton.wasReleasedThisFrame)
             {
                 if (UnityEngine.EventSystems.EventSystem.current != null && 
                     UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
@@ -52,12 +57,12 @@ namespace ArrowSwarm.Core
                 return;
             }
 
-            // Handle Touch
+            // Handle Touch on release (if not dragging)
             var touchscreen = Touchscreen.current;
             if (touchscreen != null && touchscreen.touches.Count > 0)
             {
                 var touch = touchscreen.touches[0];
-                if (touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began)
+                if (touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Ended)
                 {
                     if (UnityEngine.EventSystems.EventSystem.current != null && 
                         UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(touch.touchId.ReadValue()))

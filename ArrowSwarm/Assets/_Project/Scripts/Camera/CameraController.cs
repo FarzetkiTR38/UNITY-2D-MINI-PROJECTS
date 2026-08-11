@@ -12,10 +12,11 @@ namespace ArrowSwarm.Camera
     /// </summary>
     public class CameraController : Singleton<CameraController>
     {
-        [SerializeField] private float _panSpeed = 10f;
         [SerializeField] private float _zoomSpeed = 0.5f;
         [SerializeField] private float _smoothTime = 0.1f;
         [SerializeField] private float _padding = 1f;
+        [SerializeField] private float _topHudMargin = 1.5f;
+        [SerializeField] private float _bottomHudMargin = 1.8f;
 
         private UnityEngine.Camera _camera;
         private float _defaultOrthoSize;
@@ -23,16 +24,24 @@ namespace ArrowSwarm.Camera
         private float _maxOrthoSize;
         private Vector2 _mapCenter;
         private Vector2 _mapExtents;
+        private Vector2 _gridMin;
+        private Vector2 _gridMax;
 
-        // Touch tracking
+        // Touch & Mouse Drag tracking
         private bool _isPanning;
+        private bool _isDragging;
+        private Vector2 _dragStartScreenPos;
         private Vector2 _lastPanPosition;
         private float _lastPinchDistance;
         private bool _isPinching;
+        private const float DragThreshold = 10f; // Pixels required to initiate camera pan
 
         // Smooth zoom
         private float _targetOrthoSize;
         private float _zoomVelocity;
+
+        /// <summary>Returns true if player is currently dragging/panning the camera.</summary>
+        public bool IsDragging => _isDragging;
 
         /// <summary>Current zoom level (1 = default, higher = zoomed in).</summary>
         public float CurrentZoom => _defaultOrthoSize / _camera.orthographicSize;
@@ -75,13 +84,17 @@ namespace ArrowSwarm.Camera
             float totalGridHeight = (mapData.GridHeight - 1) * spacing;
 
             _mapCenter = origin + new Vector2(totalGridWidth * 0.5f, totalGridHeight * 0.5f);
-
             _mapExtents = new Vector2(mapWidth * 0.5f, mapHeight * 0.5f);
 
-            // Calculate ortho size to fit entire map
+            // Store Grid bounds with half spacing margin so all grid points stay on screen at limits
+            _gridMin = origin - new Vector2(spacing * 0.5f, spacing * 0.5f);
+            _gridMax = origin + new Vector2(totalGridWidth + spacing * 0.5f, totalGridHeight + spacing * 0.5f);
+
+            // Calculate ortho size to fit entire map within the visible viewport between Top HUD and Bottom HUD
             float aspect = (float)Screen.width / Screen.height;
             float orthoWidth = mapWidth / (2f * aspect);
-            float orthoHeight = mapHeight / 2f;
+            float availableHeightSpace = mapHeight + (_topHudMargin + _bottomHudMargin);
+            float orthoHeight = availableHeightSpace / 2f;
             _defaultOrthoSize = Mathf.Max(orthoWidth, orthoHeight);
 
             GameConfig config = GameManager.Instance?.Config;
@@ -96,7 +109,7 @@ namespace ArrowSwarm.Camera
             transform.position = new Vector3(_mapCenter.x, _mapCenter.y, transform.position.z);
 
             LogDebug($"Camera fit: Center={_mapCenter}, OrthoSize={_defaultOrthoSize}, " +
-                     $"ZoomRange=[{_minOrthoSize:F1}, {_maxOrthoSize:F1}]");
+                     $"GridMin={_gridMin}, GridMax={_gridMax}");
         }
 
         /// <summary>
@@ -150,7 +163,11 @@ namespace ArrowSwarm.Camera
             }
             else
             {
-                _isPanning = false;
+                if (_isPanning)
+                {
+                    _isPanning = false;
+                    StartCoroutine(ResetDraggingNextFrame());
+                }
                 _isPinching = false;
             }
         }
@@ -182,26 +199,39 @@ namespace ArrowSwarm.Camera
             var touch = touchscreen.touches[0];
             Vector2 touchPos = touch.position.ReadValue();
 
-            if (!_isPanning)
+            if (touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began)
             {
-                _isPanning = true;
+                _dragStartScreenPos = touchPos;
                 _lastPanPosition = touchPos;
+                _isPanning = false;
+                _isDragging = false;
                 return;
             }
 
-            Vector2 delta = touchPos - _lastPanPosition;
-            Vector3 worldDelta = _camera.ScreenToWorldPoint(Vector3.zero) -
-                                 _camera.ScreenToWorldPoint(new Vector3(delta.x, delta.y, 0));
-            PanCamera(worldDelta);
-            _lastPanPosition = touchPos;
+            float dist = Vector2.Distance(touchPos, _dragStartScreenPos);
+            if (!_isPanning && dist > DragThreshold)
+            {
+                _isPanning = true;
+                _isDragging = true;
+                _lastPanPosition = touchPos;
+            }
+
+            if (_isPanning)
+            {
+                Vector2 delta = touchPos - _lastPanPosition;
+                Vector3 worldDelta = _camera.ScreenToWorldPoint(Vector3.zero) -
+                                     _camera.ScreenToWorldPoint(new Vector3(delta.x, delta.y, 0));
+                PanCamera(worldDelta);
+                _lastPanPosition = touchPos;
+            }
         }
 
         private void HandleMouseInput()
         {
-            // Mouse scroll zoom (editor testing)
             var mouse = Mouse.current;
             if (mouse == null) return;
 
+            // Mouse scroll zoom
             float scroll = mouse.scroll.ReadValue().y;
             if (Mathf.Abs(scroll) > 0.01f)
             {
@@ -209,14 +239,49 @@ namespace ArrowSwarm.Camera
                 _targetOrthoSize = Mathf.Clamp(_targetOrthoSize, _minOrthoSize, _maxOrthoSize);
             }
 
-            // Right-click drag pan (editor testing)
-            if (mouse.rightButton.isPressed)
+            // Left-click or Right-click drag pan
+            if (mouse.leftButton.wasPressedThisFrame || mouse.rightButton.wasPressedThisFrame)
             {
-                Vector2 mouseDelta = mouse.delta.ReadValue();
-                Vector3 worldDelta = _camera.ScreenToWorldPoint(Vector3.zero) -
-                                     _camera.ScreenToWorldPoint(new Vector3(mouseDelta.x, mouseDelta.y, 0));
-                PanCamera(worldDelta);
+                _dragStartScreenPos = mouse.position.ReadValue();
+                _lastPanPosition = _dragStartScreenPos;
+                _isPanning = false;
+                _isDragging = false;
             }
+            else if (mouse.leftButton.isPressed || mouse.rightButton.isPressed)
+            {
+                Vector2 mousePos = mouse.position.ReadValue();
+                float dist = Vector2.Distance(mousePos, _dragStartScreenPos);
+
+                if (!_isPanning && dist > DragThreshold)
+                {
+                    _isPanning = true;
+                    _isDragging = true;
+                    _lastPanPosition = mousePos;
+                }
+
+                if (_isPanning)
+                {
+                    Vector2 delta = mousePos - _lastPanPosition;
+                    Vector3 worldDelta = _camera.ScreenToWorldPoint(Vector3.zero) -
+                                         _camera.ScreenToWorldPoint(new Vector3(delta.x, delta.y, 0));
+                    PanCamera(worldDelta);
+                    _lastPanPosition = mousePos;
+                }
+            }
+            else if (mouse.leftButton.wasReleasedThisFrame || mouse.rightButton.wasReleasedThisFrame)
+            {
+                if (_isPanning)
+                {
+                    _isPanning = false;
+                    StartCoroutine(ResetDraggingNextFrame());
+                }
+            }
+        }
+
+        private System.Collections.IEnumerator ResetDraggingNextFrame()
+        {
+            yield return null;
+            _isDragging = false;
         }
 
         private void PanCamera(Vector3 worldDelta)
@@ -233,6 +298,9 @@ namespace ArrowSwarm.Camera
             {
                 _camera.orthographicSize = Mathf.SmoothDamp(
                     currentSize, _targetOrthoSize, ref _zoomVelocity, _smoothTime);
+                
+                // Keep camera position within bounds after zoom adjustment
+                transform.position = ClampPosition(transform.position);
                 OnZoomChanged?.Invoke(ZoomNormalized);
             }
         }
@@ -242,17 +310,19 @@ namespace ArrowSwarm.Camera
             float halfHeight = _camera.orthographicSize;
             float halfWidth = halfHeight * _camera.aspect;
 
-            float minX = _mapCenter.x - _mapExtents.x + halfWidth;
-            float maxX = _mapCenter.x + _mapExtents.x - halfWidth;
-            float minY = _mapCenter.y - _mapExtents.y + halfHeight;
-            float maxY = _mapCenter.y + _mapExtents.y - halfHeight;
+            // Effective viewport height margins below Top HUD and above Bottom HUD
+            float effectiveHalfHeightTop = halfHeight - _topHudMargin;
+            float effectiveHalfHeightBottom = halfHeight - _bottomHudMargin;
 
-            // If camera view is larger than map, center it
-            if (minX > maxX) pos.x = _mapCenter.x;
-            else pos.x = Mathf.Clamp(pos.x, minX, maxX);
+            // Clamping guarantees that all grid points [_gridMin, _gridMax] remain strictly inside the red box play viewport
+            float minX = Mathf.Min(_gridMin.x + halfWidth, _gridMax.x - halfWidth);
+            float maxX = Mathf.Max(_gridMin.x + halfWidth, _gridMax.x - halfWidth);
 
-            if (minY > maxY) pos.y = _mapCenter.y;
-            else pos.y = Mathf.Clamp(pos.y, minY, maxY);
+            float minY = Mathf.Min(_gridMin.y + effectiveHalfHeightBottom, _gridMax.y - effectiveHalfHeightTop);
+            float maxY = Mathf.Max(_gridMin.y + effectiveHalfHeightBottom, _gridMax.y - effectiveHalfHeightTop);
+
+            pos.x = Mathf.Clamp(pos.x, minX, maxX);
+            pos.y = Mathf.Clamp(pos.y, minY, maxY);
 
             return pos;
         }
