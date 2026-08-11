@@ -10,10 +10,10 @@ namespace ArrowSwarm.Data
     public class PlayerData
     {
         /// <summary>Current level the player is on.</summary>
-        public int currentLevel = 1;
+        public int currentLevel = 21;
 
         /// <summary>Highest level ever reached.</summary>
-        public int highestLevel = 1;
+        public int highestLevel = 21;
 
         /// <summary>Number of available tip (hint) tokens.</summary>
         public int tipCount = 3;
@@ -43,8 +43,8 @@ namespace ArrowSwarm.Data
         {
             return new PlayerData
             {
-                currentLevel = 1,
-                highestLevel = 1,
+                currentLevel = 21,
+                highestLevel = 21,
                 tipCount = 3,
                 levelStars = new System.Collections.Generic.List<LevelStarData>(),
                 lastDailyLoginDate = "",

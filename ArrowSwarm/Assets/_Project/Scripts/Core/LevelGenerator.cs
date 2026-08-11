@@ -91,9 +91,30 @@ namespace ArrowSwarm.Core
                 ApplyGuaranteedOutwardOrientation(fallbackPlacements, map.GridWidth, map.GridHeight);
             }
             
-            result.ArrowPlacements = fallbackPlacements ?? new List<SolvabilityChecker.ArrowPlacement>();
+            result.ArrowPlacements = (fallbackPlacements != null && fallbackPlacements.Count > 0) 
+                ? fallbackPlacements 
+                : GenerateSimpleGridPlacements(map.GridWidth, map.GridHeight);
+
             result.IsValid = true;
             return result;
+        }
+
+        private static List<SolvabilityChecker.ArrowPlacement> GenerateSimpleGridPlacements(int width, int height)
+        {
+            var placements = new List<SolvabilityChecker.ArrowPlacement>();
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width - 1; x += 2)
+                {
+                    var path = new List<Vector2Int>
+                    {
+                        new Vector2Int(x, y),
+                        new Vector2Int(x + 1, y)
+                    };
+                    placements.Add(new SolvabilityChecker.ArrowPlacement(path, ArrowDirection.Left));
+                }
+            }
+            return placements;
         }
 
         /// <summary>

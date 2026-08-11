@@ -57,6 +57,16 @@ namespace ArrowSwarm.Arrow
         /// </summary>
         public void InitializePool()
         {
+            if (_arrowParent == null)
+            {
+                _arrowParent = transform;
+            }
+
+            if (_arrowPool != null)
+            {
+                _arrowPool.Clear();
+            }
+
             if (_arrowPrefab == null)
             {
 #if UNITY_EDITOR
@@ -71,11 +81,14 @@ namespace ArrowSwarm.Arrow
 
             _arrowPool = new ObjectPool<Arrow>(
                 _arrowPrefab, _arrowParent, 20, 100,
-                onGet: a => a.gameObject.SetActive(true),
+                onGet: a => { if (a != null) a.gameObject.SetActive(true); },
                 onRelease: a =>
                 {
-                    a.ResetArrow();
-                    a.gameObject.SetActive(false);
+                    if (a != null)
+                    {
+                        a.ResetArrow();
+                        a.gameObject.SetActive(false);
+                    }
                 }
             );
         }

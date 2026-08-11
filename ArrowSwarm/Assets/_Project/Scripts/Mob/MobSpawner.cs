@@ -57,17 +57,32 @@ namespace ArrowSwarm.Mob
                 }
             }
 
+            if (_mobParent == null)
+            {
+                _mobParent = transform;
+            }
+
+            if (_mobPool != null)
+            {
+                _mobPool.Clear();
+            }
+
             _mobPool = new ObjectPool<Mob>(
                 _mobPrefab, _mobParent, 15, 100,
-                onGet: m => m.gameObject.SetActive(true),
+                onGet: m => { if (m != null) m.gameObject.SetActive(true); },
                 onRelease: m =>
                 {
-                    m.ResetMob();
-                    m.gameObject.SetActive(false);
+                    if (m != null)
+                    {
+                        m.ResetMob();
+                        m.gameObject.SetActive(false);
+                    }
                 }
             );
 
-            // Subscribe to mob events
+            // Subscribe to mob events safely
+            Mob.OnMobKilled -= HandleMobKilled;
+            Mob.OnMobFinished -= HandleMobFinished;
             Mob.OnMobKilled += HandleMobKilled;
             Mob.OnMobFinished += HandleMobFinished;
         }

@@ -16,11 +16,11 @@ namespace ArrowSwarm.Core
         [SerializeField] private float _arrowMoveSpeed = 15f;
         [SerializeField] private Color[] _arrowColors = new Color[]
         {
-            new Color(0.39f, 0.71f, 0.96f, 1f), // #64B5F6 Mavi (weight 1-2)
-            new Color(0.51f, 0.78f, 0.52f, 1f), // #81C784 Yeşil (weight 3-4)
-            new Color(1.00f, 0.72f, 0.30f, 1f), // #FFB74D Turuncu (weight 5-6)
-            new Color(0.73f, 0.41f, 0.78f, 1f), // #BA68C8 Mor (weight 7-8)
-            new Color(0.94f, 0.38f, 0.57f, 1f), // #F06292 Pembe (weight 9-10)
+            new Color(0.25f, 0.76f, 0.79f, 1f), // #3FC1C9 Turkuaz/Cyan
+            new Color(0.65f, 0.46f, 0.86f, 1f), // #A675DB Mor/Purple
+            new Color(1.00f, 0.33f, 0.46f, 1f), // #FF5376 Pembe/Kırmızı
+            new Color(1.00f, 0.64f, 0.11f, 1f), // #FFA41B Turuncu/Amber
+            new Color(0.23f, 0.51f, 0.96f, 1f), // #3B82F6 Mavi/Royal Blue
         };
 
         [Header("Tips")]

@@ -28,10 +28,11 @@ namespace ArrowSwarm.Core
 
         [Header("Visuals")]
         [SerializeField] private Sprite _backgroundSprite;
-        [SerializeField] private Color _pathColor = new Color(0.2f, 0.27f, 0.4f, 1f);
-        [SerializeField] private Color _gridLineColor = new Color(0.16f, 0.16f, 0.29f, 1f);
-        [SerializeField] private Color _backgroundGradientTop = new Color(0.1f, 0.1f, 0.18f, 1f);
-        [SerializeField] private Color _backgroundGradientBottom = new Color(0.09f, 0.13f, 0.24f, 1f);
+        [SerializeField] private Color _pathColor = new Color(0.55f, 0.48f, 0.41f, 1f); // #8C7A68 High Contrast Dark Taupe
+        [SerializeField] private Color _gridLineColor = new Color(0.85f, 0.81f, 0.75f, 1f); // #D9CFBF
+        [SerializeField] private Color _cameraBackgroundColor = new Color(0.96f, 0.94f, 0.90f, 1f); // #F5EFE6
+        [SerializeField] private Color _outerContainerColor = new Color(0.92f, 0.89f, 0.85f, 1f); // #EBE4D8
+        [SerializeField] private Color _innerGridColor = new Color(0.99f, 0.98f, 0.97f, 1f); // #FDFBF7
 
         // --- Properties ---
         /// <summary>Display name of this map.</summary>
@@ -70,11 +71,20 @@ namespace ArrowSwarm.Core
         /// <summary>Color used to render grid dots/lines.</summary>
         public Color GridLineColor => _gridLineColor;
 
-        /// <summary>Top gradient color for the background.</summary>
-        public Color BackgroundGradientTop => _backgroundGradientTop;
+        /// <summary>Camera background color (Layer 1).</summary>
+        public Color CameraBackgroundColor => _cameraBackgroundColor;
 
-        /// <summary>Bottom gradient color for the background.</summary>
-        public Color BackgroundGradientBottom => _backgroundGradientBottom;
+        /// <summary>Outer container card color (Layer 2).</summary>
+        public Color OuterContainerColor => _outerContainerColor;
+
+        /// <summary>Inner grid card surface color (Layer 3).</summary>
+        public Color InnerGridColor => _innerGridColor;
+
+        /// <summary>Top gradient color for the background (legacy fallback to CameraBackgroundColor).</summary>
+        public Color BackgroundGradientTop => _cameraBackgroundColor;
+
+        /// <summary>Bottom gradient color for the background (legacy fallback to OuterContainerColor).</summary>
+        public Color BackgroundGradientBottom => _outerContainerColor;
 
         /// <summary>
         /// Total number of points in this map's grid.

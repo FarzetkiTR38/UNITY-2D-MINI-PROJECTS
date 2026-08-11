@@ -43,6 +43,8 @@ namespace ArrowSwarm.Core
         /// <summary>Fired when arrow count changes (fired, total).</summary>
         public static event Action<int, int> OnArrowCountChanged;
 
+        private bool _isLevelLoaded;
+
         private void OnEnable()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
@@ -57,19 +59,22 @@ namespace ArrowSwarm.Core
         {
             if (scene.name == "GameScene")
             {
-                LoadLevel();
+                StartCoroutine(DeferredLoadLevel());
             }
+        }
+
+        private System.Collections.IEnumerator DeferredLoadLevel()
+        {
+            // Wait for end of frame so all scene components finish Awake, OnEnable, and Start
+            yield return new WaitForEndOfFrame();
+            LoadLevel();
         }
 
         private void Start()
         {
             if (SceneManager.GetActiveScene().name == "GameScene")
             {
-                // Only load if it wasn't already loaded by OnSceneLoaded
-                if (_currentLevelData.Map == null)
-                {
-                    LoadLevel();
-                }
+                StartCoroutine(DeferredLoadLevel());
             }
         }
 
@@ -89,6 +94,7 @@ namespace ArrowSwarm.Core
         /// </summary>
         public void LoadLevel(int level)
         {
+            _isLevelLoaded = true;
             CleanupLevel();
             
             GameConfig config = GameManager.Instance?.Config;
@@ -161,11 +167,14 @@ namespace ArrowSwarm.Core
             Arrow.OnArrowFiredEvent -= HandleArrowFired;
             ArrowSpawner.OnAllArrowsFired -= HandleAllArrowsFired;
 
-            // Clean up systems
-            ArrowSpawner.Instance?.ClearAllArrows();
-            MobSpawner.Instance?.StopSpawning();
-            MobSpawner.Instance?.ClearAllMobs();
-            GridManager.Instance?.ClearGrid();
+            // Clean up systems safely
+            if (ArrowSpawner.HasInstance) ArrowSpawner.Instance.ClearAllArrows();
+            if (MobSpawner.HasInstance)
+            {
+                MobSpawner.Instance.StopSpawning();
+                MobSpawner.Instance.ClearAllMobs();
+            }
+            if (GridManager.HasInstance) GridManager.Instance.ClearGrid();
         }
 
         private void InitializeSystems()
@@ -207,10 +216,7 @@ namespace ArrowSwarm.Core
 
         protected override void OnDestroy()
         {
-            if (Instance == this)
-            {
-                CleanupLevel();
-            }
+            CleanupLevel();
             base.OnDestroy();
         }
 
