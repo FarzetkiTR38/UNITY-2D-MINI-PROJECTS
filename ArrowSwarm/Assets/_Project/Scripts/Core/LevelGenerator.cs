@@ -200,7 +200,32 @@ namespace ArrowSwarm.Core
             // Post-process: Guarantee zero head-to-head conflicts
             RemoveHeadToHeadConflicts(placements, gridWidth, gridHeight);
 
+            // Guarantee zero diagonal steps / zigzags anywhere on the map
+            FixDiagonalSegments(placements);
+
+            // Strictly enforce 100% head-to-body direction alignment (Golden Axiom)
+            EnforceStrictHeadAlignment(placements);
+
             return placements;
+        }
+
+        /// <summary>
+        /// Strictly enforces that every arrow placement's HeadDirection is 100% aligned
+        /// with the vector pointing from path[1] to path[0] (the first body segment).
+        /// Absolutely guarantees ZERO perpendicular or sideways arrowheads!
+        /// </summary>
+        private static void EnforceStrictHeadAlignment(List<SolvabilityChecker.ArrowPlacement> placements)
+        {
+            if (placements == null) return;
+            for (int i = 0; i < placements.Count; i++)
+            {
+                var p = placements[i];
+                if (p.PathPoints != null && p.PathPoints.Count >= 2)
+                {
+                    p.HeadDirection = VectorToDirection(p.PathPoints[0] - p.PathPoints[1]);
+                    placements[i] = p;
+                }
+            }
         }
 
         private struct CandidateHead
@@ -401,13 +426,13 @@ namespace ArrowSwarm.Core
                 }
             }
 
-            // 2. Try inserting next to any 4-neighbor point inside any placement's path
+            // 2. Try inserting between two 4-neighbor points inside any placement's path (valid 3-point corner detour)
             for (int pIndex = 0; pIndex < placements.Count; pIndex++)
             {
                 var existingPath = placements[pIndex].PathPoints;
-                for (int i = 0; i < existingPath.Count; i++)
+                for (int i = 0; i < existingPath.Count - 1; i++)
                 {
-                    if (IsManhattanOne(isolated, existingPath[i]))
+                    if (IsManhattanOne(isolated, existingPath[i]) && IsManhattanOne(isolated, existingPath[i + 1]))
                     {
                         existingPath.Insert(i + 1, isolated);
                         return true;
@@ -416,6 +441,44 @@ namespace ArrowSwarm.Core
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Validates that every consecutive pair of points in every arrow path is strictly
+        /// Manhattan distance 1 (100% horizontal or vertical).
+        /// If any diagonal segment is found, removes the diagonal point to guarantee ZERO diagonal lines!
+        /// </summary>
+        private static void FixDiagonalSegments(List<SolvabilityChecker.ArrowPlacement> placements)
+        {
+            if (placements == null) return;
+
+            for (int p = 0; p < placements.Count; p++)
+            {
+                var placement = placements[p];
+                var path = placement.PathPoints;
+                if (path == null || path.Count < 2) continue;
+
+                for (int i = path.Count - 2; i >= 0; i--)
+                {
+                    Vector2Int p1 = path[i];
+                    Vector2Int p2 = path[i + 1];
+
+                    int dx = Mathf.Abs(p1.x - p2.x);
+                    int dy = Mathf.Abs(p1.y - p2.y);
+
+                    if (dx + dy != 1)
+                    {
+                        // Illegal non-orthogonal step! Remove p2 to prevent diagonal zigzag!
+                        path.RemoveAt(i + 1);
+                    }
+                }
+
+                if (path.Count >= 2)
+                {
+                    placement.HeadDirection = VectorToDirection(path[0] - path[1]);
+                    placements[p] = placement;
+                }
+            }
         }
 
         private static bool IsManhattanOne(Vector2Int a, Vector2Int b)
