@@ -51,9 +51,9 @@ namespace ArrowSwarm.Grid
             _height = mapData.GridHeight;
 
             // Dynamically calculate PointSpacing and Origin to perfectly center on screen
-            UnityEngine.Camera cam = UnityEngine.Camera.main;
-            float screenHeight = cam.orthographicSize * 2f;
-            float screenWidth = screenHeight * cam.aspect;
+            UnityEngine.Camera cam = UnityEngine.Camera.main ?? UnityEngine.Object.FindFirstObjectByType<UnityEngine.Camera>();
+            float screenHeight = cam != null ? cam.orthographicSize * 2f : 10f;
+            float screenWidth = cam != null ? screenHeight * cam.aspect : 5.625f;
 
             // Padding for path and UI (Path needs 1 extra unit around grid)
             float paddingX = 2.0f; // Path left/right + small margin

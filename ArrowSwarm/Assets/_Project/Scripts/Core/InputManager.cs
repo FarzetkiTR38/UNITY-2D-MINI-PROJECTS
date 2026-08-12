@@ -77,15 +77,31 @@ namespace ArrowSwarm.Core
         {
             if (MainCamera == null) return;
             Vector2 worldPos = MainCamera.ScreenToWorldPoint(screenPosition);
-            
-            // Perform 2D Raycast All to hit arrow even if overlapping other colliders
+
+            // 1. Grid-based exact lookup: Find the arrow occupying the clicked grid cell
+            if (ArrowSwarm.Grid.GridManager.Instance != null && ArrowSpawner.Instance != null)
+            {
+                var gridMgr = ArrowSwarm.Grid.GridManager.Instance;
+                var gPoint = gridMgr.WorldToPoint(worldPos);
+                if (gPoint != null)
+                {
+                    var arrow = ArrowSpawner.Instance.GetArrowAt(gPoint.GridPosition);
+                    if (arrow != null && !arrow.IsFired)
+                    {
+                        arrow.OnPlayerClick();
+                        return;
+                    }
+                }
+            }
+
+            // 2. Physics Raycast fallback for off-grid touch
             RaycastHit2D[] hits = Physics2D.RaycastAll(worldPos, Vector2.zero);
             for (int i = 0; i < hits.Length; i++)
             {
                 if (hits[i].collider != null)
                 {
                     var arrow = hits[i].collider.GetComponentInParent<ArrowSwarm.Arrow.Arrow>();
-                    if (arrow != null)
+                    if (arrow != null && !arrow.IsFired)
                     {
                         arrow.OnPlayerClick();
                         break;

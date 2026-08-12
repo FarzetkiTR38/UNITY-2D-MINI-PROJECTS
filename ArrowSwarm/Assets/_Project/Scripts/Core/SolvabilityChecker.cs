@@ -147,6 +147,31 @@ namespace ArrowSwarm.Core
             return true;
         }
 
+        /// <summary>
+        /// Validates that no two placements share the same grid coordinate.
+        /// Returns true if all arrow placements have strictly disjoint grid cells.
+        /// </summary>
+        public static bool ValidateNoOverlaps(List<ArrowPlacement> placements)
+        {
+            if (placements == null) return true;
+            var seen = new HashSet<Vector2Int>();
+            for (int i = 0; i < placements.Count; i++)
+            {
+                var points = placements[i].PathPoints;
+                if (points == null) continue;
+                for (int j = 0; j < points.Count; j++)
+                {
+                    if (seen.Contains(points[j]))
+                    {
+                        Debug.LogError($"[ArrowSwarm] SolvabilityChecker OVERLAP DETECTED at {points[j]} in placement {i}!");
+                        return false;
+                    }
+                    seen.Add(points[j]);
+                }
+            }
+            return true;
+        }
+
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
         private static void LogDebug(string message)
         {
