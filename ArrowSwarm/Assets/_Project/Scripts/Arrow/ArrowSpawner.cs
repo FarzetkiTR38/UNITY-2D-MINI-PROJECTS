@@ -182,6 +182,29 @@ namespace ArrowSwarm.Arrow
         }
 
         /// <summary>
+        /// Finds the active (unfired) arrow that occupies the specified grid coordinate.
+        /// </summary>
+        public Arrow GetArrowAt(Vector2Int gridPoint)
+        {
+            for (int i = 0; i < _activeArrows.Count; i++)
+            {
+                var arrow = _activeArrows[i];
+                if (arrow != null && !arrow.IsFired)
+                {
+                    var points = arrow.PathPoints;
+                    for (int j = 0; j < points.Count; j++)
+                    {
+                        if (points[j] == gridPoint)
+                        {
+                            return arrow;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Finds the last unfired arrow and promotes it to rainbow.
         /// </summary>
         private void PromoteLastArrowToRainbow()

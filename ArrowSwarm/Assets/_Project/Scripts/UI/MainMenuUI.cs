@@ -4,11 +4,13 @@ namespace ArrowSwarm.UI
     using ArrowSwarm.Data;
     using TMPro;
     using UnityEngine;
+    using UnityEngine.SceneManagement;
     using UnityEngine.UI;
 
     /// <summary>
     /// Controls the Main Menu screen: Play button, Leaderboard button,
     /// settings icon, and current level display.
+    /// Features robust auto-wiring so missing references never break button clicks!
     /// </summary>
     public class MainMenuUI : MonoBehaviour
     {
@@ -27,13 +29,63 @@ namespace ArrowSwarm.UI
 
         [Header("Animation")]
         [SerializeField] private CanvasGroup _canvasGroup;
-        [SerializeField] private float _fadeSpeed = 2f;
+        [SerializeField] private float _fadeSpeed = 5f;
+
+        private void Awake()
+        {
+            AutoWireUIReferences();
+        }
 
         private void Start()
         {
             SetupUI();
             SetupButtons();
             AnimateIn();
+        }
+
+        /// <summary>
+        /// Automatically finds and binds missing UI button references in hierarchy.
+        /// </summary>
+        public void AutoWireUIReferences()
+        {
+            if (_canvasGroup == null)
+            {
+                _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+            }
+
+            var buttons = GetComponentsInChildren<Button>(true);
+            foreach (var btn in buttons)
+            {
+                if (btn == null) continue;
+                string goName = btn.gameObject.name.ToLower();
+                var tmp = btn.GetComponentInChildren<TextMeshProUGUI>();
+                string txt = tmp != null ? tmp.text.ToLower() : "";
+
+                if (goName.Contains("play") || txt.Contains("play") || btn.transform.Find("PlayImg") != null)
+                {
+                    _playButton = btn;
+                    Debug.Log($"[ArrowSwarm] MainMenuUI: Auto-wired _playButton -> {btn.gameObject.name}");
+                }
+                else if (goName.Contains("level") || txt.Contains("level"))
+                {
+                    _levelsButton = btn;
+                }
+                else if (goName.Contains("setting") || txt.Contains("setting"))
+                {
+                    _settingsButton = btn;
+                }
+                else if (goName.Contains("leader") || txt.Contains("leader"))
+                {
+                    _leaderboardButton = btn;
+                }
+            }
+
+            // Fallback: If _playButton is still null, pick the first button in hierarchy
+            if (_playButton == null && buttons.Length > 0)
+            {
+                _playButton = buttons[0];
+                Debug.Log($"[ArrowSwarm] MainMenuUI: Fallback assigned first button to _playButton -> {buttons[0].gameObject.name}");
+            }
         }
 
         private void SetupUI()
@@ -52,15 +104,44 @@ namespace ArrowSwarm.UI
 
         private void SetupButtons()
         {
-            _playButton?.onClick.AddListener(OnPlayClicked);
-            _leaderboardButton?.onClick.AddListener(OnLeaderboardClicked);
-            _levelsButton?.onClick.AddListener(OnLevelsClicked);
-            _settingsButton?.onClick.AddListener(OnSettingsClicked);
+            AutoWireUIReferences();
+
+            if (_playButton != null)
+            {
+                _playButton.onClick.RemoveAllListeners();
+                _playButton.onClick.AddListener(OnPlayClicked);
+            }
+
+            if (_leaderboardButton != null)
+            {
+                _leaderboardButton.onClick.RemoveAllListeners();
+                _leaderboardButton.onClick.AddListener(OnLeaderboardClicked);
+            }
+
+            if (_levelsButton != null)
+            {
+                _levelsButton.onClick.RemoveAllListeners();
+                _levelsButton.onClick.AddListener(OnLevelsClicked);
+            }
+
+            if (_settingsButton != null)
+            {
+                _settingsButton.onClick.RemoveAllListeners();
+                _settingsButton.onClick.AddListener(OnSettingsClicked);
+            }
         }
 
         private void OnPlayClicked()
         {
-            GameManager.Instance?.StartGame();
+            Debug.Log("[ArrowSwarm] MainMenuUI: Play button clicked! Transitioning to GameScene...");
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.StartGame();
+            }
+            else
+            {
+                SceneManager.LoadScene("GameScene");
+            }
         }
 
         private void OnLeaderboardClicked()
@@ -81,18 +162,9 @@ namespace ArrowSwarm.UI
         private void AnimateIn()
         {
             if (_canvasGroup == null) return;
-            _canvasGroup.alpha = 0f;
-            StartCoroutine(FadeIn());
-        }
-
-        private System.Collections.IEnumerator FadeIn()
-        {
-            while (_canvasGroup.alpha < 1f)
-            {
-                _canvasGroup.alpha += Time.deltaTime * _fadeSpeed;
-                yield return null;
-            }
             _canvasGroup.alpha = 1f;
+            _canvasGroup.interactable = true;
+            _canvasGroup.blocksRaycasts = true;
         }
 
         private void OnDestroy()

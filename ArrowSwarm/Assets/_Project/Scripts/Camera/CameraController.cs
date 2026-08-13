@@ -19,6 +19,7 @@ namespace ArrowSwarm.Camera
         [SerializeField] private float _bottomHudMargin = 1.8f;
 
         private UnityEngine.Camera _camera;
+        private UnityEngine.Camera Cam => _camera != null ? _camera : (_camera = GetComponent<UnityEngine.Camera>() ?? UnityEngine.Camera.main);
         private float _defaultOrthoSize;
         private float _minOrthoSize;
         private float _maxOrthoSize;
@@ -104,7 +105,7 @@ namespace ArrowSwarm.Camera
             _maxOrthoSize = _defaultOrthoSize / minZoom;
             _minOrthoSize = _defaultOrthoSize / maxZoom;
 
-            _camera.orthographicSize = _defaultOrthoSize;
+            if (Cam != null) Cam.orthographicSize = _defaultOrthoSize;
             _targetOrthoSize = _defaultOrthoSize;
             transform.position = new Vector3(_mapCenter.x, _mapCenter.y, transform.position.z);
 
