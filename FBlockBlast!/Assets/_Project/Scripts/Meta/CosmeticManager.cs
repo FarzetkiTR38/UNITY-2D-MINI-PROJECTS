@@ -60,11 +60,12 @@ namespace NeonGalaxy.Meta
         /// </summary>
         public bool TryUnlock(string itemId)
         {
-            if (IsUnlocked(itemId)) return false;
-            if (!_cosmeticLookup.ContainsKey(itemId)) return false;
+            if (string.IsNullOrEmpty(itemId)) return false;
+            if (IsUnlocked(itemId)) return true;
 
             _saveService.Data.unlockedCosmeticIds.Add(itemId);
             _saveService.MarkDirty();
+            _saveService.Save();
 
             Debug.Log($"[CosmeticManager] Unlocked cosmetic: {itemId}");
             return true;
@@ -75,10 +76,11 @@ namespace NeonGalaxy.Meta
         /// </summary>
         public bool Equip(CosmeticCategory category, string itemId)
         {
+            if (string.IsNullOrEmpty(itemId)) return false;
+
             if (!IsUnlocked(itemId))
             {
-                Debug.LogWarning($"[CosmeticManager] Cannot equip locked cosmetic: {itemId}");
-                return false;
+                TryUnlock(itemId);
             }
 
             var data = _saveService.Data;
@@ -99,6 +101,7 @@ namespace NeonGalaxy.Meta
             }
 
             _saveService.MarkDirty();
+            _saveService.Save();
             Debug.Log($"[CosmeticManager] Equipped {category}: {itemId}");
             return true;
         }

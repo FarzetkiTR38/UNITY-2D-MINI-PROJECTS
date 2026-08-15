@@ -233,12 +233,20 @@ namespace NeonGalaxy.UI
             {
                 if (product.productType == ShopProductType.CosmeticPack && product.includedCosmetics != null && product.includedCosmetics.Length > 0)
                 {
-                    isOwned = cosmeticManager != null && cosmeticManager.IsUnlocked(product.includedCosmetics[0].itemId);
+                    string cosmeticId = product.includedCosmetics[0].itemId;
+                    bool isCosmeticUnlocked = (cosmeticManager != null && cosmeticManager.IsUnlocked(cosmeticId)) || 
+                                              (saveService != null && saveService.Data.unlockedCosmeticIds.Contains(cosmeticId));
+                    isOwned = isCosmeticUnlocked || inPurchasedList;
                 }
                 else
                 {
                     isOwned = inPurchasedList;
                 }
+            }
+
+            if (button != null)
+            {
+                button.onClick.RemoveAllListeners();
             }
 
             if (isOwned)
@@ -247,7 +255,9 @@ namespace NeonGalaxy.UI
                 {
                     string cosmeticId = product.includedCosmetics[0].itemId;
                     var category = product.includedCosmetics[0].category;
-                    bool isEquipped = cosmeticManager != null && cosmeticManager.GetEquipped(category) == cosmeticId;
+
+                    string equippedId = cosmeticManager != null ? cosmeticManager.GetEquipped(category) : (saveService != null ? saveService.Data.equippedBlockSkin : "default");
+                    bool isEquipped = (equippedId == cosmeticId);
 
                     if (isEquipped)
                     {
@@ -262,7 +272,16 @@ namespace NeonGalaxy.UI
                             button.interactable = true;
                             button.onClick.AddListener(() =>
                             {
-                                cosmeticManager?.Equip(category, cosmeticId);
+                                if (cosmeticManager != null)
+                                {
+                                    cosmeticManager.Equip(category, cosmeticId);
+                                }
+                                else if (saveService != null)
+                                {
+                                    saveService.Data.equippedBlockSkin = cosmeticId;
+                                    saveService.MarkDirty();
+                                    saveService.Save();
+                                }
                                 
                                 // Refresh game pieces if playing
                                 var gameManager = FindFirstObjectByType<GameManager>();
@@ -394,11 +413,21 @@ namespace NeonGalaxy.UI
                 case ShopProductType.StarterPack:
                 case ShopProductType.CosmeticPack:
                     // Unlock cosmetics
-                    if (product.includedCosmetics != null && cosmeticManager != null)
+                    if (product.includedCosmetics != null)
                     {
                         foreach (var cosmetic in product.includedCosmetics)
                         {
-                            if (cosmetic != null) cosmeticManager.TryUnlock(cosmetic.itemId);
+                            if (cosmetic != null)
+                            {
+                                if (cosmeticManager != null)
+                                {
+                                    cosmeticManager.TryUnlock(cosmetic.itemId);
+                                }
+                                else if (saveService != null && !saveService.Data.unlockedCosmeticIds.Contains(cosmetic.itemId))
+                                {
+                                    saveService.Data.unlockedCosmeticIds.Add(cosmetic.itemId);
+                                }
+                            }
                         }
                     }
                     // Grant currencies
@@ -437,35 +466,51 @@ namespace NeonGalaxy.UI
 
         private string GetPriceString(ShopProductSO product, IIAPService iapService)
         {
+            // 1. Real-Money IAP Product (RemoveAds, CoinPacks, GemPacks, StarterPack with no soft currency cost)
+            if (product.coinCost == 0 && product.gemCost == 0 && !string.IsNullOrEmpty(product.iapProductId))
+            {
+                if (iapService != null)
+                {
+                    string localizedPrice = iapService.GetLocalizedPrice(product.iapProductId);
+                    if (!string.IsNullOrEmpty(localizedPrice) && localizedPrice != product.iapProductId)
+                    {
+                        return localizedPrice.Replace("₺", "").Trim() + " TL";
+                    }
+                }
+                return "59.99 TL"; // Preview fallback in Editor
+            }
+
+            // 2. CosmeticPack containing CosmeticItemSO
             if (product.productType == ShopProductType.CosmeticPack && product.includedCosmetics != null && product.includedCosmetics.Length > 0)
             {
                 var cosmetic = product.includedCosmetics[0];
                 if (cosmetic != null)
                 {
-                    if (cosmetic.costCurrencyType == CurrencyType.Gem || product.costCurrencyType == CurrencyType.Gem || product.gemCost > 0)
+                    if (cosmetic.costCurrencyType == CurrencyType.Gem || (product.gemCost > 0 && product.coinCost == 0))
                     {
-                        int price = cosmetic.costCurrencyType == CurrencyType.Gem && cosmetic.gemCost > 0 ? cosmetic.gemCost : (product.gemCost > 0 ? product.gemCost : cosmetic.Price);
+                        int price = cosmetic.gemCost > 0 ? cosmetic.gemCost : (product.gemCost > 0 ? product.gemCost : cosmetic.Price);
                         return $"{price} GEM";
                     }
-                    else if (cosmetic.costCurrencyType == CurrencyType.Coin || product.costCurrencyType == CurrencyType.Coin || product.coinCost > 0)
+                    if (cosmetic.costCurrencyType == CurrencyType.Coin || cosmetic.coinCost > 0 || product.coinCost > 0)
                     {
-                        int price = cosmetic.costCurrencyType == CurrencyType.Coin && cosmetic.coinCost > 0 ? cosmetic.coinCost : (product.coinCost > 0 ? product.coinCost : cosmetic.Price);
+                        int price = cosmetic.coinCost > 0 ? cosmetic.coinCost : (product.coinCost > 0 ? product.coinCost : cosmetic.Price);
                         return $"{price} GOLD";
                     }
                 }
             }
 
-            if (product.costCurrencyType == CurrencyType.Gem || product.gemCost > 0) return $"{product.gemCost} GEM";
-            if (product.costCurrencyType == CurrencyType.Coin || product.coinCost > 0) return $"{product.coinCost} GOLD";
+            // 3. Soft Currency Product (Gem / Coin)
+            if (product.gemCost > 0 || (product.costCurrencyType == CurrencyType.Gem && product.coinCost == 0)) return $"{product.gemCost} GEM";
+            if (product.coinCost > 0) return $"{product.coinCost} GOLD";
 
+            // Fallback for IAP
             if (iapService != null && !string.IsNullOrEmpty(product.iapProductId))
             {
                 string localizedPrice = iapService.GetLocalizedPrice(product.iapProductId);
-                // Eğer fiyatın içinde ₺ işareti (veya bilinmeyen sembol) varsa onu silip sonuna TL ekler
                 return localizedPrice.Replace("₺", "").Trim() + " TL";
             }
 
-            return "$1.99"; // Fallback preview
+            return "59.99 TL";
         }
 
         private void HandleCoinBalanceChanged(int newBalance)

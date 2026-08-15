@@ -75,10 +75,24 @@ namespace NeonGalaxy.Services
         {
             _onRewardedComplete = onComplete;
 
+#if UNITY_EDITOR
+            Debug.Log("[UnityAdService] Simulated Rewarded Ad completed in Unity Editor.");
+            _onRewardedComplete?.Invoke(true);
+            PreloadAds();
+            return;
+#else
             if (_isRewardedReady)
             {
                 _isRewardedReady = false; // Reset state
-                Advertisement.Show(REWARDED_AD_UNIT_ID, this);
+                try
+                {
+                    Advertisement.Show(REWARDED_AD_UNIT_ID, this);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[UnityAdService] Exception showing rewarded ad: {ex.Message}");
+                    _onRewardedComplete?.Invoke(false);
+                }
             }
             else
             {
@@ -86,16 +100,31 @@ namespace NeonGalaxy.Services
                 _onRewardedComplete?.Invoke(false);
                 Advertisement.Load(REWARDED_AD_UNIT_ID, this);
             }
+#endif
         }
 
         public void ShowInterstitial(Action onComplete)
         {
             _onInterstitialComplete = onComplete;
 
+#if UNITY_EDITOR
+            Debug.Log("[UnityAdService] Simulated Interstitial Ad completed in Unity Editor.");
+            _onInterstitialComplete?.Invoke();
+            PreloadAds();
+            return;
+#else
             if (_isInterstitialReady)
             {
                 _isInterstitialReady = false; // Reset state
-                Advertisement.Show(INTERSTITIAL_AD_UNIT_ID, this);
+                try
+                {
+                    Advertisement.Show(INTERSTITIAL_AD_UNIT_ID, this);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[UnityAdService] Exception showing interstitial ad: {ex.Message}");
+                    _onInterstitialComplete?.Invoke();
+                }
             }
             else
             {
@@ -103,6 +132,7 @@ namespace NeonGalaxy.Services
                 _onInterstitialComplete?.Invoke();
                 Advertisement.Load(INTERSTITIAL_AD_UNIT_ID, this);
             }
+#endif
         }
 
         // ── IUnityAdsInitializationListener ─────────────────────
