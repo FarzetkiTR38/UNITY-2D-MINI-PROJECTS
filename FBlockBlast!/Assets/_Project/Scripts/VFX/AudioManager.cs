@@ -104,6 +104,8 @@ namespace NeonGalaxy.VFX
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            LoadVolumeSettings();
+
             if (config == null) return;
 
             if (scene.name == Constants.SCENE_HOME || scene.name == Constants.SCENE_GAMEPLAY)
@@ -150,7 +152,10 @@ namespace NeonGalaxy.VFX
             }
         }
 
-        private void LoadVolumeSettings()
+        /// <summary>
+        /// Reloads and applies volume settings from SaveService (if available) or AudioConfigSO defaults.
+        /// </summary>
+        public void LoadVolumeSettings()
         {
             if (ServiceLocator.Has<SaveService>())
             {
@@ -177,6 +182,8 @@ namespace NeonGalaxy.VFX
         public void PlaySFX(AudioClip clip, float pitchOverride = -1f)
         {
             if (clip == null || _sfxVolume <= 0f) return;
+
+            Debug.Log($"[AudioManager] Playing SFX: {clip.name}");
 
             var source = GetNextSFXSource();
             source.clip = clip;
@@ -347,6 +354,12 @@ namespace NeonGalaxy.VFX
         public void SetSFXVolume(float volume)
         {
             _sfxVolume = Mathf.Clamp01(volume);
+            if (ServiceLocator.Has<SaveService>())
+            {
+                var save = ServiceLocator.Get<SaveService>();
+                save.Data.sfxVolume = _sfxVolume;
+                save.MarkDirty();
+            }
             ApplyVolumes();
         }
 
@@ -356,6 +369,12 @@ namespace NeonGalaxy.VFX
         public void SetMusicVolume(float volume)
         {
             _musicVolume = Mathf.Clamp01(volume);
+            if (ServiceLocator.Has<SaveService>())
+            {
+                var save = ServiceLocator.Get<SaveService>();
+                save.Data.musicVolume = _musicVolume;
+                save.MarkDirty();
+            }
             ApplyVolumes();
         }
 
@@ -365,6 +384,12 @@ namespace NeonGalaxy.VFX
         public void SetMasterVolume(float volume)
         {
             _masterVolume = Mathf.Clamp01(volume);
+            if (ServiceLocator.Has<SaveService>())
+            {
+                var save = ServiceLocator.Get<SaveService>();
+                save.Data.masterVolume = _masterVolume;
+                save.MarkDirty();
+            }
             ApplyVolumes();
         }
 

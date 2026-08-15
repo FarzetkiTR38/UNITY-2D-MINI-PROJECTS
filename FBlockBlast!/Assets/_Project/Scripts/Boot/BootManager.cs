@@ -108,6 +108,9 @@ namespace NeonGalaxy.Boot
             ServiceLocator.Register(saveService);
             Debug.Log("[BootManager] SaveService registered.");
 
+            // Refresh AudioManager volumes now that SaveService is loaded and registered
+            NeonGalaxy.VFX.AudioManager.Instance?.LoadVolumeSettings();
+
             ReportProgress(0.25f, "Save data loaded.");
             await Awaitable.NextFrameAsync();
 

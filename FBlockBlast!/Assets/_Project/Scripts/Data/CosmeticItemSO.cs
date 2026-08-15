@@ -3,6 +3,15 @@ using UnityEngine;
 namespace NeonGalaxy.Data
 {
     /// <summary>
+    /// Type of in-game currency used to acquire items.
+    /// </summary>
+    public enum CurrencyType
+    {
+        Coin = 0,
+        Gem = 1
+    }
+
+    /// <summary>
     /// Defines a single cosmetic item (board skin, block skin, frame, or title).
     /// Create instances via: Create → NeonGalaxy → Cosmetic Item.
     /// </summary>
@@ -37,8 +46,20 @@ namespace NeonGalaxy.Data
         [Tooltip("If true, only available via IAP purchase.")]
         public bool isPremium;
 
-        [Tooltip("Coin cost if purchased with in-game currency. 0 = not purchasable with coins.")]
+        [Header("Currency Pricing")]
+        [Tooltip("Select whether this cosmetic is purchased using Coin or Gem.")]
+        public CurrencyType costCurrencyType = CurrencyType.Coin;
+
+        [Tooltip("Coin cost if purchased with in-game coins. 0 = not purchasable with coins.")]
         public int coinCost;
+
+        [Tooltip("Gem cost if purchased with in-game gems. 0 = not purchasable with gems.")]
+        public int gemCost;
+
+        /// <summary>
+        /// Returns the active price depending on costCurrencyType (Coin or Gem).
+        /// </summary>
+        public int Price => costCurrencyType == CurrencyType.Coin ? coinCost : gemCost;
 
 #if UNITY_EDITOR
         private void OnValidate()

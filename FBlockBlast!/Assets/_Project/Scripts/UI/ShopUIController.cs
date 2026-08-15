@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 using TMPro;
 using NeonGalaxy.Boot;
 using NeonGalaxy.Services;
@@ -13,28 +14,37 @@ namespace NeonGalaxy.UI
     /// <summary>
     /// Controls the Shop panel UI.
     /// Displays purchasable products, handles IAP purchases, coin, and gem purchases.
-    /// Updated for unified grid display (no tabs).
+    /// Manages 3 categories: Gold/Gem Purchase, Gold Skins, and Gem Blocks.
     /// </summary>
     public class ShopUIController : MonoBehaviour
     {
         [Header("Product Registry")]
         [SerializeField] private ShopProductSO[] currencyProducts;
-        [SerializeField] private ShopProductSO[] blockSkinProducts;
+        [FormerlySerializedAs("blockSkinProducts")]
+        [SerializeField] private ShopProductSO[] goldSkinProducts;
+        [SerializeField] private ShopProductSO[] gemBlockProducts;
 
         [Header("UI Elements")]
         [SerializeField] private Transform currencyProductListParent;
-        [SerializeField] private Transform blockSkinProductListParent;
+        [FormerlySerializedAs("blockSkinProductListParent")]
+        [SerializeField] private Transform goldSkinProductListParent;
+        [SerializeField] private Transform gemBlockProductListParent;
         [SerializeField] private GameObject productCardPrefab;
-        [UnityEngine.Serialization.FormerlySerializedAs("coinBalanceText")]
+        [FormerlySerializedAs("coinBalanceText")]
         [SerializeField] private TextMeshProUGUI coinText;
-        [UnityEngine.Serialization.FormerlySerializedAs("gemBalanceText")]
+        [FormerlySerializedAs("gemBalanceText")]
         [SerializeField] private TextMeshProUGUI gemText;
 
         [Header("Categories")]
         [SerializeField] private GameObject goldGemPanel;
-        [SerializeField] private GameObject blockSkinsPanel;
+        [FormerlySerializedAs("blockSkinsPanel")]
+        [SerializeField] private GameObject goldSkinsPanel;
+        [SerializeField] private GameObject gemBlocksPanel;
+
         [SerializeField] private Button goldGemTabButton;
-        [SerializeField] private Button blockSkinsTabButton;
+        [FormerlySerializedAs("blockSkinsTabButton")]
+        [SerializeField] private Button goldSkinsTabButton;
+        [SerializeField] private Button gemBlocksTabButton;
 
         [Header("Limited Offer (Starter Pack)")]
         [SerializeField] private ShopProductSO limitedOfferProduct;
@@ -66,9 +76,13 @@ namespace NeonGalaxy.UI
             {
                 goldGemTabButton.onClick.AddListener(ShowGoldGemCategory);
             }
-            if (blockSkinsTabButton != null)
+            if (goldSkinsTabButton != null)
             {
-                blockSkinsTabButton.onClick.AddListener(ShowBlockSkinsCategory);
+                goldSkinsTabButton.onClick.AddListener(ShowGoldSkinsCategory);
+            }
+            if (gemBlocksTabButton != null)
+            {
+                gemBlocksTabButton.onClick.AddListener(ShowGemBlocksCategory);
             }
         }
 
@@ -91,20 +105,40 @@ namespace NeonGalaxy.UI
         public void ShowGoldGemCategory()
         {
             if (goldGemPanel != null) goldGemPanel.SetActive(true);
-            if (blockSkinsPanel != null) blockSkinsPanel.SetActive(false);
+            if (goldSkinsPanel != null) goldSkinsPanel.SetActive(false);
+            if (gemBlocksPanel != null) gemBlocksPanel.SetActive(false);
             
             if (goldGemTabButton != null) goldGemTabButton.interactable = false;
-            if (blockSkinsTabButton != null) blockSkinsTabButton.interactable = true;
+            if (goldSkinsTabButton != null) goldSkinsTabButton.interactable = true;
+            if (gemBlocksTabButton != null) gemBlocksTabButton.interactable = true;
         }
 
-        public void ShowBlockSkinsCategory()
+        public void ShowGoldSkinsCategory()
         {
             if (goldGemPanel != null) goldGemPanel.SetActive(false);
-            if (blockSkinsPanel != null) blockSkinsPanel.SetActive(true);
+            if (goldSkinsPanel != null) goldSkinsPanel.SetActive(true);
+            if (gemBlocksPanel != null) gemBlocksPanel.SetActive(false);
             
             if (goldGemTabButton != null) goldGemTabButton.interactable = true;
-            if (blockSkinsTabButton != null) blockSkinsTabButton.interactable = false;
+            if (goldSkinsTabButton != null) goldSkinsTabButton.interactable = false;
+            if (gemBlocksTabButton != null) gemBlocksTabButton.interactable = true;
         }
+
+        public void ShowGemBlocksCategory()
+        {
+            if (goldGemPanel != null) goldGemPanel.SetActive(false);
+            if (goldSkinsPanel != null) goldSkinsPanel.SetActive(false);
+            if (gemBlocksPanel != null) gemBlocksPanel.SetActive(true);
+            
+            if (goldGemTabButton != null) goldGemTabButton.interactable = true;
+            if (goldSkinsTabButton != null) goldSkinsTabButton.interactable = true;
+            if (gemBlocksTabButton != null) gemBlocksTabButton.interactable = false;
+        }
+
+        /// <summary>
+        /// Legacy alias for backward compatibility.
+        /// </summary>
+        public void ShowBlockSkinsCategory() => ShowGoldSkinsCategory();
 
         // ── UI Refresh ───────────────────────────────────────────
 
@@ -137,37 +171,25 @@ namespace NeonGalaxy.UI
                 limitedOfferPriceText.text = GetPriceString(limitedOfferProduct, iapService);
             }
 
-            // Populate Currency Products
-            if (currencyProductListParent != null && productCardPrefab != null && currencyProducts != null)
-            {
-                foreach (Transform child in currencyProductListParent) Destroy(child.gameObject);
-                
-                var sortedCurrency = new List<ShopProductSO>(currencyProducts);
-                sortedCurrency.Sort((a, b) => a.sortOrder.CompareTo(b.sortOrder));
-                
-                foreach (var product in sortedCurrency)
-                {
-                    if (product != null && product.productType != ShopProductType.StarterPack)
-                    {
-                        CreateProductCard(product, iapService, currencyProductListParent);
-                    }
-                }
-            }
+            PopulateCategoryProducts(currencyProducts, currencyProductListParent, iapService);
+            PopulateCategoryProducts(goldSkinProducts, goldSkinProductListParent, iapService);
+            PopulateCategoryProducts(gemBlockProducts, gemBlockProductListParent, iapService);
+        }
 
-            // Populate Block Skin Products
-            if (blockSkinProductListParent != null && productCardPrefab != null && blockSkinProducts != null)
+        private void PopulateCategoryProducts(ShopProductSO[] products, Transform parent, IIAPService iapService)
+        {
+            if (parent == null || productCardPrefab == null || products == null) return;
+
+            foreach (Transform child in parent) Destroy(child.gameObject);
+
+            var sortedProducts = new List<ShopProductSO>(products);
+            sortedProducts.Sort((a, b) => a.sortOrder.CompareTo(b.sortOrder));
+
+            foreach (var product in sortedProducts)
             {
-                foreach (Transform child in blockSkinProductListParent) Destroy(child.gameObject);
-                
-                var sortedSkins = new List<ShopProductSO>(blockSkinProducts);
-                sortedSkins.Sort((a, b) => a.sortOrder.CompareTo(b.sortOrder));
-                
-                foreach (var product in sortedSkins)
+                if (product != null && product.productType != ShopProductType.StarterPack)
                 {
-                    if (product != null && product.productType != ShopProductType.StarterPack)
-                    {
-                        CreateProductCard(product, iapService, blockSkinProductListParent);
-                    }
+                    CreateProductCard(product, iapService, parent);
                 }
             }
         }
@@ -243,7 +265,7 @@ namespace NeonGalaxy.UI
                                 cosmeticManager?.Equip(category, cosmeticId);
                                 
                                 // Refresh game pieces if playing
-                                var gameManager = FindObjectOfType<GameManager>();
+                                var gameManager = FindFirstObjectByType<GameManager>();
                                 if (gameManager != null)
                                 {
                                     gameManager.ApplyEquippedSkin();
@@ -280,10 +302,32 @@ namespace NeonGalaxy.UI
         {
             var currencyManager = ServiceLocator.Get<CurrencyManager>();
 
-            // Soft Currency Purchase Path (Gems first, then Coins)
-            if (product.gemCost > 0)
+            int gemCost = product.gemCost;
+            int coinCost = product.coinCost;
+            bool usesGem = product.costCurrencyType == CurrencyType.Gem || gemCost > 0;
+
+            if (product.productType == ShopProductType.CosmeticPack && product.includedCosmetics != null && product.includedCosmetics.Length > 0)
             {
-                if (currencyManager != null && currencyManager.SpendGems(product.gemCost))
+                var cosmetic = product.includedCosmetics[0];
+                if (cosmetic != null)
+                {
+                    if (cosmetic.costCurrencyType == CurrencyType.Gem)
+                    {
+                        usesGem = true;
+                        if (gemCost == 0) gemCost = cosmetic.gemCost;
+                    }
+                    else if (cosmetic.costCurrencyType == CurrencyType.Coin)
+                    {
+                        usesGem = false;
+                        if (coinCost == 0) coinCost = cosmetic.coinCost;
+                    }
+                }
+            }
+
+            // Soft Currency Purchase Path
+            if (usesGem && gemCost > 0)
+            {
+                if (currencyManager != null && currencyManager.SpendGems(gemCost))
                 {
                     GrantProduct(product);
                     RefreshUI();
@@ -293,9 +337,9 @@ namespace NeonGalaxy.UI
                 return;
             }
             
-            if (product.coinCost > 0)
+            if (coinCost > 0)
             {
-                if (currencyManager != null && currencyManager.SpendCoins(product.coinCost))
+                if (currencyManager != null && currencyManager.SpendCoins(coinCost))
                 {
                     GrantProduct(product);
                     RefreshUI();
@@ -393,8 +437,26 @@ namespace NeonGalaxy.UI
 
         private string GetPriceString(ShopProductSO product, IIAPService iapService)
         {
-            if (product.gemCost > 0) return $"{product.gemCost} GEM";
-            if (product.coinCost > 0) return $"{product.coinCost} GOLD";
+            if (product.productType == ShopProductType.CosmeticPack && product.includedCosmetics != null && product.includedCosmetics.Length > 0)
+            {
+                var cosmetic = product.includedCosmetics[0];
+                if (cosmetic != null)
+                {
+                    if (cosmetic.costCurrencyType == CurrencyType.Gem || product.costCurrencyType == CurrencyType.Gem || product.gemCost > 0)
+                    {
+                        int price = cosmetic.costCurrencyType == CurrencyType.Gem && cosmetic.gemCost > 0 ? cosmetic.gemCost : (product.gemCost > 0 ? product.gemCost : cosmetic.Price);
+                        return $"{price} GEM";
+                    }
+                    else if (cosmetic.costCurrencyType == CurrencyType.Coin || product.costCurrencyType == CurrencyType.Coin || product.coinCost > 0)
+                    {
+                        int price = cosmetic.costCurrencyType == CurrencyType.Coin && cosmetic.coinCost > 0 ? cosmetic.coinCost : (product.coinCost > 0 ? product.coinCost : cosmetic.Price);
+                        return $"{price} GOLD";
+                    }
+                }
+            }
+
+            if (product.costCurrencyType == CurrencyType.Gem || product.gemCost > 0) return $"{product.gemCost} GEM";
+            if (product.costCurrencyType == CurrencyType.Coin || product.coinCost > 0) return $"{product.coinCost} GOLD";
 
             if (iapService != null && !string.IsNullOrEmpty(product.iapProductId))
             {
@@ -402,7 +464,6 @@ namespace NeonGalaxy.UI
                 // Eğer fiyatın içinde ₺ işareti (veya bilinmeyen sembol) varsa onu silip sonuna TL ekler
                 return localizedPrice.Replace("₺", "").Trim() + " TL";
             }
-
 
             return "$1.99"; // Fallback preview
         }

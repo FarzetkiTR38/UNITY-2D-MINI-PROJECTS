@@ -55,6 +55,9 @@ namespace NeonGalaxy.Data
         [Tooltip("IAP product ID for real-money purchase. Maps to Constants.IAP_* IDs.")]
         public string iapProductId;
 
+        [Tooltip("Select whether this item is purchased with Coin or Gem.")]
+        public CurrencyType costCurrencyType = CurrencyType.Coin;
+
         [Tooltip("If > 0, this item can also be purchased with in-game coins.")]
         public int coinCost;
 
