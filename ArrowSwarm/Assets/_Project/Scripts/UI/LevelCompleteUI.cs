@@ -20,8 +20,6 @@ namespace ArrowSwarm.UI
 
         [Header("Stars")]
         [SerializeField] private GameObject[] _stars = new GameObject[3]; // Drag 3 star images here in Editor
-        [SerializeField] private Color _activeStarColor = Color.yellow;
-        [SerializeField] private Color _inactiveStarColor = new Color(0.2f, 0.2f, 0.2f, 0.5f);
 
         private void OnEnable()
         {
@@ -61,15 +59,7 @@ namespace ArrowSwarm.UI
             {
                 if (_stars[i] != null)
                 {
-                    Image starImage = _stars[i].GetComponent<Image>();
-                    if (starImage != null)
-                    {
-                        starImage.color = i < starsEarned ? _activeStarColor : _inactiveStarColor;
-                    }
-                    else
-                    {
-                        _stars[i].SetActive(i < starsEarned);
-                    }
+                    _stars[i].SetActive(i < starsEarned);
                 }
             }
 
