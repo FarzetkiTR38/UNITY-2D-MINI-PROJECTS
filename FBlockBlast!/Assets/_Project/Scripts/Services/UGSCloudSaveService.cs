@@ -98,5 +98,52 @@ namespace NeonGalaxy.Services
             await Task.Delay(10); // Interface requires async
             return Random.Range(1000, 9999);
         }
+
+        public async Task<bool> SavePublicDataAsync(string key, string value)
+        {
+            if (!IsAvailable) return false;
+
+            try
+            {
+                var dataToSave = new Dictionary<string, object> { { key, value } };
+                await CloudSaveService.Instance.Data.Player.SaveAsync(
+                    dataToSave,
+                    new Unity.Services.CloudSave.Models.Data.Player.SaveOptions(
+                        new Unity.Services.CloudSave.Models.Data.Player.PublicWriteAccessClassOptions()));
+
+                Debug.Log($"[UGSCloudSaveService] Public data saved under key: {key}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[UGSCloudSaveService] SavePublicDataAsync failed: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<string> LoadPublicDataForPlayerAsync(string playerId, string key)
+        {
+            if (!IsAvailable || string.IsNullOrEmpty(playerId)) return null;
+
+            try
+            {
+                var loadOptions = new Unity.Services.CloudSave.Models.Data.Player.LoadOptions(
+                    new Unity.Services.CloudSave.Models.Data.Player.PublicReadAccessClassOptions(playerId));
+
+                var results = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { key }, loadOptions);
+
+                if (results.TryGetValue(key, out var item))
+                {
+                    return item.Value.GetAs<string>();
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[UGSCloudSaveService] Could not load public data '{key}' for player {playerId}: {ex.Message}");
+                return null;
+            }
+        }
     }
 }

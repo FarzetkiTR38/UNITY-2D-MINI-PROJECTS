@@ -5,6 +5,7 @@ using TMPro;
 using NeonGalaxy.Boot;
 using NeonGalaxy.Data;
 using NeonGalaxy.Meta;
+using NeonGalaxy.Services;
 using NeonGalaxy.Core;
 
 namespace NeonGalaxy.UI
@@ -26,6 +27,7 @@ namespace NeonGalaxy.UI
         [Header("Gallery")]
         [SerializeField] private Button galleryButton;
         [SerializeField] private TextMeshProUGUI galleryButtonText;
+        [SerializeField] private Image customAvatarPreview; // Shows the custom avatar preview after gallery pick
 
         [Header("Actions")]
         [SerializeField] private Button confirmButton;
@@ -56,6 +58,30 @@ namespace NeonGalaxy.UI
                 galleryButton.onClick.AddListener(OnGalleryClicked);
         }
 
+        private void OnEnable()
+        {
+            GameEvents.OnProfileUpdated += OnProfileUpdatedWhileOpen;
+        }
+
+        private void OnDisable()
+        {
+            GameEvents.OnProfileUpdated -= OnProfileUpdatedWhileOpen;
+        }
+
+        /// <summary>
+        /// When profile is updated while panel is open (e.g. after gallery pick),
+        /// refresh the custom avatar preview.
+        /// </summary>
+        private void OnProfileUpdatedWhileOpen()
+        {
+            if (panelRoot == null || !panelRoot.activeSelf) return;
+
+            if (_isCustomSelected)
+            {
+                RefreshCustomAvatarPreview();
+            }
+        }
+
         // ── Public API ───────────────────────────────────────────
 
         /// <summary>
@@ -71,6 +97,7 @@ namespace NeonGalaxy.UI
             _selectedCustomPath = "";
 
             PopulateGrid(profileManager);
+            RefreshCustomAvatarPreview();
 
             if (panelRoot != null) panelRoot.SetActive(true);
             if (canvasGroup != null) canvasGroup.alpha = 1f;
@@ -169,6 +196,7 @@ namespace NeonGalaxy.UI
 
             // Update visual selection
             UpdateSelectionVisuals();
+            RefreshCustomAvatarPreview();
             Debug.Log($"[AvatarSelection] Selected avatar: {avatarId}");
         }
 
@@ -192,33 +220,74 @@ namespace NeonGalaxy.UI
             }
         }
 
-        // ── Gallery ──────────────────────────────────────────────
+        // ── Gallery ──────────────────────────────────────────
 
         private void OnGalleryClicked()
         {
-            Debug.Log("[AvatarSelection] Gallery button clicked.");
+            NeonGalaxy.VFX.AudioManager.Instance?.PlayUIClick();
+            Debug.Log("[AvatarSelection] Gallery button clicked — opening device gallery.");
 
-            // NOTE: NativeGallery integration placeholder.
-            // In production, use NativeGallery.GetImageFromGallery() to pick an image.
-            // For now, we log a message. The actual implementation would be:
-            //
-            // NativeGallery.Permission permission = NativeGallery.GetImageFromGallery((path) =>
-            // {
-            //     if (!string.IsNullOrEmpty(path))
-            //     {
-            //         // Copy to persistent data path for safety
-            //         string destPath = System.IO.Path.Combine(
-            //             Application.persistentDataPath, "custom_avatar.png");
-            //         System.IO.File.Copy(path, destPath, true);
-            //         _selectedCustomPath = destPath;
-            //         _isCustomSelected = true;
-            //         _selectedAvatarId = Constants.CUSTOM_AVATAR_ID;
-            //         UpdateSelectionVisuals();
-            //     }
-            // }, "Select Avatar Image");
+            var profileManager = ServiceLocator.Get<ProfileManager>();
+            if (profileManager == null)
+            {
+                Debug.LogError("[AvatarSelection] ProfileManager not available.");
+                return;
+            }
 
-            Debug.LogWarning("[AvatarSelection] NativeGallery not yet integrated. " +
-                "Install NativeGallery package and uncomment the code above.");
+            // This opens the gallery, picks image, crops, saves, and calls SetCustomAvatar
+            profileManager.SetCustomAvatarFromGallery();
+
+            // Pre-set the selection state (the actual save happens via ProfileManager event)
+            _isCustomSelected = true;
+            _selectedAvatarId = NeonGalaxy.Utility.Constants.CUSTOM_AVATAR_ID;
+            _selectedCustomPath = ""; // Will be set by the callback
+
+            UpdateSelectionVisuals();
+        }
+
+        /// <summary>
+        /// Refreshes the custom avatar preview image to display the currently active / selected avatar.
+        /// Supports both custom gallery images and built-in avatars.
+        /// </summary>
+        private void RefreshCustomAvatarPreview()
+        {
+            if (customAvatarPreview == null) return;
+
+            var profileManager = ServiceLocator.Get<ProfileManager>();
+            if (profileManager == null) return;
+
+            Sprite spriteToDisplay = null;
+
+            if (_isCustomSelected)
+            {
+                // Custom gallery avatar
+                var pictureService = ServiceLocator.Get<ProfilePictureService>();
+                if (pictureService != null)
+                {
+                    spriteToDisplay = pictureService.GetCustomAvatarSprite();
+                }
+            }
+            else if (!string.IsNullOrEmpty(_selectedAvatarId))
+            {
+                // Built-in avatar selected in grid
+                var registry = profileManager.AvatarRegistry;
+                if (registry != null)
+                {
+                    spriteToDisplay = registry.GetAvatarSprite(_selectedAvatarId);
+                }
+            }
+
+            // Fallback to active profile avatar
+            if (spriteToDisplay == null)
+            {
+                spriteToDisplay = profileManager.GetCurrentAvatarSprite();
+            }
+
+            if (spriteToDisplay != null)
+            {
+                customAvatarPreview.sprite = spriteToDisplay;
+                customAvatarPreview.gameObject.SetActive(true);
+            }
         }
 
         // ── Confirm / Cancel ─────────────────────────────────────
@@ -228,10 +297,11 @@ namespace NeonGalaxy.UI
             var profileManager = ServiceLocator.Get<ProfileManager>();
             if (profileManager == null) return;
 
-            if (_isCustomSelected && !string.IsNullOrEmpty(_selectedCustomPath))
+            // If custom was selected via gallery, the ProfileManager already saved it
+            // via the SetCustomAvatarFromGallery callback. Just close.
+            if (_isCustomSelected)
             {
-                profileManager.SetCustomAvatar(_selectedCustomPath);
-                Debug.Log("[AvatarSelection] Custom avatar confirmed.");
+                Debug.Log("[AvatarSelection] Custom avatar confirmed (already saved via gallery pick).");
             }
             else if (!string.IsNullOrEmpty(_selectedAvatarId))
             {

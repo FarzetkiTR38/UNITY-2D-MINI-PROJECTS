@@ -38,5 +38,15 @@ namespace NeonGalaxy.Services
         /// Returns -1 if the service is unavailable (caller should use local fallback).
         /// </summary>
         Task<int> GetNextGuestNumberAsync();
+
+        /// <summary>
+        /// Saves public player data (e.g. avatar string/id) that can be read by other players.
+        /// </summary>
+        Task<bool> SavePublicDataAsync(string key, string value);
+
+        /// <summary>
+        /// Loads public player data for a specific player ID (e.g. fetching their avatar for Leaderboard).
+        /// </summary>
+        Task<string> LoadPublicDataForPlayerAsync(string playerId, string key);
     }
 }

@@ -110,7 +110,7 @@ namespace NeonGalaxy.Meta
 
             if (string.IsNullOrWhiteSpace(name))
             {
-                errorMessage = "İsim boş olamaz.";
+                errorMessage = "Name cannot be empty.";
                 return false;
             }
 
@@ -118,13 +118,13 @@ namespace NeonGalaxy.Meta
 
             if (trimmed.Length < Constants.PLAYER_NAME_MIN_LENGTH)
             {
-                errorMessage = $"İsim en az {Constants.PLAYER_NAME_MIN_LENGTH} karakter olmalı.";
+                errorMessage = $"Name must be at least {Constants.PLAYER_NAME_MIN_LENGTH} characters.";
                 return false;
             }
 
             if (trimmed.Length > Constants.PLAYER_NAME_MAX_LENGTH)
             {
-                errorMessage = $"İsim en fazla {Constants.PLAYER_NAME_MAX_LENGTH} karakter olabilir.";
+                errorMessage = $"Name can be at most {Constants.PLAYER_NAME_MAX_LENGTH} characters.";
                 return false;
             }
 
@@ -165,7 +165,7 @@ namespace NeonGalaxy.Meta
 
             if (string.IsNullOrWhiteSpace(name))
             {
-                errorMessage = "Görünen isim boş olamaz.";
+                errorMessage = "Display name cannot be empty.";
                 return false;
             }
 
@@ -173,13 +173,13 @@ namespace NeonGalaxy.Meta
 
             if (trimmed.Length < Constants.DISPLAY_NAME_MIN_LENGTH)
             {
-                errorMessage = $"Görünen isim en az {Constants.DISPLAY_NAME_MIN_LENGTH} karakter olmalı.";
+                errorMessage = $"Display name must be at least {Constants.DISPLAY_NAME_MIN_LENGTH} characters.";
                 return false;
             }
 
             if (trimmed.Length > Constants.DISPLAY_NAME_MAX_LENGTH)
             {
-                errorMessage = $"Görünen isim en fazla {Constants.DISPLAY_NAME_MAX_LENGTH} karakter olabilir.";
+                errorMessage = $"Display name can be at most {Constants.DISPLAY_NAME_MAX_LENGTH} characters.";
                 return false;
             }
 
@@ -224,13 +224,13 @@ namespace NeonGalaxy.Meta
 
             if (trimmed.Length < Constants.EMAIL_MIN_LENGTH || !trimmed.Contains("@"))
             {
-                errorMessage = "Geçerli bir e-posta adresi girin.";
+                errorMessage = "Please enter a valid email address.";
                 return false;
             }
 
             if (trimmed.Length > Constants.EMAIL_MAX_LENGTH)
             {
-                errorMessage = $"E-posta en fazla {Constants.EMAIL_MAX_LENGTH} karakter olabilir.";
+                errorMessage = $"Email can be at most {Constants.EMAIL_MAX_LENGTH} characters.";
                 return false;
             }
 
@@ -258,6 +258,15 @@ namespace NeonGalaxy.Meta
         public string GetCurrentAvatarId() => _saveService.Data.profileAvatarId;
 
         /// <summary>
+        /// Returns true if the player has set a custom profile picture.
+        /// </summary>
+        public bool HasCustomProfilePicture()
+        {
+            return _saveService.Data.profileAvatarId == Constants.CUSTOM_AVATAR_ID
+                   && !string.IsNullOrEmpty(_saveService.Data.customAvatarPath);
+        }
+
+        /// <summary>
         /// Sets the current avatar to a built-in avatar by ID.
         /// </summary>
         public void SetAvatar(string avatarId)
@@ -273,6 +282,8 @@ namespace NeonGalaxy.Meta
 
             Debug.Log($"[ProfileManager] Avatar changed to: {avatarId}");
             GameEvents.InvokeProfileUpdated();
+
+            _ = SyncPublicAvatarToCloudAsync();
         }
 
         /// <summary>
@@ -291,22 +302,97 @@ namespace NeonGalaxy.Meta
 
             Debug.Log($"[ProfileManager] Custom avatar set from: {localPath}");
             GameEvents.InvokeProfileUpdated();
+
+            _ = SyncPublicAvatarToCloudAsync();
+        }
+
+        /// <summary>
+        /// Uploads the active avatar payload (Base64 string or built-in ID)
+        /// to UGS Cloud Save as public data so other players can see it on the Leaderboard.
+        /// </summary>
+        public async Task SyncPublicAvatarToCloudAsync()
+        {
+            var cloudSaveService = ServiceLocator.Get<ICloudSaveService>();
+            if (cloudSaveService == null || !cloudSaveService.IsAvailable) return;
+
+            string avatarPayload = "";
+            var data = _saveService.Data;
+
+            if (data.profileAvatarId == Constants.CUSTOM_AVATAR_ID)
+            {
+                var pictureService = ServiceLocator.Get<ProfilePictureService>();
+                if (pictureService != null)
+                {
+                    string base64 = pictureService.GetCustomAvatarBase64();
+                    if (!string.IsNullOrEmpty(base64))
+                    {
+                        avatarPayload = "data:" + base64;
+                    }
+                }
+            }
+            else if (!string.IsNullOrEmpty(data.profileAvatarId))
+            {
+                avatarPayload = "id:" + data.profileAvatarId;
+            }
+
+            if (!string.IsNullOrEmpty(avatarPayload))
+            {
+                bool success = await cloudSaveService.SavePublicDataAsync("public_avatar_data", avatarPayload);
+                if (success)
+                {
+                    Debug.Log("[ProfileManager] Public avatar payload synced to UGS Cloud Save.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Opens the device gallery, lets the user pick an image,
+        /// center-crops it to square, saves locally, and sets as custom avatar.
+        /// Uses ProfilePictureService for gallery interaction.
+        /// </summary>
+        public void SetCustomAvatarFromGallery()
+        {
+            var pictureService = ServiceLocator.Get<ProfilePictureService>();
+            if (pictureService == null)
+            {
+                Debug.LogError("[ProfileManager] ProfilePictureService not registered.");
+                return;
+            }
+
+            // Subscribe to the save event (one-shot)
+            void OnPictureSaved(string localPath)
+            {
+                pictureService.OnPictureSaved -= OnPictureSaved;
+                SetCustomAvatar(localPath);
+            }
+
+            pictureService.OnPictureSaved += OnPictureSaved;
+            pictureService.PickImageFromGallery();
         }
 
         /// <summary>
         /// Returns the current avatar sprite.
-        /// Handles both built-in avatars and custom gallery images.
+        /// Priority: custom gallery image > built-in avatar > null.
+        /// Uses ProfilePictureService for custom avatar loading.
         /// </summary>
         public Sprite GetCurrentAvatarSprite()
         {
             var data = _saveService.Data;
 
-            // Custom avatar from gallery
+            // Custom avatar from gallery — use ProfilePictureService for cached loading
             if (data.profileAvatarId == Constants.CUSTOM_AVATAR_ID
                 && !string.IsNullOrEmpty(data.customAvatarPath))
             {
-                if (_cachedCustomSprite != null) return _cachedCustomSprite;
+                // Try ProfilePictureService first (handles caching)
+                var pictureService = ServiceLocator.Get<ProfilePictureService>();
+                if (pictureService != null)
+                {
+                    var customSprite = pictureService.GetCustomAvatarSprite();
+                    if (customSprite != null) return customSprite;
+                }
 
+                // Fallback: try loading directly
+                if (_cachedCustomSprite != null) return _cachedCustomSprite;
                 _cachedCustomSprite = LoadSpriteFromFile(data.customAvatarPath);
                 if (_cachedCustomSprite != null) return _cachedCustomSprite;
 

@@ -108,6 +108,9 @@ namespace NeonGalaxy.Boot
             ServiceLocator.Register(saveService);
             Debug.Log("[BootManager] SaveService registered.");
 
+            // Refresh AudioManager volumes now that SaveService is loaded and registered
+            NeonGalaxy.VFX.AudioManager.Instance?.LoadVolumeSettings();
+
             ReportProgress(0.25f, "Save data loaded.");
             await Awaitable.NextFrameAsync();
 
@@ -172,6 +175,11 @@ namespace NeonGalaxy.Boot
             profileManager.InitializeGuestProfile();
             ServiceLocator.Register(profileManager);
             Debug.Log("[BootManager] ProfileManager registered.");
+
+            // Profile Picture Service (gallery picker + image processing)
+            var profilePictureService = new ProfilePictureService();
+            ServiceLocator.Register(profilePictureService);
+            Debug.Log("[BootManager] ProfilePictureService registered.");
 
             ReportProgress(0.80f, "Profile ready.");
             await Awaitable.NextFrameAsync();
