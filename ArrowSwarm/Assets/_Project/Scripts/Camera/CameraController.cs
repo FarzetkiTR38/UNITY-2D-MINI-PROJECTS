@@ -18,6 +18,12 @@ namespace ArrowSwarm.Camera
         [SerializeField] private float _topHudMargin = 1.5f;
         [SerializeField] private float _bottomHudMargin = 1.8f;
 
+        [Header("HUD Boundaries")]
+        [SerializeField] private RectTransform _topPanelRect;
+        [SerializeField] private RectTransform _bottomPanelRect;
+        [SerializeField] private float _fallbackTopMarginRatio = 0.15f;
+        [SerializeField] private float _fallbackBottomMarginRatio = 0.15f;
+
         private UnityEngine.Camera _camera;
         private UnityEngine.Camera Cam => _camera != null ? _camera : (_camera = GetComponent<UnityEngine.Camera>() ?? UnityEngine.Camera.main);
         private float _defaultOrthoSize;
@@ -31,6 +37,8 @@ namespace ArrowSwarm.Camera
         // Touch & Mouse Drag tracking
         private bool _isPanning;
         private bool _isDragging;
+        private bool _isTouchDragValid;
+        private bool _isMouseDragValid;
         private Vector2 _dragStartScreenPos;
         private Vector2 _lastPanPosition;
         private float _lastPinchDistance;
@@ -68,6 +76,77 @@ namespace ArrowSwarm.Camera
             {
                 _camera = GetComponent<UnityEngine.Camera>();
             }
+
+            AutoFindHudPanels();
+        }
+
+        /// <summary>
+        /// Automatically locates TopBar and BottomBar RectTransforms if not explicitly set.
+        /// </summary>
+        private void AutoFindHudPanels()
+        {
+            if (_topPanelRect != null && _bottomPanelRect != null) return;
+
+            var canvases = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+            foreach (var canvas in canvases)
+            {
+                if (canvas == null) continue;
+                if (_topPanelRect == null)
+                {
+                    Transform t = canvas.transform.Find("TopBar") ?? canvas.transform.Find("TopPanel");
+                    if (t != null) _topPanelRect = t as RectTransform;
+                }
+                if (_bottomPanelRect == null)
+                {
+                    Transform b = canvas.transform.Find("BottomBar") ?? canvas.transform.Find("BottomPanel");
+                    if (b != null) _bottomPanelRect = b as RectTransform;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Determines whether a screen position is in the valid game area
+        /// strictly between the Top HUD and Bottom HUD, and not over any UI element.
+        /// </summary>
+        public bool IsValidPanStartPosition(Vector2 screenPosition, int touchId = -1)
+        {
+            // 1. Check if pointer/touch is interacting with any UI element (slider, button, etc.)
+            if (UnityEngine.EventSystems.EventSystem.current != null)
+            {
+                bool isOverUI = touchId >= 0
+                    ? UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(touchId)
+                    : UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject();
+
+                if (isOverUI) return false;
+            }
+
+            AutoFindHudPanels();
+
+            // 2. Check Top HUD boundary (top cutoff)
+            float topLimit = Screen.height * (1f - _fallbackTopMarginRatio);
+            if (_topPanelRect != null && _topPanelRect.gameObject.activeInHierarchy)
+            {
+                Vector3[] topCorners = new Vector3[4];
+                _topPanelRect.GetWorldCorners(topCorners);
+                topLimit = Mathf.Min(topCorners[0].y, topCorners[3].y);
+            }
+
+            // 3. Check Bottom HUD boundary (bottom cutoff)
+            float bottomLimit = Screen.height * _fallbackBottomMarginRatio;
+            if (_bottomPanelRect != null && _bottomPanelRect.gameObject.activeInHierarchy)
+            {
+                Vector3[] bottomCorners = new Vector3[4];
+                _bottomPanelRect.GetWorldCorners(bottomCorners);
+                bottomLimit = Mathf.Max(bottomCorners[1].y, bottomCorners[2].y);
+            }
+
+            // Must be strictly between bottomLimit and topLimit
+            if (screenPosition.y >= topLimit || screenPosition.y <= bottomLimit)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -170,6 +249,7 @@ namespace ArrowSwarm.Camera
                     StartCoroutine(ResetDraggingNextFrame());
                 }
                 _isPinching = false;
+                _isTouchDragValid = false;
             }
         }
 
@@ -178,17 +258,25 @@ namespace ArrowSwarm.Camera
             var touch0 = touchscreen.touches[0];
             var touch1 = touchscreen.touches[1];
 
-            float currentDistance = Vector2.Distance(
-                touch0.position.ReadValue(), touch1.position.ReadValue());
+            Vector2 pos0 = touch0.position.ReadValue();
+            Vector2 pos1 = touch1.position.ReadValue();
 
             if (!_isPinching)
             {
+                if (!IsValidPanStartPosition(pos0, touch0.touchId.ReadValue()) ||
+                    !IsValidPanStartPosition(pos1, touch1.touchId.ReadValue()))
+                {
+                    return;
+                }
+
                 _isPinching = true;
-                _lastPinchDistance = currentDistance;
+                _lastPinchDistance = Vector2.Distance(pos0, pos1);
                 _isPanning = false;
+                _isTouchDragValid = false;
                 return;
             }
 
+            float currentDistance = Vector2.Distance(pos0, pos1);
             float delta = currentDistance - _lastPinchDistance;
             _targetOrthoSize -= delta * _zoomSpeed * 0.01f;
             _targetOrthoSize = Mathf.Clamp(_targetOrthoSize, _minOrthoSize, _maxOrthoSize);
@@ -199,9 +287,18 @@ namespace ArrowSwarm.Camera
         {
             var touch = touchscreen.touches[0];
             Vector2 touchPos = touch.position.ReadValue();
+            var phase = touch.phase.ReadValue();
 
-            if (touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began)
+            if (phase == UnityEngine.InputSystem.TouchPhase.Began)
             {
+                _isTouchDragValid = IsValidPanStartPosition(touchPos, touch.touchId.ReadValue());
+                if (!_isTouchDragValid)
+                {
+                    _isPanning = false;
+                    _isDragging = false;
+                    return;
+                }
+
                 _dragStartScreenPos = touchPos;
                 _lastPanPosition = touchPos;
                 _isPanning = false;
@@ -209,21 +306,35 @@ namespace ArrowSwarm.Camera
                 return;
             }
 
-            float dist = Vector2.Distance(touchPos, _dragStartScreenPos);
-            if (!_isPanning && dist > DragThreshold)
-            {
-                _isPanning = true;
-                _isDragging = true;
-                _lastPanPosition = touchPos;
-            }
+            if (!_isTouchDragValid) return;
 
-            if (_isPanning)
+            if (phase == UnityEngine.InputSystem.TouchPhase.Moved || phase == UnityEngine.InputSystem.TouchPhase.Stationary)
             {
-                Vector2 delta = touchPos - _lastPanPosition;
-                Vector3 worldDelta = _camera.ScreenToWorldPoint(Vector3.zero) -
-                                     _camera.ScreenToWorldPoint(new Vector3(delta.x, delta.y, 0));
-                PanCamera(worldDelta);
-                _lastPanPosition = touchPos;
+                float dist = Vector2.Distance(touchPos, _dragStartScreenPos);
+                if (!_isPanning && dist > DragThreshold)
+                {
+                    _isPanning = true;
+                    _isDragging = true;
+                    _lastPanPosition = touchPos;
+                }
+
+                if (_isPanning)
+                {
+                    Vector2 delta = touchPos - _lastPanPosition;
+                    Vector3 worldDelta = _camera.ScreenToWorldPoint(Vector3.zero) -
+                                         _camera.ScreenToWorldPoint(new Vector3(delta.x, delta.y, 0));
+                    PanCamera(worldDelta);
+                    _lastPanPosition = touchPos;
+                }
+            }
+            else if (phase == UnityEngine.InputSystem.TouchPhase.Ended || phase == UnityEngine.InputSystem.TouchPhase.Canceled)
+            {
+                _isTouchDragValid = false;
+                if (_isPanning)
+                {
+                    _isPanning = false;
+                    StartCoroutine(ResetDraggingNextFrame());
+                }
             }
         }
 
@@ -243,12 +354,21 @@ namespace ArrowSwarm.Camera
             // Left-click or Right-click drag pan
             if (mouse.leftButton.wasPressedThisFrame || mouse.rightButton.wasPressedThisFrame)
             {
-                _dragStartScreenPos = mouse.position.ReadValue();
+                Vector2 mousePos = mouse.position.ReadValue();
+                _isMouseDragValid = IsValidPanStartPosition(mousePos, -1);
+                if (!_isMouseDragValid)
+                {
+                    _isPanning = false;
+                    _isDragging = false;
+                    return;
+                }
+
+                _dragStartScreenPos = mousePos;
                 _lastPanPosition = _dragStartScreenPos;
                 _isPanning = false;
                 _isDragging = false;
             }
-            else if (mouse.leftButton.isPressed || mouse.rightButton.isPressed)
+            else if (_isMouseDragValid && (mouse.leftButton.isPressed || mouse.rightButton.isPressed))
             {
                 Vector2 mousePos = mouse.position.ReadValue();
                 float dist = Vector2.Distance(mousePos, _dragStartScreenPos);
@@ -271,6 +391,7 @@ namespace ArrowSwarm.Camera
             }
             else if (mouse.leftButton.wasReleasedThisFrame || mouse.rightButton.wasReleasedThisFrame)
             {
+                _isMouseDragValid = false;
                 if (_isPanning)
                 {
                     _isPanning = false;
