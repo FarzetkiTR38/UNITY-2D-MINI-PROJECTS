@@ -37,12 +37,6 @@ namespace ArrowSwarm.Data
         protected override void OnSingletonAwake()
         {
             Load();
-            if (_playerData != null)
-            {
-                _playerData.currentLevel = 21;
-                _playerData.highestLevel = 21;
-                Save();
-            }
             CheckDailyLogin();
         }
 
@@ -91,22 +85,37 @@ namespace ArrowSwarm.Data
             NotifyAndSave();
         }
 
+        /// <summary>
+        /// Gets the total stars earned across all levels.
+        /// </summary>
+        public int GetTotalStars()
+        {
+            return _playerData != null ? _playerData.GetTotalStars() : 0;
+        }
+
+        /// <summary>
+        /// Unlocks the next level if completed level is at or above highestLevel.
+        /// </summary>
+        public void UnlockNextLevel(int completedLevel)
+        {
+            if (_playerData == null) return;
+            if (completedLevel >= _playerData.highestLevel)
+            {
+                _playerData.highestLevel = completedLevel + 1;
+                NotifyAndSave();
+            }
+        }
+
         public int GetLevelStars(int level)
         {
-            if (_playerData.levelStars == null) return 0;
-            
-            for (int i = 0; i < _playerData.levelStars.Count; i++)
-            {
-                if (_playerData.levelStars[i].level == level)
-                {
-                    return _playerData.levelStars[i].stars;
-                }
-            }
-            return 0;
+            if (_playerData == null) return 0;
+            return _playerData.GetStarsForLevel(level);
         }
 
         public void SetLevelStars(int level, int stars)
         {
+            if (_playerData == null) return;
+
             if (_playerData.levelStars == null) 
             {
                 _playerData.levelStars = new System.Collections.Generic.List<LevelStarData>();
@@ -187,6 +196,7 @@ namespace ArrowSwarm.Data
             if (_autoSaveOnChange)
             {
                 Save();
+                MockCloudService.Instance?.SavePlayerData(_playerData, null);
             }
         }
 

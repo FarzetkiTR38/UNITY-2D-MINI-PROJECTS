@@ -20,8 +20,6 @@ namespace ArrowSwarm.UI
 
         [Header("Stars")]
         [SerializeField] private GameObject[] _stars = new GameObject[3]; // Drag 3 star images here in Editor
-        [SerializeField] private Color _activeStarColor = Color.yellow;
-        [SerializeField] private Color _inactiveStarColor = new Color(0.2f, 0.2f, 0.2f, 0.5f);
 
         private void OnEnable()
         {
@@ -49,7 +47,10 @@ namespace ArrowSwarm.UI
 
         private void Show()
         {
-            int level = Data.DataManager.Instance?.PlayerData?.currentLevel ?? 1;
+            int level = LevelManager.Instance != null && LevelManager.Instance.CurrentParams.Level > 0 
+                ? LevelManager.Instance.CurrentParams.Level 
+                : (Data.DataManager.Instance?.PlayerData?.currentLevel ?? 1);
+
             if (_titleText != null) _titleText.text = "LEVEL COMPLETE!";
             if (_levelText != null) _levelText.text = $"Level {level} Cleared";
 
@@ -57,19 +58,15 @@ namespace ArrowSwarm.UI
             int currentLives = GameManager.Instance != null ? GameManager.Instance.CurrentLives : 3;
             int starsEarned = Mathf.Clamp(currentLives, 0, 3);
 
+            // Record stars and progression in persistent storage & cloud
+            Data.DataManager.Instance?.SetLevelStars(level, starsEarned);
+            Data.DataManager.Instance?.UnlockNextLevel(level);
+
             for (int i = 0; i < _stars.Length; i++)
             {
                 if (_stars[i] != null)
                 {
-                    Image starImage = _stars[i].GetComponent<Image>();
-                    if (starImage != null)
-                    {
-                        starImage.color = i < starsEarned ? _activeStarColor : _inactiveStarColor;
-                    }
-                    else
-                    {
-                        _stars[i].SetActive(i < starsEarned);
-                    }
+                    _stars[i].SetActive(i < starsEarned);
                 }
             }
 

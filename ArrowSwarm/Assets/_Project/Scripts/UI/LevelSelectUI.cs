@@ -1,18 +1,26 @@
 namespace ArrowSwarm.UI
 {
+    using System.Collections.Generic;
     using ArrowSwarm.Core;
     using ArrowSwarm.Data;
+    using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
 
     /// <summary>
-    /// Controls the Level Selection panel.
-    /// Dynamically populates level buttons based on player progression.
+    /// Controls the Level Selection panel with multi-page pagination.
+    /// Displays 20 levels per page, starts at the highest reached level's page,
+    /// and lets players jump into any unlocked level.
     /// </summary>
     public class LevelSelectUI : MonoBehaviour
     {
+        public const int LEVELS_PER_PAGE = 20;
+
         [Header("UI References")]
         [SerializeField] private Button _closeButton;
+        [SerializeField] private Button _prevPageButton;
+        [SerializeField] private Button _nextPageButton;
+        [SerializeField] private TextMeshProUGUI _pageText;
         [SerializeField] private Transform _levelGridContainer;
         [SerializeField] private LevelButtonUI _levelButtonPrefab;
 
@@ -20,7 +28,13 @@ namespace ArrowSwarm.UI
         [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private float _fadeSpeed = 5f;
 
-        private const int MAX_LEVELS = 30; // Just a placeholder for total possible levels
+        private int _currentPage = 1;
+        private readonly List<LevelButtonUI> _buttonPool = new List<LevelButtonUI>();
+
+        private void Awake()
+        {
+            AutoWire();
+        }
 
         private void OnEnable()
         {
@@ -32,38 +46,128 @@ namespace ArrowSwarm.UI
                 StopAllCoroutines();
                 StartCoroutine(FadeTo(1f));
             }
-            
-            PopulateLevels();
+
+            int highestLevel = DataManager.Instance?.PlayerData?.highestLevel ?? 1;
+            int maxPage = Mathf.Max(1, (highestLevel - 1) / LEVELS_PER_PAGE + 1);
+            _currentPage = maxPage;
+
+            UpdatePage();
         }
 
         private void Start()
         {
             _closeButton?.onClick.AddListener(Close);
+            _prevPageButton?.onClick.AddListener(PrevPage);
+            _nextPageButton?.onClick.AddListener(NextPage);
         }
 
-        private void PopulateLevels()
+        public void AutoWire()
         {
-            // Clear existing children
-            foreach (Transform child in _levelGridContainer)
+            if (_canvasGroup == null)
             {
-                Destroy(child.gameObject);
+                _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
             }
 
-            int highestLevel = DataManager.Instance?.PlayerData?.highestLevel ?? 1;
-
-            for (int i = 1; i <= MAX_LEVELS; i++)
+            if (_closeButton == null)
             {
-                LevelButtonUI btn = Instantiate(_levelButtonPrefab, _levelGridContainer);
-                int stars = DataManager.Instance?.GetLevelStars(i) ?? 0;
-                bool isUnlocked = i <= highestLevel;
-                
-                btn.Setup(i, isUnlocked, stars, OnLevelClicked);
+                var btn = transform.Find("Header/CloseButton") ?? transform.Find("CloseButton");
+                if (btn != null) _closeButton = btn.GetComponent<Button>();
+            }
+
+            if (_prevPageButton == null)
+            {
+                var btn = transform.Find("Nav/PrevButton") ?? transform.Find("PrevButton");
+                if (btn != null) _prevPageButton = btn.GetComponent<Button>();
+            }
+
+            if (_nextPageButton == null)
+            {
+                var btn = transform.Find("Nav/NextButton") ?? transform.Find("NextButton");
+                if (btn != null) _nextPageButton = btn.GetComponent<Button>();
+            }
+
+            if (_pageText == null)
+            {
+                var txt = transform.Find("Nav/PageText") ?? transform.Find("PageText");
+                if (txt != null) _pageText = txt.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (_levelGridContainer == null)
+            {
+                var grid = transform.Find("GridContainer") ?? transform.Find("Content/GridContainer");
+                if (grid != null) _levelGridContainer = grid;
+            }
+        }
+
+        public void PrevPage()
+        {
+            if (_currentPage > 1)
+            {
+                _currentPage--;
+                UpdatePage();
+            }
+        }
+
+        public void NextPage()
+        {
+            int highestLevel = DataManager.Instance?.PlayerData?.highestLevel ?? 1;
+            int maxPage = Mathf.Max(1, (highestLevel - 1) / LEVELS_PER_PAGE + 1);
+
+            if (_currentPage < maxPage)
+            {
+                _currentPage++;
+                UpdatePage();
+            }
+        }
+
+        private void UpdatePage()
+        {
+            if (_levelGridContainer == null) return;
+
+            int highestLevel = DataManager.Instance?.PlayerData?.highestLevel ?? 1;
+            int maxPage = Mathf.Max(1, (highestLevel - 1) / LEVELS_PER_PAGE + 1);
+
+            _currentPage = Mathf.Clamp(_currentPage, 1, maxPage);
+
+            if (_prevPageButton != null) _prevPageButton.interactable = _currentPage > 1;
+            if (_nextPageButton != null) _nextPageButton.interactable = _currentPage < maxPage;
+
+            int startLevel = (_currentPage - 1) * LEVELS_PER_PAGE + 1;
+            int endLevel = _currentPage * LEVELS_PER_PAGE;
+
+            if (_pageText != null)
+            {
+                _pageText.text = $"Levels {startLevel} - {endLevel}";
+            }
+
+            // Collect existing child buttons in container if pool is empty
+            if (_buttonPool.Count == 0)
+            {
+                var existing = _levelGridContainer.GetComponentsInChildren<LevelButtonUI>(true);
+                _buttonPool.AddRange(existing);
+            }
+
+            // Ensure we have 20 buttons in pool
+            while (_buttonPool.Count < LEVELS_PER_PAGE && _levelButtonPrefab != null)
+            {
+                LevelButtonUI newBtn = Instantiate(_levelButtonPrefab, _levelGridContainer);
+                _buttonPool.Add(newBtn);
+            }
+
+            // Update each button for current page
+            for (int i = 0; i < LEVELS_PER_PAGE && i < _buttonPool.Count; i++)
+            {
+                int levelNum = startLevel + i;
+                bool isUnlocked = levelNum <= highestLevel;
+                int stars = DataManager.Instance?.GetLevelStars(levelNum) ?? 0;
+
+                _buttonPool[i].gameObject.SetActive(true);
+                _buttonPool[i].Setup(levelNum, isUnlocked, stars, OnLevelClicked);
             }
         }
 
         private void OnLevelClicked(int level)
         {
-            // Start the game at the specific level
             DataManager.Instance?.SetCurrentLevel(level);
             GameManager.Instance?.StartGame();
         }
@@ -101,6 +205,8 @@ namespace ArrowSwarm.UI
         private void OnDestroy()
         {
             _closeButton?.onClick.RemoveListener(Close);
+            _prevPageButton?.onClick.RemoveListener(PrevPage);
+            _nextPageButton?.onClick.RemoveListener(NextPage);
         }
     }
 }

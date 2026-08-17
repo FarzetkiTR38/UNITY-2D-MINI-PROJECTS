@@ -56,16 +56,16 @@ namespace ArrowSwarm.Data
 
             var entries = new List<LeaderboardEntry>
             {
-                new LeaderboardEntry { PlayerName = "ProPlayer", HighestLevel = 892 },
-                new LeaderboardEntry { PlayerName = "ArrowKing", HighestLevel = 756 },
-                new LeaderboardEntry { PlayerName = "SwarmMaster", HighestLevel = 643 },
-                new LeaderboardEntry { PlayerName = "PathFinder", HighestLevel = 521 },
-                new LeaderboardEntry { PlayerName = "GridLord", HighestLevel = 478 },
-                new LeaderboardEntry { PlayerName = "MobSlayer", HighestLevel = 412 },
-                new LeaderboardEntry { PlayerName = "QuickShot", HighestLevel = 367 },
-                new LeaderboardEntry { PlayerName = "TipMaster", HighestLevel = 298 },
-                new LeaderboardEntry { PlayerName = "LevelCrusher", HighestLevel = 245 },
-                new LeaderboardEntry { PlayerName = "BugHunter", HighestLevel = 189 },
+                new LeaderboardEntry { PlayerName = "ProPlayer", HighestLevel = 892, TotalStars = 2676 },
+                new LeaderboardEntry { PlayerName = "ArrowKing", HighestLevel = 756, TotalStars = 2260 },
+                new LeaderboardEntry { PlayerName = "SwarmMaster", HighestLevel = 643, TotalStars = 1920 },
+                new LeaderboardEntry { PlayerName = "PathFinder", HighestLevel = 521, TotalStars = 1550 },
+                new LeaderboardEntry { PlayerName = "GridLord", HighestLevel = 478, TotalStars = 1420 },
+                new LeaderboardEntry { PlayerName = "MobSlayer", HighestLevel = 412, TotalStars = 1230 },
+                new LeaderboardEntry { PlayerName = "QuickShot", HighestLevel = 367, TotalStars = 1100 },
+                new LeaderboardEntry { PlayerName = "TipMaster", HighestLevel = 298, TotalStars = 890 },
+                new LeaderboardEntry { PlayerName = "LevelCrusher", HighestLevel = 245, TotalStars = 730 },
+                new LeaderboardEntry { PlayerName = "BugHunter", HighestLevel = 189, TotalStars = 560 },
             };
 
             LogDebug($"Mock leaderboard loaded: {entries.Count} entries");

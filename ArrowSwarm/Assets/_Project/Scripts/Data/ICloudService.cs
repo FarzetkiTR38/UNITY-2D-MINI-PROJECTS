@@ -34,6 +34,8 @@ namespace ArrowSwarm.Data
         public string PlayerId;
         public string PlayerName;
         public int HighestLevel;
+        public int TotalStars;
+        public bool IsPlayer;
         public string LastUpdated;
     }
 }

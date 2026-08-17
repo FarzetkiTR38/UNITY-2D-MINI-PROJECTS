@@ -27,10 +27,6 @@ namespace ArrowSwarm.UI
         [Header("Canvas Group")]
         [SerializeField] private CanvasGroup _canvasGroup;
 
-        [Header("Colors")]
-        [SerializeField] private Color _heartActiveColor = new Color(0.91f, 0.27f, 0.37f);
-        [SerializeField] private Color _heartInactiveColor = new Color(0.4f, 0.4f, 0.5f);
-
         private void OnEnable()
         {
             GameManager.OnLivesChanged += UpdateLives;
@@ -49,9 +45,6 @@ namespace ArrowSwarm.UI
 
         private void Start()
         {
-            AlignPanelsToEdges();
-            ApplyPastelThemeHUDStyle();
-
             if (_canvasGroup == null)
             {
                 _canvasGroup = GetComponent<CanvasGroup>();
@@ -66,76 +59,6 @@ namespace ArrowSwarm.UI
             {
                 HandleStateChanged(GameManager.Instance.CurrentState);
             }
-        }
-
-        private void AlignPanelsToEdges()
-        {
-            if (_topPanelRect != null)
-            {
-                _topPanelRect.anchorMin = new Vector2(0f, 1f);
-                _topPanelRect.anchorMax = new Vector2(1f, 1f);
-                _topPanelRect.pivot = new Vector2(0.5f, 1f);
-                _topPanelRect.anchoredPosition = Vector2.zero;
-            }
-            else if (_levelText != null && _levelText.transform.parent is RectTransform parentTop)
-            {
-                parentTop.anchorMin = new Vector2(0f, 1f);
-                parentTop.anchorMax = new Vector2(1f, 1f);
-                parentTop.pivot = new Vector2(0.5f, 1f);
-                parentTop.anchoredPosition = Vector2.zero;
-            }
-
-            if (_bottomPanelRect != null)
-            {
-                _bottomPanelRect.anchorMin = new Vector2(0f, 0f);
-                _bottomPanelRect.anchorMax = new Vector2(1f, 0f);
-                _bottomPanelRect.pivot = new Vector2(0.5f, 0f);
-                _bottomPanelRect.anchoredPosition = Vector2.zero;
-            }
-            else if (_arrowCountText != null && _arrowCountText.transform.parent is RectTransform parentBottom)
-            {
-                parentBottom.anchorMin = new Vector2(0f, 0f);
-                parentBottom.anchorMax = new Vector2(1f, 0f);
-                parentBottom.pivot = new Vector2(0.5f, 0f);
-                parentBottom.anchoredPosition = Vector2.zero;
-            }
-        }
-
-        private void ApplyPastelThemeHUDStyle()
-        {
-            // Dark Indigo Text color (#3D344B)
-            Color textDarkIndigo = new Color(0.24f, 0.20f, 0.29f, 1f);
-
-            if (_levelText != null) _levelText.color = textDarkIndigo;
-            if (_arrowCountText != null) _arrowCountText.color = textDarkIndigo;
-            if (_tipCountText != null) _tipCountText.color = textDarkIndigo;
-
-            // Clear background images on top and bottom panel containers (remove dark translucent boxes)
-            if (_topPanelRect != null)
-            {
-                var img = _topPanelRect.GetComponent<Image>();
-                if (img != null) img.color = Color.clear;
-            }
-            if (_bottomPanelRect != null)
-            {
-                var img = _bottomPanelRect.GetComponent<Image>();
-                if (img != null) img.color = Color.clear;
-            }
-
-            // Style buttons as clean 100% opaque floating white rounded cards
-            Color whiteCard = Color.white;
-            if (_pauseButton != null && _pauseButton.targetGraphic is Image pauseImg)
-            {
-                pauseImg.color = whiteCard;
-            }
-            if (_tipButton != null && _tipButton.targetGraphic is Image tipImg)
-            {
-                tipImg.color = whiteCard;
-            }
-
-            // Heart icons: Golden Active, Soft Taupe Inactive
-            _heartInactiveColor = new Color(0.84f, 0.80f, 0.75f, 1f); // #D6CBC0
-            _heartActiveColor = new Color(1.00f, 0.64f, 0.11f, 1f);   // #FFA41B (Star Gold)
         }
 
         private void HandleLevelReady(LevelParams levelParams)
@@ -154,7 +77,10 @@ namespace ArrowSwarm.UI
 
             for (int i = 0; i < _heartIcons.Length; i++)
             {
-                _heartIcons[i].color = i < lives ? _heartActiveColor : _heartInactiveColor;
+                if (_heartIcons[i] != null)
+                {
+                    _heartIcons[i].gameObject.SetActive(i < lives);
+                }
             }
         }
 
