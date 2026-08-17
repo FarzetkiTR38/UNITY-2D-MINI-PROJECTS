@@ -47,13 +47,20 @@ namespace ArrowSwarm.UI
 
         private void Show()
         {
-            int level = Data.DataManager.Instance?.PlayerData?.currentLevel ?? 1;
+            int level = LevelManager.Instance != null && LevelManager.Instance.CurrentParams.Level > 0 
+                ? LevelManager.Instance.CurrentParams.Level 
+                : (Data.DataManager.Instance?.PlayerData?.currentLevel ?? 1);
+
             if (_titleText != null) _titleText.text = "LEVEL COMPLETE!";
             if (_levelText != null) _levelText.text = $"Level {level} Cleared";
 
             // Update stars based on remaining lives
             int currentLives = GameManager.Instance != null ? GameManager.Instance.CurrentLives : 3;
             int starsEarned = Mathf.Clamp(currentLives, 0, 3);
+
+            // Record stars and progression in persistent storage & cloud
+            Data.DataManager.Instance?.SetLevelStars(level, starsEarned);
+            Data.DataManager.Instance?.UnlockNextLevel(level);
 
             for (int i = 0; i < _stars.Length; i++)
             {

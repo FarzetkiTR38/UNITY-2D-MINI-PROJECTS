@@ -61,22 +61,15 @@ namespace ArrowSwarm.Data
         public List<LeaderboardEntry> GetTopPlayers(int count)
         {
             // Always inject current player data dynamically so it's fresh
-            var currentData = DataManager.Instance.PlayerData;
-            
-            // Calculate total stars for player
-            int playerStars = 0;
-            if (currentData.levelStars != null)
-            {
-                foreach (var starData in currentData.levelStars)
-                {
-                    playerStars += starData.stars;
-                }
-            }
+            var currentData = DataManager.Instance?.PlayerData;
+            int playerLevel = currentData?.highestLevel ?? 1;
+            int playerStars = currentData?.GetTotalStars() ?? 0;
+            string playerName = currentData?.playerName ?? "Player";
 
             var playerEntry = new LeaderboardEntry 
             { 
-                PlayerName = currentData.playerName, 
-                HighestLevel = currentData.highestLevel, 
+                PlayerName = playerName, 
+                HighestLevel = playerLevel, 
                 TotalStars = playerStars,
                 IsPlayer = true
             };
@@ -94,21 +87,16 @@ namespace ArrowSwarm.Data
 
         public int GetPlayerRank()
         {
-            var currentData = DataManager.Instance.PlayerData;
-            int playerStars = 0;
-            if (currentData.levelStars != null)
-            {
-                foreach (var starData in currentData.levelStars)
-                {
-                    playerStars += starData.stars;
-                }
-            }
+            var currentData = DataManager.Instance?.PlayerData;
+            int playerLevel = currentData?.highestLevel ?? 1;
+            int playerStars = currentData?.GetTotalStars() ?? 0;
+            string playerName = currentData?.playerName ?? "Player";
 
             var allEntries = new List<LeaderboardEntry>(_cachedEntries);
             allEntries.Add(new LeaderboardEntry 
             { 
-                PlayerName = currentData.playerName, 
-                HighestLevel = currentData.highestLevel, 
+                PlayerName = playerName, 
+                HighestLevel = playerLevel, 
                 TotalStars = playerStars,
                 IsPlayer = true 
             });

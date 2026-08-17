@@ -10,10 +10,10 @@ namespace ArrowSwarm.Data
     public class PlayerData
     {
         /// <summary>Current level the player is on.</summary>
-        public int currentLevel = 21;
+        public int currentLevel = 1;
 
         /// <summary>Highest level ever reached.</summary>
-        public int highestLevel = 21;
+        public int highestLevel = 1;
 
         /// <summary>Number of available tip (hint) tokens.</summary>
         public int tipCount = 3;
@@ -37,14 +37,44 @@ namespace ArrowSwarm.Data
         public string playerId = "";
 
         /// <summary>
+        /// Calculates the total stars earned across all levels.
+        /// </summary>
+        public int GetTotalStars()
+        {
+            if (levelStars == null) return 0;
+            int total = 0;
+            for (int i = 0; i < levelStars.Count; i++)
+            {
+                total += levelStars[i].stars;
+            }
+            return total;
+        }
+
+        /// <summary>
+        /// Gets the recorded stars for a specific level.
+        /// </summary>
+        public int GetStarsForLevel(int level)
+        {
+            if (levelStars == null) return 0;
+            for (int i = 0; i < levelStars.Count; i++)
+            {
+                if (levelStars[i].level == level)
+                {
+                    return levelStars[i].stars;
+                }
+            }
+            return 0;
+        }
+
+        /// <summary>
         /// Creates a default PlayerData with initial values.
         /// </summary>
         public static PlayerData CreateDefault()
         {
             return new PlayerData
             {
-                currentLevel = 21,
-                highestLevel = 21,
+                currentLevel = 1,
+                highestLevel = 1,
                 tipCount = 3,
                 levelStars = new System.Collections.Generic.List<LevelStarData>(),
                 lastDailyLoginDate = "",

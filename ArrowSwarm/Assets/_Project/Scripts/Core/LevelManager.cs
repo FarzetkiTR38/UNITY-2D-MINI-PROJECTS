@@ -137,13 +137,13 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Advances to the next level.
+        /// Advances to the highest unlocked level.
         /// </summary>
         public void NextLevel()
         {
             CleanupLevel();
 
-            int nextLevel = (DataManager.Instance?.PlayerData?.currentLevel ?? 1) + 1;
+            int nextLevel = DataManager.Instance?.PlayerData?.highestLevel ?? 1;
             DataManager.Instance?.SetCurrentLevel(nextLevel);
 
             GameManager.Instance.StartGame();
