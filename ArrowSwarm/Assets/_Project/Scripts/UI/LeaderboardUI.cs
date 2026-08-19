@@ -1,75 +1,185 @@
 namespace ArrowSwarm.UI
 {
+    using System.Collections.Generic;
     using ArrowSwarm.Data;
     using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
 
     /// <summary>
-    /// Leaderboard screen showing top 10 players and current player rank.
-    /// Uses ICloudService for data (mock in first phase).
+    /// Leaderboard screen showing top 10 players matching the popup dialog visual design.
+    /// Handles animated transitions, data loading, and back/close buttons.
     /// </summary>
     public class LeaderboardUI : MonoBehaviour
     {
+        [Header("UI References")]
         [SerializeField] private CanvasGroup _canvasGroup;
-        [SerializeField] private TextMeshProUGUI _titleText;
-        [SerializeField] private TextMeshProUGUI[] _rankTexts; // Top 10 entries
-        [SerializeField] private TextMeshProUGUI _playerRankText;
-        [SerializeField] private TextMeshProUGUI _noInternetText;
         [SerializeField] private Button _backButton;
+        [SerializeField] private Button _closeButton;
+        [SerializeField] private TextMeshProUGUI _titleText;
+        [SerializeField] private Transform _entriesContainer;
+        [SerializeField] private LeaderboardEntryUI[] _entryRows;
+
+        [Header("Decoration & Board")]
+        [SerializeField] private Image _boardImage;
+        [SerializeField] private Image _footerTrophyImage;
+
+        [Header("Animation")]
+        [SerializeField] private float _fadeSpeed = 5f;
+
+        private void Awake()
+        {
+            AutoWire();
+        }
 
         private void Start()
         {
             _backButton?.onClick.AddListener(Hide);
+            _closeButton?.onClick.AddListener(Hide);
             if (_titleText != null) _titleText.text = "LEADERBOARD";
-            Hide();
         }
 
         /// <summary>
-        /// Shows the leaderboard panel and loads data.
+        /// Automatically discovers and connects required UI references.
+        /// </summary>
+        public void AutoWire()
+        {
+            if (_canvasGroup == null)
+                _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+
+            if (_backButton == null)
+            {
+                var btn = transform.Find("BoardFrame/Header/BackButton") ?? transform.Find("BackButton");
+                if (btn != null) _backButton = btn.GetComponent<Button>();
+            }
+
+            if (_closeButton == null)
+            {
+                var btn = transform.Find("BoardFrame/Header/CloseButton") ?? transform.Find("CloseBtn") ?? transform.Find("CloseButton");
+                if (btn != null) _closeButton = btn.GetComponent<Button>();
+            }
+
+            if (_titleText == null)
+            {
+                var txt = transform.Find("BoardFrame/Header/TitleText") ?? transform.Find("TitleText");
+                if (txt != null) _titleText = txt.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (_entriesContainer == null)
+            {
+                _entriesContainer = transform.Find("BoardFrame/EntriesContainer") ?? transform.Find("EntriesContainer");
+            }
+
+            if (_entriesContainer != null && (_entryRows == null || _entryRows.Length == 0))
+            {
+                _entryRows = _entriesContainer.GetComponentsInChildren<LeaderboardEntryUI>(true);
+            }
+
+            if (_boardImage == null)
+            {
+                var b = transform.Find("BoardFrame");
+                if (b != null) _boardImage = b.GetComponent<Image>();
+            }
+
+            if (_footerTrophyImage == null)
+            {
+                var f = transform.Find("BoardFrame/FooterArea/TrophyBadge") ?? transform.Find("FooterArea/TrophyBadge");
+                if (f != null) _footerTrophyImage = f.GetComponent<Image>();
+            }
+        }
+
+        /// <summary>
+        /// Shows the leaderboard panel with smooth fade in and refreshes data.
         /// </summary>
         public void Show()
         {
             gameObject.SetActive(true);
-            LoadLeaderboardData();
+            AutoWire();
+
+            if (_canvasGroup != null)
+            {
+                _canvasGroup.alpha = 0f;
+                _canvasGroup.interactable = true;
+                _canvasGroup.blocksRaycasts = true;
+                StopAllCoroutines();
+                StartCoroutine(FadeTo(1f));
+            }
+
+            RefreshLeaderboardData();
         }
 
         /// <summary>
-        /// Hides the leaderboard panel.
+        /// Hides the leaderboard panel with smooth fade out.
         /// </summary>
         public void Hide()
         {
-            gameObject.SetActive(false);
+            if (!gameObject.activeInHierarchy) return;
+
+            if (_canvasGroup != null)
+            {
+                _canvasGroup.interactable = false;
+                _canvasGroup.blocksRaycasts = false;
+                StopAllCoroutines();
+                StartCoroutine(FadeTo(0f, true));
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
 
-        private void LoadLeaderboardData()
+        /// <summary>
+        /// Loads and displays top 10 player entries from LeaderboardManager.
+        /// </summary>
+        public void RefreshLeaderboardData()
         {
-            if (_noInternetText != null) _noInternetText.gameObject.SetActive(false);
+            int rowCount = _entryRows != null && _entryRows.Length > 0 ? _entryRows.Length : 10;
+            var entries = LeaderboardManager.Instance?.GetTopPlayers(rowCount);
 
-            var entries = LeaderboardManager.Instance?.GetTopPlayers(_rankTexts.Length);
-            if (entries != null)
+            if (entries != null && _entryRows != null)
             {
-                for (int i = 0; i < _rankTexts.Length && i < entries.Count; i++)
+                for (int i = 0; i < _entryRows.Length; i++)
                 {
-                    if (_rankTexts[i] != null)
+                    if (_entryRows[i] == null) continue;
+
+                    if (i < entries.Count)
                     {
-                        string colorHex = entries[i].IsPlayer ? "#FFD700" : "#FFFFFF"; // Gold color for player
-                        _rankTexts[i].text = $"<color={colorHex}>#{i + 1}  {entries[i].PlayerName}  Lv.{entries[i].HighestLevel} ({entries[i].TotalStars}★)</color>";
+                        _entryRows[i].gameObject.SetActive(true);
+                        _entryRows[i].Setup(
+                            rank: i + 1,
+                            playerName: entries[i].PlayerName,
+                            level: entries[i].HighestLevel,
+                            stars: entries[i].TotalStars,
+                            isPlayer: entries[i].IsPlayer
+                        );
+                    }
+                    else
+                    {
+                        _entryRows[i].gameObject.SetActive(false);
                     }
                 }
             }
+        }
 
-            if (_playerRankText != null)
+        private System.Collections.IEnumerator FadeTo(float target, bool disableOnComplete = false)
+        {
+            while (Mathf.Abs(_canvasGroup.alpha - target) > 0.01f)
             {
-                int playerRank = LeaderboardManager.Instance?.GetPlayerRank() ?? 999;
-                string playerName = DataManager.Instance?.PlayerData?.playerName ?? "Player";
-                _playerRankText.text = $"You: {playerName} - Rank: #{playerRank}";
+                _canvasGroup.alpha = Mathf.MoveTowards(_canvasGroup.alpha, target, Time.unscaledDeltaTime * _fadeSpeed);
+                yield return null;
+            }
+            _canvasGroup.alpha = target;
+
+            if (disableOnComplete)
+            {
+                gameObject.SetActive(false);
             }
         }
 
         private void OnDestroy()
         {
             _backButton?.onClick.RemoveListener(Hide);
+            _closeButton?.onClick.RemoveListener(Hide);
         }
     }
 }
