@@ -3,30 +3,16 @@ namespace ArrowSwarm.Data
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using ArrowSwarm.Utils;
     using UnityEngine;
 
     /// <summary>
     /// Mock implementation of ICloudService for development/testing.
     /// Returns fake leaderboard data and simulates save operations.
     /// </summary>
-    public class MockCloudService : MonoBehaviour, ICloudService
+    public class MockCloudService : Singleton<MockCloudService>, ICloudService
     {
         [SerializeField] private float _simulatedLatency = 0.5f;
-
-        private static MockCloudService _instance;
-
-        /// <summary>Singleton-like access for the mock service.</summary>
-        public static MockCloudService Instance => _instance;
-
-        private void Awake()
-        {
-            if (_instance != null && _instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-            _instance = this;
-        }
 
         /// <inheritdoc/>
         public void SavePlayerData(PlayerData data, Action<bool> onComplete)

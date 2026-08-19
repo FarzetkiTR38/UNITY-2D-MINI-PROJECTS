@@ -35,15 +35,15 @@ namespace ArrowSwarm.Data
             }
             else
             {
-                _cachedEntries = new List<LeaderboardEntry>();
                 string[] fakeNames = { "ArrowGod", "Sniper99", "NoobSlayer", "RobinHood", "Legolas", "Hawkeye", "BowMaster", "SwiftArrow", "EagleEye", "ShadowArcher" };
+                int[] baseLevels = { 123, 118, 112, 108, 101, 96, 89, 84, 79, 74 };
+                int[] baseStars = { 320, 309, 294, 281, 268, 251, 233, 220, 208, 195 };
                 
-                System.Random rnd = new System.Random();
-                foreach (string name in fakeNames)
+                for (int i = 0; i < fakeNames.Length; i++)
                 {
-                    int fakeLevel = rnd.Next(5, 30);
-                    int fakeStars = fakeLevel * rnd.Next(1, 4); // Random stars
-                    _cachedEntries.Add(new LeaderboardEntry { PlayerName = name, HighestLevel = fakeLevel, TotalStars = fakeStars, IsPlayer = false });
+                    int fakeLevel = i < baseLevels.Length ? baseLevels[i] : (70 - i * 5);
+                    int fakeStars = i < baseStars.Length ? baseStars[i] : (fakeLevel * 2 + 10);
+                    _cachedEntries.Add(new LeaderboardEntry { PlayerName = fakeNames[i], HighestLevel = fakeLevel, TotalStars = fakeStars, IsPlayer = false });
                 }
 
                 SaveLeaderboard();
