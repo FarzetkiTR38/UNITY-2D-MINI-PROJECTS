@@ -2,31 +2,17 @@ namespace ArrowSwarm.Ads
 {
     using System;
     using System.Collections;
+    using ArrowSwarm.Utils;
     using UnityEngine;
 
     /// <summary>
     /// Mock implementation of IAdService for development/testing.
     /// Simulates a 2-second ad loading screen, then grants the reward.
     /// </summary>
-    public class MockAdService : MonoBehaviour, IAdService
+    public class MockAdService : Singleton<MockAdService>, IAdService
     {
         [SerializeField] private float _fakeAdDuration = 2f;
         [SerializeField] private GameObject _fakeAdPanel; // Optional UI panel
-
-        private static MockAdService _instance;
-
-        /// <summary>Singleton-like access for the mock service.</summary>
-        public static MockAdService Instance => _instance;
-
-        private void Awake()
-        {
-            if (_instance != null && _instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-            _instance = this;
-        }
 
         /// <inheritdoc/>
         public void ShowRewardedAd(Action<bool> onRewardGranted)

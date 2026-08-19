@@ -115,14 +115,10 @@ namespace ArrowSwarm.Data
         public void SetLevelStars(int level, int stars)
         {
             if (_playerData == null) return;
-
             if (_playerData.levelStars == null) 
-            {
                 _playerData.levelStars = new System.Collections.Generic.List<LevelStarData>();
-            }
 
             stars = Mathf.Clamp(stars, 0, 3);
-            
             bool found = false;
             for (int i = 0; i < _playerData.levelStars.Count; i++)
             {
@@ -140,9 +136,7 @@ namespace ArrowSwarm.Data
             }
 
             if (!found)
-            {
                 _playerData.levelStars.Add(new LevelStarData { level = level, stars = stars });
-            }
 
             NotifyAndSave();
         }
@@ -196,7 +190,10 @@ namespace ArrowSwarm.Data
             if (_autoSaveOnChange)
             {
                 Save();
-                MockCloudService.Instance?.SavePlayerData(_playerData, null);
+                if (MockCloudService.Instance != null)
+                {
+                    MockCloudService.Instance.SavePlayerData(_playerData, null);
+                }
             }
         }
 

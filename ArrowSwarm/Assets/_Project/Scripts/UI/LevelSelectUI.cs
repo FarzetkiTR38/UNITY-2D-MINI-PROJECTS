@@ -64,9 +64,7 @@ namespace ArrowSwarm.UI
         public void AutoWire()
         {
             if (_canvasGroup == null)
-            {
                 _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
-            }
 
             if (_closeButton == null)
             {
@@ -93,10 +91,7 @@ namespace ArrowSwarm.UI
             }
 
             if (_levelGridContainer == null)
-            {
-                var grid = transform.Find("GridContainer") ?? transform.Find("Content/GridContainer");
-                if (grid != null) _levelGridContainer = grid;
-            }
+                _levelGridContainer = transform.Find("GridContainer") ?? transform.Find("Content/GridContainer");
         }
 
         public void PrevPage()
@@ -172,8 +167,15 @@ namespace ArrowSwarm.UI
             GameManager.Instance?.StartGame();
         }
 
+        public void Show()
+        {
+            gameObject.SetActive(true);
+        }
+
         public void Close()
         {
+            if (!gameObject.activeInHierarchy) return;
+
             if (_canvasGroup != null)
             {
                 _canvasGroup.interactable = false;
