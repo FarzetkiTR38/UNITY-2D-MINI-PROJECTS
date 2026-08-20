@@ -38,6 +38,7 @@ namespace ArrowSwarm.Effects
         public void SpawnEffect(ParticleSystem prefab, Vector3 position, Color? color = null)
         {
             if (prefab == null) return;
+            if (Data.DataManager.Instance != null && Data.DataManager.Instance.PlayerData != null && !Data.DataManager.Instance.PlayerData.vfxEnabled) return;
 
             ParticleSystem ps = GetFromPool(prefab);
             ps.transform.position = position;
@@ -58,6 +59,7 @@ namespace ArrowSwarm.Effects
         public ParticleSystem SpawnTrail(ParticleSystem prefab, Transform parent, Color? color = null)
         {
             if (prefab == null) return null;
+            if (Data.DataManager.Instance != null && Data.DataManager.Instance.PlayerData != null && !Data.DataManager.Instance.PlayerData.vfxEnabled) return null;
 
             ParticleSystem ps = GetFromPool(prefab);
             ps.transform.SetParent(parent, false);

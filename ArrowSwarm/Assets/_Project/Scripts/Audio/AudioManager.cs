@@ -70,6 +70,7 @@ namespace ArrowSwarm.Audio
         public void PlaySFX(AudioClip clip)
         {
             if (clip == null || _sfxSource == null) return;
+            if (DataManager.Instance != null && DataManager.Instance.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled) return;
             _sfxSource.PlayOneShot(clip, _sfxVolume);
         }
 

@@ -161,6 +161,46 @@ namespace ArrowSwarm.Data
         }
 
         /// <summary>
+        /// Toggles SFX sound effects on or off.
+        /// </summary>
+        public void SetSFXEnabled(bool enabled)
+        {
+            if (_playerData == null) return;
+            _playerData.sfxEnabled = enabled;
+            NotifyAndSave();
+        }
+
+        /// <summary>
+        /// Toggles VFX particle effects on or off.
+        /// </summary>
+        public void SetVFXEnabled(bool enabled)
+        {
+            if (_playerData == null) return;
+            _playerData.vfxEnabled = enabled;
+            NotifyAndSave();
+        }
+
+        /// <summary>
+        /// Toggles vibration/haptics on or off.
+        /// </summary>
+        public void SetVibrationEnabled(bool enabled)
+        {
+            if (_playerData == null) return;
+            _playerData.vibrationEnabled = enabled;
+            NotifyAndSave();
+        }
+
+        /// <summary>
+        /// Sets the current selected language.
+        /// </summary>
+        public void SetLanguage(string language)
+        {
+            if (_playerData == null || string.IsNullOrEmpty(language)) return;
+            _playerData.selectedLanguage = language;
+            NotifyAndSave();
+        }
+
+        /// <summary>
         /// Deletes all saved data and resets to default.
         /// </summary>
         public void DeleteAllData()

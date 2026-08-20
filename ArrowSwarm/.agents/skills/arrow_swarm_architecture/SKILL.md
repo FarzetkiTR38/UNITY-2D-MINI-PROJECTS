@@ -70,6 +70,7 @@ ParticleManager ─── spawns effects based on events
 4. **Object pooling mandatory** for Mob and Arrow prefabs.
 5. **GameConfig ScriptableObject** holds all tunable parameters — no magic numbers in code.
 6. **MapData ScriptableObject** per map (5 total) — grid size, waypoints, colors.
+7. **Scene-First UI Visuals Rule**: Never override or overwrite UI colors, sprites, or fonts in code at runtime (`Awake`/`Start`/`Setup`). Visual styling is fully configured in the Scene/Inspector/Prefabs by the designer, and code only manages dynamic data (numbers, labels, active/inactive states).
 
 ## Game State Flow
 ```
