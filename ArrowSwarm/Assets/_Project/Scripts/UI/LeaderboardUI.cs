@@ -18,7 +18,7 @@ namespace ArrowSwarm.UI
         [SerializeField] private Button _closeButton;
         [SerializeField] private TextMeshProUGUI _titleText;
         [SerializeField] private Transform _entriesContainer;
-        [SerializeField] private LeaderboardEntryUI[] _entryRows;
+        [SerializeField] private LeaderboardEntryUI[] _entryRows; // 10 entries (1, 2, 3 scene objects + 4..10 prefab instances)
 
         [Header("Decoration & Board")]
         [SerializeField] private Image _boardImage;
@@ -36,7 +36,10 @@ namespace ArrowSwarm.UI
         {
             _backButton?.onClick.AddListener(Hide);
             _closeButton?.onClick.AddListener(Hide);
-            if (_titleText != null) _titleText.text = "LEADERBOARD";
+            if (_titleText != null && string.IsNullOrEmpty(_titleText.text))
+            {
+                _titleText.text = "LEADERBOARD";
+            }
         }
 
         /// <summary>
@@ -83,7 +86,7 @@ namespace ArrowSwarm.UI
 
             if (_footerTrophyImage == null)
             {
-                var f = transform.Find("BoardFrame/FooterArea/TrophyBadge") ?? transform.Find("FooterArea/TrophyBadge");
+                var f = transform.Find("BoardFrame/Footer") ?? transform.Find("BoardFrame/FooterArea/TrophyBadge") ?? transform.Find("FooterArea/TrophyBadge");
                 if (f != null) _footerTrophyImage = f.GetComponent<Image>();
             }
         }
@@ -144,13 +147,15 @@ namespace ArrowSwarm.UI
 
                     if (i < entries.Count)
                     {
+                        int rank = i + 1;
+                        var entry = entries[i];
                         _entryRows[i].gameObject.SetActive(true);
                         _entryRows[i].Setup(
-                            rank: i + 1,
-                            playerName: entries[i].PlayerName,
-                            level: entries[i].HighestLevel,
-                            stars: entries[i].TotalStars,
-                            isPlayer: entries[i].IsPlayer
+                            rank: rank,
+                            playerName: entry.PlayerName,
+                            level: entry.HighestLevel,
+                            stars: entry.TotalStars,
+                            isPlayer: entry.IsPlayer
                         );
                     }
                     else

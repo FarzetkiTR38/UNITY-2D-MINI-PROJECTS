@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 namespace ArrowSwarm.Editor
 {
+    using System.IO;
     using ArrowSwarm.UI;
     using TMPro;
     using UnityEditor;
@@ -9,10 +10,23 @@ namespace ArrowSwarm.Editor
     using UnityEngine.UI;
 
     /// <summary>
-    /// Editor utility to construct the complete Leaderboard UI hierarchy matching the visual mockup.
+    /// Editor utility to construct the complete Leaderboard UI hierarchy.
+    /// Creates distinct scene objects for Rank 1, 2, 3 and uses a single reusable Prefab for Ranks 4-10.
+    /// Automatically applies existing project sprite assets.
     /// </summary>
     public static class LeaderboardUIBuilder
     {
+        private const string PREFAB_FOLDER = "Assets/_Project/Prefabs/UI";
+        private const string PREFAB_PATH = "Assets/_Project/Prefabs/UI/LeaderboardEntry_Normal.prefab";
+
+        private const string ART_FOLDER = "Assets/_Project/Art/_FarzetkiArts/LeaderBoard";
+        private const string SPRITE_RANK1_PATH = ART_FOLDER + "/ArrowSwarm_LeaderboardPanel_Assets (8).png";
+        private const string SPRITE_RANK2_PATH = ART_FOLDER + "/ArrowSwarm_LeaderboardPanel_Assets (9).png";
+        private const string SPRITE_RANK3_PATH = ART_FOLDER + "/ArrowSwarm_LeaderboardPanel_Assets (10).png";
+        private const string SPRITE_NORMAL_PATH = ART_FOLDER + "/ArrowSwarm_LeaderboardPanel_Assets (11).png";
+        private const string SPRITE_FOOTER_PATH = ART_FOLDER + "/ArrowSwarm_LeaderboardPanel_Assets (3).png";
+        private const string SPRITE_CLOSE_PATH = ART_FOLDER + "/ArrowSwarm_LeaderboardPanel_Assets (4).png";
+
         [MenuItem("ArrowSwarm/Build Leaderboard UI")]
         public static void BuildLeaderboardUI()
         {
@@ -23,7 +37,24 @@ namespace ArrowSwarm.Editor
                 return;
             }
 
-            // Find or create LeaderboardPanel
+            if (!Directory.Exists(PREFAB_FOLDER))
+            {
+                Directory.CreateDirectory(PREFAB_FOLDER);
+                AssetDatabase.Refresh();
+            }
+
+            // Load sprite assets
+            Sprite rank1Sprite = LoadSprite(SPRITE_RANK1_PATH);
+            Sprite rank2Sprite = LoadSprite(SPRITE_RANK2_PATH);
+            Sprite rank3Sprite = LoadSprite(SPRITE_RANK3_PATH);
+            Sprite normalSprite = LoadSprite(SPRITE_NORMAL_PATH);
+            Sprite footerSprite = LoadSprite(SPRITE_FOOTER_PATH);
+            Sprite closeSprite = LoadSprite(SPRITE_CLOSE_PATH);
+
+            // 1. Create & save the Prefab for Ranks 4-10
+            GameObject normalPrefab = CreateAndSaveNormalEntryPrefab(normalSprite);
+
+            // 2. Find or create LeaderboardPanel
             Transform panelT = canvas.transform.Find("LeaderboardPanel");
             GameObject panelGO;
             if (panelT == null)
@@ -36,7 +67,6 @@ namespace ArrowSwarm.Editor
                 panelGO = panelT.gameObject;
             }
 
-            // Configure LeaderboardPanel RectTransform & Image
             RectTransform panelRT = panelGO.GetComponent<RectTransform>();
             panelRT.anchorMin = Vector2.zero;
             panelRT.anchorMax = Vector2.one;
@@ -44,7 +74,7 @@ namespace ArrowSwarm.Editor
             panelRT.offsetMax = Vector2.zero;
 
             Image panelImg = panelGO.GetComponent<Image>();
-            panelImg.color = new Color(0f, 0f, 0f, 0.75f);
+            panelImg.color = new Color(0f, 0f, 0f, 0.78f);
             panelImg.raycastTarget = true;
 
             var cg = panelGO.GetComponent<CanvasGroup>() ?? panelGO.AddComponent<CanvasGroup>();
@@ -56,7 +86,7 @@ namespace ArrowSwarm.Editor
                 Object.DestroyImmediate(panelGO.transform.GetChild(i).gameObject);
             }
 
-            // 1. BoardFrame (Main Dialog Container)
+            // 3. BoardFrame
             GameObject boardGO = CreateUIObject("BoardFrame", panelGO.transform);
             RectTransform boardRT = boardGO.GetComponent<RectTransform>();
             boardRT.anchorMin = new Vector2(0.5f, 0.5f);
@@ -66,9 +96,9 @@ namespace ArrowSwarm.Editor
             boardRT.anchoredPosition = Vector2.zero;
 
             Image boardImg = boardGO.GetComponent<Image>();
-            boardImg.color = new Color(0.92f, 0.96f, 1.0f, 1.0f); // Light blue dialog border frame
+            boardImg.color = new Color(0.92f, 0.96f, 1.0f, 1.0f);
 
-            // 2. Header
+            // 4. Header
             GameObject headerGO = CreateUIObject("Header", boardGO.transform);
             RectTransform headerRT = headerGO.GetComponent<RectTransform>();
             headerRT.anchorMin = new Vector2(0f, 1f);
@@ -94,29 +124,41 @@ namespace ArrowSwarm.Editor
             backIcon.GetComponent<RectTransform>().sizeDelta = new Vector2(90f, 90f);
 
             // Header -> TitleText
-            var titleTxt = CreateTextObject("TitleText", headerGO.transform, "LEADERBOARD", 56, new Color(0.08f, 0.35f, 0.75f, 1f), TextAlignmentOptions.Center);
+            var titleTxt = CreateTextObject("TitleText", headerGO.transform, "LEADERBOARD", 75, new Color(0.97f, 0.98f, 1f, 1f), TextAlignmentOptions.Center);
             RectTransform titleRT = titleTxt.GetComponent<RectTransform>();
             titleRT.anchorMin = new Vector2(0.5f, 0.5f);
             titleRT.anchorMax = new Vector2(0.5f, 0.5f);
-            titleRT.sizeDelta = new Vector2(560f, 90f);
+            titleRT.sizeDelta = new Vector2(660f, 200f);
             titleRT.anchoredPosition = Vector2.zero;
             titleTxt.fontStyle = FontStyles.Bold;
+
+            // Try load Fazo_Font_Titles if exists
+            var titleFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/_Project/Fonts/Fazo_Font_Titles.asset");
+            if (titleFont != null) titleTxt.font = titleFont;
 
             // Header -> CloseButton
             GameObject closeBtnGO = CreateUIObject("CloseButton", headerGO.transform);
             RectTransform closeBtnRT = closeBtnGO.GetComponent<RectTransform>();
             closeBtnRT.anchorMin = new Vector2(1f, 0.5f);
             closeBtnRT.anchorMax = new Vector2(1f, 0.5f);
-            closeBtnRT.sizeDelta = new Vector2(90f, 90f);
+            closeBtnRT.sizeDelta = closeSprite != null ? new Vector2(351f, 342f) : new Vector2(90f, 90f);
+            closeBtnRT.localScale = closeSprite != null ? new Vector3(0.3f, 0.3f, 0.3f) : Vector3.one;
             closeBtnRT.anchoredPosition = new Vector2(-45f, 0f);
             Image closeBtnImg = closeBtnGO.GetComponent<Image>();
-            closeBtnImg.color = new Color(0.18f, 0.58f, 0.96f, 1.0f);
+            if (closeSprite != null)
+            {
+                closeBtnImg.sprite = closeSprite;
+                closeBtnImg.color = Color.white;
+            }
+            else
+            {
+                closeBtnImg.color = new Color(0.18f, 0.58f, 0.96f, 1.0f);
+                var closeIcon = CreateTextObject("Icon", closeBtnGO.transform, "✕", 42, Color.white, TextAlignmentOptions.Center);
+                closeIcon.GetComponent<RectTransform>().sizeDelta = new Vector2(90f, 90f);
+            }
             Button closeBtn = closeBtnGO.AddComponent<Button>();
 
-            var closeIcon = CreateTextObject("Icon", closeBtnGO.transform, "✕", 42, Color.white, TextAlignmentOptions.Center);
-            closeIcon.GetComponent<RectTransform>().sizeDelta = new Vector2(90f, 90f);
-
-            // 3. EntriesContainer
+            // 5. EntriesContainer
             GameObject containerGO = CreateUIObject("EntriesContainer", boardGO.transform);
             RectTransform containerRT = containerGO.GetComponent<RectTransform>();
             containerRT.anchorMin = Vector2.zero;
@@ -134,51 +176,53 @@ namespace ArrowSwarm.Editor
             vlg.childForceExpandWidth = true;
             vlg.childForceExpandHeight = false;
 
-            // 4. Create 10 Entry Rows
+            // 6. Build Top 10 rows:
+            // Ranks 1, 2, 3 -> Separate distinct scene objects
+            // Ranks 4 to 10 -> Prefab instances of LeaderboardEntry_Normal.prefab
             LeaderboardEntryUI[] entryRows = new LeaderboardEntryUI[10];
             int[] sampleLevels = { 123, 118, 112, 108, 101, 96, 89, 84, 79, 74 };
             int[] sampleStars = { 320, 309, 294, 281, 268, 251, 233, 220, 208, 195 };
 
-            for (int r = 1; r <= 10; r++)
+            // Rank 1 (Gold)
+            entryRows[0] = CreateSingleSceneRow(containerGO.transform, 1, sampleLevels[0], sampleStars[0], rank1Sprite, new Color(0.98f, 0.76f, 0.22f, 1f), true);
+
+            // Rank 2 (Silver)
+            entryRows[1] = CreateSingleSceneRow(containerGO.transform, 2, sampleLevels[1], sampleStars[1], rank2Sprite, new Color(0.75f, 0.82f, 0.90f, 1f), true);
+
+            // Rank 3 (Bronze)
+            entryRows[2] = CreateSingleSceneRow(containerGO.transform, 3, sampleLevels[2], sampleStars[2], rank3Sprite, new Color(0.85f, 0.53f, 0.28f, 1f), true);
+
+            // Ranks 4 to 10 (Prefab Instances)
+            for (int r = 4; r <= 10; r++)
             {
-                entryRows[r - 1] = CreateEntryRow(containerGO.transform, r, sampleLevels[r - 1], sampleStars[r - 1]);
+                GameObject rowInstance = (GameObject)PrefabUtility.InstantiatePrefab(normalPrefab, containerGO.transform);
+                rowInstance.name = $"Entry_{r}";
+
+                var entryUI = rowInstance.GetComponent<LeaderboardEntryUI>();
+                entryUI.AutoWire();
+                entryUI.Setup(r, $"Player_{r}", sampleLevels[r - 1], sampleStars[r - 1], false);
+                entryRows[r - 1] = entryUI;
             }
 
-            // 5. FooterArea
-            GameObject footerGO = CreateUIObject("FooterArea", boardGO.transform);
+            // 7. Footer
+            GameObject footerGO = CreateUIObject("Footer", boardGO.transform);
             RectTransform footerRT = footerGO.GetComponent<RectTransform>();
             footerRT.anchorMin = new Vector2(0.5f, 0f);
             footerRT.anchorMax = new Vector2(0.5f, 0f);
-            footerRT.sizeDelta = new Vector2(400f, 110f);
-            footerRT.anchoredPosition = new Vector2(0f, 65f);
-            Object.DestroyImmediate(footerGO.GetComponent<Image>());
+            footerRT.anchoredPosition = new Vector2(-14f, 109f);
+            footerRT.sizeDelta = footerSprite != null ? new Vector2(1962f, 724.35f) : new Vector2(400f, 110f);
+            footerRT.localScale = footerSprite != null ? new Vector3(0.3f, 0.3f, 0.3f) : Vector3.one;
 
-            // Left Arrow
-            GameObject leftArrowGO = CreateUIObject("LeftArrowIcon", footerGO.transform);
-            RectTransform leftArrowRT = leftArrowGO.GetComponent<RectTransform>();
-            leftArrowRT.anchorMin = new Vector2(0f, 0.5f);
-            leftArrowRT.anchorMax = new Vector2(0f, 0.5f);
-            leftArrowRT.sizeDelta = new Vector2(42f, 42f);
-            leftArrowRT.anchoredPosition = new Vector2(50f, 0f);
-            leftArrowGO.GetComponent<Image>().color = new Color(0.95f, 0.40f, 0.65f, 1.0f);
-
-            // Trophy Badge
-            GameObject trophyGO = CreateUIObject("TrophyBadge", footerGO.transform);
-            RectTransform trophyRT = trophyGO.GetComponent<RectTransform>();
-            trophyRT.anchorMin = new Vector2(0.5f, 0.5f);
-            trophyRT.anchorMax = new Vector2(0.5f, 0.5f);
-            trophyRT.sizeDelta = new Vector2(110f, 90f);
-            trophyRT.anchoredPosition = Vector2.zero;
-            trophyGO.GetComponent<Image>().color = new Color(1.0f, 0.78f, 0.20f, 1.0f);
-
-            // Right Arrow
-            GameObject rightArrowGO = CreateUIObject("RightArrowIcon", footerGO.transform);
-            RectTransform rightArrowRT = rightArrowGO.GetComponent<RectTransform>();
-            rightArrowRT.anchorMin = new Vector2(1f, 0.5f);
-            rightArrowRT.anchorMax = new Vector2(1f, 0.5f);
-            rightArrowRT.sizeDelta = new Vector2(42f, 42f);
-            rightArrowRT.anchoredPosition = new Vector2(-50f, 0f);
-            rightArrowGO.GetComponent<Image>().color = new Color(1.0f, 0.75f, 0.20f, 1.0f);
+            Image footerImg = footerGO.GetComponent<Image>();
+            if (footerSprite != null)
+            {
+                footerImg.sprite = footerSprite;
+                footerImg.color = Color.white;
+            }
+            else
+            {
+                footerImg.color = new Color(1.0f, 0.78f, 0.20f, 1.0f);
+            }
 
             // Connect references to LeaderboardUI
             leaderboardUI.AutoWire();
@@ -190,25 +234,34 @@ namespace ArrowSwarm.Editor
                 mainMenuUI.AutoWireUIReferences();
             }
 
-            // Save scene
+            // Save scene and assets
             EditorSceneManager.MarkSceneDirty(panelGO.scene);
             EditorSceneManager.SaveScene(panelGO.scene);
+            AssetDatabase.SaveAssets();
 
-            Debug.Log("[ArrowSwarm] Leaderboard UI successfully constructed in MainMenuScene!");
+            Debug.Log("[ArrowSwarm] Leaderboard UI successfully constructed with 1-3 distinct and 4-10 prefab instances!");
         }
 
-        private static LeaderboardEntryUI CreateEntryRow(Transform parent, int rank, int level, int stars)
+        private static LeaderboardEntryUI CreateSingleSceneRow(Transform parent, int rank, int level, int stars, Sprite cardSprite, Color fallbackColor, bool showCrown)
         {
             GameObject rowGO = CreateUIObject($"Entry_{rank}", parent);
             RectTransform rowRT = rowGO.GetComponent<RectTransform>();
             rowRT.sizeDelta = new Vector2(0f, 114f);
 
             Image cardBg = rowGO.GetComponent<Image>();
-            cardBg.color = GetRankColor(rank);
+            if (cardSprite != null)
+            {
+                cardBg.sprite = cardSprite;
+                cardBg.color = Color.white;
+            }
+            else
+            {
+                cardBg.color = fallbackColor;
+            }
 
             var entryUI = rowGO.AddComponent<LeaderboardEntryUI>();
 
-            // LeftBadge (Rank Number + Crown)
+            // LeftBadge
             GameObject badgeGO = CreateUIObject("LeftBadge", rowGO.transform);
             RectTransform badgeRT = badgeGO.GetComponent<RectTransform>();
             badgeRT.anchorMin = new Vector2(0f, 0f);
@@ -216,9 +269,9 @@ namespace ArrowSwarm.Editor
             badgeRT.pivot = new Vector2(0.5f, 0.5f);
             badgeRT.sizeDelta = new Vector2(140f, 0f);
             badgeRT.anchoredPosition = new Vector2(70f, 0f);
-            badgeGO.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f); // Transparent
+            badgeGO.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
 
-            // Crown Icon for Rank 1-3
+            // Crown Icon
             GameObject crownGO = CreateUIObject("CrownIcon", badgeGO.transform);
             RectTransform crownRT = crownGO.GetComponent<RectTransform>();
             crownRT.anchorMin = new Vector2(0.5f, 1f);
@@ -229,20 +282,18 @@ namespace ArrowSwarm.Editor
             crownGO.GetComponent<Image>().color = rank == 1 ? new Color(1f, 0.85f, 0.2f, 1f) :
                                                  rank == 2 ? new Color(0.85f, 0.9f, 0.95f, 1f) :
                                                              new Color(0.9f, 0.6f, 0.35f, 1f);
-            crownGO.SetActive(rank <= 3);
+            crownGO.SetActive(showCrown);
 
             // RankText
-            float rankPosY = rank <= 3 ? -10f : 0f;
-            float rankFontSize = rank == 10 ? 46f : 52f;
-            var rankTxt = CreateTextObject("RankText", badgeGO.transform, rank.ToString(), rankFontSize, Color.white, TextAlignmentOptions.Center);
+            var rankTxt = CreateTextObject("RankText", badgeGO.transform, rank.ToString(), 52f, Color.white, TextAlignmentOptions.Center);
             RectTransform rankTxtRT = rankTxt.GetComponent<RectTransform>();
             rankTxtRT.anchorMin = new Vector2(0.5f, 0.5f);
             rankTxtRT.anchorMax = new Vector2(0.5f, 0.5f);
             rankTxtRT.sizeDelta = new Vector2(120f, 60f);
-            rankTxtRT.anchoredPosition = new Vector2(0f, rankPosY);
+            rankTxtRT.anchoredPosition = new Vector2(0f, showCrown ? -8f : 0f);
             rankTxt.fontStyle = FontStyles.Bold;
 
-            // ContentPill (White capsule containing Level & Stars)
+            // ContentPill
             GameObject pillGO = CreateUIObject("ContentPill", rowGO.transform);
             RectTransform pillRT = pillGO.GetComponent<RectTransform>();
             pillRT.anchorMin = Vector2.zero;
@@ -252,8 +303,8 @@ namespace ArrowSwarm.Editor
             Image pillImg = pillGO.GetComponent<Image>();
             pillImg.color = Color.white;
 
-            // Pill -> LevelText
-            var levelTxt = CreateTextObject("LevelText", pillGO.transform, $"Lv.{level}", 38, new Color(0.05f, 0.15f, 0.40f, 1.0f), TextAlignmentOptions.Left);
+            // LevelText
+            var levelTxt = CreateTextObject("LevelText", pillGO.transform, $"Lv.{level}", 38f, new Color(0.05f, 0.15f, 0.40f, 1.0f), TextAlignmentOptions.Left);
             RectTransform levelRT = levelTxt.GetComponent<RectTransform>();
             levelRT.anchorMin = new Vector2(0f, 0.5f);
             levelRT.anchorMax = new Vector2(0f, 0.5f);
@@ -261,7 +312,7 @@ namespace ArrowSwarm.Editor
             levelRT.anchoredPosition = new Vector2(130f, 0f);
             levelTxt.fontStyle = FontStyles.Bold;
 
-            // Pill -> Divider
+            // Divider
             GameObject dividerGO = CreateUIObject("Divider", pillGO.transform);
             RectTransform dividerRT = dividerGO.GetComponent<RectTransform>();
             dividerRT.anchorMin = new Vector2(0.54f, 0.5f);
@@ -270,17 +321,17 @@ namespace ArrowSwarm.Editor
             dividerRT.anchoredPosition = Vector2.zero;
             dividerGO.GetComponent<Image>().color = new Color(0.80f, 0.85f, 0.92f, 1.0f);
 
-            // Pill -> StarIcon
+            // StarIcon
             GameObject starGO = CreateUIObject("StarIcon", pillGO.transform);
             RectTransform starRT = starGO.GetComponent<RectTransform>();
             starRT.anchorMin = new Vector2(0.68f, 0.5f);
             starRT.anchorMax = new Vector2(0.68f, 0.5f);
             starRT.sizeDelta = new Vector2(46f, 46f);
             starRT.anchoredPosition = Vector2.zero;
-            starGO.GetComponent<Image>().color = new Color(1.0f, 0.78f, 0.12f, 1.0f); // Yellow star placeholder
+            starGO.GetComponent<Image>().color = new Color(1.0f, 0.78f, 0.12f, 1.0f);
 
-            // Pill -> StarsText
-            var starsTxt = CreateTextObject("StarsText", pillGO.transform, stars.ToString(), 38, new Color(0.05f, 0.15f, 0.40f, 1.0f), TextAlignmentOptions.Left);
+            // StarsText
+            var starsTxt = CreateTextObject("StarsText", pillGO.transform, stars.ToString(), 38f, new Color(0.05f, 0.15f, 0.40f, 1.0f), TextAlignmentOptions.Left);
             RectTransform starsRT = starsTxt.GetComponent<RectTransform>();
             starsRT.anchorMin = new Vector2(1f, 0.5f);
             starsRT.anchorMax = new Vector2(1f, 0.5f);
@@ -292,15 +343,120 @@ namespace ArrowSwarm.Editor
             return entryUI;
         }
 
-        private static Color GetRankColor(int rank)
+        private static GameObject CreateAndSaveNormalEntryPrefab(Sprite normalCardSprite)
         {
-            switch (rank)
+            GameObject tempRoot = new GameObject("LeaderboardEntry_Normal", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            RectTransform rowRT = tempRoot.GetComponent<RectTransform>();
+            rowRT.sizeDelta = new Vector2(0f, 114f);
+
+            Image cardBg = tempRoot.GetComponent<Image>();
+            if (normalCardSprite != null)
             {
-                case 1: return new Color(0.98f, 0.76f, 0.22f, 1f); // Gold
-                case 2: return new Color(0.75f, 0.82f, 0.90f, 1f); // Silver
-                case 3: return new Color(0.85f, 0.53f, 0.28f, 1f); // Bronze
-                default: return new Color(0.18f, 0.58f, 0.96f, 1f); // Blue
+                cardBg.sprite = normalCardSprite;
+                cardBg.color = Color.white;
             }
+            else
+            {
+                cardBg.color = new Color(0.18f, 0.58f, 0.96f, 1f);
+            }
+
+            var entryUI = tempRoot.AddComponent<LeaderboardEntryUI>();
+
+            // LeftBadge
+            GameObject badgeGO = CreateUIObject("LeftBadge", tempRoot.transform);
+            RectTransform badgeRT = badgeGO.GetComponent<RectTransform>();
+            badgeRT.anchorMin = new Vector2(0f, 0f);
+            badgeRT.anchorMax = new Vector2(0f, 1f);
+            badgeRT.pivot = new Vector2(0.5f, 0.5f);
+            badgeRT.sizeDelta = new Vector2(140f, 0f);
+            badgeRT.anchoredPosition = new Vector2(70f, 0f);
+            badgeGO.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+
+            // Crown Icon (disabled for ranks 4-10)
+            GameObject crownGO = CreateUIObject("CrownIcon", badgeGO.transform);
+            RectTransform crownRT = crownGO.GetComponent<RectTransform>();
+            crownRT.anchorMin = new Vector2(0.5f, 1f);
+            crownRT.anchorMax = new Vector2(0.5f, 1f);
+            crownRT.pivot = new Vector2(0.5f, 1f);
+            crownRT.sizeDelta = new Vector2(48f, 32f);
+            crownRT.anchoredPosition = new Vector2(0f, -6f);
+            crownGO.GetComponent<Image>().color = new Color(1f, 0.85f, 0.2f, 1f);
+            crownGO.SetActive(false);
+
+            // RankText
+            var rankTxt = CreateTextObject("RankText", badgeGO.transform, "4", 52f, Color.white, TextAlignmentOptions.Center);
+            RectTransform rankTxtRT = rankTxt.GetComponent<RectTransform>();
+            rankTxtRT.anchorMin = new Vector2(0.5f, 0.5f);
+            rankTxtRT.anchorMax = new Vector2(0.5f, 0.5f);
+            rankTxtRT.sizeDelta = new Vector2(120f, 60f);
+            rankTxtRT.anchoredPosition = Vector2.zero;
+            rankTxt.fontStyle = FontStyles.Bold;
+
+            // ContentPill
+            GameObject pillGO = CreateUIObject("ContentPill", tempRoot.transform);
+            RectTransform pillRT = pillGO.GetComponent<RectTransform>();
+            pillRT.anchorMin = Vector2.zero;
+            pillRT.anchorMax = Vector2.one;
+            pillRT.offsetMin = new Vector2(146f, 10f);
+            pillRT.offsetMax = new Vector2(-12f, -10f);
+            Image pillImg = pillGO.GetComponent<Image>();
+            pillImg.color = Color.white;
+
+            // LevelText
+            var levelTxt = CreateTextObject("LevelText", pillGO.transform, "Lv.100", 38f, new Color(0.05f, 0.15f, 0.40f, 1.0f), TextAlignmentOptions.Left);
+            RectTransform levelRT = levelTxt.GetComponent<RectTransform>();
+            levelRT.anchorMin = new Vector2(0f, 0.5f);
+            levelRT.anchorMax = new Vector2(0f, 0.5f);
+            levelRT.sizeDelta = new Vector2(220f, 60f);
+            levelRT.anchoredPosition = new Vector2(130f, 0f);
+            levelTxt.fontStyle = FontStyles.Bold;
+
+            // Divider
+            GameObject dividerGO = CreateUIObject("Divider", pillGO.transform);
+            RectTransform dividerRT = dividerGO.GetComponent<RectTransform>();
+            dividerRT.anchorMin = new Vector2(0.54f, 0.5f);
+            dividerRT.anchorMax = new Vector2(0.54f, 0.5f);
+            dividerRT.sizeDelta = new Vector2(2f, 54f);
+            dividerRT.anchoredPosition = Vector2.zero;
+            dividerGO.GetComponent<Image>().color = new Color(0.80f, 0.85f, 0.92f, 1.0f);
+
+            // StarIcon
+            GameObject starGO = CreateUIObject("StarIcon", pillGO.transform);
+            RectTransform starRT = starGO.GetComponent<RectTransform>();
+            starRT.anchorMin = new Vector2(0.68f, 0.5f);
+            starRT.anchorMax = new Vector2(0.68f, 0.5f);
+            starRT.sizeDelta = new Vector2(46f, 46f);
+            starRT.anchoredPosition = Vector2.zero;
+            starGO.GetComponent<Image>().color = new Color(1.0f, 0.78f, 0.12f, 1.0f);
+
+            // StarsText
+            var starsTxt = CreateTextObject("StarsText", pillGO.transform, "200", 38f, new Color(0.05f, 0.15f, 0.40f, 1.0f), TextAlignmentOptions.Left);
+            RectTransform starsRT = starsTxt.GetComponent<RectTransform>();
+            starsRT.anchorMin = new Vector2(1f, 0.5f);
+            starsRT.anchorMax = new Vector2(1f, 0.5f);
+            starsRT.sizeDelta = new Vector2(150f, 60f);
+            starsRT.anchoredPosition = new Vector2(-70f, 0f);
+            starsTxt.fontStyle = FontStyles.Bold;
+
+            entryUI.AutoWire();
+
+            // Save as Prefab
+            GameObject prefab = PrefabUtility.SaveAsPrefabAsset(tempRoot, PREFAB_PATH);
+            Object.DestroyImmediate(tempRoot);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            return prefab;
+        }
+
+        private static Sprite LoadSprite(string path)
+        {
+            var assets = AssetDatabase.LoadAllAssetsAtPath(path);
+            foreach (var a in assets)
+            {
+                if (a is Sprite s) return s;
+            }
+            return null;
         }
 
         private static GameObject CreateUIObject(string name, Transform parent)
