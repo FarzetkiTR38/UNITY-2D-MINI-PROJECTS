@@ -113,6 +113,8 @@ namespace ArrowSwarm.UI
             if (_levelsButton == null) _levelsButton = FindButton(searchRoot, "level");
             if (_leaderboardButton == null) _leaderboardButton = FindButton(searchRoot, "leader");
             if (_settingsButton == null) _settingsButton = FindButton(searchRoot, "setting");
+            if (_levelText == null) _levelText = FindText(searchRoot, "level");
+            if (_starsText == null) _starsText = FindText(searchRoot, "star");
         }
 
         private Button FindButton(Transform root, string keyword)
@@ -125,6 +127,16 @@ namespace ArrowSwarm.UI
             return null;
         }
 
+        private TextMeshProUGUI FindText(Transform root, string keyword)
+        {
+            foreach (var txt in root.GetComponentsInChildren<TextMeshProUGUI>(true))
+            {
+                if (txt != null && txt.gameObject.name.ToLower().Contains(keyword))
+                    return txt;
+            }
+            return null;
+        }
+
         private void SetupUI()
         {
             int level = DataManager.Instance?.PlayerData?.highestLevel ?? 1;
@@ -132,12 +144,12 @@ namespace ArrowSwarm.UI
 
             if (_levelText != null)
             {
-                _levelText.text = _starsText != null ? $"Level: {level}" : $"Level: {level}   <color=#FFD700>★ {totalStars}</color>";
+                _levelText.text = $"Lv.{level}";
             }
 
             if (_starsText != null)
             {
-                _starsText.text = $"{totalStars} ★";
+                _starsText.text = totalStars.ToString();
             }
 
             if (_titleText != null)

@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1416945}
   - component: {fileID: 1416944}
+  - component: {fileID: 1416946}
   m_Layer: 0
   m_Name: BootManager
   m_TagString: Untagged
@@ -149,7 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Core.BootLoader
   _splashDuration: 2
-  _coreManagersPrefab: {fileID: 0}
+  _coreManagersPrefab: {fileID: 1021733024}
 --- !u!4 &1416945
 Transform:
   m_ObjectHideFlags: 0
@@ -165,6 +166,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1416946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1416943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de379590988e5c44d803fd5fc139d962, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Debug.AdminManager
+  _targetLevel: 1
+  _targetHighestLevel: 1
+  _targetTotalStars: 0
+  _specificLevel: 1
+  _starsForSpecificLevel: 3
+  _targetTips: 10
+  _liveCurrentLevel: 0
+  _liveHighestLevel: 0
+  _liveTotalStars: 0
+  _liveTipCount: 0
 --- !u!1 &337687326
 GameObject:
   m_ObjectHideFlags: 0
@@ -350,6 +373,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d8486559637857843b87c776dee4cc1e, type: 3}
+--- !u!1 &1021733024 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1036625359666785736, guid: d8486559637857843b87c776dee4cc1e, type: 3}
+  m_PrefabInstance: {fileID: 1021733023}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
