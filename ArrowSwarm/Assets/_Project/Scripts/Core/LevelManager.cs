@@ -57,7 +57,7 @@ namespace ArrowSwarm.Core
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (scene.name == "GameScene")
+            if (IsPlayableGameScene(scene.name))
             {
                 StartCoroutine(DeferredLoadLevel());
             }
@@ -72,10 +72,15 @@ namespace ArrowSwarm.Core
 
         private void Start()
         {
-            if (SceneManager.GetActiveScene().name == "GameScene")
+            if (IsPlayableGameScene(SceneManager.GetActiveScene().name))
             {
                 StartCoroutine(DeferredLoadLevel());
             }
+        }
+
+        private bool IsPlayableGameScene(string sceneName)
+        {
+            return sceneName == "GameScene" || sceneName.StartsWith("Map");
         }
 
         /// <summary>
@@ -83,6 +88,13 @@ namespace ArrowSwarm.Core
         /// </summary>
         public void LoadLevel()
         {
+            var mapCtrl = UnityEngine.Object.FindFirstObjectByType<MapSceneController>();
+            if (mapCtrl != null)
+            {
+                LoadLevel(mapCtrl.DefaultLevel);
+                return;
+            }
+
             int level = ArrowSwarm.Debug.DebugManager.Instance != null 
                 ? ArrowSwarm.Debug.DebugManager.Instance.GetEffectiveLevel() 
                 : (DataManager.Instance?.PlayerData?.currentLevel ?? 1);
