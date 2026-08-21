@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 8289285757318608031}
   - component: {fileID: 6737051135234421051}
   - component: {fileID: 2148272329135093668}
+  - component: {fileID: 1984038596682423607}
+  - component: {fileID: 2416592008265847882}
   m_Layer: 0
   m_Name: CoreManagers
   m_TagString: Untagged
@@ -142,3 +144,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Mob.MobSpawner
   _mobPrefab: {fileID: 48537207568713487, guid: 62df004f68899b443ac1ea02fc00be6f, type: 3}
   _mobParent: {fileID: 0}
+--- !u!114 &1984038596682423607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036625359666785736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de379590988e5c44d803fd5fc139d962, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Debug.AdminManager
+  _targetLevel: 1
+  _targetHighestLevel: 1
+  _targetTotalStars: 0
+  _specificLevel: 1
+  _starsForSpecificLevel: 3
+  _targetTips: 10
+  _liveCurrentLevel: 0
+  _liveHighestLevel: 0
+  _liveTotalStars: 0
+  _liveTipCount: 0
+--- !u!114 &2416592008265847882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036625359666785736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e644297e61b36140b6b1a12f6a0c0d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Debug.DebugManager
+  _useDebugLevel: 0
+  _debugLevel: 1
+  _quickJumpLevels: 010000000a0000003200000064000000fa000000f4010000e8030000
+  _infiniteLives: 0
+  _infiniteTips: 0
+  _showArrowDirections: 0
+  _gameSpeedMultiplier: 1
+  _currentLevel: 0
+  _currentTier: 0
+  _arrowCount: 0
+  _mobCount: 0
+  _currentState: 
+  _showDebugInfo: 0

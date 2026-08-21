@@ -77,11 +77,22 @@ namespace ArrowSwarm.Data
         /// </summary>
         public void SetCurrentLevel(int level)
         {
-            _playerData.currentLevel = level;
+            if (_playerData == null) return;
+            _playerData.currentLevel = Mathf.Max(1, level);
             if (level > _playerData.highestLevel)
             {
                 _playerData.highestLevel = level;
             }
+            NotifyAndSave();
+        }
+
+        /// <summary>
+        /// Directly sets the highest level reached and saves.
+        /// </summary>
+        public void SetHighestLevel(int highest)
+        {
+            if (_playerData == null) return;
+            _playerData.highestLevel = Mathf.Max(1, highest);
             NotifyAndSave();
         }
 
@@ -142,10 +153,111 @@ namespace ArrowSwarm.Data
         }
 
         /// <summary>
+        /// Forcefully sets stars for a specific level (0-3) without max comparison.
+        /// </summary>
+        public void ForceSetLevelStars(int level, int stars)
+        {
+            if (_playerData == null) return;
+            if (_playerData.levelStars == null) 
+                _playerData.levelStars = new System.Collections.Generic.List<LevelStarData>();
+
+            stars = Mathf.Clamp(stars, 0, 3);
+            bool found = false;
+            for (int i = 0; i < _playerData.levelStars.Count; i++)
+            {
+                if (_playerData.levelStars[i].level == level)
+                {
+                    var data = _playerData.levelStars[i];
+                    data.stars = stars;
+                    _playerData.levelStars[i] = data;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+                _playerData.levelStars.Add(new LevelStarData { level = level, stars = stars });
+
+            NotifyAndSave();
+        }
+
+        /// <summary>
+        /// Sets a specific total star count by distributing across levels (3 per level).
+        /// </summary>
+        public void SetTotalStarsDirect(int targetTotalStars)
+        {
+            if (_playerData == null) return;
+            if (_playerData.levelStars == null)
+                _playerData.levelStars = new System.Collections.Generic.List<LevelStarData>();
+
+            _playerData.levelStars.Clear();
+            int remaining = Mathf.Max(0, targetTotalStars);
+            int lvl = 1;
+            while (remaining > 0)
+            {
+                int starsForThisLvl = Mathf.Min(3, remaining);
+                _playerData.levelStars.Add(new LevelStarData { level = lvl, stars = starsForThisLvl });
+                remaining -= starsForThisLvl;
+                lvl++;
+            }
+
+            NotifyAndSave();
+        }
+
+        /// <summary>
+        /// Unlocks all levels up to target level with specified stars per level.
+        /// </summary>
+        public void UnlockLevelsWithStars(int upToLevel, int starsPerLevel = 3)
+        {
+            if (_playerData == null) return;
+            if (_playerData.levelStars == null)
+                _playerData.levelStars = new System.Collections.Generic.List<LevelStarData>();
+
+            starsPerLevel = Mathf.Clamp(starsPerLevel, 0, 3);
+            for (int lvl = 1; lvl <= upToLevel; lvl++)
+            {
+                bool found = false;
+                for (int i = 0; i < _playerData.levelStars.Count; i++)
+                {
+                    if (_playerData.levelStars[i].level == lvl)
+                    {
+                        var data = _playerData.levelStars[i];
+                        data.stars = starsPerLevel;
+                        _playerData.levelStars[i] = data;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    _playerData.levelStars.Add(new LevelStarData { level = lvl, stars = starsPerLevel });
+                }
+            }
+
+            if (upToLevel > _playerData.highestLevel)
+            {
+                _playerData.highestLevel = upToLevel;
+            }
+
+            NotifyAndSave();
+        }
+
+        /// <summary>
+        /// Directly sets the tip token balance.
+        /// </summary>
+        public void SetTipCount(int tips)
+        {
+            if (_playerData == null) return;
+            _playerData.tipCount = Mathf.Max(0, tips);
+            NotifyAndSave();
+        }
+
+        /// <summary>
         /// Adds or removes tip tokens.
         /// </summary>
         public void ModifyTipCount(int delta)
         {
+            if (_playerData == null) return;
             _playerData.tipCount = Mathf.Max(0, _playerData.tipCount + delta);
             NotifyAndSave();
         }
@@ -157,6 +269,46 @@ namespace ArrowSwarm.Data
         {
             _playerData.musicVolume = Mathf.Clamp01(music);
             _playerData.sfxVolume = Mathf.Clamp01(sfx);
+            NotifyAndSave();
+        }
+
+        /// <summary>
+        /// Toggles SFX sound effects on or off.
+        /// </summary>
+        public void SetSFXEnabled(bool enabled)
+        {
+            if (_playerData == null) return;
+            _playerData.sfxEnabled = enabled;
+            NotifyAndSave();
+        }
+
+        /// <summary>
+        /// Toggles VFX particle effects on or off.
+        /// </summary>
+        public void SetVFXEnabled(bool enabled)
+        {
+            if (_playerData == null) return;
+            _playerData.vfxEnabled = enabled;
+            NotifyAndSave();
+        }
+
+        /// <summary>
+        /// Toggles vibration/haptics on or off.
+        /// </summary>
+        public void SetVibrationEnabled(bool enabled)
+        {
+            if (_playerData == null) return;
+            _playerData.vibrationEnabled = enabled;
+            NotifyAndSave();
+        }
+
+        /// <summary>
+        /// Sets the current selected language.
+        /// </summary>
+        public void SetLanguage(string language)
+        {
+            if (_playerData == null || string.IsNullOrEmpty(language)) return;
+            _playerData.selectedLanguage = language;
             NotifyAndSave();
         }
 
@@ -184,7 +336,10 @@ namespace ArrowSwarm.Data
             }
         }
 
-        private void NotifyAndSave()
+        /// <summary>
+        /// Fires OnPlayerDataChanged and saves player data to storage.
+        /// </summary>
+        public void NotifyAndSave()
         {
             OnPlayerDataChanged?.Invoke(_playerData);
             if (_autoSaveOnChange)

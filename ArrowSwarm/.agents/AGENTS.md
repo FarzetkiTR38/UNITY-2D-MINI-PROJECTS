@@ -32,6 +32,7 @@
 - Use TextMeshPro for ALL text — never legacy Text.
 - Two Canvas setup: Canvas_HUD (always visible) + Canvas_Overlay (popups/menus).
 - CanvasGroup for show/hide animations — not SetActive.
+- **Scene-First Visuals Rule**: NEVER override or hardcode UI colors, sprites, or fonts via code at runtime (`Awake`/`Start`/`Setup`) if they are meant to be configured in the Scene/Inspector/Prefabs. Code only handles dynamic data (text, numbers, active state), letting the designer configure all colors, sprites, and styling directly in the Inspector.
 
 ### Testing
 - DebugManager must allow jumping to any level via Inspector.
@@ -52,3 +53,4 @@ Arrow colors:  #64B5F6, #81C784, #FFB74D, #BA68C8, #F06292
 - Don't hardcode level parameters — always derive from DifficultyCalculator.
 - Don't use `Resources.Load` — use direct references or addressables.
 - Don't use legacy Input system — use the new Input System or EventSystem for touch.
+- Don't override or overwrite UI colors, sprites, or fonts in code at runtime (Scene/Inspector has full authority over static visuals).

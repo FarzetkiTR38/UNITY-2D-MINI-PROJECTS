@@ -30,6 +30,18 @@ namespace ArrowSwarm.Data
         /// <summary>SFX volume (0 to 1).</summary>
         public float sfxVolume = 1.0f;
 
+        /// <summary>SFX sound effects enabled toggle.</summary>
+        public bool sfxEnabled = true;
+
+        /// <summary>VFX particle effects enabled toggle.</summary>
+        public bool vfxEnabled = true;
+
+        /// <summary>Haptic vibration enabled toggle.</summary>
+        public bool vibrationEnabled = true;
+
+        /// <summary>Selected language code/name.</summary>
+        public string selectedLanguage = "ENGLISH";
+
         /// <summary>Player display name for leaderboard.</summary>
         public string playerName = "Player";
 
@@ -80,6 +92,10 @@ namespace ArrowSwarm.Data
                 lastDailyLoginDate = "",
                 musicVolume = 0.7f,
                 sfxVolume = 1.0f,
+                sfxEnabled = true,
+                vfxEnabled = true,
+                vibrationEnabled = true,
+                selectedLanguage = "ENGLISH",
                 playerName = "Player",
                 playerId = Guid.NewGuid().ToString()
             };
