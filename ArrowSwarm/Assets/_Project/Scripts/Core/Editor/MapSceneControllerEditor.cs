@@ -13,11 +13,18 @@ namespace ArrowSwarm.Core.Editor
     {
         private static readonly string[] MapButtonLabels = new string[]
         {
-            "🌲 Forest (6×8)",
-            "🌊 Ocean (8×10)",
-            "🏜️ Desert (10×12)",
-            "🏔️ Mountain (12×15)",
-            "🌌 Space (15×20)"
+            "Map 1 (6×8)",
+            "Map 2 (8×10)",
+            "Map 3 (10×12)",
+            "Map 4 (12×15)",
+            "Map 5 (15×20)",
+            "Map 6 (15×25)",
+            "Map 7 (15×30)",
+            "Map 8 (20×25)",
+            "Map 9 (20×30)",
+            "Map 10 (20×35)",
+            "Map 11 (20×40)",
+            "Map 12 (25×40)"
         };
 
         public override void OnInspectorGUI()
@@ -33,27 +40,36 @@ namespace ArrowSwarm.Core.Editor
             MapData activeMap = controller.GetActiveMap();
             string gridInfo = activeMap != null ? $"{activeMap.GridWidth}×{activeMap.GridHeight}" : "?×?";
             EditorGUILayout.HelpBox(
-                $"Active Map: {mapName} ({gridInfo})\nCurrent Level: {controller.DefaultLevel} (Range: {controller.CurrentLevelRange.x}-{controller.CurrentLevelRange.y})",
+                $"Active: {mapName} ({gridInfo}) | Default Level: {controller.DefaultLevel}",
                 MessageType.Info);
 
             EditorGUILayout.Space(6);
             DrawDefaultInspector();
 
-            // 1. Map Selection Buttons
+            // 1. Map Selection Buttons (2 columns)
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("🗺️ Map Selector (1-Click Switch)", EditorStyles.boldLabel);
 
-            for (int i = 0; i < MapButtonLabels.Length; i++)
+            for (int i = 0; i < MapButtonLabels.Length; i += 2)
             {
-                bool isCurrent = (i == controller.ActiveMapIndex);
-                GUI.backgroundColor = isCurrent ? new Color(0.3f, 0.9f, 0.5f) : Color.white;
-
-                if (GUILayout.Button(MapButtonLabels[i], GUILayout.Height(30)))
+                EditorGUILayout.BeginHorizontal();
+                for (int col = 0; col < 2; col++)
                 {
-                    controller.SelectMap(i);
-                    EditorUtility.SetDirty(controller);
-                    if (!Application.isPlaying) SceneView.RepaintAll();
+                    int index = i + col;
+                    if (index < MapButtonLabels.Length)
+                    {
+                        bool isCurrent = (index == controller.ActiveMapIndex);
+                        GUI.backgroundColor = isCurrent ? new Color(0.3f, 0.9f, 0.5f) : Color.white;
+
+                        if (GUILayout.Button(MapButtonLabels[index], GUILayout.Height(28)))
+                        {
+                            controller.SelectMap(index);
+                            EditorUtility.SetDirty(controller);
+                            if (!Application.isPlaying) SceneView.RepaintAll();
+                        }
+                    }
                 }
+                EditorGUILayout.EndHorizontal();
             }
             GUI.backgroundColor = Color.white;
 

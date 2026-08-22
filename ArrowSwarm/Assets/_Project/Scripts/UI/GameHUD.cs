@@ -24,6 +24,12 @@ namespace ArrowSwarm.UI
         [SerializeField] private TextMeshProUGUI _arrowCountText;
         [SerializeField] private Slider _zoomSlider;
 
+        /// <summary>RectTransform of the top HUD bar.</summary>
+        public RectTransform TopPanelRect => _topPanelRect;
+
+        /// <summary>RectTransform of the bottom HUD bar.</summary>
+        public RectTransform BottomPanelRect => _bottomPanelRect;
+
         [Header("Canvas Group")]
         [SerializeField] private CanvasGroup _canvasGroup;
 

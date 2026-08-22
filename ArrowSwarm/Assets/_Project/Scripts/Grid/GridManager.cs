@@ -51,11 +51,11 @@ namespace ArrowSwarm.Grid
             _height = mapData.GridHeight;
             _pointSpacing = (mapData != null && mapData.PointSpacing > 0) ? mapData.PointSpacing : 1.0f;
 
-            // Calculate origin to center perfectly around (0, -0.5f) to leave room for top HUD
+            // Calculate origin to center perfectly around (0, 0)
             float totalWidth = (_width - 1) * _pointSpacing;
             float totalHeight = (_height - 1) * _pointSpacing;
             
-            _origin = new Vector2(-totalWidth / 2f, (-totalHeight / 2f) - 0.5f);
+            _origin = new Vector2(-totalWidth / 2f, -totalHeight / 2f);
 
             _points = new GridPoint[_width, _height];
 

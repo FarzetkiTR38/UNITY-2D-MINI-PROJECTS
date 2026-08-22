@@ -100,14 +100,17 @@ namespace ArrowSwarm.Core
         public MapData[] Maps => _maps;
 
         /// <summary>
-        /// Gets the map data for the given level number (5 levels per map, cyclic).
-        /// Level 1-5 → Map 0 (Forest), Level 6-10 → Map 1 (Ocean), etc.
+        /// Gets the map data for the given level number using DifficultyCalculator.
         /// </summary>
         public MapData GetMapForLevel(int level)
         {
             if (_maps == null || _maps.Length == 0) return null;
-            int mapIndex = DifficultyCalculator.GetMapIndex(level) % _maps.Length;
-            return _maps[mapIndex];
+            int mapIndex = DifficultyCalculator.GetMapIndex(level);
+            if (mapIndex >= 0 && mapIndex < _maps.Length)
+            {
+                return _maps[mapIndex];
+            }
+            return _maps[Mathf.Abs(mapIndex) % _maps.Length];
         }
 
         /// <summary>

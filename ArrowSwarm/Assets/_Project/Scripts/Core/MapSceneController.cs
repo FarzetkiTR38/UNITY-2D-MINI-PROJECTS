@@ -4,36 +4,36 @@ namespace ArrowSwarm.Core
     using UnityEngine;
 
     /// <summary>
-    /// Controls the unified Map Test Scene. Allows switching between 5 map themes
+    /// Controls the unified Map Test Scene. Allows switching between all 12 maps
     /// from a single scene via Inspector buttons. Automatically synchronizes level numbers
-    /// to load the correct map procedurally (Lv 1-5: Forest, 6-10: Ocean, 11-15: Desert, 16-20: Mountain, 21-25: Space).
+    /// to load the correct map procedurally.
     /// </summary>
     public class MapSceneController : MonoBehaviour
     {
         [Header("Map Assets")]
-        [Tooltip("Array of 5 MapData ScriptableObjects — one per map theme.")]
+        [Tooltip("Array of 12 MapData ScriptableObjects.")]
         [SerializeField] private MapData[] _mapDataAssets;
 
         [Header("Active Map & Level")]
-        [Tooltip("Currently selected map index (0-4).")]
+        [Tooltip("Currently selected map index (0-11).")]
         [SerializeField] private int _activeMapIndex = 0;
 
         [Tooltip("Active level to load when starting, switching maps, or clicking Restart.")]
         [SerializeField] private int _defaultLevel = 1;
 
-        /// <summary>Currently selected map index (0 to 4).</summary>
+        /// <summary>Currently selected map index (0 to 11).</summary>
         public int ActiveMapIndex
         {
             get => _activeMapIndex;
             set
             {
                 _activeMapIndex = Mathf.Clamp(value, 0, Mathf.Max(0, MapCount - 1));
-                _defaultLevel = _activeMapIndex * 5 + 1;
+                _defaultLevel = GetDefaultLevelForMapIndex(_activeMapIndex);
             }
         }
 
         /// <summary>Display name of the currently selected map.</summary>
-        public string MapName => GetActiveMap()?.MapName ?? "Unknown";
+        public string MapName => GetActiveMap()?.MapName ?? $"Map {_activeMapIndex + 1}";
 
         /// <summary>Default starting level for this scene.</summary>
         public int DefaultLevel
@@ -49,8 +49,41 @@ namespace ArrowSwarm.Core
         /// <summary>Number of available map assets.</summary>
         public int MapCount => _mapDataAssets != null ? _mapDataAssets.Length : 0;
 
-        /// <summary>Level range for the current map (e.g. 1-5, 6-10, 21-25).</summary>
-        public Vector2Int CurrentLevelRange => new Vector2Int(_activeMapIndex * 5 + 1, _activeMapIndex * 5 + 5);
+        /// <summary>Level range or sample levels for the current map.</summary>
+        public Vector2Int CurrentLevelRange
+        {
+            get
+            {
+                if (_activeMapIndex < 5)
+                {
+                    return new Vector2Int(_activeMapIndex * 5 + 1, _activeMapIndex * 5 + 5);
+                }
+                return new Vector2Int(_defaultLevel, _defaultLevel + 4);
+            }
+        }
+
+        /// <summary>
+        /// Gets the representative level for each map index.
+        /// </summary>
+        public static int GetDefaultLevelForMapIndex(int mapIndex)
+        {
+            return mapIndex switch
+            {
+                0 => 1,   // Map 1 (Lv 1-5)
+                1 => 6,   // Map 2 (Lv 6-10)
+                2 => 11,  // Map 3 (Lv 11-15)
+                3 => 16,  // Map 4 (Lv 16-20)
+                4 => 21,  // Map 5 (Lv 21-25)
+                5 => 30,  // Map 6 (Lv 30, 35, 40...)
+                6 => 26,  // Map 7 (Lv 26, 31, 36...)
+                7 => 27,  // Map 8 (Lv 27, 32, 37...)
+                8 => 28,  // Map 9 (Lv 28, 33, 38...)
+                9 => 29,  // Map 10 (Lv 29, 34, 39...)
+                10 => 50, // Map 11 (Lv 50, 75, 125, 150...)
+                11 => 100,// Map 12 (Lv 100, 200, 300...)
+                _ => 1
+            };
+        }
 
         private void OnEnable()
         {
@@ -67,27 +100,27 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Ensures all 5 MapData assets are referenced.
+        /// Ensures all 12 MapData assets are referenced.
         /// </summary>
         public void EnsureMapAssets()
         {
-            if (_mapDataAssets != null && _mapDataAssets.Length == 5 && _mapDataAssets[0] != null)
+            if (_mapDataAssets != null && _mapDataAssets.Length == 12 && _mapDataAssets[0] != null)
             {
                 return;
             }
 
-            if (GameManager.HasInstance && GameManager.Instance.Config != null && GameManager.Instance.Config.Maps != null)
+            if (GameManager.HasInstance && GameManager.Instance.Config != null && GameManager.Instance.Config.Maps != null && GameManager.Instance.Config.Maps.Length >= 12)
             {
                 _mapDataAssets = GameManager.Instance.Config.Maps;
                 return;
             }
 
 #if UNITY_EDITOR
-            string[] names = { "Map1_Forest", "Map2_Ocean", "Map3_Desert", "Map4_Mountain", "Map5_Space" };
-            _mapDataAssets = new MapData[5];
-            for (int i = 0; i < names.Length; i++)
+            _mapDataAssets = new MapData[12];
+            for (int i = 0; i < 12; i++)
             {
-                string[] guids = UnityEditor.AssetDatabase.FindAssets($"{names[i]} t:MapData");
+                string assetName = $"Map{i + 1}";
+                string[] guids = UnityEditor.AssetDatabase.FindAssets($"{assetName} t:MapData");
                 if (guids.Length > 0)
                 {
                     string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
@@ -109,7 +142,7 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Selects a map by index (0: Forest, 1: Ocean, 2: Desert, 3: Mountain, 4: Space).
+        /// Selects a map by index (0 to 11).
         /// Automatically adjusts the active level and fits the camera.
         /// </summary>
         public void SelectMap(int index)
@@ -158,7 +191,7 @@ namespace ArrowSwarm.Core
         public void PreviousMapLevel() => LoadLevel(Mathf.Max(1, _defaultLevel - 1));
 
         /// <summary>
-        /// Fits camera to current map preview in 9:16 portrait.
+        /// Adjusts camera position and orthographic size to preview the active map cleanly.
         /// </summary>
         public void FitCameraToPreview()
         {
@@ -178,22 +211,20 @@ namespace ArrowSwarm.Core
 
             float totalWidth = (map.GridWidth - 1) * spacing;
             float totalHeight = (map.GridHeight - 1) * spacing;
-            Vector2 origin = new Vector2(-totalWidth / 2f, (-totalHeight / 2f) - 0.5f);
+            Vector2 origin = new Vector2(-totalWidth / 2f, -totalHeight / 2f);
             Vector2 center = origin + new Vector2(totalWidth * 0.5f, totalHeight * 0.5f);
 
             float pathOffset = 1.10f;
             float outerMargin = 0.60f;
-            float cardPadding = (pathOffset + outerMargin) * spacing;
-            float outerCardWidth = totalWidth + 2f * cardPadding;
-            float outerCardHeight = totalHeight + 2f * cardPadding;
+            float boardPadding = (pathOffset + outerMargin) * spacing;
+            float visualBoardWidth = totalWidth + 2f * boardPadding;
+            float visualBoardHeight = totalHeight + 2f * boardPadding;
 
-            float sideMargin = 0.4f * spacing;
-            float topHudMargin = 1.5f;
-            float bottomHudMargin = 1.8f;
+            const float targetHeightRatio = 0.620f;
+            const float targetWidthRatio = 0.880f;
 
-            float orthoWidth = (outerCardWidth + sideMargin * 2f) / (2f * aspect);
-            float availableHeightSpace = outerCardHeight + (topHudMargin + bottomHudMargin);
-            float orthoHeight = availableHeightSpace / 2f;
+            float orthoHeight = visualBoardHeight / (2f * targetHeightRatio);
+            float orthoWidth = visualBoardWidth / (2f * aspect * targetWidthRatio);
             float orthoSize = Mathf.Max(orthoWidth, orthoHeight);
 
             cam.orthographicSize = orthoSize;
@@ -217,7 +248,7 @@ namespace ArrowSwarm.Core
             int h = map.GridHeight;
             float totalW = (w - 1) * s;
             float totalH = (h - 1) * s;
-            Vector2 origin = new Vector2(-totalW / 2f, (-totalH / 2f) - 0.5f);
+            Vector2 origin = new Vector2(-totalW / 2f, -totalH / 2f);
             Vector2 center = origin + new Vector2(totalW * 0.5f, totalH * 0.5f);
             float pathOffset = 1.10f;
 

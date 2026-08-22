@@ -45,8 +45,8 @@ namespace ArrowSwarm.Path
         }
 
         /// <summary>
-        /// Draws the path using LineRenderer and instantiates portal sprites
-        /// at the spawn and finish positions.
+        /// Instantiates portal sprites at the spawn and finish positions.
+        /// (Path line is hidden as the 3-layer card background already defines the channel).
         /// </summary>
         public void DrawPath()
         {
@@ -55,73 +55,15 @@ namespace ArrowSwarm.Path
             if (pm.Waypoints == null) return;
             if (pm.Waypoints.Count < 2) return;
 
+            // Hide or clear any legacy LineRenderer component
             if (_lineRenderer == null)
             {
-                _lineRenderer = gameObject.GetComponent<LineRenderer>();
-                if (_lineRenderer == null)
-                {
-                    _lineRenderer = gameObject.AddComponent<LineRenderer>();
-                }
+                _lineRenderer = GetComponent<LineRenderer>();
             }
-
-            // Get path color from current map (High contrast #8C7A68 default)
-            Color pathColor = new Color(0.55f, 0.48f, 0.41f, 1f);
-            GameManager gmInstance = GameManager.Instance;
-            if (gmInstance != null)
+            if (_lineRenderer != null)
             {
-                GameConfig config = gmInstance.Config;
-                if (config != null)
-                {
-                    int currentLevel = 1;
-                    if (Data.DataManager.HasInstance)
-                    {
-                        Data.DataManager dm = Data.DataManager.Instance;
-                        if (dm != null && dm.PlayerData != null)
-                        {
-                            currentLevel = dm.PlayerData.currentLevel;
-                        }
-                    }
-                    MapData mapData = config.GetMapForLevel(currentLevel);
-                    if (mapData != null)
-                    {
-                        pathColor = mapData.PathColor;
-                    }
-                }
-            }
-
-            _lineRenderer.positionCount = pm.Waypoints.Count;
-            for (int i = 0; i < pm.Waypoints.Count; i++)
-            {
-                _lineRenderer.SetPosition(i, pm.Waypoints[i]);
-            }
-
-            _lineRenderer.startWidth = _lineWidth;
-            _lineRenderer.endWidth = _lineWidth;
-            _lineRenderer.startColor = pathColor;
-            _lineRenderer.endColor = pathColor;
-            _lineRenderer.sortingOrder = _sortingOrder;
-            _lineRenderer.useWorldSpace = true;
-
-            if (_pathMaterial != null)
-            {
-                _lineRenderer.sharedMaterial = _pathMaterial;
-            }
-            else
-            {
-                if (_sharedPathMaterial == null)
-                {
-                    Shader shader = Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default");
-                    if (shader == null)
-                    {
-                        shader = Shader.Find("Sprites/Default");
-                    }
-                    if (shader != null)
-                    {
-                        _sharedPathMaterial = new Material(shader);
-                        _sharedPathMaterial.mainTexture = Texture2D.whiteTexture;
-                    }
-                }
-                _lineRenderer.sharedMaterial = _sharedPathMaterial;
+                _lineRenderer.positionCount = 0;
+                _lineRenderer.enabled = false;
             }
 
             // Clear any previous portal objects first

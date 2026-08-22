@@ -152,8 +152,11 @@ namespace ArrowSwarm.Arrow
             return Weight;
         }
 
+        /// <summary>Visuals component reference.</summary>
+        public ArrowVisuals Visuals => _visuals != null ? _visuals : (_visuals = GetComponent<ArrowVisuals>());
+
         /// <summary>
-        /// Promotes this arrow to rainbow state (last remaining arrow).
+        /// Sets rainbow mode on this arrow.
         /// </summary>
         public void SetRainbow(bool rainbow)
         {
@@ -170,11 +173,6 @@ namespace ArrowSwarm.Arrow
             _isRainbow = false;
             _pathPoints.Clear();
             _visuals?.ResetVisuals();
-        }
-
-        private void OnMouseDown()
-        {
-            OnPlayerClick();
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]

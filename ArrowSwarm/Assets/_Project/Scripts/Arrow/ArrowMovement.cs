@@ -51,16 +51,20 @@ namespace ArrowSwarm.Arrow
             Vector2 headWorld = arrow.HeadPoint.PointToWorld(grid.PointSpacing, grid.Origin);
             transform.position = new Vector3(headWorld.x, headWorld.y, 0f);
 
-            // Initial rotation
-            float zRotation = arrow.HeadDirection switch
+            // Initial direction towards grid exit
+            Vector2 initialDir = (gridExitPoint - headWorld).normalized;
+            if (initialDir == Vector2.zero)
             {
-                ArrowDirection.Up => 0f,
-                ArrowDirection.Right => -90f,
-                ArrowDirection.Down => 180f,
-                ArrowDirection.Left => 90f,
-                _ => 0f
-            };
-            transform.rotation = Quaternion.Euler(0, 0, zRotation);
+                initialDir = arrow.HeadDirection switch
+                {
+                    ArrowDirection.Up => Vector2.up,
+                    ArrowDirection.Right => Vector2.right,
+                    ArrowDirection.Down => Vector2.down,
+                    ArrowDirection.Left => Vector2.left,
+                    _ => Vector2.up
+                };
+            }
+            RotateArrow(initialDir);
 
             // Build full path
             var waypoints = new System.Collections.Generic.List<Vector2>();
@@ -84,7 +88,13 @@ namespace ArrowSwarm.Arrow
             if (dir == Vector2.zero) return;
             float rawAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
             float snappedAngle = Mathf.Round(rawAngle / 90f) * 90f;
-            transform.rotation = Quaternion.Euler(0, 0, snappedAngle);
+            Quaternion targetRot = Quaternion.Euler(0, 0, snappedAngle);
+            transform.rotation = targetRot;
+
+            if (_arrow != null && _arrow.Visuals != null && _arrow.Visuals.HeadTransform != null)
+            {
+                _arrow.Visuals.HeadTransform.rotation = targetRot;
+            }
         }
 
         private void CompleteMovement()

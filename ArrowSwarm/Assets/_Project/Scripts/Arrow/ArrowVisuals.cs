@@ -248,13 +248,22 @@ namespace ArrowSwarm.Arrow
             }
         }
 
+        /// <summary>ArrowHead child transform.</summary>
+        public Transform HeadTransform => _headTransform;
+
         /// <summary>
-        /// Plays the fire visual effect (stops pulse, hides line, keeps head moving).
+        /// Plays the fire visual effect (stops pulse, hides line, aligns arrowhead to movement).
         /// </summary>
         public void PlayFireEffect()
         {
             _isPulsing = false;
             _lineRenderer.enabled = false;
+
+            if (_headTransform != null)
+            {
+                _headTransform.localPosition = Vector3.zero;
+                _headTransform.localRotation = Quaternion.identity;
+            }
             
             if (_trailRenderer != null)
             {

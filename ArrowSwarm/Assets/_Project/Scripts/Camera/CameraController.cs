@@ -87,18 +87,27 @@ namespace ArrowSwarm.Camera
         {
             if (_topPanelRect != null && _bottomPanelRect != null) return;
 
+            var hud = FindFirstObjectByType<ArrowSwarm.UI.GameHUD>();
+            if (hud != null)
+            {
+                if (_topPanelRect == null) _topPanelRect = hud.TopPanelRect;
+                if (_bottomPanelRect == null) _bottomPanelRect = hud.BottomPanelRect;
+            }
+
+            if (_topPanelRect != null && _bottomPanelRect != null) return;
+
             var canvases = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
             foreach (var canvas in canvases)
             {
                 if (canvas == null) continue;
                 if (_topPanelRect == null)
                 {
-                    Transform t = canvas.transform.Find("TopBar") ?? canvas.transform.Find("TopPanel");
+                    Transform t = canvas.transform.Find("TopBar") ?? canvas.transform.Find("TopPanel") ?? canvas.transform.Find("Header");
                     if (t != null) _topPanelRect = t as RectTransform;
                 }
                 if (_bottomPanelRect == null)
                 {
-                    Transform b = canvas.transform.Find("BottomBar") ?? canvas.transform.Find("BottomPanel");
+                    Transform b = canvas.transform.Find("BottomBar") ?? canvas.transform.Find("BottomPanel") ?? canvas.transform.Find("Footer");
                     if (b != null) _bottomPanelRect = b as RectTransform;
                 }
             }
@@ -150,7 +159,45 @@ namespace ArrowSwarm.Camera
         }
 
         /// <summary>
+        /// Gets the normalized screen height fractions occupied by Top HUD and Bottom HUD.
+        /// TopBar is typically ~8.5% of portrait screen height, BottomBar is ~13%.
+        /// </summary>
+        public void GetHudRatios(out float topRatio, out float bottomRatio)
+        {
+            AutoFindHudPanels();
+
+            // Calibrated reference ratios for 1080x1920 UI:
+            topRatio = 0.085f;
+            if (_topPanelRect != null && _topPanelRect.gameObject.activeInHierarchy && Screen.height > 0)
+            {
+                Vector3[] topCorners = new Vector3[4];
+                _topPanelRect.GetWorldCorners(topCorners);
+                float topLimit = Mathf.Min(topCorners[0].y, topCorners[3].y);
+                float measuredRatio = (Screen.height - topLimit) / (float)Screen.height;
+                if (measuredRatio > 0.03f && measuredRatio < 0.30f)
+                {
+                    topRatio = measuredRatio;
+                }
+            }
+
+            bottomRatio = 0.130f;
+            if (_bottomPanelRect != null && _bottomPanelRect.gameObject.activeInHierarchy && Screen.height > 0)
+            {
+                Vector3[] bottomCorners = new Vector3[4];
+                _bottomPanelRect.GetWorldCorners(bottomCorners);
+                float bottomLimit = Mathf.Max(bottomCorners[1].y, bottomCorners[2].y);
+                float measuredRatio = bottomLimit / (float)Screen.height;
+                if (measuredRatio > 0.05f && measuredRatio < 0.35f)
+                {
+                    bottomRatio = measuredRatio;
+                }
+            }
+        }
+
+        /// <summary>
         /// Sets up the camera to fit the map with given dimensions.
+        /// Guaranteed to center the map with EXACTLY equal vertical gaps above and below,
+        /// and perfectly equal horizontal gaps on the left and right.
         /// </summary>
         public void FitToMap(MapData mapData)
         {
@@ -159,36 +206,38 @@ namespace ArrowSwarm.Camera
                 : 1.0f;
             Vector2 origin = ArrowSwarm.Grid.GridManager.HasInstance
                 ? ArrowSwarm.Grid.GridManager.Instance.Origin
-                : new Vector2(-((mapData.GridWidth - 1) * spacing) / 2f, (-((mapData.GridHeight - 1) * spacing) / 2f) - 0.5f);
+                : new Vector2(-((mapData.GridWidth - 1) * spacing) / 2f, -((mapData.GridHeight - 1) * spacing) / 2f);
 
             float totalGridWidth = (mapData.GridWidth - 1) * spacing;
             float totalGridHeight = (mapData.GridHeight - 1) * spacing;
 
             _mapCenter = origin + new Vector2(totalGridWidth * 0.5f, totalGridHeight * 0.5f);
 
-            // Derive outer card dimensions including mob path wrapping margin
+            // Full visual dimensions including cards, track channel, portal, and mobs
             float pathOffset = ArrowSwarm.Path.PathManager.HasInstance
                 ? ArrowSwarm.Path.PathManager.Instance.PathOffsetMultiplier
                 : 1.10f;
             float outerMargin = 0.60f;
-            float cardPadding = (pathOffset + outerMargin) * spacing;
-            float outerCardWidth = totalGridWidth + 2f * cardPadding;
-            float outerCardHeight = totalGridHeight + 2f * cardPadding;
+            float boardPadding = (pathOffset + outerMargin) * spacing;
+            float visualBoardWidth = totalGridWidth + 2f * boardPadding;
+            float visualBoardHeight = totalGridHeight + 2f * boardPadding;
 
-            _mapExtents = new Vector2(outerCardWidth * 0.5f, outerCardHeight * 0.5f);
+            _mapExtents = new Vector2(visualBoardWidth * 0.5f, visualBoardHeight * 0.5f);
 
-            // Store Grid/Map bounds with card margin so camera clamping keeps everything inside viewport
-            _gridMin = origin - new Vector2(cardPadding, cardPadding);
-            _gridMax = origin + new Vector2(totalGridWidth + cardPadding, totalGridHeight + cardPadding);
+            _gridMin = origin - new Vector2(boardPadding, boardPadding);
+            _gridMax = origin + new Vector2(totalGridWidth + boardPadding, totalGridHeight + boardPadding);
 
-            // Calculate ortho size to fit entire map within the visible viewport between Top HUD and Bottom HUD
             float aspect = (float)Screen.width / Screen.height;
             if (aspect <= 0f) aspect = 9f / 16f;
 
-            float sideMargin = 0.4f * spacing;
-            float orthoWidth = (outerCardWidth + sideMargin * 2f) / (2f * aspect);
-            float availableHeightSpace = outerCardHeight + (_topHudMargin + _bottomHudMargin);
-            float orthoHeight = availableHeightSpace / 2f;
+            // Target playable window scale:
+            // 62% vertical coverage gives ~19% top margin and ~19% bottom margin
+            // perfectly clearing Top HUD (~10%) and Bottom HUD (~14%) with equal gaps.
+            const float targetHeightRatio = 0.620f;
+            const float targetWidthRatio = 0.880f;
+
+            float orthoHeight = visualBoardHeight / (2f * targetHeightRatio);
+            float orthoWidth = visualBoardWidth / (2f * aspect * targetWidthRatio);
             _defaultOrthoSize = Mathf.Max(orthoWidth, orthoHeight);
 
             GameConfig config = GameManager.Instance?.Config;
@@ -200,10 +249,12 @@ namespace ArrowSwarm.Camera
 
             if (Cam != null) Cam.orthographicSize = _defaultOrthoSize;
             _targetOrthoSize = _defaultOrthoSize;
+
+            // Camera is centered PRECISELY on map center: Top Gap == Bottom Gap, Left Gap == Right Gap
             transform.position = new Vector3(_mapCenter.x, _mapCenter.y, transform.position.z);
 
             LogDebug($"Camera fit: Center={_mapCenter}, OrthoSize={_defaultOrthoSize}, " +
-                     $"GridMin={_gridMin}, GridMax={_gridMax}");
+                     $"BoardSize={visualBoardWidth}x{visualBoardHeight}");
         }
 
         /// <summary>
@@ -446,11 +497,15 @@ namespace ArrowSwarm.Camera
             float halfHeight = _camera.orthographicSize;
             float halfWidth = halfHeight * _camera.aspect;
 
-            // Effective viewport height margins below Top HUD and above Bottom HUD
-            float effectiveHalfHeightTop = halfHeight - _topHudMargin;
-            float effectiveHalfHeightBottom = halfHeight - _bottomHudMargin;
+            GetHudRatios(out float topRatio, out float bottomRatio);
+            float topMarginWorld = halfHeight * 2f * topRatio;
+            float bottomMarginWorld = halfHeight * 2f * bottomRatio;
 
-            // Clamping guarantees that all grid points [_gridMin, _gridMax] remain strictly inside the red box play viewport
+            // Effective viewport height margins below Top HUD and above Bottom HUD
+            float effectiveHalfHeightTop = halfHeight - topMarginWorld;
+            float effectiveHalfHeightBottom = halfHeight - bottomMarginWorld;
+
+            // Clamping guarantees that all grid points [_gridMin, _gridMax] remain strictly inside the visible play viewport
             float minX = Mathf.Min(_gridMin.x + halfWidth, _gridMax.x - halfWidth);
             float maxX = Mathf.Max(_gridMin.x + halfWidth, _gridMax.x - halfWidth);
 

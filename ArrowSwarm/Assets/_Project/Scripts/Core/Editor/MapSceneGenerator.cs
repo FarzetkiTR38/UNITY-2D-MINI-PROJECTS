@@ -9,8 +9,8 @@ namespace ArrowSwarm.Core.Editor
     using UnityEngine.SceneManagement;
 
     /// <summary>
-    /// Editor utility to generate and configure the 5 standalone map test/preview scenes.
-    /// Accessible via Unity menu: ArrowSwarm > Generate 5 Map Scenes.
+    /// Editor utility to generate and configure standalone map test/preview scenes.
+    /// Accessible via Unity menu: ArrowSwarm > Generate Map Scenes.
     /// </summary>
     public static class MapSceneGenerator
     {
@@ -20,19 +20,25 @@ namespace ArrowSwarm.Core.Editor
             public string MapName;
             public string SceneName;
             public int DefaultLevel;
-            public Vector2Int LevelRange;
         }
 
         private static readonly MapSceneDef[] MapDefs = new MapSceneDef[]
         {
-            new MapSceneDef { MapIndex = 0, MapName = "Forest", SceneName = "Map1_ForestScene", DefaultLevel = 1, LevelRange = new Vector2Int(1, 5) },
-            new MapSceneDef { MapIndex = 1, MapName = "Ocean", SceneName = "Map2_OceanScene", DefaultLevel = 6, LevelRange = new Vector2Int(6, 10) },
-            new MapSceneDef { MapIndex = 2, MapName = "Desert", SceneName = "Map3_DesertScene", DefaultLevel = 11, LevelRange = new Vector2Int(11, 15) },
-            new MapSceneDef { MapIndex = 3, MapName = "Mountain", SceneName = "Map4_MountainScene", DefaultLevel = 16, LevelRange = new Vector2Int(16, 20) },
-            new MapSceneDef { MapIndex = 4, MapName = "Space", SceneName = "Map5_SpaceScene", DefaultLevel = 21, LevelRange = new Vector2Int(21, 25) }
+            new MapSceneDef { MapIndex = 0, MapName = "Map 1", SceneName = "Map1Scene", DefaultLevel = 1 },
+            new MapSceneDef { MapIndex = 1, MapName = "Map 2", SceneName = "Map2Scene", DefaultLevel = 6 },
+            new MapSceneDef { MapIndex = 2, MapName = "Map 3", SceneName = "Map3Scene", DefaultLevel = 11 },
+            new MapSceneDef { MapIndex = 3, MapName = "Map 4", SceneName = "Map4Scene", DefaultLevel = 16 },
+            new MapSceneDef { MapIndex = 4, MapName = "Map 5", SceneName = "Map5Scene", DefaultLevel = 21 },
+            new MapSceneDef { MapIndex = 5, MapName = "Map 6", SceneName = "Map6Scene", DefaultLevel = 30 },
+            new MapSceneDef { MapIndex = 6, MapName = "Map 7", SceneName = "Map7Scene", DefaultLevel = 26 },
+            new MapSceneDef { MapIndex = 7, MapName = "Map 8", SceneName = "Map8Scene", DefaultLevel = 27 },
+            new MapSceneDef { MapIndex = 8, MapName = "Map 9", SceneName = "Map9Scene", DefaultLevel = 28 },
+            new MapSceneDef { MapIndex = 9, MapName = "Map 10", SceneName = "Map10Scene", DefaultLevel = 29 },
+            new MapSceneDef { MapIndex = 10, MapName = "Map 11", SceneName = "Map11Scene", DefaultLevel = 50 },
+            new MapSceneDef { MapIndex = 11, MapName = "Map 12", SceneName = "Map12Scene", DefaultLevel = 100 }
         };
 
-        [MenuItem("ArrowSwarm/Generate 5 Map Scenes")]
+        [MenuItem("ArrowSwarm/Generate Map Scenes")]
         public static void GenerateAllMapScenes()
         {
             string gameScenePath = "Assets/_Project/Scenes/GameScene.unity";
