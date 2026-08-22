@@ -154,26 +154,40 @@ namespace ArrowSwarm.Camera
         /// </summary>
         public void FitToMap(MapData mapData)
         {
-            float spacing = ArrowSwarm.Grid.GridManager.Instance.PointSpacing;
-            Vector2 origin = ArrowSwarm.Grid.GridManager.Instance.Origin;
-
-            float mapWidth = mapData.GridWidth * spacing + _padding * 2;
-            float mapHeight = mapData.GridHeight * spacing + _padding * 2;
+            float spacing = ArrowSwarm.Grid.GridManager.HasInstance
+                ? ArrowSwarm.Grid.GridManager.Instance.PointSpacing
+                : 1.0f;
+            Vector2 origin = ArrowSwarm.Grid.GridManager.HasInstance
+                ? ArrowSwarm.Grid.GridManager.Instance.Origin
+                : new Vector2(-((mapData.GridWidth - 1) * spacing) / 2f, (-((mapData.GridHeight - 1) * spacing) / 2f) - 0.5f);
 
             float totalGridWidth = (mapData.GridWidth - 1) * spacing;
             float totalGridHeight = (mapData.GridHeight - 1) * spacing;
 
             _mapCenter = origin + new Vector2(totalGridWidth * 0.5f, totalGridHeight * 0.5f);
-            _mapExtents = new Vector2(mapWidth * 0.5f, mapHeight * 0.5f);
 
-            // Store Grid bounds with half spacing margin so all grid points stay on screen at limits
-            _gridMin = origin - new Vector2(spacing * 0.5f, spacing * 0.5f);
-            _gridMax = origin + new Vector2(totalGridWidth + spacing * 0.5f, totalGridHeight + spacing * 0.5f);
+            // Derive outer card dimensions including mob path wrapping margin
+            float pathOffset = ArrowSwarm.Path.PathManager.HasInstance
+                ? ArrowSwarm.Path.PathManager.Instance.PathOffsetMultiplier
+                : 1.10f;
+            float outerMargin = 0.60f;
+            float cardPadding = (pathOffset + outerMargin) * spacing;
+            float outerCardWidth = totalGridWidth + 2f * cardPadding;
+            float outerCardHeight = totalGridHeight + 2f * cardPadding;
+
+            _mapExtents = new Vector2(outerCardWidth * 0.5f, outerCardHeight * 0.5f);
+
+            // Store Grid/Map bounds with card margin so camera clamping keeps everything inside viewport
+            _gridMin = origin - new Vector2(cardPadding, cardPadding);
+            _gridMax = origin + new Vector2(totalGridWidth + cardPadding, totalGridHeight + cardPadding);
 
             // Calculate ortho size to fit entire map within the visible viewport between Top HUD and Bottom HUD
             float aspect = (float)Screen.width / Screen.height;
-            float orthoWidth = mapWidth / (2f * aspect);
-            float availableHeightSpace = mapHeight + (_topHudMargin + _bottomHudMargin);
+            if (aspect <= 0f) aspect = 9f / 16f;
+
+            float sideMargin = 0.4f * spacing;
+            float orthoWidth = (outerCardWidth + sideMargin * 2f) / (2f * aspect);
+            float availableHeightSpace = outerCardHeight + (_topHudMargin + _bottomHudMargin);
             float orthoHeight = availableHeightSpace / 2f;
             _defaultOrthoSize = Mathf.Max(orthoWidth, orthoHeight);
 

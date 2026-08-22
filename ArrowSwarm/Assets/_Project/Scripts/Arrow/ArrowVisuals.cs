@@ -121,9 +121,13 @@ namespace ArrowSwarm.Arrow
                 _lineRenderer.SetPosition(i, new Vector3(worldPos.x, worldPos.y, 0f));
             }
 
-            _baseLineWidth = _lineWidth;
-            _lineRenderer.startWidth = _lineWidth;
-            _lineRenderer.endWidth = _lineWidth;
+            // Calculate bold, juicy line width and arrowhead size proportional to grid spacing
+            float dynamicLineWidth = Mathf.Clamp(spacing * 0.35f, 0.10f, 0.28f);
+            float dynamicHeadSize = Mathf.Clamp(spacing * 0.75f, 0.20f, 0.58f);
+
+            _baseLineWidth = dynamicLineWidth;
+            _lineRenderer.startWidth = dynamicLineWidth;
+            _lineRenderer.endWidth = dynamicLineWidth;
 
             // Ensure parent transform has zero rotation so arrowhead is strictly orthogonal
             transform.rotation = Quaternion.identity;
@@ -137,9 +141,9 @@ namespace ArrowSwarm.Arrow
                 ArrowDirection.Left => 90f,
                 _ => 0f
             };
-            _headTransform.position = new Vector3(headWorldPos.x, headWorldPos.y, -0.1f);
+            _headTransform.position = new Vector3(headWorldPos.x, headWorldPos.y, -0.05f);
             _headTransform.localRotation = Quaternion.Euler(0, 0, zRotation);
-            _baseHeadScale = Vector3.one * _headSize;
+            _baseHeadScale = Vector3.one * dynamicHeadSize;
             _headTransform.localScale = _baseHeadScale;
 
             // Random color from palette (independent of weight) or rainbow

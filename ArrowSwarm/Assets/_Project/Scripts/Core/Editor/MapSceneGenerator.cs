@@ -72,10 +72,8 @@ namespace ArrowSwarm.Core.Editor
                     controller = controllerObj.AddComponent<MapSceneController>();
                 }
 
-                controller.MapIndex = def.MapIndex;
-                controller.MapName = def.MapName;
+                controller.ActiveMapIndex = def.MapIndex;
                 controller.DefaultLevel = def.DefaultLevel;
-                controller.LevelRange = def.LevelRange;
 
                 EditorUtility.SetDirty(controller);
                 EditorUtility.SetDirty(controllerObj);
@@ -83,7 +81,7 @@ namespace ArrowSwarm.Core.Editor
                 EditorSceneManager.SaveScene(scene);
 
                 generatedScenePaths.Add(targetPath);
-                Debug.Log($"[ArrowSwarm] Generated Map Scene: {def.SceneName} (Map {def.MapIndex}: {def.MapName}, Default Level: {def.DefaultLevel}, Range: {def.LevelRange})");
+                Debug.Log($"[ArrowSwarm] Generated Map Scene: {def.SceneName} (Map {def.MapIndex}: {def.MapName}, Default Level: {def.DefaultLevel})");
             }
 
             // Update Build Settings

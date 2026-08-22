@@ -49,28 +49,9 @@ namespace ArrowSwarm.Grid
 
             _width = mapData.GridWidth;
             _height = mapData.GridHeight;
+            _pointSpacing = (mapData != null && mapData.PointSpacing > 0) ? mapData.PointSpacing : 1.0f;
 
-            // Dynamically calculate PointSpacing and Origin to perfectly center on screen
-            UnityEngine.Camera cam = UnityEngine.Camera.main ?? UnityEngine.Object.FindFirstObjectByType<UnityEngine.Camera>();
-            float screenHeight = cam != null ? cam.orthographicSize * 2f : 10f;
-            float screenWidth = cam != null ? screenHeight * cam.aspect : 5.625f;
-
-            // Padding for path and UI (Path needs 1 extra unit around grid)
-            float paddingX = 2.0f; // Path left/right + small margin
-            float paddingY = 4.0f; // Path top/bottom + UI margin (top UI, bottom UI)
-
-            float availableWidth = screenWidth - paddingX;
-            float availableHeight = screenHeight - paddingY;
-
-            // Max point spacing to fit both dimensions
-            float spacingX = availableWidth / Mathf.Max(1, _width - 1);
-            float spacingY = availableHeight / Mathf.Max(1, _height - 1);
-            _pointSpacing = Mathf.Min(spacingX, spacingY);
-
-            // Cap the point spacing so small grids aren't gigantic
-            _pointSpacing = Mathf.Min(_pointSpacing, 1.2f);
-
-            // Calculate origin to center perfectly around (0, -0.5f) to leave more room for top UI
+            // Calculate origin to center perfectly around (0, -0.5f) to leave room for top HUD
             float totalWidth = (_width - 1) * _pointSpacing;
             float totalHeight = (_height - 1) * _pointSpacing;
             
@@ -89,6 +70,21 @@ namespace ArrowSwarm.Grid
             }
 
             OnGridInitialized?.Invoke(_width, _height);
+
+            // Direct calls ensure immediate rendering even if event subscriptions
+            // haven't been set up yet (first click scenario)
+            MapContainerVisualizer containerVis = GetComponent<MapContainerVisualizer>();
+            if (containerVis != null)
+            {
+                containerVis.BuildThreeLayerTheme(_width, _height);
+            }
+
+            GridVisualizer gridVis = GetComponent<GridVisualizer>();
+            if (gridVis != null)
+            {
+                gridVis.DrawPointGrid();
+            }
+
             LogDebug($"Grid initialized: {_width}x{_height}, Spacing={_pointSpacing}");
         }
 
@@ -251,6 +247,14 @@ namespace ArrowSwarm.Grid
                 ArrowSwarm.Arrow.ArrowDirection.Right => Vector2Int.right,
                 _ => Vector2Int.zero
             };
+        }
+
+        /// <summary>
+        /// Gets the standard point spacing for grid placement (default: 1.0f).
+        /// </summary>
+        public static float CalculatePointSpacing(int width, int height, float orthoSize = 5.0f, float aspect = 0.5625f)
+        {
+            return 1.0f;
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]

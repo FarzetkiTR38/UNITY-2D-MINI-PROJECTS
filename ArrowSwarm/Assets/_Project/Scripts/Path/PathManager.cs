@@ -33,7 +33,7 @@ namespace ArrowSwarm.Path
         /// <summary>Fired when path is initialized.</summary>
         public static event Action OnPathInitialized;
 
-        [SerializeField] private float _pathOffsetMultiplier = 1.35f;
+        [SerializeField] private float _pathOffsetMultiplier = 1.10f;
 
         /// <summary>Multiplier defining how far the path wraps outside the grid points.</summary>
         public float PathOffsetMultiplier => _pathOffsetMultiplier;
@@ -68,7 +68,39 @@ namespace ArrowSwarm.Path
 
             CalculateTotalLength();
             OnPathInitialized?.Invoke();
+
+            // Direct call ensures immediate path rendering even if event
+            // subscriptions haven't been set up yet (first click scenario)
+            PathVisualizer pathVis = GetComponent<PathVisualizer>();
+            if (pathVis == null)
+            {
+                pathVis = FindFirstObjectByType<PathVisualizer>();
+            }
+            if (pathVis != null)
+            {
+                pathVis.DrawPath();
+            }
+
             LogDebug($"Path initialized as Rectangle: {_waypoints.Count} waypoints, Length={_totalPathLength:F1}");
+        }
+
+        /// <summary>
+        /// Clears the path and removes all visual portals and path lines.
+        /// </summary>
+        public void ClearPath()
+        {
+            _waypoints.Clear();
+            _totalPathLength = 0f;
+
+            PathVisualizer pathVis = GetComponent<PathVisualizer>();
+            if (pathVis == null)
+            {
+                pathVis = FindFirstObjectByType<PathVisualizer>();
+            }
+            if (pathVis != null)
+            {
+                pathVis.ClearPath();
+            }
         }
 
         /// <summary>

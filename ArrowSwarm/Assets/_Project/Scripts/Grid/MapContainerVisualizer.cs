@@ -9,6 +9,8 @@ namespace ArrowSwarm.Grid
     /// Layer 1: Camera Background Color (#F5EFE6)
     /// Layer 2: Outer Card Container around track (#EBE4D8)
     /// Layer 3: Inner Grid Surface beneath arrows (#FDFBF7)
+    /// Card sizes are derived from PathManager.PathOffsetMultiplier so
+    /// the mob path always flows through the exact center of the grey channel.
     /// 100% procedural — no external sprite assets required.
     /// </summary>
     public class MapContainerVisualizer : MonoBehaviour
@@ -18,13 +20,17 @@ namespace ArrowSwarm.Grid
 
         [Header("Layer 2: Outer Track Container Card")]
         [SerializeField] private Color _outerContainerColor = new Color(0.92f, 0.89f, 0.85f, 1f); // #EBE4D8
-        [SerializeField] private float _outerPadding = 1.4f;
         [SerializeField] private int _layer2SortingOrder = -10;
 
         [Header("Layer 3: Inner Grid Card Surface")]
         [SerializeField] private Color _innerGridColor = new Color(0.99f, 0.98f, 0.97f, 1f); // #FDFBF7
-        [SerializeField] private float _innerPadding = 0.4f;
         [SerializeField] private int _layer3SortingOrder = -9;
+
+        [Header("Channel Margins")]
+        [Tooltip("Distance from path center to inner card edge, in spacing units.")]
+        [SerializeField] private float _innerMargin = 0.60f;
+        [Tooltip("Distance from path center to outer card edge, in spacing units.")]
+        [SerializeField] private float _outerMargin = 0.60f;
 
         private SpriteRenderer _outerContainerRenderer;
         private SpriteRenderer _innerGridRenderer;
@@ -46,6 +52,9 @@ namespace ArrowSwarm.Grid
 
         /// <summary>
         /// Builds the 3 visual layers procedurally based on current grid dimensions.
+        /// Inner card = totalGrid + 2 * (pathOffset - innerMargin) * spacing
+        /// Outer card = totalGrid + 2 * (pathOffset + outerMargin) * spacing
+        /// This guarantees the mob path runs through the exact center of the grey channel.
         /// </summary>
         public void BuildThreeLayerTheme(int width, int height)
         {
@@ -59,9 +68,12 @@ namespace ArrowSwarm.Grid
             float totalGridHeight = (height - 1) * spacing;
             Vector2 center = origin + new Vector2(totalGridWidth * 0.5f, totalGridHeight * 0.5f);
 
-            float pathOffsetMult = Path.PathManager.Instance?.PathOffsetMultiplier ?? 1.35f;
-            float mobPathWidth = totalGridWidth + pathOffsetMult * 2f * spacing;
-            float mobPathHeight = totalGridHeight + pathOffsetMult * 2f * spacing;
+            // Get path offset multiplier from PathManager (default 1.10f)
+            float pathOffsetMult = 1.10f;
+            if (Path.PathManager.HasInstance)
+            {
+                pathOffsetMult = Path.PathManager.Instance.PathOffsetMultiplier;
+            }
 
             // Layer 1: Apply Camera Background Color
             UnityEngine.Camera mainCam = UnityEngine.Camera.main;
@@ -70,18 +82,22 @@ namespace ArrowSwarm.Grid
                 mainCam.backgroundColor = _cameraBackgroundColor;
             }
 
-            // Layer 2: Outer Card Container (wraps snugly just outside the mob path track)
-            float outerPaddingUnits = spacing * 0.4f;
-            float outerW = mobPathWidth + outerPaddingUnits * 2f;
-            float outerH = mobPathHeight + outerPaddingUnits * 2f;
-            EnsureCardLayer(ref _outerContainerRenderer, "Layer2_OuterCard", center, new Vector2(outerW, outerH), _outerContainerColor, _layer2SortingOrder, 40f);
+            // Layer 2: Outer Card — path center + outerMargin on each side
+            float outerW = totalGridWidth + 2f * (pathOffsetMult + _outerMargin) * spacing;
+            float outerH = totalGridHeight + 2f * (pathOffsetMult + _outerMargin) * spacing;
+            EnsureCardLayer(ref _outerContainerRenderer, "Layer2_OuterCard", center,
+                new Vector2(outerW, outerH), _outerContainerColor, _layer2SortingOrder, 40f);
 
-            // Layer 3: Inner Grid Surface (sits directly beneath arrows)
-            float innerW = totalGridWidth + spacing * 0.8f;
-            float innerH = totalGridHeight + spacing * 0.8f;
-            EnsureCardLayer(ref _innerGridRenderer, "Layer3_InnerGridCard", center, new Vector2(innerW, innerH), _innerGridColor, _layer3SortingOrder, 28f);
+            // Layer 3: Inner Card — path center - innerMargin on each side
+            float innerW = totalGridWidth + 2f * (pathOffsetMult - _innerMargin) * spacing;
+            float innerH = totalGridHeight + 2f * (pathOffsetMult - _innerMargin) * spacing;
+            EnsureCardLayer(ref _innerGridRenderer, "Layer3_InnerGridCard", center,
+                new Vector2(innerW, innerH), _innerGridColor, _layer3SortingOrder, 28f);
         }
 
+        /// <summary>
+        /// Creates or updates a card layer SpriteRenderer with the given parameters.
+        /// </summary>
         private void EnsureCardLayer(ref SpriteRenderer renderer, string name, Vector2 center, Vector2 size, Color color, int sortingOrder, float cornerRadius)
         {
             Transform child = transform.Find(name);

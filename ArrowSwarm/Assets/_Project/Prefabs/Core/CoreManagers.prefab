@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 2148272329135093668}
   - component: {fileID: 1984038596682423607}
   - component: {fileID: 2416592008265847882}
+  - component: {fileID: 4338240835624392683}
   m_Layer: 0
   m_Name: CoreManagers
   m_TagString: Untagged
@@ -191,3 +192,22 @@ MonoBehaviour:
   _mobCount: 0
   _currentState: 
   _showDebugInfo: 0
+--- !u!114 &4338240835624392683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036625359666785736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d64e657289baa04f93f7a34c1befc8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Path.PathVisualizer
+  _lineWidth: 0.25
+  _pathMaterial: {fileID: 0}
+  _sortingOrder: -6
+  _spawnPortalSprite: {fileID: 2625913683774283652, guid: f2ee383b2981ecd4a9714e593ebd8904, type: 3}
+  _finishPortalSprite: {fileID: 2625913683774283652, guid: f2ee383b2981ecd4a9714e593ebd8904, type: 3}
+  _portalScale: 1.5
+  _portalSortingOrder: 15
