@@ -80,7 +80,9 @@ namespace ArrowSwarm.Core
 
         private bool IsPlayableGameScene(string sceneName)
         {
-            return sceneName == "GameScene" || sceneName.StartsWith("Map");
+            return sceneName == "GameScene"
+                || sceneName == "MapTestScene"
+                || sceneName.StartsWith("Map");
         }
 
         /// <summary>
@@ -186,6 +188,7 @@ namespace ArrowSwarm.Core
                 MobSpawner.Instance.StopSpawning();
                 MobSpawner.Instance.ClearAllMobs();
             }
+            if (PathManager.HasInstance) PathManager.Instance.ClearPath();
             if (GridManager.HasInstance) GridManager.Instance.ClearGrid();
         }
 

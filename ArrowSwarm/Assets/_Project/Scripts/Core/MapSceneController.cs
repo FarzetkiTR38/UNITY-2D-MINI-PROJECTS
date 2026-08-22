@@ -1,48 +1,170 @@
 namespace ArrowSwarm.Core
 {
+    using ArrowSwarm.Grid;
     using UnityEngine;
-    using UnityEngine.SceneManagement;
 
     /// <summary>
-    /// Controls a standalone Map preview/gameplay scene (Map1..Map5).
-    /// Sets the active level range, allows quick level jumping within this map,
-    /// and provides scene switching shortcuts in Inspector.
+    /// Controls the unified Map Test Scene. Allows switching between all 12 maps
+    /// from a single scene via Inspector buttons. Automatically synchronizes level numbers
+    /// to load the correct map procedurally.
     /// </summary>
     public class MapSceneController : MonoBehaviour
     {
-        [Header("Map Configuration")]
-        [Tooltip("The map index (0: Forest, 1: Ocean, 2: Desert, 3: Mountain, 4: Space).")]
-        [SerializeField] private int _mapIndex = 0;
+        [Header("Map Assets")]
+        [Tooltip("Array of 12 MapData ScriptableObjects.")]
+        [SerializeField] private MapData[] _mapDataAssets;
 
-        [Tooltip("Name of the map theme.")]
-        [SerializeField] private string _mapName = "Forest";
+        [Header("Active Map & Level")]
+        [Tooltip("Currently selected map index (0-11).")]
+        [SerializeField] private int _activeMapIndex = 0;
 
-        [Tooltip("Default level to load when starting this scene.")]
+        [Tooltip("Active level to load when starting, switching maps, or clicking Restart.")]
         [SerializeField] private int _defaultLevel = 1;
 
-        [Tooltip("Level range for this map (e.g. 1-5, 6-10, 11-15, 16-20, 21-25).")]
-        [SerializeField] private Vector2Int _levelRange = new Vector2Int(1, 5);
+        /// <summary>Currently selected map index (0 to 11).</summary>
+        public int ActiveMapIndex
+        {
+            get => _activeMapIndex;
+            set
+            {
+                _activeMapIndex = Mathf.Clamp(value, 0, Mathf.Max(0, MapCount - 1));
+                _defaultLevel = GetDefaultLevelForMapIndex(_activeMapIndex);
+            }
+        }
 
-        /// <summary>The map index (0 to 4).</summary>
-        public int MapIndex { get => _mapIndex; set => _mapIndex = value; }
-
-        /// <summary>Display name of the map theme.</summary>
-        public string MapName { get => _mapName; set => _mapName = value; }
+        /// <summary>Display name of the currently selected map.</summary>
+        public string MapName => GetActiveMap()?.MapName ?? $"Map {_activeMapIndex + 1}";
 
         /// <summary>Default starting level for this scene.</summary>
-        public int DefaultLevel { get => _defaultLevel; set => _defaultLevel = value; }
+        public int DefaultLevel
+        {
+            get => _defaultLevel;
+            set
+            {
+                _defaultLevel = Mathf.Max(1, value);
+                _activeMapIndex = DifficultyCalculator.GetMapIndex(_defaultLevel);
+            }
+        }
 
-        /// <summary>Min and max level range for this map.</summary>
-        public Vector2Int LevelRange { get => _levelRange; set => _levelRange = value; }
+        /// <summary>Number of available map assets.</summary>
+        public int MapCount => _mapDataAssets != null ? _mapDataAssets.Length : 0;
+
+        /// <summary>Level range or sample levels for the current map.</summary>
+        public Vector2Int CurrentLevelRange
+        {
+            get
+            {
+                if (_activeMapIndex < 5)
+                {
+                    return new Vector2Int(_activeMapIndex * 5 + 1, _activeMapIndex * 5 + 5);
+                }
+                return new Vector2Int(_defaultLevel, _defaultLevel + 4);
+            }
+        }
 
         /// <summary>
-        /// Loads a specific level within this map's range.
+        /// Gets the representative level for each map index.
+        /// </summary>
+        public static int GetDefaultLevelForMapIndex(int mapIndex)
+        {
+            return mapIndex switch
+            {
+                0 => 1,   // Map 1 (Lv 1-5)
+                1 => 6,   // Map 2 (Lv 6-10)
+                2 => 11,  // Map 3 (Lv 11-15)
+                3 => 16,  // Map 4 (Lv 16-20)
+                4 => 21,  // Map 5 (Lv 21-25)
+                5 => 30,  // Map 6 (Lv 30, 35, 40...)
+                6 => 26,  // Map 7 (Lv 26, 31, 36...)
+                7 => 27,  // Map 8 (Lv 27, 32, 37...)
+                8 => 28,  // Map 9 (Lv 28, 33, 38...)
+                9 => 29,  // Map 10 (Lv 29, 34, 39...)
+                10 => 50, // Map 11 (Lv 50, 75, 125, 150...)
+                11 => 100,// Map 12 (Lv 100, 200, 300...)
+                _ => 1
+            };
+        }
+
+        private void OnEnable()
+        {
+            EnsureMapAssets();
+        }
+
+        private void Start()
+        {
+            EnsureMapAssets();
+            if (Application.isPlaying)
+            {
+                FitCameraToPreview();
+            }
+        }
+
+        /// <summary>
+        /// Ensures all 12 MapData assets are referenced.
+        /// </summary>
+        public void EnsureMapAssets()
+        {
+            if (_mapDataAssets != null && _mapDataAssets.Length == 12 && _mapDataAssets[0] != null)
+            {
+                return;
+            }
+
+            if (GameManager.HasInstance && GameManager.Instance.Config != null && GameManager.Instance.Config.Maps != null && GameManager.Instance.Config.Maps.Length >= 12)
+            {
+                _mapDataAssets = GameManager.Instance.Config.Maps;
+                return;
+            }
+
+#if UNITY_EDITOR
+            _mapDataAssets = new MapData[12];
+            for (int i = 0; i < 12; i++)
+            {
+                string assetName = $"Map{i + 1}";
+                string[] guids = UnityEditor.AssetDatabase.FindAssets($"{assetName} t:MapData");
+                if (guids.Length > 0)
+                {
+                    string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
+                    _mapDataAssets[i] = UnityEditor.AssetDatabase.LoadAssetAtPath<MapData>(path);
+                }
+            }
+#endif
+        }
+
+        /// <summary>
+        /// Returns the currently active MapData ScriptableObject.
+        /// </summary>
+        public MapData GetActiveMap()
+        {
+            EnsureMapAssets();
+            if (_mapDataAssets == null || _mapDataAssets.Length == 0) return null;
+            int idx = Mathf.Clamp(_activeMapIndex, 0, _mapDataAssets.Length - 1);
+            return _mapDataAssets[idx];
+        }
+
+        /// <summary>
+        /// Selects a map by index (0 to 11).
+        /// Automatically adjusts the active level and fits the camera.
+        /// </summary>
+        public void SelectMap(int index)
+        {
+            ActiveMapIndex = index;
+            FitCameraToPreview();
+
+            if (Application.isPlaying && LevelManager.HasInstance)
+            {
+                LevelManager.Instance.LoadLevel(_defaultLevel);
+            }
+        }
+
+        /// <summary>
+        /// Loads a specific level.
         /// </summary>
         public void LoadLevel(int level)
         {
-            level = Mathf.Clamp(level, _levelRange.x, _levelRange.y);
-            _defaultLevel = level;
-            if (LevelManager.Instance != null)
+            DefaultLevel = level;
+            FitCameraToPreview();
+
+            if (Application.isPlaying && LevelManager.HasInstance)
             {
                 LevelManager.Instance.LoadLevel(level);
             }
@@ -54,50 +176,113 @@ namespace ArrowSwarm.Core
         [ContextMenu("🔄 Restart Level")]
         public void RestartCurrentLevel()
         {
-            if (LevelManager.Instance != null)
+            if (Application.isPlaying && LevelManager.HasInstance)
             {
                 LevelManager.Instance.LoadLevel(_defaultLevel);
             }
         }
 
+        /// <summary>Loads next level within or beyond this map.</summary>
+        [ContextMenu("▶ Next Level")]
+        public void NextMapLevel() => LoadLevel(_defaultLevel + 1);
+
+        /// <summary>Loads previous level.</summary>
+        [ContextMenu("◀ Previous Level")]
+        public void PreviousMapLevel() => LoadLevel(Mathf.Max(1, _defaultLevel - 1));
+
         /// <summary>
-        /// Loads the next level within this map's range.
+        /// Adjusts camera position and orthographic size to preview the active map cleanly.
         /// </summary>
-        [ContextMenu("▶ Next Level In This Map")]
-        public void NextMapLevel()
+        public void FitCameraToPreview()
         {
-            int next = Mathf.Min(_defaultLevel + 1, _levelRange.y);
-            LoadLevel(next);
+            MapData map = GetActiveMap();
+            if (map == null) return;
+
+            UnityEngine.Camera cam = UnityEngine.Camera.main;
+            if (cam == null) cam = FindFirstObjectByType<UnityEngine.Camera>();
+            if (cam == null) return;
+
+            float aspect = (float)Screen.width / Screen.height;
+            if (aspect <= 0f) aspect = 9f / 16f;
+
+            float spacing = (Application.isPlaying && GridManager.HasInstance)
+                ? GridManager.Instance.PointSpacing
+                : 1.0f;
+
+            float totalWidth = (map.GridWidth - 1) * spacing;
+            float totalHeight = (map.GridHeight - 1) * spacing;
+            Vector2 origin = new Vector2(-totalWidth / 2f, -totalHeight / 2f);
+            Vector2 center = origin + new Vector2(totalWidth * 0.5f, totalHeight * 0.5f);
+
+            float pathOffset = 1.10f;
+            float outerMargin = 0.60f;
+            float boardPadding = (pathOffset + outerMargin) * spacing;
+            float visualBoardWidth = totalWidth + 2f * boardPadding;
+            float visualBoardHeight = totalHeight + 2f * boardPadding;
+
+            const float targetHeightRatio = 0.620f;
+            const float targetWidthRatio = 0.880f;
+
+            float orthoHeight = visualBoardHeight / (2f * targetHeightRatio);
+            float orthoWidth = visualBoardWidth / (2f * aspect * targetWidthRatio);
+            float orthoSize = Mathf.Max(orthoWidth, orthoHeight);
+
+            cam.orthographicSize = orthoSize;
+            cam.transform.position = new Vector3(center.x, center.y, cam.transform.position.z);
         }
 
-        /// <summary>
-        /// Loads the previous level within this map's range.
-        /// </summary>
-        [ContextMenu("◀ Previous Level In This Map")]
-        public void PreviousMapLevel()
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
         {
-            int prev = Mathf.Max(_defaultLevel - 1, _levelRange.x);
-            LoadLevel(prev);
-        }
+            MapData map = GetActiveMap();
+            if (map == null) return;
 
-        /// <summary>
-        /// Switch to another map scene by index (0-4).
-        /// </summary>
-        public void SwitchToMapScene(int targetMapIndex)
-        {
-            string[] sceneNames = new string[]
-            {
-                "Map1_ForestScene",
-                "Map2_OceanScene",
-                "Map3_DesertScene",
-                "Map4_MountainScene",
-                "Map5_SpaceScene"
-            };
+            float aspect = (float)Screen.width / Screen.height;
+            if (aspect <= 0f) aspect = 9f / 16f;
 
-            if (targetMapIndex >= 0 && targetMapIndex < sceneNames.Length)
+            float s = (Application.isPlaying && GridManager.HasInstance)
+                ? GridManager.Instance.PointSpacing
+                : 1.0f;
+
+            int w = map.GridWidth;
+            int h = map.GridHeight;
+            float totalW = (w - 1) * s;
+            float totalH = (h - 1) * s;
+            Vector2 origin = new Vector2(-totalW / 2f, -totalH / 2f);
+            Vector2 center = origin + new Vector2(totalW * 0.5f, totalH * 0.5f);
+            float pathOffset = 1.10f;
+
+            // Outer Card (Layer 2)
+            Gizmos.color = new Color(0.92f, 0.89f, 0.85f, 0.5f);
+            Gizmos.DrawWireCube(center, new Vector3(totalW + 2f * (pathOffset + 0.60f) * s, totalH + 2f * (pathOffset + 0.60f) * s, 0f));
+
+            // Inner Card (Layer 3)
+            Gizmos.color = new Color(0.99f, 0.98f, 0.97f, 0.7f);
+            Gizmos.DrawWireCube(center, new Vector3(totalW + 2f * (pathOffset - 0.60f) * s, totalH + 2f * (pathOffset - 0.60f) * s, 0f));
+
+            // Path Rectangle
+            Gizmos.color = new Color(0.55f, 0.48f, 0.41f, 0.8f);
+            Vector3 tl = new Vector3(origin.x - pathOffset * s, origin.y + totalH + pathOffset * s, 0f);
+            Vector3 tr = new Vector3(origin.x + totalW + pathOffset * s, origin.y + totalH + pathOffset * s, 0f);
+            Vector3 br = new Vector3(origin.x + totalW + pathOffset * s, origin.y - pathOffset * s, 0f);
+            Vector3 bl = new Vector3(origin.x - pathOffset * s, origin.y - pathOffset * s, 0f);
+            Gizmos.DrawLine(tl, tr); Gizmos.DrawLine(tr, br); Gizmos.DrawLine(br, bl); Gizmos.DrawLine(bl, tl);
+
+            // Grid Dots
+            for (int x = 0; x < w; x++)
             {
-                SceneManager.LoadScene(sceneNames[targetMapIndex]);
+                for (int y = 0; y < h; y++)
+                {
+                    Vector3 pos = new Vector3(origin.x + x * s, origin.y + y * s, 0f);
+                    bool isEdge = (x == 0 || x == w - 1 || y == 0 || y == h - 1);
+                    Gizmos.color = isEdge ? new Color(0.4f, 0.4f, 0.6f, 0.7f) : new Color(0.3f, 0.3f, 0.5f, 0.5f);
+                    Gizmos.DrawSphere(pos, s * 0.05f);
+                }
             }
+
+            UnityEditor.Handles.color = Color.white;
+            UnityEditor.Handles.Label(new Vector3(center.x, center.y + totalH * 0.5f + 1.2f, 0f), $"{map.MapName} ({w}×{h}) - Level {_defaultLevel}");
         }
+#endif
     }
 }

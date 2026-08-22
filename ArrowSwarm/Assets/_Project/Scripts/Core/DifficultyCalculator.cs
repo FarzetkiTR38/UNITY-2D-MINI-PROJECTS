@@ -102,22 +102,51 @@ namespace ArrowSwarm.Core
         /// Level 6-10 (Tier 2) → Max 5
         /// Level 11-15 (Tier 3) → Max 6
         /// Level 16-20 (Tier 4) → Max 7
-        /// Level 21-25 (Tier 5) → Max 8
-        /// Scalable up to 10 for higher levels.
+        /// Level 21+ (Map 5 to Map 12) → Max 8 (Capped at 8)
         /// </summary>
         public static int GetMaxWeight(int level)
         {
             int tier = GetDifficultyTier(level);
-            return Mathf.Min(10, 3 + tier);
+            return Mathf.Min(8, 3 + tier);
         }
 
         /// <summary>
-        /// Calculates which map index to use for the given level.
-        /// 5 levels per map: Level 1-5 → Map 0, Level 6-10 → Map 1, etc.
+        /// Calculates which map index (0 to 11 for Map 1 to Map 12) to use for the given level:
+        /// - Level 1-25: Map 1 to Map 5 (5 levels each: 1-5 → Map1, 6-10 → Map2, 11-15 → Map3, 16-20 → Map4, 21-25 → Map5)
+        /// - Level % 100 == 0: Map 12 (Index 11, e.g. 100, 200, 300, 400...)
+        /// - Level >= 50 && Level % 25 == 0: Map 11 (Index 10, e.g. 50, 75, 125, 150, 175, 225...)
+        /// - Level 26+ (Rotating 5-level cycle):
+        ///   - Level % 5 == 0 → Map 6 (Index 5, e.g. 30, 35, 40, 45, 55...)
+        ///   - Level % 5 == 1 → Map 7 (Index 6, e.g. 26, 31, 36, 41, 46, 51...)
+        ///   - Level % 5 == 2 → Map 8 (Index 7, e.g. 27, 32, 37, 42, 47, 52...)
+        ///   - Level % 5 == 3 → Map 9 (Index 8, e.g. 28, 33, 38, 43, 48, 53...)
+        ///   - Level % 5 == 4 → Map 10 (Index 9, e.g. 29, 34, 39, 44, 49, 54...)
         /// </summary>
         public static int GetMapIndex(int level)
         {
-            return ((level - 1) / 5) % 5;
+            if (level <= 0) return 0;
+
+            // 1. Initial 25 levels: Map 1 to Map 5 (5 levels each)
+            if (level <= 25)
+            {
+                return (level - 1) / 5; // 0 to 4 (Map 1 to Map 5)
+            }
+
+            // 2. Special Milestone: Every 100 levels -> Map 12 (Index 11)
+            if (level % 100 == 0)
+            {
+                return 11; // Map 12
+            }
+
+            // 3. Special Milestone: From level 50 onwards, every 25 levels -> Map 11 (Index 10)
+            if (level >= 50 && level % 25 == 0)
+            {
+                return 10; // Map 11
+            }
+
+            // 4. Rotating cycle for levels >= 26: Map 6 to Map 10 (Indices 5 to 9)
+            int remainder = level % 5;
+            return 5 + remainder;
         }
 
         /// <summary>

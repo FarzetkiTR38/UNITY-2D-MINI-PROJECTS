@@ -3,116 +3,128 @@ namespace ArrowSwarm.Core.Editor
 {
     using UnityEditor;
     using UnityEngine;
-    using UnityEditor.SceneManagement;
 
     /// <summary>
-    /// Custom Inspector for MapSceneController allowing instant level switching,
-    /// map preview navigation, and jumping across Map1..Map5 scenes.
+    /// Custom Inspector for MapSceneController providing 1-click map switching,
+    /// in-map level buttons, and live camera fit.
     /// </summary>
     [CustomEditor(typeof(MapSceneController))]
     public class MapSceneControllerEditor : Editor
     {
-        private static readonly string[] MapNames = new string[]
+        private static readonly string[] MapButtonLabels = new string[]
         {
-            "🌲 Map 1: Forest",
-            "🌊 Map 2: Ocean",
-            "🏜️ Map 3: Desert",
-            "🏔️ Map 4: Mountain",
-            "🌌 Map 5: Space"
-        };
-
-        private static readonly string[] ScenePaths = new string[]
-        {
-            "Assets/_Project/Scenes/Map1_ForestScene.unity",
-            "Assets/_Project/Scenes/Map2_OceanScene.unity",
-            "Assets/_Project/Scenes/Map3_DesertScene.unity",
-            "Assets/_Project/Scenes/Map4_MountainScene.unity",
-            "Assets/_Project/Scenes/Map5_SpaceScene.unity"
+            "Map 1 (6×8)",
+            "Map 2 (8×10)",
+            "Map 3 (10×12)",
+            "Map 4 (12×15)",
+            "Map 5 (15×20)",
+            "Map 6 (15×25)",
+            "Map 7 (15×30)",
+            "Map 8 (20×25)",
+            "Map 9 (20×30)",
+            "Map 10 (20×35)",
+            "Map 11 (20×40)",
+            "Map 12 (25×40)"
         };
 
         public override void OnInspectorGUI()
         {
-            serializedObject.Update();
+            if (target == null) return;
 
+            serializedObject.Update();
             var controller = (MapSceneController)target;
-            int mapIdx = Mathf.Clamp(controller.MapIndex, 0, 4);
+            if (controller == null) return;
 
             EditorGUILayout.Space(4);
+            string mapName = controller.MapName;
+            MapData activeMap = controller.GetActiveMap();
+            string gridInfo = activeMap != null ? $"{activeMap.GridWidth}×{activeMap.GridHeight}" : "?×?";
             EditorGUILayout.HelpBox(
-                $"{MapNames[mapIdx]}\nLevels {controller.LevelRange.x} to {controller.LevelRange.y} | Active Default Level: {controller.DefaultLevel}",
+                $"Active: {mapName} ({gridInfo}) | Default Level: {controller.DefaultLevel}",
                 MessageType.Info);
 
             EditorGUILayout.Space(6);
             DrawDefaultInspector();
 
+            // 1. Map Selection Buttons (2 columns)
             EditorGUILayout.Space(10);
-            EditorGUILayout.LabelField("🎮 In-Map Level Selector", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("🗺️ Map Selector (1-Click Switch)", EditorStyles.boldLabel);
 
-            EditorGUILayout.BeginHorizontal();
-            for (int lvl = controller.LevelRange.x; lvl <= controller.LevelRange.y; lvl++)
+            for (int i = 0; i < MapButtonLabels.Length; i += 2)
             {
-                bool isCurrent = (lvl == controller.DefaultLevel);
-                GUI.backgroundColor = isCurrent ? new Color(0.3f, 0.8f, 1f) : Color.white;
-
-                if (GUILayout.Button($"Lv.{lvl}", GUILayout.Height(28)))
+                EditorGUILayout.BeginHorizontal();
+                for (int col = 0; col < 2; col++)
                 {
-                    if (Application.isPlaying)
+                    int index = i + col;
+                    if (index < MapButtonLabels.Length)
                     {
-                        controller.LoadLevel(lvl);
-                    }
-                    else
-                    {
-                        controller.DefaultLevel = lvl;
-                        EditorUtility.SetDirty(controller);
-                    }
-                }
-            }
-            GUI.backgroundColor = Color.white;
-            EditorGUILayout.EndHorizontal();
+                        bool isCurrent = (index == controller.ActiveMapIndex);
+                        GUI.backgroundColor = isCurrent ? new Color(0.3f, 0.9f, 0.5f) : Color.white;
 
-            EditorGUILayout.Space(6);
-
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("◀ Prev Level"))
-            {
-                controller.PreviousMapLevel();
-            }
-            if (GUILayout.Button("🔄 Restart Level"))
-            {
-                controller.RestartCurrentLevel();
-            }
-            if (GUILayout.Button("Next Level ▶"))
-            {
-                controller.NextMapLevel();
-            }
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.Space(14);
-            EditorGUILayout.LabelField("🗺️ Jump to Map Scene", EditorStyles.boldLabel);
-
-            for (int i = 0; i < ScenePaths.Length; i++)
-            {
-                bool isThisMap = (i == controller.MapIndex);
-                GUI.backgroundColor = isThisMap ? new Color(0.4f, 0.9f, 0.5f) : Color.white;
-
-                if (GUILayout.Button(MapNames[i], GUILayout.Height(26)))
-                {
-                    if (Application.isPlaying)
-                    {
-                        controller.SwitchToMapScene(i);
-                    }
-                    else
-                    {
-                        if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+                        if (GUILayout.Button(MapButtonLabels[index], GUILayout.Height(28)))
                         {
-                            EditorSceneManager.OpenScene(ScenePaths[i]);
+                            controller.SelectMap(index);
+                            EditorUtility.SetDirty(controller);
+                            if (!Application.isPlaying) SceneView.RepaintAll();
                         }
                     }
                 }
+                EditorGUILayout.EndHorizontal();
             }
             GUI.backgroundColor = Color.white;
 
-            serializedObject.ApplyModifiedProperties();
+            // 2. In-Map Level Selector
+            EditorGUILayout.Space(10);
+            EditorGUILayout.LabelField($"🎮 Levels for {mapName}", EditorStyles.boldLabel);
+
+            Vector2Int range = controller.CurrentLevelRange;
+            EditorGUILayout.BeginHorizontal();
+            for (int lvl = range.x; lvl <= range.y; lvl++)
+            {
+                bool isCurrentLvl = (lvl == controller.DefaultLevel);
+                GUI.backgroundColor = isCurrentLvl ? new Color(0.3f, 0.8f, 1f) : Color.white;
+
+                if (GUILayout.Button($"Lv.{lvl}", GUILayout.Height(28)))
+                {
+                    controller.LoadLevel(lvl);
+                    EditorUtility.SetDirty(controller);
+                    if (!Application.isPlaying) SceneView.RepaintAll();
+                }
+            }
+            GUI.backgroundColor = Color.white;
+            EditorGUILayout.EndHorizontal();
+
+            // 3. Navigation Controls
+            EditorGUILayout.Space(6);
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("◀ Prev Level", GUILayout.Height(28)))
+            {
+                controller.PreviousMapLevel();
+                EditorUtility.SetDirty(controller);
+            }
+            if (GUILayout.Button("🔄 Restart", GUILayout.Height(28)))
+            {
+                controller.RestartCurrentLevel();
+            }
+            if (GUILayout.Button("Next Level ▶", GUILayout.Height(28)))
+            {
+                controller.NextMapLevel();
+                EditorUtility.SetDirty(controller);
+            }
+            EditorGUILayout.EndHorizontal();
+
+            // 4. Camera Preview Fit
+            EditorGUILayout.Space(8);
+            if (GUILayout.Button("📷 Fit Camera to Preview (9:16)", GUILayout.Height(26)))
+            {
+                controller.FitCameraToPreview();
+                SceneView.RepaintAll();
+            }
+
+            if (serializedObject != null && serializedObject.targetObject != null)
+            {
+                serializedObject.ApplyModifiedProperties();
+            }
         }
     }
 }

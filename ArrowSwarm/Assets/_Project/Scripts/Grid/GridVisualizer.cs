@@ -7,15 +7,18 @@ namespace ArrowSwarm.Grid
     /// <summary>
     /// Draws the point grid visually using small dot sprites at each intersection.
     /// Subscribes to GridManager events to know when to draw.
+    /// Also callable directly via DrawPointGrid() for immediate rendering.
+    /// Manages its own dedicated child container to prevent destroying sibling objects.
     /// </summary>
     public class GridVisualizer : MonoBehaviour
     {
-        [SerializeField] private float _dotSize = 0.08f;
+        [SerializeField] private float _dotScaleMultiplier = 0.14f;
         [SerializeField] private Color _dotColor = new Color(0.3f, 0.3f, 0.5f, 0.5f);
         [SerializeField] private Color _edgeDotColor = new Color(0.4f, 0.4f, 0.6f, 0.7f);
         [SerializeField] private int _sortingOrder = -1;
 
         private GridManager _gridManager;
+        private Transform _dotsContainer;
 
         private void OnEnable()
         {
@@ -35,19 +38,33 @@ namespace ArrowSwarm.Grid
 
         /// <summary>
         /// Creates dot sprites at every grid intersection point.
+        /// Includes null safety for GridManager reference.
         /// </summary>
-        private void DrawPointGrid()
+        public void DrawPointGrid()
         {
-            // Clear existing dots
-            foreach (Transform child in transform)
+            if (_gridManager == null)
             {
-                Destroy(child.gameObject);
+                _gridManager = GridManager.Instance;
+                if (_gridManager == null)
+                {
+                    _gridManager = GetComponent<GridManager>();
+                }
+            }
+            if (_gridManager == null) return;
+
+            EnsureDotsContainer();
+
+            // Clear only existing dot children inside the dedicated container
+            for (int i = _dotsContainer.childCount - 1; i >= 0; i--)
+            {
+                Destroy(_dotsContainer.GetChild(i).gameObject);
             }
 
             int width = _gridManager.Width;
             int height = _gridManager.Height;
             float spacing = _gridManager.PointSpacing;
             Vector2 origin = _gridManager.Origin;
+            float dotSize = Mathf.Clamp(spacing * _dotScaleMultiplier, 0.04f, 0.10f);
 
             for (int x = 0; x < width; x++)
             {
@@ -57,22 +74,41 @@ namespace ArrowSwarm.Grid
                     Vector2 worldPos = pos.PointToWorld(spacing, origin);
                     bool isEdge = pos.IsEdge(width, height);
 
-                    CreateDot(worldPos, isEdge, $"Dot_{x}_{y}");
+                    CreateDot(worldPos, isEdge, dotSize, $"Dot_{x}_{y}");
                 }
             }
         }
 
-        private void CreateDot(Vector2 position, bool isEdge, string name)
+        private void EnsureDotsContainer()
+        {
+            if (_dotsContainer != null) return;
+            Transform existing = transform.Find("GridDotsContainer");
+            if (existing != null)
+            {
+                _dotsContainer = existing;
+            }
+            else
+            {
+                var obj = new GameObject("GridDotsContainer");
+                obj.transform.SetParent(transform, false);
+                _dotsContainer = obj.transform;
+            }
+        }
+
+        /// <summary>
+        /// Creates a single dot sprite at the given world position.
+        /// </summary>
+        private void CreateDot(Vector2 position, bool isEdge, float dotSize, string name)
         {
             var dotObj = new GameObject(name);
-            dotObj.transform.SetParent(transform, false);
+            dotObj.transform.SetParent(_dotsContainer, false);
             dotObj.transform.position = new Vector3(position.x, position.y, 0f);
 
             var sr = dotObj.AddComponent<SpriteRenderer>();
             sr.sprite = CreateCircleSprite();
             sr.color = isEdge ? _edgeDotColor : _dotColor;
             sr.sortingOrder = _sortingOrder;
-            dotObj.transform.localScale = Vector3.one * _dotSize;
+            dotObj.transform.localScale = Vector3.one * dotSize;
         }
 
         /// <summary>

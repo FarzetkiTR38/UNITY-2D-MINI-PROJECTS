@@ -29,6 +29,7 @@ namespace ArrowSwarm.Mob
 
         /// <summary>
         /// Sets up mob visuals with a random variant and initial HP display.
+        /// Sets sorting orders: sprite=20 (above portals), HP text=25 (frontmost).
         /// </summary>
         public void Initialize(int hp)
         {
@@ -36,6 +37,22 @@ namespace ArrowSwarm.Mob
             if (_mobVariants != null && _mobVariants.Length > 0)
             {
                 _spriteRenderer.sprite = _mobVariants[Random.Range(0, _mobVariants.Length)];
+            }
+
+            // Sorting order: mobs render above portals (15) and arrows (5-6)
+            if (_spriteRenderer != null)
+            {
+                _spriteRenderer.sortingOrder = 20;
+            }
+
+            // HP text renders above everything
+            if (_hpText != null)
+            {
+                MeshRenderer hpRenderer = _hpText.GetComponent<MeshRenderer>();
+                if (hpRenderer != null)
+                {
+                    hpRenderer.sortingOrder = 25;
+                }
             }
 
             UpdateHPDisplay(hp);
