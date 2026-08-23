@@ -230,6 +230,12 @@ namespace ArrowSwarm.Core
             // Strictly enforce 100% head-to-body direction alignment (Golden Axiom)
             EnforceStrictHeadAlignment(placements);
 
+            // Fix arrows whose head direction fires into their own body (self-blocking)
+            FixSelfBlockingArrows(placements, gridWidth, gridHeight);
+
+            // Re-check head-to-head after alignment and self-blocking fixes
+            RemoveHeadToHeadConflicts(placements, gridWidth, gridHeight);
+
             // Audit zero overlaps and full grid coverage
             SolvabilityChecker.ValidateNoOverlaps(placements);
 
@@ -253,6 +259,114 @@ namespace ArrowSwarm.Core
                     placements[i] = p;
                 }
             }
+        }
+
+        /// <summary>
+        /// Checks if an arrow's fire line passes through its own body segments.
+        /// A self-blocking arrow can never be fired because it blocks itself.
+        /// </summary>
+        private static bool IsSelfBlocking(
+            SolvabilityChecker.ArrowPlacement placement, int gridWidth, int gridHeight)
+        {
+            var path = placement.PathPoints;
+            if (path == null || path.Count < 2) return false;
+
+            Vector2Int head = path[0];
+            Vector2Int step = ArrowSwarm.Grid.GridManager.DirectionToVector(placement.HeadDirection);
+            if (step == Vector2Int.zero) return true;
+
+            // Build set of own body points (excluding head)
+            var ownBody = new HashSet<Vector2Int>();
+            for (int i = 1; i < path.Count; i++)
+            {
+                ownBody.Add(path[i]);
+            }
+
+            // Trace fire line from head — if it hits own body, arrow is self-blocking
+            Vector2Int current = head + step;
+            while (current.IsInBounds(gridWidth, gridHeight))
+            {
+                if (ownBody.Contains(current)) return true;
+                current += step;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Detects and fixes arrows whose head direction causes them to fire into
+        /// their own body. Fix: reverse the path so the other end becomes the head.
+        /// Path shapes are 100% preserved — only the head endpoint changes.
+        /// </summary>
+        private static void FixSelfBlockingArrows(
+            List<SolvabilityChecker.ArrowPlacement> placements, int gridWidth, int gridHeight)
+        {
+            if (placements == null) return;
+
+            for (int i = 0; i < placements.Count; i++)
+            {
+                var placement = placements[i];
+                if (!IsSelfBlocking(placement, gridWidth, gridHeight)) continue;
+
+                // Strategy 1: Flip the arrow (reverse path, other end becomes head)
+                var flipped = placement;
+                FlipArrowOrientation(ref flipped);
+
+                if (!IsSelfBlocking(flipped, gridWidth, gridHeight))
+                {
+                    placements[i] = flipped;
+                    continue;
+                }
+
+                // Strategy 2: Both ends self-block. Try all 4 directions from each end.
+                bool wasFixed = TryAlternateDirections(ref placement, gridWidth, gridHeight);
+                if (wasFixed)
+                {
+                    placements[i] = placement;
+                    continue;
+                }
+
+                // Try from flipped end
+                wasFixed = TryAlternateDirections(ref flipped, gridWidth, gridHeight);
+                if (wasFixed)
+                {
+                    placements[i] = flipped;
+                    continue;
+                }
+
+                // Last resort: keep flipped version (outward orientation will handle later)
+                placements[i] = flipped;
+            }
+        }
+
+        /// <summary>
+        /// Tries all 4 cardinal directions for an arrow's head to find one that
+        /// does not self-block. Returns true if a valid direction was found.
+        /// </summary>
+        private static bool TryAlternateDirections(
+            ref SolvabilityChecker.ArrowPlacement placement, int gridWidth, int gridHeight)
+        {
+            ArrowDirection[] allDirs =
+            {
+                ArrowDirection.Up, ArrowDirection.Down,
+                ArrowDirection.Left, ArrowDirection.Right
+            };
+
+            ArrowDirection originalDir = placement.HeadDirection;
+
+            foreach (var dir in allDirs)
+            {
+                if (dir == originalDir) continue;
+                placement.HeadDirection = dir;
+                if (!IsSelfBlocking(placement, gridWidth, gridHeight))
+                {
+                    return true;
+                }
+            }
+
+            // Restore original if nothing worked
+            placement.HeadDirection = originalDir;
+            return false;
         }
 
         private struct CandidateHead
@@ -925,8 +1039,9 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Attempts to resolve direction deadlocks by iteratively flipping head directions of stuck arrows,
-        /// and as a final fallback applies guaranteed outward sequential directions.
+        /// Attempts to resolve direction deadlocks by applying targeted self-blocking
+        /// and head-to-head fixes first, then random flips with re-fix after each,
+        /// and finally guaranteed outward orientation as fallback.
         /// </summary>
         private static bool SolveDirectionDeadlocks(
             List<SolvabilityChecker.ArrowPlacement> placements,
@@ -939,7 +1054,14 @@ namespace ArrowSwarm.Core
             var initialCheck = SolvabilityChecker.Check(placements, gridWidth, gridHeight, totalMobHP, winabilityRatio);
             if (initialCheck.IsValid) return true;
 
-            // 2. Try smart flips on stuck arrows
+            // 2. Targeted fix: resolve known self-blocking and head-to-head issues
+            FixSelfBlockingArrows(placements, gridWidth, gridHeight);
+            RemoveHeadToHeadConflicts(placements, gridWidth, gridHeight);
+
+            var targetedCheck = SolvabilityChecker.Check(placements, gridWidth, gridHeight, totalMobHP, winabilityRatio);
+            if (targetedCheck.IsValid) return true;
+
+            // 3. Try smart flips on stuck arrows with re-fix after each flip
             for (int attempt = 0; attempt < 40; attempt++)
             {
                 int index = Random.Range(0, placements.Count);
@@ -947,12 +1069,18 @@ namespace ArrowSwarm.Core
                 FlipArrowOrientation(ref tempPlacement);
                 placements[index] = tempPlacement;
 
+                // Re-apply targeted fixes after each flip
+                FixSelfBlockingArrows(placements, gridWidth, gridHeight);
+                RemoveHeadToHeadConflicts(placements, gridWidth, gridHeight);
+
                 var check = SolvabilityChecker.Check(placements, gridWidth, gridHeight, totalMobHP, winabilityRatio);
                 if (check.IsValid) return true;
             }
 
-            // 3. Guaranteed Fallback
+            // 4. Guaranteed Fallback
             ApplyGuaranteedOutwardOrientation(placements, gridWidth, gridHeight);
+            FixSelfBlockingArrows(placements, gridWidth, gridHeight);
+
             var finalCheck = SolvabilityChecker.Check(placements, gridWidth, gridHeight, totalMobHP, winabilityRatio);
             return finalCheck.IsSolvable;
         }
@@ -1019,61 +1147,126 @@ namespace ArrowSwarm.Core
             return steps;
         }
 
+        /// <summary>
+        /// Multi-pass resolution of head-to-head deadlocks where two arrows
+        /// mutually block each other. Flips the arrow further from the edge
+        /// and verifies the flip doesn't create self-blocking.
+        /// </summary>
         private static void RemoveHeadToHeadConflicts(
             List<SolvabilityChecker.ArrowPlacement> placements,
             int gridWidth, int gridHeight)
         {
             if (placements == null || placements.Count == 0) return;
 
-            Dictionary<Vector2Int, int> pointToArrowIndex = new Dictionary<Vector2Int, int>();
-            for (int i = 0; i < placements.Count; i++)
+            int maxPasses = 5;
+
+            for (int pass = 0; pass < maxPasses; pass++)
             {
-                var pts = placements[i].PathPoints;
-                for (int j = 0; j < pts.Count; j++)
+                bool anyFlipped = false;
+
+                // Rebuild point-to-arrow index each pass (directions change after flips)
+                var pointToArrowIndex = new Dictionary<Vector2Int, int>();
+                for (int i = 0; i < placements.Count; i++)
                 {
-                    pointToArrowIndex[pts[j]] = i;
-                }
-            }
-
-            for (int i = 0; i < placements.Count; i++)
-            {
-                var placementA = placements[i];
-                Vector2Int headA = placementA.HeadPoint;
-                Vector2Int stepA = ArrowSwarm.Grid.GridManager.DirectionToVector(placementA.HeadDirection);
-
-                Vector2Int currA = headA + stepA;
-                if (!currA.IsInBounds(gridWidth, gridHeight)) continue;
-
-                while (currA.IsInBounds(gridWidth, gridHeight))
-                {
-                    if (pointToArrowIndex.TryGetValue(currA, out int indexB) && indexB != i)
+                    var pts = placements[i].PathPoints;
+                    for (int j = 0; j < pts.Count; j++)
                     {
-                        var placementB = placements[indexB];
-                        Vector2Int headB = placementB.HeadPoint;
-                        Vector2Int stepB = ArrowSwarm.Grid.GridManager.DirectionToVector(placementB.HeadDirection);
-
-                        Vector2Int currB = headB + stepB;
-                        bool bPointsToA = false;
-                        while (currB.IsInBounds(gridWidth, gridHeight))
-                        {
-                            if (pointToArrowIndex.TryGetValue(currB, out int target) && target == i)
-                            {
-                                bPointsToA = true;
-                                break;
-                            }
-                            currB += stepB;
-                        }
-
-                        if (bPointsToA)
-                        {
-                            FlipArrowOrientation(ref placementB);
-                            placements[indexB] = placementB;
-                        }
-                        break;
+                        pointToArrowIndex[pts[j]] = i;
                     }
-                    currA += stepA;
                 }
+
+                for (int i = 0; i < placements.Count; i++)
+                {
+                    var placementA = placements[i];
+                    Vector2Int headA = placementA.HeadPoint;
+                    Vector2Int stepA = ArrowSwarm.Grid.GridManager.DirectionToVector(placementA.HeadDirection);
+
+                    Vector2Int currA = headA + stepA;
+                    if (!currA.IsInBounds(gridWidth, gridHeight)) continue;
+
+                    while (currA.IsInBounds(gridWidth, gridHeight))
+                    {
+                        if (pointToArrowIndex.TryGetValue(currA, out int indexB) && indexB != i)
+                        {
+                            var placementB = placements[indexB];
+                            Vector2Int headB = placementB.HeadPoint;
+                            Vector2Int stepB = ArrowSwarm.Grid.GridManager.DirectionToVector(placementB.HeadDirection);
+
+                            // Check if B fires into A (mutual blocking)
+                            Vector2Int currB = headB + stepB;
+                            bool bPointsToA = false;
+                            while (currB.IsInBounds(gridWidth, gridHeight))
+                            {
+                                if (pointToArrowIndex.TryGetValue(currB, out int target) && target == i)
+                                {
+                                    bPointsToA = true;
+                                    break;
+                                }
+                                currB += stepB;
+                            }
+
+                            if (bPointsToA)
+                            {
+                                // Mutual blocking! Flip the one further from edge
+                                int stepsAToEdge = GetStepsToEdge(headA, stepA, gridWidth, gridHeight);
+                                int stepsBToEdge = GetStepsToEdge(headB, stepB, gridWidth, gridHeight);
+
+                                if (stepsBToEdge >= stepsAToEdge)
+                                {
+                                    anyFlipped |= TryFlipWithSelfBlockCheck(
+                                        placements, indexB, i, gridWidth, gridHeight);
+                                }
+                                else
+                                {
+                                    anyFlipped |= TryFlipWithSelfBlockCheck(
+                                        placements, i, indexB, gridWidth, gridHeight);
+                                }
+                            }
+                            break;
+                        }
+                        currA += stepA;
+                    }
+                }
+
+                if (!anyFlipped) break;
             }
+        }
+
+        /// <summary>
+        /// Tries to flip primaryIndex arrow. If the flip creates self-blocking,
+        /// tries flipping fallbackIndex instead. Returns true if any flip was applied.
+        /// </summary>
+        private static bool TryFlipWithSelfBlockCheck(
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int primaryIndex, int fallbackIndex,
+            int gridWidth, int gridHeight)
+        {
+            // Try primary
+            var primary = placements[primaryIndex];
+            FlipArrowOrientation(ref primary);
+
+            if (!IsSelfBlocking(primary, gridWidth, gridHeight))
+            {
+                placements[primaryIndex] = primary;
+                return true;
+            }
+
+            // Primary flip creates self-block — try fallback
+            FlipArrowOrientation(ref primary); // undo
+            var fallback = placements[fallbackIndex];
+            FlipArrowOrientation(ref fallback);
+
+            if (!IsSelfBlocking(fallback, gridWidth, gridHeight))
+            {
+                placements[fallbackIndex] = fallback;
+                return true;
+            }
+
+            // Both create self-block — force primary flip (self-block fix will handle)
+            FlipArrowOrientation(ref fallback); // undo
+            FlipArrowOrientation(ref primary);  // re-apply
+            placements[primaryIndex] = primary;
+            return true;
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]

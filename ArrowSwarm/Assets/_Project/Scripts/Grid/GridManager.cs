@@ -165,6 +165,8 @@ namespace ArrowSwarm.Grid
         public bool IsPathClear(Vector2Int headPoint, ArrowSwarm.Arrow.ArrowDirection headDir)
         {
             Vector2Int step = DirectionToVector(headDir);
+            if (step == Vector2Int.zero) return false;
+
             Vector2Int current = headPoint + step;
             
             while (current.IsInBounds(_width, _height))

@@ -386,8 +386,8 @@ namespace ArrowSwarm.Camera
                 if (_isPanning)
                 {
                     Vector2 delta = touchPos - _lastPanPosition;
-                    Vector3 worldDelta = _camera.ScreenToWorldPoint(Vector3.zero) -
-                                         _camera.ScreenToWorldPoint(new Vector3(delta.x, delta.y, 0));
+                    float unitsPerPixel = (Cam.orthographicSize * 2f) / Mathf.Max(1f, Screen.height);
+                    Vector3 worldDelta = new Vector3(-delta.x * unitsPerPixel, -delta.y * unitsPerPixel, 0f);
                     PanCamera(worldDelta);
                     _lastPanPosition = touchPos;
                 }
@@ -448,8 +448,8 @@ namespace ArrowSwarm.Camera
                 if (_isPanning)
                 {
                     Vector2 delta = mousePos - _lastPanPosition;
-                    Vector3 worldDelta = _camera.ScreenToWorldPoint(Vector3.zero) -
-                                         _camera.ScreenToWorldPoint(new Vector3(delta.x, delta.y, 0));
+                    float unitsPerPixel = (Cam.orthographicSize * 2f) / Mathf.Max(1f, Screen.height);
+                    Vector3 worldDelta = new Vector3(-delta.x * unitsPerPixel, -delta.y * unitsPerPixel, 0f);
                     PanCamera(worldDelta);
                     _lastPanPosition = mousePos;
                 }
