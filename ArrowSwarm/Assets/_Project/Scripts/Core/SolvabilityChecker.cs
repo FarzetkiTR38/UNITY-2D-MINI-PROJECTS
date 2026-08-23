@@ -134,6 +134,7 @@ namespace ArrowSwarm.Core
         {
             Vector2Int current = arrow.HeadPoint;
             Vector2Int step = ArrowSwarm.Grid.GridManager.DirectionToVector(arrow.HeadDirection);
+            if (step == Vector2Int.zero) return false;
             
             current += step;
             while (current.IsInBounds(gridWidth, gridHeight))

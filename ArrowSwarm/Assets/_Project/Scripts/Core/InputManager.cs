@@ -76,7 +76,10 @@ namespace ArrowSwarm.Core
         private void ProcessClick(Vector2 screenPosition)
         {
             if (MainCamera == null) return;
-            Vector2 worldPos = MainCamera.ScreenToWorldPoint(screenPosition);
+            float cameraDistance = Mathf.Abs(MainCamera.transform.position.z);
+            if (cameraDistance < 0.1f) cameraDistance = 10f;
+            Vector3 worldPos3 = MainCamera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, cameraDistance));
+            Vector2 worldPos = new Vector2(worldPos3.x, worldPos3.y);
 
             // 1. Grid-based exact lookup: Find the arrow occupying the clicked grid cell
             if (ArrowSwarm.Grid.GridManager.Instance != null && ArrowSpawner.Instance != null)
