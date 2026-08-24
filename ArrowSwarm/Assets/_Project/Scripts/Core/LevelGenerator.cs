@@ -95,6 +95,23 @@ namespace ArrowSwarm.Core
                 ? fallbackPlacements 
                 : GenerateSimpleGridPlacements(map.GridWidth, map.GridHeight);
 
+            // Final Absolute Sanitization: Guarantee 0 self-blocking arrows in the final generated level
+            if (result.ArrowPlacements != null)
+            {
+                for (int i = 0; i < result.ArrowPlacements.Count; i++)
+                {
+                    if (IsSelfBlocking(result.ArrowPlacements[i], map.GridWidth, map.GridHeight))
+                    {
+                        var flipped = result.ArrowPlacements[i];
+                        FlipArrowOrientation(ref flipped);
+                        if (!IsSelfBlocking(flipped, map.GridWidth, map.GridHeight))
+                        {
+                            result.ArrowPlacements[i] = flipped;
+                        }
+                    }
+                }
+            }
+
             result.IsValid = true;
             return result;
         }
@@ -148,7 +165,10 @@ namespace ArrowSwarm.Core
             int minLength = Mathf.Max(2, levelParams.MinWeight + 1);
             int maxLength = Mathf.Min(16, levelParams.MaxWeight + 4);
 
-            while (filledCells < totalCells)
+            int maxLoopIterations = totalCells * 3;
+            int loopCount = 0;
+
+            while (filledCells < totalCells && loopCount++ < maxLoopIterations)
             {
                 Vector2Int headPos = Vector2Int.zero;
                 ArrowDirection headDir = ArrowDirection.Up;
@@ -156,7 +176,15 @@ namespace ArrowSwarm.Core
 
                 // Priority 1: Boundary cell facing outward (free exit)
                 var freeBoundary = GetFreeBoundaryCandidates(gridWidth, gridHeight, occupied);
-                if (freeBoundary.Count > 0 && (placements.Count == 0 || Random.value < 0.30f))
+                var validBoundary = freeBoundary.FindAll(c => !CreatesHeadToHeadConflict(c.pos, c.dir, placements));
+                if (validBoundary.Count > 0 && (placements.Count == 0 || Random.value < 0.30f))
+                {
+                    var cand = validBoundary[Random.Range(0, validBoundary.Count)];
+                    headPos = cand.pos;
+                    headDir = cand.dir;
+                    foundHead = true;
+                }
+                else if (freeBoundary.Count > 0 && placements.Count == 0)
                 {
                     var cand = freeBoundary[Random.Range(0, freeBoundary.Count)];
                     headPos = cand.pos;
@@ -167,7 +195,15 @@ namespace ArrowSwarm.Core
                 {
                     // Priority 2: Interior cell facing an exit or previously cleared space
                     var interiorCands = GetInteriorCandidates(gridWidth, gridHeight, occupied);
-                    if (interiorCands.Count > 0)
+                    var validInterior = interiorCands.FindAll(c => !CreatesHeadToHeadConflict(c.pos, c.dir, placements));
+                    if (validInterior.Count > 0)
+                    {
+                        var cand = validInterior[Random.Range(0, validInterior.Count)];
+                        headPos = cand.pos;
+                        headDir = cand.dir;
+                        foundHead = true;
+                    }
+                    else if (interiorCands.Count > 0)
                     {
                         var cand = interiorCands[Random.Range(0, interiorCands.Count)];
                         headPos = cand.pos;
@@ -203,15 +239,15 @@ namespace ArrowSwarm.Core
                         }
                     }
                 }
-                else if (path != null && path.Count == 1)
+                else
                 {
-                    Vector2Int isolated = path[0];
-                    if (cellOwner[isolated.x, isolated.y] == -1)
+                    // Single cell or failed to grow backwards: attach to existing placement
+                    if (cellOwner[headPos.x, headPos.y] == -1)
                     {
-                        bool attached = AttachIsolatedCellToPlacement(isolated, placements, cellOwner, gridWidth, gridHeight);
+                        bool attached = AttachIsolatedCellToPlacement(headPos, placements, cellOwner, gridWidth, gridHeight);
                         if (attached)
                         {
-                            occupied[isolated.x, isolated.y] = true;
+                            occupied[headPos.x, headPos.y] = true;
                             filledCells++;
                         }
                     }
@@ -315,69 +351,73 @@ namespace ArrowSwarm.Core
                 var originalPath = new List<Vector2Int>(placements[i].PathPoints);
                 ArrowDirection originalDir = placements[i].HeadDirection;
 
-                // Strategy 1: Flip the arrow (reverse path, other end becomes head)
+                // Try flipping the arrow (reverse path, other end becomes head with natural direction)
                 var flipped = placements[i];
                 FlipArrowOrientation(ref flipped);
 
                 if (!IsSelfBlocking(flipped, gridWidth, gridHeight))
                 {
                     placements[i] = flipped;
-                    continue;
                 }
-
-                // Strategy 2: Try all 4 directions from the FLIPPED head
-                bool wasFixed = TryAlternateDirections(ref flipped, gridWidth, gridHeight);
-                if (wasFixed)
+                else
                 {
-                    placements[i] = flipped;
-                    continue;
+                    // Flipped is also self-blocking, restore original state
+                    RestoreArrowState(placements, i, originalPath, originalDir);
                 }
-
-                // Strategy 3: Restore original orientation, try alternate directions
-                RestoreArrowState(placements, i, originalPath, originalDir);
-                var original = placements[i];
-                wasFixed = TryAlternateDirections(ref original, gridWidth, gridHeight);
-                if (wasFixed)
-                {
-                    placements[i] = original;
-                    continue;
-                }
-
-                // Last resort: keep flipped version (resolver will handle later)
-                RestoreArrowState(placements, i, originalPath, originalDir);
-                var lastResort = placements[i];
-                FlipArrowOrientation(ref lastResort);
-                placements[i] = lastResort;
             }
         }
 
         /// <summary>
-        /// Tries all 4 cardinal directions for an arrow's head to find one that
-        /// does not self-block. Returns true if a valid direction was found.
+        /// Checks if placing an arrow head at headPos with direction headDir would create
+        /// a mutual head-to-head deadlock on the same row or column with any existing placement.
         /// </summary>
-        private static bool TryAlternateDirections(
-            ref SolvabilityChecker.ArrowPlacement placement, int gridWidth, int gridHeight)
+        private static bool CreatesHeadToHeadConflict(
+            Vector2Int headPos, ArrowDirection headDir,
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int ignoreIndex = -1)
         {
-            ArrowDirection[] allDirs =
-            {
-                ArrowDirection.Up, ArrowDirection.Down,
-                ArrowDirection.Left, ArrowDirection.Right
-            };
+            if (placements == null) return false;
 
-            ArrowDirection originalDir = placement.HeadDirection;
-
-            foreach (var dir in allDirs)
+            for (int i = 0; i < placements.Count; i++)
             {
-                if (dir == originalDir) continue;
-                placement.HeadDirection = dir;
-                if (!IsSelfBlocking(placement, gridWidth, gridHeight))
+                if (i == ignoreIndex) continue;
+
+                var p = placements[i];
+                Vector2Int h = p.HeadPoint;
+                ArrowDirection d = p.HeadDirection;
+
+                // Same row check (Y axis identical)
+                if (h.y == headPos.y)
                 {
-                    return true;
+                    if (headPos.x < h.x && headDir == ArrowDirection.Right && d == ArrowDirection.Left) return true;
+                    if (headPos.x > h.x && headDir == ArrowDirection.Left && d == ArrowDirection.Right) return true;
+                }
+
+                // Same column check (X axis identical)
+                if (h.x == headPos.x)
+                {
+                    if (headPos.y < h.y && headDir == ArrowDirection.Up && d == ArrowDirection.Down) return true;
+                    if (headPos.y > h.y && headDir == ArrowDirection.Down && d == ArrowDirection.Up) return true;
                 }
             }
 
-            // Restore original if nothing worked
-            placement.HeadDirection = originalDir;
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if a point lies in the line of fire of an arrow's head.
+        /// </summary>
+        private static bool IsInFireRay(Vector2Int pt, Vector2Int head, ArrowDirection dir, int width, int height)
+        {
+            Vector2Int step = ArrowSwarm.Grid.GridManager.DirectionToVector(dir);
+            if (step == Vector2Int.zero) return false;
+
+            Vector2Int curr = head + step;
+            while (curr.IsInBounds(width, height))
+            {
+                if (curr == pt) return true;
+                curr += step;
+            }
             return false;
         }
 
@@ -564,25 +604,29 @@ namespace ArrowSwarm.Core
 
             for (int x = 0; x < width; x++)
             {
-                if (!occupied[x, height - 1])
+                // Head at top, facing Up: neck must be below (x, height - 2)
+                if (!occupied[x, height - 1] && (height < 2 || !occupied[x, height - 2]))
                     list.Add(new CandidateHead { pos = new Vector2Int(x, height - 1), dir = ArrowDirection.Up });
             }
 
             for (int x = 0; x < width; x++)
             {
-                if (!occupied[x, 0])
+                // Head at bottom, facing Down: neck must be above (x, 1)
+                if (!occupied[x, 0] && (height < 2 || !occupied[x, 1]))
                     list.Add(new CandidateHead { pos = new Vector2Int(x, 0), dir = ArrowDirection.Down });
             }
 
             for (int y = 0; y < height; y++)
             {
-                if (!occupied[0, y])
+                // Head at left, facing Left: neck must be right (1, y)
+                if (!occupied[0, y] && (width < 2 || !occupied[1, y]))
                     list.Add(new CandidateHead { pos = new Vector2Int(0, y), dir = ArrowDirection.Left });
             }
 
             for (int y = 0; y < height; y++)
             {
-                if (!occupied[width - 1, y])
+                // Head at right, facing Right: neck must be left (width - 2, y)
+                if (!occupied[width - 1, y] && (width < 2 || !occupied[width - 2, y]))
                     list.Add(new CandidateHead { pos = new Vector2Int(width - 1, y), dir = ArrowDirection.Right });
             }
 
@@ -606,11 +650,16 @@ namespace ArrowSwarm.Core
                     foreach (var dir in dirs)
                     {
                         Vector2Int step = ArrowSwarm.Grid.GridManager.DirectionToVector(dir);
-                        Vector2Int target = pos + step;
+                        Vector2Int neck = pos - step;
 
-                        if (!target.IsInBounds(width, height) || occupied[target.x, target.y])
+                        // Neck MUST be in bounds and unoccupied for growth to start
+                        if (neck.IsInBounds(width, height) && !occupied[neck.x, neck.y])
                         {
-                            list.Add(new CandidateHead { pos = pos, dir = dir });
+                            Vector2Int target = pos + step;
+                            if (!target.IsInBounds(width, height) || occupied[target.x, target.y])
+                            {
+                                list.Add(new CandidateHead { pos = pos, dir = dir });
+                            }
                         }
                     }
                 }
@@ -639,8 +688,19 @@ namespace ArrowSwarm.Core
             foreach (var dir in dirs)
             {
                 Vector2Int step = ArrowSwarm.Grid.GridManager.DirectionToVector(dir);
-                Vector2Int target = pos + step;
-                if (!target.IsInBounds(width, height)) return dir;
+                Vector2Int neck = pos - step;
+                if (neck.IsInBounds(width, height) && !occupied[neck.x, neck.y])
+                {
+                    Vector2Int target = pos + step;
+                    if (!target.IsInBounds(width, height)) return dir;
+                }
+            }
+            // Fallback
+            foreach (var dir in dirs)
+            {
+                Vector2Int step = ArrowSwarm.Grid.GridManager.DirectionToVector(dir);
+                Vector2Int neck = pos - step;
+                if (neck.IsInBounds(width, height) && !occupied[neck.x, neck.y]) return dir;
             }
             return ArrowDirection.Up;
         }
@@ -649,34 +709,28 @@ namespace ArrowSwarm.Core
             Vector2Int headPos, ArrowDirection headDir, int targetLength,
             int width, int height, bool[,] occupied)
         {
-            List<Vector2Int> path = new List<Vector2Int>();
-            path.Add(headPos);
+            Vector2Int headStep = ArrowSwarm.Grid.GridManager.DirectionToVector(headDir);
+            Vector2Int secondPos = headPos - headStep;
 
-            Vector2Int backDir = -ArrowSwarm.Grid.GridManager.DirectionToVector(headDir);
-            Vector2Int secondPos = headPos + backDir;
-
-            if (secondPos.IsInBounds(width, height) && !occupied[secondPos.x, secondPos.y])
+            // By the Neck Axiom, secondPos MUST be in bounds and unoccupied
+            if (!secondPos.IsInBounds(width, height) || occupied[secondPos.x, secondPos.y])
             {
-                path.Add(secondPos);
-            }
-            else
-            {
-                Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-                foreach (var d in dirs)
-                {
-                    Vector2Int neighbor = headPos + d;
-                    if (neighbor.IsInBounds(width, height) && !occupied[neighbor.x, neighbor.y])
-                    {
-                        path.Add(neighbor);
-                        break;
-                    }
-                }
+                return null; // Cannot form a natural neck pointing in headDir
             }
 
-            if (path.Count < 2) return path;
+            List<Vector2Int> path = new List<Vector2Int> { headPos, secondPos };
 
-            Vector2Int current = path[path.Count - 1];
-            Vector2Int currentDir = path[path.Count - 1] - path[path.Count - 2];
+            // Calculate line of fire (laser) for the head: points that this arrow CANNOT occupy under any circumstances
+            var fireRay = new HashSet<Vector2Int>();
+            Vector2Int rayPt = headPos + headStep;
+            while (rayPt.IsInBounds(width, height))
+            {
+                fireRay.Add(rayPt);
+                rayPt += headStep;
+            }
+
+            Vector2Int current = secondPos;
+            Vector2Int currentDir = -headStep;
             int straightSteps = 0;
 
             while (path.Count < targetLength)
@@ -687,7 +741,11 @@ namespace ArrowSwarm.Core
                 foreach (var d in dirs)
                 {
                     Vector2Int neighbor = current + d;
-                    if (neighbor.IsInBounds(width, height) && !occupied[neighbor.x, neighbor.y] && !path.Contains(neighbor))
+                    // CRITICAL: Cannot be occupied, cannot be in current path, AND CANNOT BE IN HEAD'S LASER FIRE RAY!
+                    if (neighbor.IsInBounds(width, height) && 
+                        !occupied[neighbor.x, neighbor.y] && 
+                        !path.Contains(neighbor) &&
+                        !fireRay.Contains(neighbor))
                     {
                         validDirs.Add(d);
                     }
@@ -732,86 +790,73 @@ namespace ArrowSwarm.Core
         {
             if (placements == null || placements.Count == 0) return false;
 
-            // 1. Try attaching isolated to an existing placement's TAIL
+            // 1. Try attaching isolated to an existing placement's TAIL (strictly never into head's laser ray)
             for (int pIndex = 0; pIndex < placements.Count; pIndex++)
             {
-                var existingPath = placements[pIndex].PathPoints;
+                var p = placements[pIndex];
+                var existingPath = p.PathPoints;
                 Vector2Int tail = existingPath[existingPath.Count - 1];
 
                 if (IsManhattanOne(isolated, tail))
                 {
-                    existingPath.Add(isolated);
-                    cellOwner[isolated.x, isolated.y] = pIndex;
-                    return true;
-                }
-            }
-
-            // 2. Try attaching isolated to an existing placement's HEAD
-            for (int pIndex = 0; pIndex < placements.Count; pIndex++)
-            {
-                var existingPath = placements[pIndex].PathPoints;
-                Vector2Int head = existingPath[0];
-
-                if (IsManhattanOne(isolated, head))
-                {
-                    existingPath.Insert(0, isolated);
-                    cellOwner[isolated.x, isolated.y] = pIndex;
-                    return true;
-                }
-            }
-
-            // 3. Try inserting isolated as a corner detour inside an existing placement's path
-            for (int pIndex = 0; pIndex < placements.Count; pIndex++)
-            {
-                var existingPath = placements[pIndex].PathPoints;
-                for (int i = 0; i < existingPath.Count - 1; i++)
-                {
-                    if (IsManhattanOne(isolated, existingPath[i]) && IsManhattanOne(isolated, existingPath[i + 1]))
+                    if (!IsInFireRay(isolated, existingPath[0], p.HeadDirection, width, height))
                     {
-                        existingPath.Insert(i + 1, isolated);
+                        existingPath.Add(isolated);
                         cellOwner[isolated.x, isolated.y] = pIndex;
                         return true;
                     }
                 }
             }
 
-            // 4. Try forming a 2-point arrow with an UNOWNED adjacent neighbor
+            // 2. Try inserting isolated as a corner detour inside an existing placement's path
+            for (int pIndex = 0; pIndex < placements.Count; pIndex++)
+            {
+                var p = placements[pIndex];
+                var existingPath = p.PathPoints;
+                for (int i = 0; i < existingPath.Count - 1; i++)
+                {
+                    if (IsManhattanOne(isolated, existingPath[i]) && IsManhattanOne(isolated, existingPath[i + 1]))
+                    {
+                        if (!IsInFireRay(isolated, existingPath[0], p.HeadDirection, width, height))
+                        {
+                            existingPath.Insert(i + 1, isolated);
+                            cellOwner[isolated.x, isolated.y] = pIndex;
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            // 3. Try forming a 2-point arrow with an UNOWNED adjacent neighbor
             Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
             foreach (var d in dirs)
             {
                 Vector2Int neighbor = isolated + d;
                 if (neighbor.IsInBounds(width, height) && cellOwner[neighbor.x, neighbor.y] == -1)
                 {
-                    int arrowIdx = placements.Count;
-                    var smallPath = new List<Vector2Int> { isolated, neighbor };
                     ArrowDirection dir = VectorToDirection(isolated - neighbor);
-                    placements.Add(new SolvabilityChecker.ArrowPlacement(smallPath, dir));
-
-                    cellOwner[isolated.x, isolated.y] = arrowIdx;
-                    cellOwner[neighbor.x, neighbor.y] = arrowIdx;
-                    return true;
-                }
-            }
-
-            // 5. Ultimate Fallback: Attach isolated to ANY adjacent placement's path
-            foreach (var d in dirs)
-            {
-                Vector2Int neighbor = isolated + d;
-                if (neighbor.IsInBounds(width, height) && cellOwner[neighbor.x, neighbor.y] != -1)
-                {
-                    int pIndex = cellOwner[neighbor.x, neighbor.y];
-                    var existingPath = placements[pIndex].PathPoints;
-                    int idx = existingPath.IndexOf(neighbor);
-                    if (idx == 0)
+                    if (!CreatesHeadToHeadConflict(isolated, dir, placements))
                     {
-                        existingPath.Insert(0, isolated);
+                        int arrowIdx = placements.Count;
+                        var smallPath = new List<Vector2Int> { isolated, neighbor };
+                        placements.Add(new SolvabilityChecker.ArrowPlacement(smallPath, dir));
+
+                        cellOwner[isolated.x, isolated.y] = arrowIdx;
+                        cellOwner[neighbor.x, neighbor.y] = arrowIdx;
+                        return true;
                     }
-                    else
+
+                    ArrowDirection oppDir = VectorToDirection(neighbor - isolated);
+                    if (!CreatesHeadToHeadConflict(neighbor, oppDir, placements))
                     {
-                        existingPath.Add(isolated);
+                        int arrowIdx = placements.Count;
+                        var smallPath = new List<Vector2Int> { neighbor, isolated };
+                        placements.Add(new SolvabilityChecker.ArrowPlacement(smallPath, oppDir));
+
+                        cellOwner[isolated.x, isolated.y] = arrowIdx;
+                        cellOwner[neighbor.x, neighbor.y] = arrowIdx;
+                        return true;
                     }
-                    cellOwner[isolated.x, isolated.y] = pIndex;
-                    return true;
                 }
             }
 
@@ -867,35 +912,19 @@ namespace ArrowSwarm.Core
                         Vector2Int neighbor = tail + d;
                         if (neighbor.IsInBounds(width, height) && cellOwner[neighbor.x, neighbor.y] == -1)
                         {
-                            path.Add(neighbor);
-                            cellOwner[neighbor.x, neighbor.y] = p;
-                            tail = neighbor;
-                            grewAny = true;
+                            // Ensure neighbor is not in head's line of fire
+                            if (!IsInFireRay(neighbor, path[0], placements[p].HeadDirection, width, height))
+                            {
+                                path.Add(neighbor);
+                                cellOwner[neighbor.x, neighbor.y] = p;
+                                tail = neighbor;
+                                grewAny = true;
+                            }
                         }
                     }
                 }
 
-                // Pass 2: Extend arrow heads into any adjacent unowned cell
-                for (int p = 0; p < placements.Count; p++)
-                {
-                    var path = placements[p].PathPoints;
-                    if (path == null || path.Count == 0) continue;
-
-                    Vector2Int head = path[0];
-                    foreach (var d in dirs)
-                    {
-                        Vector2Int neighbor = head + d;
-                        if (neighbor.IsInBounds(width, height) && cellOwner[neighbor.x, neighbor.y] == -1)
-                        {
-                            path.Insert(0, neighbor);
-                            cellOwner[neighbor.x, neighbor.y] = p;
-                            head = neighbor;
-                            grewAny = true;
-                        }
-                    }
-                }
-
-                // Pass 3: Insert empty cell as an orthogonal 90-degree corner detour into any adjacent body segment
+                // Pass 2: Insert empty cell as an orthogonal 90-degree corner detour into any adjacent body segment
                 for (int x = 0; x < width; x++)
                 {
                     for (int y = 0; y < height; y++)
@@ -908,17 +937,20 @@ namespace ArrowSwarm.Core
                         for (int p = 0; p < placements.Count; p++)
                         {
                             var path = placements[p].PathPoints;
-                            if (path == null) continue;
+                            if (path == null || path.Count < 2) continue;
 
                             for (int i = 0; i < path.Count - 1; i++)
                             {
                                 if (IsManhattanOne(emptyPt, path[i]) && IsManhattanOne(emptyPt, path[i + 1]))
                                 {
-                                    path.Insert(i + 1, emptyPt);
-                                    cellOwner[x, y] = p;
-                                    filled = true;
-                                    grewAny = true;
-                                    break;
+                                    if (!IsInFireRay(emptyPt, path[0], placements[p].HeadDirection, width, height))
+                                    {
+                                        path.Insert(i + 1, emptyPt);
+                                        cellOwner[x, y] = p;
+                                        filled = true;
+                                        grewAny = true;
+                                        break;
+                                    }
                                 }
                             }
                             if (filled) break;
@@ -1291,21 +1323,39 @@ namespace ArrowSwarm.Core
                 Vector2Int dirA = path[0] - path[1];
                 Vector2Int dirB = path[path.Count - 1] - path[path.Count - 2];
 
+                var placeA = new SolvabilityChecker.ArrowPlacement(new List<Vector2Int>(path), VectorToDirection(dirA));
+                bool selfBlockA = IsSelfBlocking(placeA, gridWidth, gridHeight);
+
+                var reversedPath = new List<Vector2Int>(path);
+                reversedPath.Reverse();
+                var placeB = new SolvabilityChecker.ArrowPlacement(reversedPath, VectorToDirection(dirB));
+                bool selfBlockB = IsSelfBlocking(placeB, gridWidth, gridHeight);
+
+                // If A is clean and B self-blocks, MUST keep A
+                if (!selfBlockA && selfBlockB)
+                {
+                    placements[i] = placeA;
+                    continue;
+                }
+                // If B is clean and A self-blocks, MUST keep B
+                if (selfBlockA && !selfBlockB)
+                {
+                    placements[i] = placeB;
+                    continue;
+                }
+
+                // If both are clean, choose the one with fewer steps to grid edge
                 int stepsA = GetStepsToEdge(endA, dirA, gridWidth, gridHeight);
                 int stepsB = GetStepsToEdge(endB, dirB, gridWidth, gridHeight);
 
-                if (stepsB < stepsA)
+                if (stepsB < stepsA && !selfBlockB)
                 {
-                    path.Reverse();
-                    placement.HeadDirection = VectorToDirection(dirB);
+                    placements[i] = placeB;
                 }
                 else
                 {
-                    placement.HeadDirection = VectorToDirection(dirA);
+                    placements[i] = placeA;
                 }
-
-                placement.PathPoints = path;
-                placements[i] = placement;
             }
 
             RemoveHeadToHeadConflicts(placements, gridWidth, gridHeight);
@@ -1324,83 +1374,53 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Multi-pass resolution of head-to-head deadlocks where two arrows
-        /// mutually block each other. Flips the arrow further from the edge
-        /// and verifies the flip doesn't create self-blocking.
+        /// Multi-pass systematic resolution of head-to-head deadlocks across all rows and columns.
+        /// Checks if any two arrow heads on the same row or column point towards each other,
+        /// and flips one of them safely without creating self-blocking or new conflicts.
         /// </summary>
         private static void RemoveHeadToHeadConflicts(
             List<SolvabilityChecker.ArrowPlacement> placements,
             int gridWidth, int gridHeight)
         {
-            if (placements == null || placements.Count == 0) return;
+            if (placements == null || placements.Count < 2) return;
 
-            int maxPasses = 5;
-
+            int maxPasses = 15;
             for (int pass = 0; pass < maxPasses; pass++)
             {
                 bool anyFlipped = false;
 
-                // Rebuild point-to-arrow index each pass (directions change after flips)
-                var pointToArrowIndex = new Dictionary<Vector2Int, int>();
                 for (int i = 0; i < placements.Count; i++)
                 {
-                    var pts = placements[i].PathPoints;
-                    for (int j = 0; j < pts.Count; j++)
+                    var pA = placements[i];
+                    Vector2Int hA = pA.HeadPoint;
+                    ArrowDirection dA = pA.HeadDirection;
+
+                    for (int j = i + 1; j < placements.Count; j++)
                     {
-                        pointToArrowIndex[pts[j]] = i;
-                    }
-                }
+                        var pB = placements[j];
+                        Vector2Int hB = pB.HeadPoint;
+                        ArrowDirection dB = pB.HeadDirection;
 
-                for (int i = 0; i < placements.Count; i++)
-                {
-                    var placementA = placements[i];
-                    Vector2Int headA = placementA.HeadPoint;
-                    Vector2Int stepA = ArrowSwarm.Grid.GridManager.DirectionToVector(placementA.HeadDirection);
+                        bool isConflict = false;
 
-                    Vector2Int currA = headA + stepA;
-                    if (!currA.IsInBounds(gridWidth, gridHeight)) continue;
-
-                    while (currA.IsInBounds(gridWidth, gridHeight))
-                    {
-                        if (pointToArrowIndex.TryGetValue(currA, out int indexB) && indexB != i)
+                        // Same row: A is to the left of B, A points Right, B points Left
+                        if (hA.y == hB.y)
                         {
-                            var placementB = placements[indexB];
-                            Vector2Int headB = placementB.HeadPoint;
-                            Vector2Int stepB = ArrowSwarm.Grid.GridManager.DirectionToVector(placementB.HeadDirection);
-
-                            // Check if B fires into A (mutual blocking)
-                            Vector2Int currB = headB + stepB;
-                            bool bPointsToA = false;
-                            while (currB.IsInBounds(gridWidth, gridHeight))
-                            {
-                                if (pointToArrowIndex.TryGetValue(currB, out int target) && target == i)
-                                {
-                                    bPointsToA = true;
-                                    break;
-                                }
-                                currB += stepB;
-                            }
-
-                            if (bPointsToA)
-                            {
-                                // Mutual blocking! Flip the one further from edge
-                                int stepsAToEdge = GetStepsToEdge(headA, stepA, gridWidth, gridHeight);
-                                int stepsBToEdge = GetStepsToEdge(headB, stepB, gridWidth, gridHeight);
-
-                                if (stepsBToEdge >= stepsAToEdge)
-                                {
-                                    anyFlipped |= TryFlipWithSelfBlockCheck(
-                                        placements, indexB, i, gridWidth, gridHeight);
-                                }
-                                else
-                                {
-                                    anyFlipped |= TryFlipWithSelfBlockCheck(
-                                        placements, i, indexB, gridWidth, gridHeight);
-                                }
-                            }
-                            break;
+                            if (hA.x < hB.x && dA == ArrowDirection.Right && dB == ArrowDirection.Left) isConflict = true;
+                            else if (hB.x < hA.x && dB == ArrowDirection.Right && dA == ArrowDirection.Left) isConflict = true;
                         }
-                        currA += stepA;
+                        // Same column: A is below B, A points Up, B points Down
+                        else if (hA.x == hB.x)
+                        {
+                            if (hA.y < hB.y && dA == ArrowDirection.Up && dB == ArrowDirection.Down) isConflict = true;
+                            else if (hB.y < hA.y && dB == ArrowDirection.Up && dA == ArrowDirection.Down) isConflict = true;
+                        }
+
+                        if (isConflict)
+                        {
+                            // Conflict found! Try flipping one of the arrows safely
+                            anyFlipped |= TryFlipWithSelfBlockCheck(placements, j, i, gridWidth, gridHeight);
+                        }
                     }
                 }
 
@@ -1409,8 +1429,8 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Tries to flip primaryIndex arrow. If the flip creates self-blocking,
-        /// tries flipping fallbackIndex instead. Returns true if any flip was applied.
+        /// Tries to flip primaryIndex arrow. Checks that the flip does not create
+        /// self-blocking or new head-to-head conflicts. If primary fails, tries fallbackIndex.
         /// Uses deep copy for safe undo of shared PathPoints references.
         /// </summary>
         private static bool TryFlipWithSelfBlockCheck(
@@ -1418,44 +1438,59 @@ namespace ArrowSwarm.Core
             int primaryIndex, int fallbackIndex,
             int gridWidth, int gridHeight)
         {
-            // Save primary original state (deep copy)
+            // Try primary with strict conflict check
             var primaryOrigPath = new List<Vector2Int>(placements[primaryIndex].PathPoints);
             ArrowDirection primaryOrigDir = placements[primaryIndex].HeadDirection;
 
-            // Try flipping primary
             var primary = placements[primaryIndex];
             FlipArrowOrientation(ref primary);
 
-            if (!IsSelfBlocking(primary, gridWidth, gridHeight))
+            if (!IsSelfBlocking(primary, gridWidth, gridHeight) &&
+                !CreatesHeadToHeadConflict(primary.HeadPoint, primary.HeadDirection, placements, primaryIndex))
             {
                 placements[primaryIndex] = primary;
                 return true;
             }
 
-            // Primary flip creates self-block — restore primary
             RestoreArrowState(placements, primaryIndex, primaryOrigPath, primaryOrigDir);
 
-            // Save fallback original state (deep copy)
+            // Try fallback with strict conflict check
             var fallbackOrigPath = new List<Vector2Int>(placements[fallbackIndex].PathPoints);
             ArrowDirection fallbackOrigDir = placements[fallbackIndex].HeadDirection;
 
-            // Try flipping fallback
             var fallback = placements[fallbackIndex];
             FlipArrowOrientation(ref fallback);
 
-            if (!IsSelfBlocking(fallback, gridWidth, gridHeight))
+            if (!IsSelfBlocking(fallback, gridWidth, gridHeight) &&
+                !CreatesHeadToHeadConflict(fallback.HeadPoint, fallback.HeadDirection, placements, fallbackIndex))
             {
                 placements[fallbackIndex] = fallback;
                 return true;
             }
 
-            // Both create self-block — restore fallback, force primary flip
+            // Relaxed check: accept flip as long as it's not self-blocking
             RestoreArrowState(placements, fallbackIndex, fallbackOrigPath, fallbackOrigDir);
 
-            var forcedPrimary = placements[primaryIndex];
-            FlipArrowOrientation(ref forcedPrimary);
-            placements[primaryIndex] = forcedPrimary;
-            return true;
+            var relaxedPrimary = placements[primaryIndex];
+            FlipArrowOrientation(ref relaxedPrimary);
+            if (!IsSelfBlocking(relaxedPrimary, gridWidth, gridHeight))
+            {
+                placements[primaryIndex] = relaxedPrimary;
+                return true;
+            }
+
+            RestoreArrowState(placements, primaryIndex, primaryOrigPath, primaryOrigDir);
+
+            var relaxedFallback = placements[fallbackIndex];
+            FlipArrowOrientation(ref relaxedFallback);
+            if (!IsSelfBlocking(relaxedFallback, gridWidth, gridHeight))
+            {
+                placements[fallbackIndex] = relaxedFallback;
+                return true;
+            }
+
+            RestoreArrowState(placements, fallbackIndex, fallbackOrigPath, fallbackOrigDir);
+            return false;
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
