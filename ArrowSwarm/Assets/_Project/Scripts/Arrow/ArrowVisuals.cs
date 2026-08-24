@@ -252,24 +252,50 @@ namespace ArrowSwarm.Arrow
         public Transform HeadTransform => _headTransform;
 
         /// <summary>
-        /// Plays the fire visual effect (stops pulse, hides line, aligns arrowhead to movement).
+        /// Plays the fire visual effect (stops idle pulse, keeps line renderer active for slithering body).
         /// </summary>
         public void PlayFireEffect()
         {
             _isPulsing = false;
-            _lineRenderer.enabled = false;
+            if (_lineRenderer != null)
+            {
+                _lineRenderer.enabled = true;
+            }
+
+            if (_trailRenderer != null)
+            {
+                _trailRenderer.enabled = false; // Disabled in favor of full arrow body slither
+                _trailRenderer.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Updates the slithering body line and head position/rotation while the arrow is moving along the path.
+        /// </summary>
+        public void UpdateSlitheringBody(List<Vector3> bodyPoints, Vector3 headPos, Quaternion headRotation, bool headVisible)
+        {
+            if (_lineRenderer != null)
+            {
+                if (bodyPoints != null && bodyPoints.Count >= 2)
+                {
+                    _lineRenderer.enabled = true;
+                    _lineRenderer.positionCount = bodyPoints.Count;
+                    _lineRenderer.SetPositions(bodyPoints.ToArray());
+                }
+                else
+                {
+                    _lineRenderer.positionCount = 0;
+                }
+            }
 
             if (_headTransform != null)
             {
-                _headTransform.localPosition = Vector3.zero;
-                _headTransform.localRotation = Quaternion.identity;
-            }
-            
-            if (_trailRenderer != null)
-            {
-                _trailRenderer.enabled = true;
-                _trailRenderer.startColor = _headRenderer.color;
-                _trailRenderer.endColor = _headRenderer.color.WithAlpha(0f);
+                _headTransform.position = headPos;
+                _headTransform.rotation = headRotation;
+                if (_headRenderer != null)
+                {
+                    _headRenderer.enabled = headVisible;
+                }
             }
         }
 
