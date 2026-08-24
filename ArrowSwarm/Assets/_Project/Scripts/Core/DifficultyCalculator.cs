@@ -97,19 +97,19 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Calculates the maximum arrow weight for a given level based on its active map:
-        /// - Map 1  (Index 0)  → Max Weight 5  (Weight 1–5)
-        /// - Map 2  (Index 1)  → Max Weight 6  (Weight 1–6)
-        /// - Map 3  (Index 2)  → Max Weight 7  (Weight 1–7)
-        /// - Map 4  (Index 3)  → Max Weight 8  (Weight 1–8)
-        /// - Map 5  (Index 4)  → Max Weight 9  (Weight 1–9)
-        /// - Map 6  (Index 5)  → Max Weight 10 (Weight 1–10)
-        /// - Map 7  (Index 6)  → Max Weight 12 (Weight 1–12)
-        /// - Map 8  (Index 7)  → Max Weight 14 (Weight 1–14)
-        /// - Map 9  (Index 8)  → Max Weight 16 (Weight 1–16)
-        /// - Map 10 (Index 9)  → Max Weight 18 (Weight 1–18)
-        /// - Map 11 (Index 10) → Max Weight 20 (Weight 1–20)
-        /// - Map 12 (Index 11) → Max Weight 22 (Weight 1–22)
+        /// Calculates the maximum arrow weight for a given level based on its active map (Golden Ratio curve):
+        /// - Map 1  (Index 0)  → Max Weight 5  (Weight 1–5,  2–6 points)
+        /// - Map 2  (Index 1)  → Max Weight 6  (Weight 1–6,  2–7 points)
+        /// - Map 3  (Index 2)  → Max Weight 7  (Weight 1–7,  2–8 points)
+        /// - Map 4  (Index 3)  → Max Weight 8  (Weight 1–8,  2–9 points)
+        /// - Map 5  (Index 4)  → Max Weight 10 (Weight 1–10, 2–11 points)
+        /// - Map 6  (Index 5)  → Max Weight 12 (Weight 1–12, 2–13 points)
+        /// - Map 7  (Index 6)  → Max Weight 15 (Weight 1–15, 2–16 points)
+        /// - Map 8  (Index 7)  → Max Weight 18 (Weight 1–18, 2–19 points)
+        /// - Map 9  (Index 8)  → Max Weight 22 (Weight 1–22, 2–23 points)
+        /// - Map 10 (Index 9)  → Max Weight 26 (Weight 1–26, 2–27 points)
+        /// - Map 11 (Index 10) → Max Weight 30 (Weight 1–30, 2–31 points)
+        /// - Map 12 (Index 11) → Max Weight 35 (Weight 1–35, 2–36 points - Mega Boss Maze)
         /// </summary>
         public static int GetMaxWeight(int level)
         {
@@ -120,14 +120,14 @@ namespace ArrowSwarm.Core
                 1 => 6,   // Map 2  (Weight 1–6)
                 2 => 7,   // Map 3  (Weight 1–7)
                 3 => 8,   // Map 4  (Weight 1–8)
-                4 => 9,   // Map 5  (Weight 1–9)
-                5 => 10,  // Map 6  (Weight 1–10)
-                6 => 12,  // Map 7  (Weight 1–12)
-                7 => 14,  // Map 8  (Weight 1–14)
-                8 => 16,  // Map 9  (Weight 1–16)
-                9 => 18,  // Map 10 (Weight 1–18)
-                10 => 20, // Map 11 (Weight 1–20)
-                11 => 22, // Map 12 (Weight 1–22)
+                4 => 10,  // Map 5  (Weight 1–10)
+                5 => 12,  // Map 6  (Weight 1–12)
+                6 => 15,  // Map 7  (Weight 1–15)
+                7 => 18,  // Map 8  (Weight 1–18)
+                8 => 22,  // Map 9  (Weight 1–22)
+                9 => 26,  // Map 10 (Weight 1–26)
+                10 => 30, // Map 11 (Weight 1–30)
+                11 => 35, // Map 12 (Weight 1–35)
                 _ => 5
             };
         }
