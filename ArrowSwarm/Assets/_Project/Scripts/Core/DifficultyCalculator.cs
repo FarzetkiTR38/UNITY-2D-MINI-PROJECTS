@@ -111,40 +111,43 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Calculates which map index (0 to 11 for Map 1 to Map 12) to use for the given level:
-        /// - Level 1-25: Map 1 to Map 5 (5 levels each: 1-5 → Map1, 6-10 → Map2, 11-15 → Map3, 16-20 → Map4, 21-25 → Map5)
-        /// - Level % 100 == 0: Map 12 (Index 11, e.g. 100, 200, 300, 400...)
-        /// - Level >= 50 && Level % 25 == 0: Map 11 (Index 10, e.g. 50, 75, 125, 150, 175, 225...)
-        /// - Level 26+ (Rotating 5-level cycle):
-        ///   - Level % 5 == 0 → Map 6 (Index 5, e.g. 30, 35, 40, 45, 55...)
-        ///   - Level % 5 == 1 → Map 7 (Index 6, e.g. 26, 31, 36, 41, 46, 51...)
-        ///   - Level % 5 == 2 → Map 8 (Index 7, e.g. 27, 32, 37, 42, 47, 52...)
-        ///   - Level % 5 == 3 → Map 9 (Index 8, e.g. 28, 33, 38, 43, 48, 53...)
-        ///   - Level % 5 == 4 → Map 10 (Index 9, e.g. 29, 34, 39, 44, 49, 54...)
+        /// Calculates which map index (0 to 11 for Map 1 to Map 12) is active for the given level.
+        /// Hierarchy / Override Rule (Higher-level milestones override lower rules):
+        /// 1. Priority 1 (Top Override): From Level 100 onwards, every 50 levels -> Map 12 (Index 11, e.g. 100, 150, 200, 250, 300, 350...)
+        /// 2. Priority 2 (Override): From Level 50 onwards, every 10 levels -> Map 11 (Index 10, e.g. 50, 60, 70, 80, 90, 110, 120, 130, 140, 160...)
+        /// 3. Priority 3: Levels 1-25 -> Map 1 to Map 5 (5 levels each, Indices 0 to 4)
+        /// 4. Priority 4: Levels 26+ -> 5-map rotating cycle (Map 6 to Map 10, Indices 5 to 9):
+        ///   - Level % 5 == 0 → Map 6 (Index 5, e.g. 30, 35, 40, 45, 55, 65...)
+        ///   - Level % 5 == 1 → Map 7 (Index 6, e.g. 26, 31, 36, 41, 46, 51, 56...)
+        ///   - Level % 5 == 2 → Map 8 (Index 7, e.g. 27, 32, 37, 42, 47, 52, 57...)
+        ///   - Level % 5 == 3 → Map 9 (Index 8, e.g. 28, 33, 38, 43, 48, 53, 58...)
+        ///   - Level % 5 == 4 → Map 10 (Index 9, e.g. 29, 34, 39, 44, 49, 54, 59...)
         /// </summary>
         public static int GetMapIndex(int level)
         {
             if (level <= 0) return 0;
 
-            // 1. Initial 25 levels: Map 1 to Map 5 (5 levels each)
+            // 1. Priority 1 (Top Override): From level 100 onwards, every 50 levels -> Map 12 (Index 11)
+            // e.g. 100, 150, 200, 250, 300, 350...
+            if (level >= 100 && level % 50 == 0)
+            {
+                return 11; // Map 12
+            }
+
+            // 2. Priority 2 (Override): From level 50 onwards, every 10 levels -> Map 11 (Index 10)
+            // e.g. 50, 60, 70, 80, 90, 110, 120, 130, 140, 160...
+            if (level >= 50 && level % 10 == 0)
+            {
+                return 10; // Map 11
+            }
+
+            // 3. Priority 3: Initial 25 levels -> Map 1 to Map 5 (5 levels each)
             if (level <= 25)
             {
                 return (level - 1) / 5; // 0 to 4 (Map 1 to Map 5)
             }
 
-            // 2. Special Milestone: Every 100 levels -> Map 12 (Index 11)
-            if (level % 100 == 0)
-            {
-                return 11; // Map 12
-            }
-
-            // 3. Special Milestone: From level 50 onwards, every 25 levels -> Map 11 (Index 10)
-            if (level >= 50 && level % 25 == 0)
-            {
-                return 10; // Map 11
-            }
-
-            // 4. Rotating cycle for levels >= 26: Map 6 to Map 10 (Indices 5 to 9)
+            // 4. Priority 4: Rotating cycle for levels >= 26 -> Map 6 to Map 10 (Indices 5 to 9)
             int remainder = level % 5;
             return 5 + remainder;
         }
