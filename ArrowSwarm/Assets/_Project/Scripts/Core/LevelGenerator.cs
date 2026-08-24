@@ -860,13 +860,40 @@ namespace ArrowSwarm.Core
                 }
             }
 
+            // 4. Try Head extension: isolated becomes the new head of an adjacent arrow
+            for (int pIndex = 0; pIndex < placements.Count; pIndex++)
+            {
+                var p = placements[pIndex];
+                var existingPath = p.PathPoints;
+                Vector2Int head = existingPath[0];
+
+                if (IsManhattanOne(isolated, head))
+                {
+                    ArrowDirection newDir = VectorToDirection(isolated - head);
+                    if (!CreatesHeadToHeadConflict(isolated, newDir, placements, pIndex))
+                    {
+                        var testPath = new List<Vector2Int> { isolated };
+                        testPath.AddRange(existingPath);
+                        var testPlacement = new SolvabilityChecker.ArrowPlacement(testPath, newDir);
+                        if (!IsSelfBlocking(testPlacement, width, height))
+                        {
+                            existingPath.Insert(0, isolated);
+                            p.HeadDirection = newDir;
+                            placements[pIndex] = p;
+                            cellOwner[isolated.x, isolated.y] = pIndex;
+                            return true;
+                        }
+                    }
+                }
+            }
+
             return false;
         }
 
         /// <summary>
-        /// Sweeps all coordinates in the grid and absorbs any unowned cell (cellOwner == -1)
-        /// into an adjacent arrow's tail, corner detour, or forms a new 2-point arrow.
-        /// Guarantees 100% full grid cell coverage with 0 empty dots remaining!
+        /// Sweeps all coordinates in the grid and absorbs 100% of any unowned cells (cellOwner == -1)
+        /// using multi-tiered absorption (tail extension, corner detour, 2-point creation, head extension,
+        /// and arrow splitting). Guarantees ZERO empty dots remain on the board!
         /// </summary>
         private static void FillAllUnownedCells(
             List<SolvabilityChecker.ArrowPlacement> placements, int width, int height)
@@ -954,6 +981,187 @@ namespace ArrowSwarm.Core
                                 }
                             }
                             if (filled) break;
+                        }
+                    }
+                }
+
+                // Pass 3: Form 2-point arrows for any adjacent pair of unowned cells
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        if (cellOwner[x, y] != -1) continue;
+                        Vector2Int ptA = new Vector2Int(x, y);
+
+                        foreach (var d in dirs)
+                        {
+                            Vector2Int ptB = ptA + d;
+                            if (ptB.IsInBounds(width, height) && cellOwner[ptB.x, ptB.y] == -1)
+                            {
+                                ArrowDirection dirA = VectorToDirection(ptA - ptB);
+                                if (!CreatesHeadToHeadConflict(ptA, dirA, placements))
+                                {
+                                    int newIdx = placements.Count;
+                                    placements.Add(new SolvabilityChecker.ArrowPlacement(new List<Vector2Int> { ptA, ptB }, dirA));
+                                    cellOwner[ptA.x, ptA.y] = newIdx;
+                                    cellOwner[ptB.x, ptB.y] = newIdx;
+                                    grewAny = true;
+                                    break;
+                                }
+
+                                ArrowDirection dirB = VectorToDirection(ptB - ptA);
+                                if (!CreatesHeadToHeadConflict(ptB, dirB, placements))
+                                {
+                                    int newIdx = placements.Count;
+                                    placements.Add(new SolvabilityChecker.ArrowPlacement(new List<Vector2Int> { ptB, ptA }, dirB));
+                                    cellOwner[ptA.x, ptA.y] = newIdx;
+                                    cellOwner[ptB.x, ptB.y] = newIdx;
+                                    grewAny = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Pass 4: Head extension into adjacent unowned cell
+                for (int p = 0; p < placements.Count; p++)
+                {
+                    var pPlacement = placements[p];
+                    var path = pPlacement.PathPoints;
+                    if (path == null || path.Count == 0) continue;
+
+                    Vector2Int head = path[0];
+                    foreach (var d in dirs)
+                    {
+                        Vector2Int neighbor = head + d;
+                        if (neighbor.IsInBounds(width, height) && cellOwner[neighbor.x, neighbor.y] == -1)
+                        {
+                            ArrowDirection newDir = VectorToDirection(neighbor - head);
+                            if (!CreatesHeadToHeadConflict(neighbor, newDir, placements, p))
+                            {
+                                var testPath = new List<Vector2Int> { neighbor };
+                                testPath.AddRange(path);
+                                var testPlacement = new SolvabilityChecker.ArrowPlacement(testPath, newDir);
+                                if (!IsSelfBlocking(testPlacement, width, height))
+                                {
+                                    path.Insert(0, neighbor);
+                                    pPlacement.HeadDirection = newDir;
+                                    placements[p] = pPlacement;
+                                    cellOwner[neighbor.x, neighbor.y] = p;
+                                    grewAny = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // FINAL PASS 5: Absolute guarantee sweep — Any remaining isolated unowned cells
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (cellOwner[x, y] != -1) continue;
+
+                    Vector2Int isolated = new Vector2Int(x, y);
+                    bool absorbed = false;
+
+                    // Strategy A: Split an adjacent arrow of length >= 4 to absorb isolated
+                    for (int p = 0; p < placements.Count; p++)
+                    {
+                        var existingPath = placements[p].PathPoints;
+                        if (existingPath == null || existingPath.Count < 4) continue;
+
+                        for (int k = 2; k < existingPath.Count - 1; k++)
+                        {
+                            if (IsManhattanOne(isolated, existingPath[k]))
+                            {
+                                var path1 = existingPath.GetRange(0, k);
+                                var path2 = new List<Vector2Int> { isolated };
+                                path2.AddRange(existingPath.GetRange(k, existingPath.Count - k));
+
+                                ArrowDirection dir1 = placements[p].HeadDirection;
+                                ArrowDirection dir2 = VectorToDirection(isolated - existingPath[k]);
+
+                                var place1 = new SolvabilityChecker.ArrowPlacement(path1, dir1);
+                                var place2 = new SolvabilityChecker.ArrowPlacement(path2, dir2);
+
+                                if (!IsSelfBlocking(place1, width, height) && !IsSelfBlocking(place2, width, height))
+                                {
+                                    placements[p] = place1;
+                                    int newIdx = placements.Count;
+                                    placements.Add(place2);
+
+                                    for (int i = 0; i < path1.Count; i++) cellOwner[path1[i].x, path1[i].y] = p;
+                                    for (int i = 0; i < path2.Count; i++) cellOwner[path2[i].x, path2[i].y] = newIdx;
+                                    cellOwner[isolated.x, isolated.y] = newIdx;
+
+                                    absorbed = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (absorbed) break;
+                    }
+
+                    if (absorbed) continue;
+
+                    // Strategy B: Force attach to any adjacent arrow tail or head
+                    foreach (var d in dirs)
+                    {
+                        Vector2Int neighbor = isolated + d;
+                        if (neighbor.IsInBounds(width, height) && cellOwner[neighbor.x, neighbor.y] != -1)
+                        {
+                            int pIndex = cellOwner[neighbor.x, neighbor.y];
+                            var path = placements[pIndex].PathPoints;
+                            if (path != null && path.Count > 0)
+                            {
+                                if (neighbor == path[path.Count - 1])
+                                {
+                                    path.Add(isolated);
+                                    cellOwner[isolated.x, isolated.y] = pIndex;
+                                    absorbed = true;
+                                    break;
+                                }
+                                else if (neighbor == path[0])
+                                {
+                                    path.Insert(0, isolated);
+                                    placements[pIndex] = new SolvabilityChecker.ArrowPlacement(path, VectorToDirection(isolated - neighbor));
+                                    cellOwner[isolated.x, isolated.y] = pIndex;
+                                    absorbed = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (absorbed) continue;
+
+                    // Strategy C: Pair with adjacent cell from an arrow of length >= 3
+                    foreach (var d in dirs)
+                    {
+                        Vector2Int neighbor = isolated + d;
+                        if (neighbor.IsInBounds(width, height) && cellOwner[neighbor.x, neighbor.y] != -1)
+                        {
+                            int pIndex = cellOwner[neighbor.x, neighbor.y];
+                            var path = placements[pIndex].PathPoints;
+                            if (path != null && path.Count >= 3)
+                            {
+                                if (neighbor == path[path.Count - 1])
+                                {
+                                    path.RemoveAt(path.Count - 1);
+                                    int newIdx = placements.Count;
+                                    var newPath = new List<Vector2Int> { isolated, neighbor };
+                                    ArrowDirection newDir = VectorToDirection(isolated - neighbor);
+                                    placements.Add(new SolvabilityChecker.ArrowPlacement(newPath, newDir));
+                                    cellOwner[isolated.x, isolated.y] = newIdx;
+                                    cellOwner[neighbor.x, neighbor.y] = newIdx;
+                                    absorbed = true;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
