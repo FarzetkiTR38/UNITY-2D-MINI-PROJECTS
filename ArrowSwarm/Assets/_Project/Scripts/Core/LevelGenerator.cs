@@ -163,7 +163,7 @@ namespace ArrowSwarm.Core
             int filledCells = 0;
 
             int minLength = Mathf.Max(2, levelParams.MinWeight + 1);
-            int maxLength = Mathf.Min(16, levelParams.MaxWeight + 4);
+            int maxLength = Mathf.Max(minLength, levelParams.MaxWeight + 1);
 
             int maxLoopIterations = totalCells * 3;
             int loopCount = 0;

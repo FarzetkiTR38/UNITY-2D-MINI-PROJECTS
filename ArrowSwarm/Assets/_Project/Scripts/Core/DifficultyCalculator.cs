@@ -97,17 +97,39 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Calculates the maximum arrow weight for a given level.
-        /// Level 1-5 (Tier 1) → Max 4
-        /// Level 6-10 (Tier 2) → Max 5
-        /// Level 11-15 (Tier 3) → Max 6
-        /// Level 16-20 (Tier 4) → Max 7
-        /// Level 21+ (Map 5 to Map 12) → Max 8 (Capped at 8)
+        /// Calculates the maximum arrow weight for a given level based on its active map:
+        /// - Map 1  (Index 0)  → Max Weight 5  (Weight 1–5)
+        /// - Map 2  (Index 1)  → Max Weight 6  (Weight 1–6)
+        /// - Map 3  (Index 2)  → Max Weight 7  (Weight 1–7)
+        /// - Map 4  (Index 3)  → Max Weight 8  (Weight 1–8)
+        /// - Map 5  (Index 4)  → Max Weight 9  (Weight 1–9)
+        /// - Map 6  (Index 5)  → Max Weight 10 (Weight 1–10)
+        /// - Map 7  (Index 6)  → Max Weight 12 (Weight 1–12)
+        /// - Map 8  (Index 7)  → Max Weight 14 (Weight 1–14)
+        /// - Map 9  (Index 8)  → Max Weight 16 (Weight 1–16)
+        /// - Map 10 (Index 9)  → Max Weight 18 (Weight 1–18)
+        /// - Map 11 (Index 10) → Max Weight 20 (Weight 1–20)
+        /// - Map 12 (Index 11) → Max Weight 22 (Weight 1–22)
         /// </summary>
         public static int GetMaxWeight(int level)
         {
-            int tier = GetDifficultyTier(level);
-            return Mathf.Min(8, 3 + tier);
+            int mapIndex = GetMapIndex(level);
+            return mapIndex switch
+            {
+                0 => 5,   // Map 1  (Weight 1–5)
+                1 => 6,   // Map 2  (Weight 1–6)
+                2 => 7,   // Map 3  (Weight 1–7)
+                3 => 8,   // Map 4  (Weight 1–8)
+                4 => 9,   // Map 5  (Weight 1–9)
+                5 => 10,  // Map 6  (Weight 1–10)
+                6 => 12,  // Map 7  (Weight 1–12)
+                7 => 14,  // Map 8  (Weight 1–14)
+                8 => 16,  // Map 9  (Weight 1–16)
+                9 => 18,  // Map 10 (Weight 1–18)
+                10 => 20, // Map 11 (Weight 1–20)
+                11 => 22, // Map 12 (Weight 1–22)
+                _ => 5
+            };
         }
 
         /// <summary>
