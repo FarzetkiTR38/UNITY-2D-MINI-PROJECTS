@@ -236,6 +236,9 @@ namespace ArrowSwarm.Core
             // Re-check head-to-head after alignment and self-blocking fixes
             RemoveHeadToHeadConflicts(placements, gridWidth, gridHeight);
 
+            // Simulation-based greedy resolver for any remaining deadlocks
+            ResolveDeadlockedArrows(placements, gridWidth, gridHeight);
+
             // Audit zero overlaps and full grid coverage
             SolvabilityChecker.ValidateNoOverlaps(placements);
 
@@ -297,6 +300,7 @@ namespace ArrowSwarm.Core
         /// Detects and fixes arrows whose head direction causes them to fire into
         /// their own body. Fix: reverse the path so the other end becomes the head.
         /// Path shapes are 100% preserved — only the head endpoint changes.
+        /// Uses deep copy to avoid shared PathPoints reference corruption.
         /// </summary>
         private static void FixSelfBlockingArrows(
             List<SolvabilityChecker.ArrowPlacement> placements, int gridWidth, int gridHeight)
@@ -305,11 +309,14 @@ namespace ArrowSwarm.Core
 
             for (int i = 0; i < placements.Count; i++)
             {
-                var placement = placements[i];
-                if (!IsSelfBlocking(placement, gridWidth, gridHeight)) continue;
+                if (!IsSelfBlocking(placements[i], gridWidth, gridHeight)) continue;
+
+                // Save original state (deep copy path because Reverse is in-place)
+                var originalPath = new List<Vector2Int>(placements[i].PathPoints);
+                ArrowDirection originalDir = placements[i].HeadDirection;
 
                 // Strategy 1: Flip the arrow (reverse path, other end becomes head)
-                var flipped = placement;
+                var flipped = placements[i];
                 FlipArrowOrientation(ref flipped);
 
                 if (!IsSelfBlocking(flipped, gridWidth, gridHeight))
@@ -318,24 +325,29 @@ namespace ArrowSwarm.Core
                     continue;
                 }
 
-                // Strategy 2: Both ends self-block. Try all 4 directions from each end.
-                bool wasFixed = TryAlternateDirections(ref placement, gridWidth, gridHeight);
-                if (wasFixed)
-                {
-                    placements[i] = placement;
-                    continue;
-                }
-
-                // Try from flipped end
-                wasFixed = TryAlternateDirections(ref flipped, gridWidth, gridHeight);
+                // Strategy 2: Try all 4 directions from the FLIPPED head
+                bool wasFixed = TryAlternateDirections(ref flipped, gridWidth, gridHeight);
                 if (wasFixed)
                 {
                     placements[i] = flipped;
                     continue;
                 }
 
-                // Last resort: keep flipped version (outward orientation will handle later)
-                placements[i] = flipped;
+                // Strategy 3: Restore original orientation, try alternate directions
+                RestoreArrowState(placements, i, originalPath, originalDir);
+                var original = placements[i];
+                wasFixed = TryAlternateDirections(ref original, gridWidth, gridHeight);
+                if (wasFixed)
+                {
+                    placements[i] = original;
+                    continue;
+                }
+
+                // Last resort: keep flipped version (resolver will handle later)
+                RestoreArrowState(placements, i, originalPath, originalDir);
+                var lastResort = placements[i];
+                FlipArrowOrientation(ref lastResort);
+                placements[i] = lastResort;
             }
         }
 
@@ -367,6 +379,176 @@ namespace ArrowSwarm.Core
             // Restore original if nothing worked
             placement.HeadDirection = originalDir;
             return false;
+        }
+
+        /// <summary>
+        /// Checks if a single arrow can fire: path from head in HeadDirection
+        /// must be clear of any occupied points all the way to the grid edge.
+        /// </summary>
+        private static bool CanFireArrow(
+            SolvabilityChecker.ArrowPlacement arrow,
+            int gridWidth, int gridHeight,
+            HashSet<Vector2Int> occupied)
+        {
+            Vector2Int current = arrow.HeadPoint;
+            Vector2Int step = ArrowSwarm.Grid.GridManager.DirectionToVector(arrow.HeadDirection);
+            if (step == Vector2Int.zero) return false;
+
+            current += step;
+            while (current.IsInBounds(gridWidth, gridHeight))
+            {
+                if (occupied.Contains(current)) return false;
+                current += step;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Simulates the iterative arrow firing process and returns the indices
+        /// of arrows that could NOT fire (stuck in deadlock).
+        /// </summary>
+        private static List<int> FindStuckArrowIndices(
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int gridWidth, int gridHeight)
+        {
+            var occupied = new HashSet<Vector2Int>();
+            var remainingIndices = new List<int>();
+
+            for (int i = 0; i < placements.Count; i++)
+            {
+                remainingIndices.Add(i);
+                var pts = placements[i].PathPoints;
+                if (pts == null) continue;
+                for (int j = 0; j < pts.Count; j++)
+                {
+                    occupied.Add(pts[j]);
+                }
+            }
+
+            bool progress = true;
+            while (progress && remainingIndices.Count > 0)
+            {
+                progress = false;
+                for (int i = remainingIndices.Count - 1; i >= 0; i--)
+                {
+                    int idx = remainingIndices[i];
+                    if (CanFireArrow(placements[idx], gridWidth, gridHeight, occupied))
+                    {
+                        var pts = placements[idx].PathPoints;
+                        for (int j = 0; j < pts.Count; j++)
+                        {
+                            occupied.Remove(pts[j]);
+                        }
+                        remainingIndices.RemoveAt(i);
+                        progress = true;
+                    }
+                }
+            }
+
+            return remainingIndices;
+        }
+
+        /// <summary>
+        /// Simulation-based greedy resolver for deadlocked arrows.
+        /// Runs the firing simulation to find stuck arrows, then tries flipping
+        /// each one. Keeps flips that reduce the stuck count, undoes the rest.
+        /// Uses deep copy for safe undo (PathPoints is a shared reference).
+        /// Repeats until all arrows can fire or no more progress is made.
+        /// Path shapes are 100% preserved — only head direction changes.
+        /// </summary>
+        private static void ResolveDeadlockedArrows(
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int gridWidth, int gridHeight)
+        {
+            if (placements == null || placements.Count == 0) return;
+
+            int maxIterations = 80;
+            int noProgressCount = 0;
+            int maxNoProgress = 5;
+
+            for (int iteration = 0; iteration < maxIterations; iteration++)
+            {
+                var stuckIndices = FindStuckArrowIndices(placements, gridWidth, gridHeight);
+                if (stuckIndices.Count == 0) return; // All arrows can fire!
+
+                bool improved = false;
+
+                for (int s = 0; s < stuckIndices.Count; s++)
+                {
+                    int stuckIdx = stuckIndices[s];
+
+                    // Deep-copy the original state for safe undo
+                    var originalPath = new List<Vector2Int>(placements[stuckIdx].PathPoints);
+                    ArrowDirection originalDir = placements[stuckIdx].HeadDirection;
+
+                    // Flip this stuck arrow
+                    var flipped = placements[stuckIdx];
+                    FlipArrowOrientation(ref flipped);
+
+                    // Skip if flip creates self-blocking
+                    if (IsSelfBlocking(flipped, gridWidth, gridHeight))
+                    {
+                        // Restore original state (in-place Reverse corrupted the shared list)
+                        RestoreArrowState(placements, stuckIdx, originalPath, originalDir);
+                        continue;
+                    }
+
+                    placements[stuckIdx] = flipped;
+
+                    // Check if this improved the situation
+                    var newStuck = FindStuckArrowIndices(placements, gridWidth, gridHeight);
+                    if (newStuck.Count < stuckIndices.Count)
+                    {
+                        // Strict improvement! Restart with new stuck list
+                        improved = true;
+                        noProgressCount = 0;
+                        break;
+                    }
+
+                    if (newStuck.Count == stuckIndices.Count)
+                    {
+                        // Same count but different arrows might be stuck — could cascade later
+                        bool differentSet = false;
+                        for (int n = 0; n < newStuck.Count; n++)
+                        {
+                            if (!stuckIndices.Contains(newStuck[n]))
+                            {
+                                differentSet = true;
+                                break;
+                            }
+                        }
+
+                        if (differentSet)
+                        {
+                            // Accept: different deadlock group may be easier to resolve
+                            improved = true;
+                            noProgressCount++;
+                            break;
+                        }
+                    }
+
+                    // No improvement — restore original state
+                    RestoreArrowState(placements, stuckIdx, originalPath, originalDir);
+                }
+
+                if (!improved || noProgressCount >= maxNoProgress) break;
+            }
+        }
+
+        /// <summary>
+        /// Restores an arrow placement to its original state using a deep-copied path.
+        /// Necessary because FlipArrowOrientation uses in-place List.Reverse() which
+        /// corrupts the shared PathPoints reference in the struct copy.
+        /// </summary>
+        private static void RestoreArrowState(
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int index, List<Vector2Int> originalPath, ArrowDirection originalDir)
+        {
+            var restored = placements[index];
+            restored.PathPoints.Clear();
+            restored.PathPoints.AddRange(originalPath);
+            restored.HeadDirection = originalDir;
+            placements[index] = restored;
         }
 
         private struct CandidateHead
@@ -1039,9 +1221,11 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Attempts to resolve direction deadlocks by applying targeted self-blocking
-        /// and head-to-head fixes first, then random flips with re-fix after each,
-        /// and finally guaranteed outward orientation as fallback.
+        /// Attempts to resolve direction deadlocks using a multi-layered approach:
+        /// 1. Targeted pattern fixes (self-blocking, head-to-head)
+        /// 2. Simulation-based greedy resolver (finds stuck arrows, flips them)
+        /// 3. Guaranteed outward orientation as final fallback
+        /// Path shapes are never modified — only arrow directions change.
         /// </summary>
         private static bool SolveDirectionDeadlocks(
             List<SolvabilityChecker.ArrowPlacement> placements,
@@ -1050,36 +1234,28 @@ namespace ArrowSwarm.Core
         {
             if (placements == null || placements.Count == 0) return false;
 
-            // 1. Initial check
+            // 1. Initial check — maybe already solvable
             var initialCheck = SolvabilityChecker.Check(placements, gridWidth, gridHeight, totalMobHP, winabilityRatio);
             if (initialCheck.IsValid) return true;
 
-            // 2. Targeted fix: resolve known self-blocking and head-to-head issues
+            // 2. Targeted pattern fixes
             FixSelfBlockingArrows(placements, gridWidth, gridHeight);
             RemoveHeadToHeadConflicts(placements, gridWidth, gridHeight);
 
             var targetedCheck = SolvabilityChecker.Check(placements, gridWidth, gridHeight, totalMobHP, winabilityRatio);
             if (targetedCheck.IsValid) return true;
 
-            // 3. Try smart flips on stuck arrows with re-fix after each flip
-            for (int attempt = 0; attempt < 40; attempt++)
-            {
-                int index = Random.Range(0, placements.Count);
-                var tempPlacement = placements[index];
-                FlipArrowOrientation(ref tempPlacement);
-                placements[index] = tempPlacement;
+            // 3. Simulation-based greedy resolver — the main solver
+            ResolveDeadlockedArrows(placements, gridWidth, gridHeight);
+            FixSelfBlockingArrows(placements, gridWidth, gridHeight);
 
-                // Re-apply targeted fixes after each flip
-                FixSelfBlockingArrows(placements, gridWidth, gridHeight);
-                RemoveHeadToHeadConflicts(placements, gridWidth, gridHeight);
+            var resolvedCheck = SolvabilityChecker.Check(placements, gridWidth, gridHeight, totalMobHP, winabilityRatio);
+            if (resolvedCheck.IsValid) return true;
 
-                var check = SolvabilityChecker.Check(placements, gridWidth, gridHeight, totalMobHP, winabilityRatio);
-                if (check.IsValid) return true;
-            }
-
-            // 4. Guaranteed Fallback
+            // 4. Guaranteed outward fallback + re-resolve
             ApplyGuaranteedOutwardOrientation(placements, gridWidth, gridHeight);
             FixSelfBlockingArrows(placements, gridWidth, gridHeight);
+            ResolveDeadlockedArrows(placements, gridWidth, gridHeight);
 
             var finalCheck = SolvabilityChecker.Check(placements, gridWidth, gridHeight, totalMobHP, winabilityRatio);
             return finalCheck.IsSolvable;
@@ -1235,13 +1411,18 @@ namespace ArrowSwarm.Core
         /// <summary>
         /// Tries to flip primaryIndex arrow. If the flip creates self-blocking,
         /// tries flipping fallbackIndex instead. Returns true if any flip was applied.
+        /// Uses deep copy for safe undo of shared PathPoints references.
         /// </summary>
         private static bool TryFlipWithSelfBlockCheck(
             List<SolvabilityChecker.ArrowPlacement> placements,
             int primaryIndex, int fallbackIndex,
             int gridWidth, int gridHeight)
         {
-            // Try primary
+            // Save primary original state (deep copy)
+            var primaryOrigPath = new List<Vector2Int>(placements[primaryIndex].PathPoints);
+            ArrowDirection primaryOrigDir = placements[primaryIndex].HeadDirection;
+
+            // Try flipping primary
             var primary = placements[primaryIndex];
             FlipArrowOrientation(ref primary);
 
@@ -1251,8 +1432,14 @@ namespace ArrowSwarm.Core
                 return true;
             }
 
-            // Primary flip creates self-block — try fallback
-            FlipArrowOrientation(ref primary); // undo
+            // Primary flip creates self-block — restore primary
+            RestoreArrowState(placements, primaryIndex, primaryOrigPath, primaryOrigDir);
+
+            // Save fallback original state (deep copy)
+            var fallbackOrigPath = new List<Vector2Int>(placements[fallbackIndex].PathPoints);
+            ArrowDirection fallbackOrigDir = placements[fallbackIndex].HeadDirection;
+
+            // Try flipping fallback
             var fallback = placements[fallbackIndex];
             FlipArrowOrientation(ref fallback);
 
@@ -1262,10 +1449,12 @@ namespace ArrowSwarm.Core
                 return true;
             }
 
-            // Both create self-block — force primary flip (self-block fix will handle)
-            FlipArrowOrientation(ref fallback); // undo
-            FlipArrowOrientation(ref primary);  // re-apply
-            placements[primaryIndex] = primary;
+            // Both create self-block — restore fallback, force primary flip
+            RestoreArrowState(placements, fallbackIndex, fallbackOrigPath, fallbackOrigDir);
+
+            var forcedPrimary = placements[primaryIndex];
+            FlipArrowOrientation(ref forcedPrimary);
+            placements[primaryIndex] = forcedPrimary;
             return true;
         }
 
