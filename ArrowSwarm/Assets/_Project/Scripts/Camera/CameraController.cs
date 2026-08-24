@@ -227,8 +227,8 @@ namespace ArrowSwarm.Camera
             _gridMin = origin - new Vector2(boardPadding, boardPadding);
             _gridMax = origin + new Vector2(totalGridWidth + boardPadding, totalGridHeight + boardPadding);
 
-            float aspect = (float)Screen.width / Screen.height;
-            if (aspect <= 0f) aspect = 9f / 16f;
+            float aspect = (Screen.height > 0) ? ((float)Screen.width / Screen.height) : (9f / 16f);
+            if (float.IsNaN(aspect) || float.IsInfinity(aspect) || aspect <= 0.01f) aspect = 9f / 16f;
 
             // Target playable window scale:
             // 62% vertical coverage gives ~19% top margin and ~19% bottom margin
@@ -239,6 +239,10 @@ namespace ArrowSwarm.Camera
             float orthoHeight = visualBoardHeight / (2f * targetHeightRatio);
             float orthoWidth = visualBoardWidth / (2f * aspect * targetWidthRatio);
             _defaultOrthoSize = Mathf.Max(orthoWidth, orthoHeight);
+            if (float.IsNaN(_defaultOrthoSize) || float.IsInfinity(_defaultOrthoSize) || _defaultOrthoSize <= 0.1f)
+            {
+                _defaultOrthoSize = 10f;
+            }
 
             GameConfig config = GameManager.Instance?.Config;
             float maxZoom = config?.MaxZoom ?? 3f;
@@ -251,7 +255,9 @@ namespace ArrowSwarm.Camera
             _targetOrthoSize = _defaultOrthoSize;
 
             // Camera is centered PRECISELY on map center: Top Gap == Bottom Gap, Left Gap == Right Gap
-            transform.position = new Vector3(_mapCenter.x, _mapCenter.y, transform.position.z);
+            float camZ = float.IsNaN(transform.position.z) ? -10f : transform.position.z;
+            if (Mathf.Abs(camZ) < 0.1f) camZ = -10f;
+            transform.position = new Vector3(_mapCenter.x, _mapCenter.y, camZ);
 
             LogDebug($"Camera fit: Center={_mapCenter}, OrthoSize={_defaultOrthoSize}, " +
                      $"BoardSize={visualBoardWidth}x{visualBoardHeight}");

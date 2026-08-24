@@ -202,8 +202,8 @@ namespace ArrowSwarm.Core
             if (cam == null) cam = FindFirstObjectByType<UnityEngine.Camera>();
             if (cam == null) return;
 
-            float aspect = (float)Screen.width / Screen.height;
-            if (aspect <= 0f) aspect = 9f / 16f;
+            float aspect = (Screen.height > 0) ? ((float)Screen.width / Screen.height) : (9f / 16f);
+            if (float.IsNaN(aspect) || float.IsInfinity(aspect) || aspect <= 0.01f) aspect = 9f / 16f;
 
             float spacing = (Application.isPlaying && GridManager.HasInstance)
                 ? GridManager.Instance.PointSpacing
@@ -226,9 +226,15 @@ namespace ArrowSwarm.Core
             float orthoHeight = visualBoardHeight / (2f * targetHeightRatio);
             float orthoWidth = visualBoardWidth / (2f * aspect * targetWidthRatio);
             float orthoSize = Mathf.Max(orthoWidth, orthoHeight);
+            if (float.IsNaN(orthoSize) || float.IsInfinity(orthoSize) || orthoSize <= 0.1f)
+            {
+                orthoSize = 10f;
+            }
 
             cam.orthographicSize = orthoSize;
-            cam.transform.position = new Vector3(center.x, center.y, cam.transform.position.z);
+            float camZ = float.IsNaN(cam.transform.position.z) ? -10f : cam.transform.position.z;
+            if (Mathf.Abs(camZ) < 0.1f) camZ = -10f;
+            cam.transform.position = new Vector3(center.x, center.y, camZ);
         }
 
 #if UNITY_EDITOR
