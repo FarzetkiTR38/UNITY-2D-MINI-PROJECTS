@@ -94,9 +94,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36e276add022e7546a94cecbd4518ea2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Arrow.Arrow
-  _direction: 0
-  _weight: 1
-  _gridPosition: {x: 0, y: 0}
+  _headDirection: 0
+  _pathPoints: []
   _isFired: 0
   _isRainbow: 0
 --- !u!114 &740828226394036124
@@ -182,7 +181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c4a117634618264080e1fef2d72a467, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Arrow.ArrowVisuals
+  _lineWidth: 0.08
+  _headSize: 0.2
   _pulseSpeed: 2
   _pulseAmount: 0.05
-  _baseSizeMin: 0.6
-  _baseSizeMax: 1.2
