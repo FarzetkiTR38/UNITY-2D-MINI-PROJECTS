@@ -34,19 +34,41 @@ namespace ArrowSwarm.Arrow
         private readonly List<Vector3> _spawnPointsBuffer = new List<Vector3>();
         private float _baseLineWidth;
         private Vector3 _baseHeadScale;
+        private Color _originalColor;
 
         /// <summary>Whether this arrow is currently playing its birth/spawn animation.</summary>
         public bool IsSpawning => _isSpawning;
 
-        // Cached rainbow colors
-        private static readonly Color[] RainbowColors = new Color[]
+        // Multi-color traveling rainbow gradient cache (8 sample keys for full spectrum coverage)
+        private readonly Gradient _rainbowGradient = new Gradient();
+        private readonly GradientColorKey[] _rainbowColorKeys = new GradientColorKey[8];
+        private readonly GradientAlphaKey[] _rainbowAlphaKeys = new GradientAlphaKey[2]
         {
-            new Color(0.39f, 0.71f, 0.96f, 1f), // Mavi
-            new Color(0.51f, 0.78f, 0.52f, 1f), // Yeşil
-            new Color(1.00f, 0.72f, 0.30f, 1f), // Turuncu
-            new Color(0.73f, 0.41f, 0.78f, 1f), // Mor
-            new Color(0.94f, 0.38f, 0.57f, 1f), // Pembe
+            new GradientAlphaKey(1f, 0f),
+            new GradientAlphaKey(1f, 1f)
         };
+
+        // Curated vivid spectrum palette for dynamic multi-color rainbow
+        private static readonly Color[] CuratedRainbowPalette = new Color[]
+        {
+            new Color(0.39f, 0.71f, 0.96f, 1f), // Electric Sky Blue (#64B5F6)
+            new Color(0.30f, 0.85f, 0.90f, 1f), // Cyan Teal
+            new Color(0.48f, 0.85f, 0.52f, 1f), // Mint Green (#81C784)
+            new Color(1.00f, 0.84f, 0.30f, 1f), // Golden Sun Yellow
+            new Color(1.00f, 0.62f, 0.30f, 1f), // Vivid Orange (#FFB74D)
+            new Color(0.98f, 0.38f, 0.55f, 1f), // Coral Rose (#FF6B8B)
+            new Color(0.73f, 0.41f, 0.82f, 1f), // Orchid Violet (#BA68C8)
+            new Color(0.50f, 0.45f, 0.95f, 1f), // Electric Indigo
+        };
+
+        private static Color SampleRainbowColor(float normalizedT)
+        {
+            float t = Mathf.Repeat(normalizedT, 1f) * CuratedRainbowPalette.Length;
+            int idx0 = Mathf.FloorToInt(t);
+            int idx1 = (idx0 + 1) % CuratedRainbowPalette.Length;
+            float frac = t - idx0;
+            return Color.Lerp(CuratedRainbowPalette[idx0], CuratedRainbowPalette[idx1], frac);
+        }
 
         private void Awake()
         {
@@ -146,25 +168,30 @@ namespace ArrowSwarm.Arrow
             _headTransform.localScale = _baseHeadScale;
 
             // Random color from palette (independent of weight) or rainbow
-            Color arrowColor;
             if (_isRainbow)
             {
-                arrowColor = RainbowColors[0];
+                SetRainbowMode(true);
             }
             else
             {
-                arrowColor = GameManager.Instance?.Config?.GetRandomArrowColor() ?? Color.white;
+                Color arrowColor = GameManager.Instance?.Config?.GetRandomArrowColor() ?? Color.white;
+                _originalColor = arrowColor;
+                _lineRenderer.startColor = arrowColor;
+                _lineRenderer.endColor = arrowColor;
+                if (_headRenderer != null)
+                {
+                    _headRenderer.color = arrowColor;
+                }
             }
-
-            _lineRenderer.startColor = arrowColor;
-            _lineRenderer.endColor = arrowColor;
-            _headRenderer.color = arrowColor;
 
             _isPulsing = false; // Disable continuous idle pulsing for normal arrows
             _pulseTimer = Random.Range(0f, Mathf.PI * 2f);
 
             _lineRenderer.enabled = true;
-            _headRenderer.enabled = true;
+            if (_headRenderer != null)
+            {
+                _headRenderer.enabled = true;
+            }
             
             if (_trailRenderer != null)
             {
@@ -309,28 +336,38 @@ namespace ArrowSwarm.Arrow
         }
 
         /// <summary>
-        /// Enables or disables rainbow mode visuals.
+        /// Enables or disables rainbow mode visuals with a dynamic traveling multi-color rainbow gradient.
+        /// Size remains completely fixed and static.
         /// </summary>
         public void SetRainbowMode(bool rainbow)
         {
             _isRainbow = rainbow;
-            _isPulsing = rainbow;
+            _isPulsing = false;
+
+            if (_lineRenderer != null)
+            {
+                _lineRenderer.startWidth = _baseLineWidth;
+                _lineRenderer.endWidth = _baseLineWidth;
+            }
+            if (_headTransform != null)
+            {
+                _headTransform.localScale = _baseHeadScale != Vector3.zero ? _baseHeadScale : Vector3.one * _headSize;
+            }
 
             if (rainbow)
             {
-                _pulseSpeed = 4f;
-                _pulseAmount = 0.1f;
+                UpdateRainbowColor();
             }
             else
             {
                 if (_lineRenderer != null)
                 {
-                    _lineRenderer.startWidth = _baseLineWidth;
-                    _lineRenderer.endWidth = _baseLineWidth;
+                    _lineRenderer.startColor = _originalColor;
+                    _lineRenderer.endColor = _originalColor;
                 }
-                if (_headTransform != null)
+                if (_headRenderer != null)
                 {
-                    _headTransform.localScale = _baseHeadScale;
+                    _headRenderer.color = _originalColor;
                 }
             }
         }
@@ -365,20 +402,38 @@ namespace ArrowSwarm.Arrow
 
         private void UpdateRainbowColor()
         {
-            float t = (Time.time * 2f) % RainbowColors.Length;
-            int index = Mathf.FloorToInt(t);
-            int nextIndex = (index + 1) % RainbowColors.Length;
-            float lerp = t - index;
-            Color color = Color.Lerp(RainbowColors[index], RainbowColors[nextIndex], lerp);
+            if (!_isRainbow || _lineRenderer == null) return;
 
-            _lineRenderer.startColor = color;
-            _lineRenderer.endColor = color.WithAlpha(0.6f);
-            _headRenderer.color = color;
-            
+            float flowSpeed = 0.75f;
+            float repeatCycles = Mathf.Clamp((_arrow != null ? _arrow.Weight : 4) * 0.4f, 1.2f, 3.0f);
+            float timeOffset = Time.time * flowSpeed;
+
+            int keyCount = _rainbowColorKeys.Length;
+            for (int i = 0; i < keyCount; i++)
+            {
+                float pos = (float)i / (keyCount - 1);
+                // LineRenderer vertex 0 is head, vertex N-1 is tail.
+                // Pos 0 is vertex 0 (head), pos 1 is tail.
+                // Wave flows smoothly from tail to head:
+                float sampleT = pos * repeatCycles + timeOffset;
+                _rainbowColorKeys[i] = new GradientColorKey(SampleRainbowColor(sampleT), pos);
+            }
+
+            _rainbowGradient.SetKeys(_rainbowColorKeys, _rainbowAlphaKeys);
+            _lineRenderer.colorGradient = _rainbowGradient;
+
+            // Arrow head matches the color at vertex 0 (head position = 0.0)
+            float headSampleT = 0f * repeatCycles + timeOffset;
+            Color headColor = SampleRainbowColor(headSampleT);
+
+            if (_headRenderer != null)
+            {
+                _headRenderer.color = headColor;
+            }
+
             if (_trailRenderer != null && _trailRenderer.enabled)
             {
-                _trailRenderer.startColor = color;
-                _trailRenderer.endColor = color.WithAlpha(0f);
+                _trailRenderer.colorGradient = _rainbowGradient;
             }
         }
 
@@ -651,15 +706,17 @@ namespace ArrowSwarm.Arrow
 
         private void EnsureHeadSprite()
         {
-            if (_headTransform != null) return;
+            if (_headTransform != null && _headRenderer != null) return;
 
-            // Look for existing child named "ArrowHead"
-            _headTransform = transform.Find("ArrowHead");
             if (_headTransform == null)
             {
-                var headObj = new GameObject("ArrowHead");
-                headObj.transform.SetParent(transform, false);
-                _headTransform = headObj.transform;
+                _headTransform = transform.Find("ArrowHead");
+                if (_headTransform == null)
+                {
+                    var headObj = new GameObject("ArrowHead");
+                    headObj.transform.SetParent(transform, false);
+                    _headTransform = headObj.transform;
+                }
             }
 
             _headRenderer = _headTransform.GetComponent<SpriteRenderer>();
@@ -668,13 +725,13 @@ namespace ArrowSwarm.Arrow
                 _headRenderer = _headTransform.gameObject.AddComponent<SpriteRenderer>();
             }
 
-            // Use existing sprite or create triangle
             if (_headRenderer.sprite == null)
             {
                 _headRenderer.sprite = CreateArrowHeadSprite();
             }
 
             _headRenderer.sortingOrder = 6;
+            _headRenderer.enabled = true;
         }
 
         private void EnsureTrailRenderer()
@@ -750,11 +807,11 @@ namespace ArrowSwarm.Arrow
         {
             Color originalLineStart = _lineRenderer.startColor;
             Color originalLineEnd = _lineRenderer.endColor;
-            Color originalHead = _headRenderer.color;
+            Color originalHead = _headRenderer != null ? _headRenderer.color : Color.white;
 
             _lineRenderer.startColor = flashColor;
             _lineRenderer.endColor = flashColor;
-            _headRenderer.color = flashColor;
+            if (_headRenderer != null) _headRenderer.color = flashColor;
 
             yield return new WaitForSeconds(duration);
 
@@ -762,7 +819,7 @@ namespace ArrowSwarm.Arrow
             {
                 _lineRenderer.startColor = originalLineStart;
                 _lineRenderer.endColor = originalLineEnd;
-                _headRenderer.color = originalHead;
+                if (_headRenderer != null) _headRenderer.color = originalHead;
             }
         }
     }

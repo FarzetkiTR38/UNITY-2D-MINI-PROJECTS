@@ -154,7 +154,15 @@ namespace ArrowSwarm.Path
             var portal = new GameObject(name);
             portal.transform.SetParent(_portalsContainer, false);
             portal.transform.position = new Vector3(position.x, position.y, 0f);
-            portal.transform.localScale = Vector3.one * _portalScale;
+
+            float scaleFactor = 1.0f;
+            if (ArrowSwarm.Grid.GridManager.HasInstance)
+            {
+                scaleFactor = DifficultyCalculator.GetMapScaleFactor(
+                    ArrowSwarm.Grid.GridManager.Instance.Width,
+                    ArrowSwarm.Grid.GridManager.Instance.Height);
+            }
+            portal.transform.localScale = Vector3.one * (_portalScale * scaleFactor);
 
             var sr = portal.AddComponent<SpriteRenderer>();
             sr.sortingOrder = _portalSortingOrder;

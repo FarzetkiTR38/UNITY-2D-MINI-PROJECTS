@@ -214,11 +214,10 @@ namespace ArrowSwarm.Camera
             _mapCenter = origin + new Vector2(totalGridWidth * 0.5f, totalGridHeight * 0.5f);
 
             // Full visual dimensions including cards, track channel, portal, and mobs
-            float pathOffset = ArrowSwarm.Path.PathManager.HasInstance
-                ? ArrowSwarm.Path.PathManager.Instance.PathOffsetMultiplier
-                : 1.10f;
-            float outerMargin = 0.60f;
-            float boardPadding = (pathOffset + outerMargin) * spacing;
+            float scaleFactor = DifficultyCalculator.GetMapScaleFactor(mapData.GridWidth, mapData.GridHeight);
+            float cardMargin = 0.50f * spacing;
+            float halfTrackWidth = 0.60f * scaleFactor * spacing;
+            float boardPadding = cardMargin + 2f * halfTrackWidth;
             float visualBoardWidth = totalGridWidth + 2f * boardPadding;
             float visualBoardHeight = totalGridHeight + 2f * boardPadding;
 

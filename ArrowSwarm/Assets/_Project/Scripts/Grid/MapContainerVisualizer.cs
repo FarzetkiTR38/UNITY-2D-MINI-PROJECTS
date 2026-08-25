@@ -28,9 +28,9 @@ namespace ArrowSwarm.Grid
 
         [Header("Channel Margins")]
         [Tooltip("Distance from path center to inner card edge, in spacing units.")]
-        [SerializeField] private float _innerMargin = 0.60f;
+        [SerializeField] private float _innerMargin = 0.55f;
         [Tooltip("Distance from path center to outer card edge, in spacing units.")]
-        [SerializeField] private float _outerMargin = 0.60f;
+        [SerializeField] private float _outerMargin = 0.55f;
 
         private SpriteRenderer _outerContainerRenderer;
         private SpriteRenderer _innerGridRenderer;
@@ -38,16 +38,26 @@ namespace ArrowSwarm.Grid
         private void OnEnable()
         {
             GridManager.OnGridInitialized += HandleGridInitialized;
+            Path.PathManager.OnPathInitialized += HandlePathInitialized;
         }
 
         private void OnDisable()
         {
             GridManager.OnGridInitialized -= HandleGridInitialized;
+            Path.PathManager.OnPathInitialized -= HandlePathInitialized;
         }
 
         private void HandleGridInitialized(int width, int height)
         {
             BuildThreeLayerTheme(width, height);
+        }
+
+        private void HandlePathInitialized()
+        {
+            if (GridManager.HasInstance)
+            {
+                BuildThreeLayerTheme(GridManager.Instance.Width, GridManager.Instance.Height);
+            }
         }
 
         /// <summary>
@@ -68,12 +78,13 @@ namespace ArrowSwarm.Grid
             float totalGridHeight = (height - 1) * spacing;
             Vector2 center = origin + new Vector2(totalGridWidth * 0.5f, totalGridHeight * 0.5f);
 
-            // Get path offset multiplier from PathManager (default 1.10f)
-            float pathOffsetMult = 1.10f;
-            if (Path.PathManager.HasInstance)
-            {
-                pathOffsetMult = Path.PathManager.Instance.PathOffsetMultiplier;
-            }
+            float scaleFactor = DifficultyCalculator.GetMapScaleFactor(width, height);
+            
+            // Fixed tight card margin: white card hugs the grid arrows directly
+            float cardMargin = 0.50f * spacing;
+
+            // Scaled track channel half-width: thick enough to fit scaled enemies
+            float halfTrackWidth = 0.60f * scaleFactor * spacing;
 
             // Layer 1: Apply Camera Background Color
             UnityEngine.Camera mainCam = UnityEngine.Camera.main;
@@ -82,15 +93,15 @@ namespace ArrowSwarm.Grid
                 mainCam.backgroundColor = _cameraBackgroundColor;
             }
 
-            // Layer 2: Outer Card — path center + outerMargin on each side
-            float outerW = totalGridWidth + 2f * (pathOffsetMult + _outerMargin) * spacing;
-            float outerH = totalGridHeight + 2f * (pathOffsetMult + _outerMargin) * spacing;
+            // Layer 2: Outer Card — wraps outside the grey track channel
+            float outerW = totalGridWidth + 2f * (cardMargin + 2f * halfTrackWidth);
+            float outerH = totalGridHeight + 2f * (cardMargin + 2f * halfTrackWidth);
             EnsureCardLayer(ref _outerContainerRenderer, "Layer2_OuterCard", center,
                 new Vector2(outerW, outerH), _outerContainerColor, _layer2SortingOrder, 40f);
 
-            // Layer 3: Inner Card — path center - innerMargin on each side
-            float innerW = totalGridWidth + 2f * (pathOffsetMult - _innerMargin) * spacing;
-            float innerH = totalGridHeight + 2f * (pathOffsetMult - _innerMargin) * spacing;
+            // Layer 3: Inner Card — wraps tightly right around the grid arrows
+            float innerW = totalGridWidth + 2f * cardMargin;
+            float innerH = totalGridHeight + 2f * cardMargin;
             EnsureCardLayer(ref _innerGridRenderer, "Layer3_InnerGridCard", center,
                 new Vector2(innerW, innerH), _innerGridColor, _layer3SortingOrder, 28f);
         }

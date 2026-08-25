@@ -30,7 +30,11 @@ namespace ArrowSwarm.Core
 
         [Header("Mob")]
         [SerializeField] private float _maxMobSpeed = 20f;
-        [SerializeField] private float _minSpawnInterval = 0.4f;
+        [SerializeField] private float _minSpawnInterval = 1.6f;
+        [SerializeField] private float _targetTransitSeconds = 25.0f;
+        [SerializeField] private float _baseMobScale = 1.0f;
+        [SerializeField] private float _gapCloseSpeedMultiplier = 1.5f;
+        [SerializeField] private float _mobSpacingMultiplier = 2.0f;
 
         [Header("Camera")]
         [SerializeField] private float _minZoom = 1f;
@@ -74,6 +78,18 @@ namespace ArrowSwarm.Core
 
         /// <summary>Minimum spawn interval in seconds (clamp floor).</summary>
         public float MinSpawnInterval => _minSpawnInterval;
+
+        /// <summary>Target seconds for a mob to traverse the entire perimeter.</summary>
+        public float TargetTransitSeconds => _targetTransitSeconds;
+
+        /// <summary>Speed multiplier applied when closing a gap.</summary>
+        public float GapCloseSpeedMultiplier => _gapCloseSpeedMultiplier;
+
+        /// <summary>Multiplier for spacing between adjacent mobs.</summary>
+        public float MobSpacingMultiplier => _mobSpacingMultiplier;
+
+        /// <summary>Base scale factor for mobs on Map 1.</summary>
+        public float BaseMobScale => _baseMobScale;
 
         /// <summary>Minimum camera zoom (fit all).</summary>
         public float MinZoom => _minZoom;

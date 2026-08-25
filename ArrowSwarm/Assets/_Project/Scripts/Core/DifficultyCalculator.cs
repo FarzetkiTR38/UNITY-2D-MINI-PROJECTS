@@ -175,11 +175,83 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
+        /// Calculates the adaptive map scale factor so mob size, channel width, and portals
+        /// scale beautifully across maps: Map 1 (6x8) is 1.0x, scaling up to ~3.45x on Map 12 (25x40).
+        /// </summary>
+        public static float GetMapScaleFactor(int gridWidth, int gridHeight)
+        {
+            int points = gridWidth * gridHeight;
+            if (points <= 48) return 1.0f;
+            return 1.0f + 0.55f * Mathf.Sqrt((points - 48f) / 48f);
+        }
+
+        /// <summary>
+        /// Calculates mob movement speed so mobs traverse the perimeter in targetTransitSeconds (default 25s).
+        /// </summary>
+        public static float GetMobSpeedForTransit(float pathLength, float targetTransitSeconds = 25.0f)
+        {
+            if (targetTransitSeconds <= 0.1f) targetTransitSeconds = 25.0f;
+            return Mathf.Max(0.5f, pathLength / targetTransitSeconds);
+        }
+
+        /// <summary>
+        /// Calculates wave data (mob count, HP progression, and boss flag) for a given level.
+        /// </summary>
+        public static WaveConfig GetWaveConfig(int level)
+        {
+            int waveCount = Mathf.Clamp(3 + (level - 1) / 15, 3, 5);
+            int totalMobs = GetTotalMobs(level);
+            int baseHP = GetMobHP(level);
+
+            var waves = new WaveData[waveCount];
+            int remainingMobs = totalMobs;
+
+            for (int i = 0; i < waveCount; i++)
+            {
+                int count;
+                if (i == waveCount - 1)
+                {
+                    count = Mathf.Max(1, remainingMobs);
+                }
+                else
+                {
+                    float fraction = (waveCount - i) / (float)((waveCount * (waveCount + 1)) / 2);
+                    count = Mathf.Max(1, Mathf.RoundToInt(totalMobs * fraction));
+                    if (remainingMobs - count < (waveCount - 1 - i))
+                    {
+                        count = Mathf.Max(1, remainingMobs - (waveCount - 1 - i));
+                    }
+                }
+
+                remainingMobs = Mathf.Max(0, remainingMobs - count);
+
+                float hpMult = 0.6f + (i * 0.4f) + (i == waveCount - 1 ? 0.8f : 0f);
+                int waveHP = Mathf.Max(2, Mathf.RoundToInt(baseHP * hpMult));
+
+                waves[i] = new WaveData
+                {
+                    MobCount = count,
+                    MobHP = waveHP,
+                    IsBossWave = (i == waveCount - 1)
+                };
+            }
+
+            return new WaveConfig
+            {
+                Waves = waves,
+                WavePauseDuration = 1.5f
+            };
+        }
+
+        /// <summary>
         /// Returns a complete LevelParams struct with all calculated values.
         /// </summary>
         public static LevelParams CalculateAll(int level, int gridWidth, int gridHeight,
             float maxMobSpeed, float minSpawnInterval)
         {
+            float scaleFactor = GetMapScaleFactor(gridWidth, gridHeight);
+            WaveConfig waveConfig = GetWaveConfig(level);
+
             return new LevelParams
             {
                 Level = level,
@@ -192,9 +264,40 @@ namespace ArrowSwarm.Core
                 SpawnInterval = GetSpawnInterval(level, minSpawnInterval),
                 TotalMobs = GetTotalMobs(level),
                 MinWeight = GetMinWeight(level),
-                MaxWeight = GetMaxWeight(level)
+                MaxWeight = GetMaxWeight(level),
+                MapScaleFactor = scaleFactor,
+                WaveConfig = waveConfig
             };
         }
+    }
+
+    /// <summary>
+    /// Holds wave configuration for enemy spawning in a level.
+    /// </summary>
+    [System.Serializable]
+    public struct WaveData
+    {
+        /// <summary>Number of mobs in this wave.</summary>
+        public int MobCount;
+
+        /// <summary>Hit points of mobs in this wave.</summary>
+        public int MobHP;
+
+        /// <summary>Whether this wave is a boss wave (highest HP, distinct styling).</summary>
+        public bool IsBossWave;
+    }
+
+    /// <summary>
+    /// Configuration of all waves for a level.
+    /// </summary>
+    [System.Serializable]
+    public struct WaveConfig
+    {
+        /// <summary>Array of wave definitions.</summary>
+        public WaveData[] Waves;
+
+        /// <summary>Pause between waves in seconds.</summary>
+        public float WavePauseDuration;
     }
 
     /// <summary>
@@ -236,6 +339,12 @@ namespace ArrowSwarm.Core
         /// <summary>Maximum arrow weight (segment count).</summary>
         public int MaxWeight;
 
+        /// <summary>Adaptive map scale factor (1.0 for 6x8, up to 5.0 for 25x40).</summary>
+        public float MapScaleFactor;
+
+        /// <summary>Wave spawning configuration.</summary>
+        public WaveConfig WaveConfig;
+
         /// <summary>
         /// Formatted string representation for debug logging.
         /// </summary>
@@ -245,6 +354,7 @@ namespace ArrowSwarm.Core
                    $"Arrows={ArrowCount}, Outward={OutwardChance:P0}, " +
                    $"MobHP={MobHP}, MobSpd={MobSpeed:F1}, " +
                    $"SpawnInt={SpawnInterval:F2}s, Mobs={TotalMobs}, " +
+                   $"Scale={MapScaleFactor:F2}x, Waves={WaveConfig.Waves?.Length ?? 0}, " +
                    $"Weight={MinWeight}-{MaxWeight}";
         }
     }

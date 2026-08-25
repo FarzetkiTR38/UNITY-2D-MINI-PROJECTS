@@ -4,12 +4,14 @@ namespace ArrowSwarm.Mob
     using System.Collections;
     using System.Collections.Generic;
     using ArrowSwarm.Core;
+    using ArrowSwarm.Path;
     using ArrowSwarm.Utils;
     using UnityEngine;
 
     /// <summary>
-    /// Spawns mobs at timed intervals using object pooling.
-    /// Manages the spawn schedule based on level difficulty parameters.
+    /// Spawns mobs in an infinite continuous stream while level is active using object pooling.
+    /// Manages relaxed perimeter-proportional speed, clear spacing,
+    /// and event-driven backward gap-closing triggered when mobs in the chain die.
     /// </summary>
     public class MobSpawner : Singleton<MobSpawner>
     {
@@ -19,9 +21,15 @@ namespace ArrowSwarm.Mob
         private ObjectPool<Mob> _mobPool;
         private readonly List<Mob> _activeMobs = new List<Mob>();
         private Coroutine _spawnCoroutine;
+        private Coroutine _gapCloseCoroutine;
         private int _spawnedCount;
         private int _killedCount;
         private int _finishedCount;
+
+        private float _baseMobSpeed = 1.0f;
+        private float _mobScaleFactor = 1.0f;
+        private float _desiredSpacing = 1.6f;
+        private float _gapCloseMultiplier = 1.5f;
 
         /// <summary>List of currently active mobs.</summary>
         public IReadOnlyList<Mob> ActiveMobs => _activeMobs;
@@ -31,6 +39,9 @@ namespace ArrowSwarm.Mob
 
         /// <summary>Number of mobs killed.</summary>
         public int KilledCount => _killedCount;
+
+        /// <summary>Current base movement speed for mobs.</summary>
+        public float BaseMobSpeed => _baseMobSpeed;
 
         protected override void OnSingletonAwake()
         {
@@ -68,7 +79,7 @@ namespace ArrowSwarm.Mob
             }
 
             _mobPool = new ObjectPool<Mob>(
-                _mobPrefab, _mobParent, 15, 100,
+                _mobPrefab, _mobParent, 20, 150,
                 onGet: m => { if (m != null) m.gameObject.SetActive(true); },
                 onRelease: m =>
                 {
@@ -88,7 +99,7 @@ namespace ArrowSwarm.Mob
         }
 
         /// <summary>
-        /// Starts spawning mobs based on level parameters.
+        /// Starts infinite continuous spawning according to level parameters.
         /// </summary>
         public void StartSpawning(LevelParams levelParams)
         {
@@ -99,10 +110,31 @@ namespace ArrowSwarm.Mob
             _killedCount = 0;
             _finishedCount = 0;
 
-            float delay = 1.25f; // Start quickly
-            _spawnCoroutine = StartCoroutine(SpawnRoutine(levelParams, delay));
+            GameConfig config = GameManager.Instance?.Config;
+            float transitSeconds = config != null ? config.TargetTransitSeconds : 25.0f;
+            _gapCloseMultiplier = config != null ? config.GapCloseSpeedMultiplier : 1.5f;
+            float spacingMult = config != null ? config.MobSpacingMultiplier : 2.0f;
+            float baseScale = config != null ? config.BaseMobScale : 1.0f;
+            float mapScale = levelParams.MapScaleFactor > 0 ? levelParams.MapScaleFactor : 1.0f;
+            _mobScaleFactor = baseScale * mapScale;
 
-            LogDebug($"Infinite spawn started. Delay={delay}s");
+            // Calculate perimeter transit speed
+            float totalPathLength = PathManager.HasInstance ? PathManager.Instance.TotalPathLength : 26f;
+            if (totalPathLength < 1f) totalPathLength = 26f;
+            _baseMobSpeed = DifficultyCalculator.GetMobSpeedForTransit(totalPathLength, transitSeconds);
+
+            // Calculate spacing: mob sprite width * spacing multiplier
+            float mobWorldWidth = 0.8f * _mobScaleFactor;
+            _desiredSpacing = mobWorldWidth * spacingMult;
+
+            // Calculate spawn interval so mobs spawn with clean, relaxed separation
+            float calculatedInterval = _desiredSpacing / Mathf.Max(0.1f, _baseMobSpeed);
+            float minInterval = config != null ? config.MinSpawnInterval : 1.6f;
+            float spawnInterval = Mathf.Max(minInterval, calculatedInterval);
+
+            _spawnCoroutine = StartCoroutine(InfiniteContinuousSpawnRoutine(levelParams, spawnInterval));
+
+            LogDebug($"Infinite spawning started: Length={totalPathLength:F1}, Speed={_baseMobSpeed:F2}, Scale={_mobScaleFactor:F2}x, Spacing={_desiredSpacing:F2}, Interval={spawnInterval:F2}s");
         }
 
         /// <summary>
@@ -114,6 +146,11 @@ namespace ArrowSwarm.Mob
             {
                 StopCoroutine(_spawnCoroutine);
                 _spawnCoroutine = null;
+            }
+            if (_gapCloseCoroutine != null)
+            {
+                StopCoroutine(_gapCloseCoroutine);
+                _gapCloseCoroutine = null;
             }
         }
 
@@ -129,7 +166,7 @@ namespace ArrowSwarm.Mob
             {
                 if (mobsToDestroy[i] != null && mobsToDestroy[i].gameObject.activeSelf)
                 {
-                    mobsToDestroy[i].TakeDamage(9999); // Force kill
+                    mobsToDestroy[i].TakeDamage(9999);
                 }
             }
             _activeMobs.Clear();
@@ -154,42 +191,33 @@ namespace ArrowSwarm.Mob
             }
         }
 
-        private IEnumerator SpawnRoutine(LevelParams levelParams, float initialDelay)
+        private IEnumerator InfiniteContinuousSpawnRoutine(LevelParams levelParams, float spawnInterval)
         {
-            yield return new WaitForSeconds(initialDelay);
+            yield return new WaitForSeconds(1.0f);
 
-            // Askeri düzen (sıralı ve sık) için sabit kısa bir aralık
-            WaitForSeconds spawnWait = new WaitForSeconds(0.85f);
+            WaitForSeconds spawnWait = new WaitForSeconds(spawnInterval);
+            int baseHP = levelParams.MobHP > 0 ? levelParams.MobHP : DifficultyCalculator.GetMobHP(levelParams.Level);
 
             while (true)
             {
-                // Only spawn if playing
-                if (GameManager.Instance != null && GameManager.Instance.CurrentState != GameState.Playing)
+                while (GameManager.Instance != null && GameManager.Instance.CurrentState != GameState.Playing)
                 {
-                    yield return new WaitForSeconds(1f);
-                    continue;
+                    yield return new WaitForSeconds(0.5f);
                 }
 
-                SpawnSingleMob(levelParams);
+                // Gradual HP progression over time
+                int groupIndex = _spawnedCount / 4;
+                int mobHP = baseHP + (groupIndex * 2);
+
+                SpawnSingleMob(mobHP);
                 yield return spawnWait;
             }
         }
 
-        private void SpawnSingleMob(LevelParams levelParams)
+        private void SpawnSingleMob(int hp)
         {
             Mob mob = _mobPool.Get();
-            
-            // Can ölçeği (HP Scaling): 3'erli gruplar halinde artıyor
-            int groupIndex = _spawnedCount / 3;
-            int hp = 5;
-            if (groupIndex == 1) hp = 7;
-            else if (groupIndex == 2) hp = 10;
-            else if (groupIndex > 2) hp = 10 + (groupIndex - 2) * 4;
-
-            // Daha yavaş sabit hız
-            float speed = 1f;
-
-            mob.Initialize(_spawnedCount, hp, speed);
+            mob.Initialize(_spawnedCount, hp, _baseMobSpeed, _mobScaleFactor);
             _activeMobs.Add(mob);
             _spawnedCount++;
         }
@@ -197,7 +225,76 @@ namespace ArrowSwarm.Mob
         private void HandleMobKilled(Mob mob)
         {
             _killedCount++;
+
+            // Event-driven gap closing: check if there was a front group and rear group
+            int killedIndex = _activeMobs.IndexOf(mob);
             RemoveMob(mob);
+
+            // If a mob in the middle/rear died, pull the front group backward to close the gap
+            if (killedIndex > 0 && _activeMobs.Count >= killedIndex)
+            {
+                TriggerEventDrivenGapClose(killedIndex - 1);
+            }
+        }
+
+        /// <summary>
+        /// Triggers event-driven gap closing when a mob is killed.
+        /// Front mobs smoothly reverse along the path to connect with the trailing group.
+        /// </summary>
+        private void TriggerEventDrivenGapClose(int frontGroupEndIndex)
+        {
+            if (frontGroupEndIndex < 0 || frontGroupEndIndex >= _activeMobs.Count) return;
+            if (_activeMobs.Count <= frontGroupEndIndex + 1) return; // No rear mob to close to
+
+            Mob mobAhead = _activeMobs[frontGroupEndIndex];
+            Mob mobBehind = _activeMobs[frontGroupEndIndex + 1];
+
+            if (mobAhead == null || mobBehind == null || !mobAhead.IsAlive || !mobBehind.IsAlive) return;
+
+            float frontDist = mobAhead.Movement.CurrentPathDistance;
+            float rearDist = mobBehind.Movement.CurrentPathDistance;
+            float actualGap = frontDist - rearDist;
+
+            if (actualGap > _desiredSpacing + 0.10f)
+            {
+                float excessDistance = actualGap - _desiredSpacing;
+                if (_gapCloseCoroutine != null)
+                {
+                    StopCoroutine(_gapCloseCoroutine);
+                }
+                _gapCloseCoroutine = StartCoroutine(GapCloseRoutine(frontGroupEndIndex, excessDistance));
+            }
+        }
+
+        private IEnumerator GapCloseRoutine(int frontGroupEndIndex, float excessDistance)
+        {
+            float reverseSpeed = _baseMobSpeed * _gapCloseMultiplier;
+            float relativeClosingSpeed = reverseSpeed + _baseMobSpeed;
+            float duration = Mathf.Clamp(excessDistance / relativeClosingSpeed, 0.1f, 1.5f);
+
+            // Reverse front mobs
+            for (int i = 0; i <= frontGroupEndIndex && i < _activeMobs.Count; i++)
+            {
+                Mob m = _activeMobs[i];
+                if (m != null && m.IsAlive)
+                {
+                    m.Movement.SetSpeed(-reverseSpeed);
+                }
+            }
+
+            yield return new WaitForSeconds(duration);
+
+            // Restore forward base speed
+            for (int i = 0; i <= frontGroupEndIndex && i < _activeMobs.Count; i++)
+            {
+                Mob m = _activeMobs[i];
+                if (m != null && m.IsAlive)
+                {
+                    m.Movement.SetSpeed(_baseMobSpeed);
+                }
+            }
+
+            _gapCloseCoroutine = null;
         }
 
         private void HandleMobFinished(Mob mob)

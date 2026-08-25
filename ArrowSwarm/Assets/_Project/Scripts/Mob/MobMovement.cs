@@ -6,7 +6,7 @@ namespace ArrowSwarm.Mob
 
     /// <summary>
     /// Controls mob movement along the path using PathFollower.
-    /// Handles reaching the finish point.
+    /// Handles reaching the finish point and supports dynamic speed changes for gap closing.
     /// </summary>
     [RequireComponent(typeof(PathFollower))]
     public class MobMovement : MonoBehaviour
@@ -20,6 +20,12 @@ namespace ArrowSwarm.Mob
         /// <summary>Current movement direction (normalized).</summary>
         public Vector2 CurrentDirection { get; private set; }
 
+        /// <summary>Current distance along the path in world units.</summary>
+        public float CurrentPathDistance => _pathFollower != null ? _pathFollower.CurrentDistance : 0f;
+
+        /// <summary>Normalized progress along the path (0 to 1).</summary>
+        public float Progress => _pathFollower != null ? _pathFollower.Progress : 0f;
+
         /// <summary>Fired when this mob reaches the finish point.</summary>
         public event Action OnFinishReached;
 
@@ -31,21 +37,37 @@ namespace ArrowSwarm.Mob
         /// <summary>
         /// Starts the mob moving along the path at the given speed.
         /// </summary>
-        public void StartMoving(float speed)
+        public void StartMoving(float speed, float initialDistance = 0f)
         {
             _hasReachedFinish = false;
 
             PathManager pm = PathManager.Instance;
-            if (pm == null || pm.Waypoints == null)
+            if (pm == null || pm.Waypoints == null || pm.Waypoints.Count < 2)
             {
                 Debug.LogError("[ArrowSwarm] MobMovement: PathManager not initialized!");
                 return;
             }
 
             var waypoints = new System.Collections.Generic.List<Vector2>(pm.Waypoints);
-            _pathFollower.StartFollowing(waypoints, speed);
+            _pathFollower.StartFollowing(waypoints, speed, initialDistance);
             _pathFollower.OnPathEnd += HandlePathEnd;
             _pathFollower.OnDirectionChanged += HandleDirectionChanged;
+        }
+
+        /// <summary>
+        /// Updates the movement speed (positive = forward, negative = reverse/gap-closing).
+        /// </summary>
+        public void SetSpeed(float newSpeed)
+        {
+            _pathFollower?.SetSpeed(newSpeed);
+        }
+
+        /// <summary>
+        /// Sets the exact distance along the path.
+        /// </summary>
+        public void SetDistance(float distance)
+        {
+            _pathFollower?.SetDistance(distance);
         }
 
         /// <summary>
