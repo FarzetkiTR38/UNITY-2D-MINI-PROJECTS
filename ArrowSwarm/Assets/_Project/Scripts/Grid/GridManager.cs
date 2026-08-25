@@ -211,6 +211,40 @@ namespace ArrowSwarm.Grid
         }
 
         /// <summary>
+        /// Finds the world collision point and the obstacle arrow blocking this arrow along its line of fire.
+        /// Stops just before entering the obstacle cell so the arrow head impacts it visually.
+        /// </summary>
+        public Vector2 GetCollisionPoint(Vector2Int headPoint, ArrowSwarm.Arrow.ArrowDirection direction, out ArrowSwarm.Arrow.Arrow obstacleArrow)
+        {
+            obstacleArrow = null;
+            Vector2Int step = DirectionToVector(direction);
+            float s = _pointSpacing;
+            Vector2 headWorld = headPoint.PointToWorld(s, _origin);
+
+            if (step == Vector2Int.zero) return headWorld;
+
+            Vector2Int current = headPoint + step;
+
+            while (current.IsInBounds(_width, _height))
+            {
+                GridPoint point = GetPoint(current);
+                if (point != null && point.IsOccupied && point.OccupyingArrow != null)
+                {
+                    obstacleArrow = point.OccupyingArrow;
+                    Vector2 obstacleWorld = current.PointToWorld(s, _origin);
+                    Vector2 dirVec = new Vector2(step.x, step.y).normalized;
+                    // Stop ~50% into the step gap before the obstacle point
+                    return obstacleWorld - dirVec * (s * 0.45f);
+                }
+                current += step;
+            }
+
+            // If no obstacle found inside grid (e.g. edge reached), nudge forward half a cell
+            Vector2 forwardDir = new Vector2(step.x, step.y).normalized;
+            return headWorld + forwardDir * (s * 0.5f);
+        }
+
+        /// <summary>
         /// Converts a world position to the nearest grid point.
         /// Returns null if out of bounds.
         /// </summary>

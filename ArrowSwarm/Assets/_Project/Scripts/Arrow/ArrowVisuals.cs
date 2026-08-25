@@ -304,7 +304,94 @@ namespace ArrowSwarm.Arrow
         /// </summary>
         public void PlayBlockedEffect()
         {
-            StartCoroutine(FlashColor(Color.red, 0.2f));
+            StartCoroutine(FlashColor(new Color(1f, 0.25f, 0.25f, 1f), 0.25f));
+        }
+
+        /// <summary>
+        /// Restores resting position and line positions when a blocked arrow finishes its return bounce animation.
+        /// </summary>
+        public void RestoreRestingVisuals()
+        {
+            if (_arrow == null) return;
+
+            GridManager grid = GridManager.Instance;
+            IReadOnlyList<Vector2Int> pathPoints = _arrow.PathPoints;
+            float spacing = grid.PointSpacing;
+            Vector2 origin = grid.Origin;
+
+            Vector2 headWorldPos = _arrow.HeadPoint.PointToWorld(spacing, origin);
+            transform.position = new Vector3(headWorldPos.x, headWorldPos.y, 0f);
+            transform.rotation = Quaternion.identity;
+
+            if (_lineRenderer != null)
+            {
+                _lineRenderer.positionCount = pathPoints.Count;
+                for (int i = 0; i < pathPoints.Count; i++)
+                {
+                    Vector2 worldPos = pathPoints[i].PointToWorld(spacing, origin);
+                    _lineRenderer.SetPosition(i, new Vector3(worldPos.x, worldPos.y, 0f));
+                }
+            }
+
+            if (_headTransform != null)
+            {
+                float zRotation = _arrow.HeadDirection switch
+                {
+                    ArrowDirection.Up => 0f,
+                    ArrowDirection.Right => -90f,
+                    ArrowDirection.Down => 180f,
+                    ArrowDirection.Left => 90f,
+                    _ => 0f
+                };
+                _headTransform.position = new Vector3(headWorldPos.x, headWorldPos.y, -0.05f);
+                _headTransform.localRotation = Quaternion.Euler(0, 0, zRotation);
+                _headTransform.localScale = _baseHeadScale != Vector3.zero ? _baseHeadScale : Vector3.one * _headSize;
+                if (_headRenderer != null) _headRenderer.enabled = true;
+            }
+
+            // Restore BoxCollider to full path bounds
+            if (_boxCollider != null && pathPoints.Count > 1)
+            {
+                Vector2 min = Vector2.positiveInfinity;
+                Vector2 max = Vector2.negativeInfinity;
+                foreach (var p in pathPoints)
+                {
+                    Vector2 localPos = p.PointToWorld(spacing, origin) - (Vector2)transform.position;
+                    min = Vector2.Min(min, localPos);
+                    max = Vector2.Max(max, localPos);
+                }
+                Vector2 size = max - min;
+                size.x += spacing * 0.7f;
+                size.y += spacing * 0.7f;
+                _boxCollider.size = size;
+                _boxCollider.offset = (min + max) / 2f;
+            }
+        }
+
+        /// <summary>
+        /// Plays a subtle bump reaction shake on the obstacle arrow that was hit.
+        /// </summary>
+        public void PlayBumpedReactionEffect(Vector2 impactDir)
+        {
+            StartCoroutine(BumpReactionRoutine(impactDir));
+        }
+
+        private System.Collections.IEnumerator BumpReactionRoutine(Vector2 impactDir)
+        {
+            Vector3 originalPos = transform.position;
+            float elapsed = 0f;
+            float dur = 0.12f;
+            Vector2 normDir = impactDir.normalized;
+            
+            while (elapsed < dur)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / dur;
+                float offset = Mathf.Sin(t * Mathf.PI) * 0.08f;
+                transform.position = originalPos + (Vector3)(normDir * offset);
+                yield return null;
+            }
+            transform.position = originalPos;
         }
 
         /// <summary>

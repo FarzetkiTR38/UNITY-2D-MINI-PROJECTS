@@ -20,6 +20,7 @@ namespace ArrowSwarm.Arrow
 
         private ArrowMovement _movement;
         private ArrowVisuals _visuals;
+        private bool _isBlockedAnimating;
 
         /// <summary>Direction the arrow head faces.</summary>
         public ArrowDirection HeadDirection => _headDirection;
@@ -44,6 +45,9 @@ namespace ArrowSwarm.Arrow
 
         /// <summary>Whether this arrow has been fired.</summary>
         public bool IsFired => _isFired;
+
+        /// <summary>Whether this arrow is currently performing its blocked bounce animation.</summary>
+        public bool IsBlockedAnimating => _isBlockedAnimating;
 
         /// <summary>Whether this is the rainbow (last) arrow.</summary>
         public bool IsRainbow => _isRainbow;
@@ -71,6 +75,7 @@ namespace ArrowSwarm.Arrow
             _pathPoints.AddRange(pathPoints);
             _headDirection = headDirection;
             _isFired = false;
+            _isBlockedAnimating = false;
             _isRainbow = isRainbow;
 
             _movement = GetComponent<ArrowMovement>();
@@ -83,11 +88,11 @@ namespace ArrowSwarm.Arrow
 
         /// <summary>
         /// Called when the player taps/clicks this arrow.
-        /// Arrow can only fire if its head is on the grid edge AND facing outward.
+        /// Arrow fires if its path is clear; otherwise slithers forward, impacts the obstacle, and bounces back.
         /// </summary>
         public void OnPlayerClick()
         {
-            if (_isFired) return;
+            if (_isFired || _isBlockedAnimating) return;
             if (GameManager.Instance.CurrentState != GameState.Playing) return;
 
             bool canFire = GridManager.Instance.IsPathClear(HeadPoint, _headDirection);
@@ -99,11 +104,18 @@ namespace ArrowSwarm.Arrow
             }
             else
             {
-                // Head not on edge or not facing outward — wrong click
+                // Wrong click: slither forward, impact obstacle, shake/flash red, and slither back in reverse
+                _isBlockedAnimating = true;
                 OnArrowClicked?.Invoke(this, false);
                 GameManager.Instance.HandleWrongClick();
-                _visuals?.PlayBlockedEffect();
-                LogDebug($"Arrow at {HeadPoint} BLOCKED (Dir={_headDirection}, path not clear)");
+
+                Vector2 collisionPoint = GridManager.Instance.GetCollisionPoint(HeadPoint, _headDirection, out Arrow obstacleArrow);
+                _movement?.StartBlockedBounce(this, collisionPoint, obstacleArrow, () =>
+                {
+                    _isBlockedAnimating = false;
+                });
+
+                LogDebug($"Arrow at {HeadPoint} BLOCKED BOUNCE (Dir={_headDirection}, Collision={collisionPoint})");
             }
         }
 
@@ -170,8 +182,10 @@ namespace ArrowSwarm.Arrow
         public void ResetArrow()
         {
             _isFired = false;
+            _isBlockedAnimating = false;
             _isRainbow = false;
             _pathPoints.Clear();
+            _movement?.ResetMovement();
             _visuals?.ResetVisuals();
         }
 
