@@ -1,24 +1,47 @@
 namespace ArrowSwarm.Arrow
 {
+    using System;
     using System.Collections.Generic;
+    using ArrowSwarm.Audio;
     using ArrowSwarm.Core;
     using ArrowSwarm.Grid;
     using ArrowSwarm.Utils;
     using UnityEngine;
 
     /// <summary>
-    /// Handles continuous snake-like arrow movement after firing.
-    /// The entire arrow body (with its full length/weight) slithers out of the grid,
-    /// through the exit gate, and reverses along the enemy path towards the spawn portal,
-    /// damaging mobs via trigger collisions.
+    /// Handles continuous snake-like arrow movement after firing, including:
+    /// 1. Normal slither flight along grid exit and reverse enemy path.
+    /// 2. Blocked bounce slither: advances forward, impacts obstacle arrow, shakes/flashes red,
+    ///    and slithers back in reverse to its resting position.
     /// </summary>
     [RequireComponent(typeof(Arrow))]
     public class ArrowMovement : MonoBehaviour
     {
+        private enum MovementMode
+        {
+            None,
+            NormalFlight,
+            BlockedBounce
+        }
+
+        private enum BlockedState
+        {
+            MovingForward,
+            ImpactShake,
+            ReturningReverse
+        }
+
         private Arrow _arrow;
         private BoxCollider2D _boxCollider;
         private float _speed;
         private bool _isMoving;
+
+        private MovementMode _mode = MovementMode.None;
+        private BlockedState _blockedState = BlockedState.MovingForward;
+        private float _shakeTimer;
+        private float _maxForwardDistance;
+        private Arrow _obstacleArrow;
+        private Action _onBounceComplete;
 
         private readonly List<Vector2> _trajectory = new List<Vector2>();
         private readonly List<float> _trajectoryDistances = new List<float>();
@@ -56,6 +79,7 @@ namespace ArrowSwarm.Arrow
         public void StartMovement(Arrow arrow, Vector2 gridExitPoint)
         {
             _arrow = arrow;
+            _mode = MovementMode.NormalFlight;
             _speed = GameManager.Instance?.Config?.ArrowMoveSpeed ?? 15f;
 
             GridManager grid = GridManager.Instance;
@@ -136,10 +160,78 @@ namespace ArrowSwarm.Arrow
             RotateArrow(initialDir);
         }
 
+        /// <summary>
+        /// Starts the blocked bounce animation:
+        /// Slithers forward to the obstacle collision point, impacts with red flash & shake,
+        /// and slithers back in reverse to its resting position.
+        /// </summary>
+        public void StartBlockedBounce(Arrow arrow, Vector2 collisionPoint, Arrow obstacleArrow, Action onComplete)
+        {
+            _arrow = arrow;
+            _obstacleArrow = obstacleArrow;
+            _onBounceComplete = onComplete;
+            _mode = MovementMode.BlockedBounce;
+            _blockedState = BlockedState.MovingForward;
+            _speed = GameManager.Instance?.Config?.ArrowMoveSpeed ?? 15f;
+
+            GridManager grid = GridManager.Instance;
+            float spacing = grid.PointSpacing;
+            Vector2 origin = grid.Origin;
+
+            // Build bounce trajectory: Tail -> Head -> CollisionPoint
+            _trajectory.Clear();
+            var pathPoints = arrow.PathPoints;
+            int n = pathPoints.Count;
+
+            for (int i = n - 1; i >= 0; i--)
+            {
+                _trajectory.Add(pathPoints[i].PointToWorld(spacing, origin));
+            }
+
+            Vector2 headWorld = pathPoints[0].PointToWorld(spacing, origin);
+            if (Vector2.Distance(collisionPoint, headWorld) > 0.02f)
+            {
+                _trajectory.Add(collisionPoint);
+            }
+
+            if (_trajectory.Count < 2)
+            {
+                _mode = MovementMode.None;
+                onComplete?.Invoke();
+                return;
+            }
+
+            _trajectoryDistances.Clear();
+            _trajectoryDistances.Add(0f);
+            for (int i = 1; i < _trajectory.Count; i++)
+            {
+                float segmentDist = Vector2.Distance(_trajectory[i], _trajectory[i - 1]);
+                _trajectoryDistances.Add(_trajectoryDistances[i - 1] + segmentDist);
+            }
+
+            _totalTrajectoryLength = _trajectoryDistances[_trajectoryDistances.Count - 1];
+            _bodyLength = _trajectoryDistances[n - 1];
+            _maxForwardDistance = _totalTrajectoryLength;
+            _currentHeadDistance = _bodyLength;
+            _isMoving = true;
+        }
+
         private void Update()
         {
             if (!_isMoving || _trajectory.Count < 2) return;
 
+            if (_mode == MovementMode.NormalFlight)
+            {
+                UpdateNormalFlight();
+            }
+            else if (_mode == MovementMode.BlockedBounce)
+            {
+                UpdateBlockedBounce();
+            }
+        }
+
+        private void UpdateNormalFlight()
+        {
             _currentHeadDistance += _speed * Time.deltaTime;
             float tailDistance = Mathf.Max(0f, _currentHeadDistance - _bodyLength);
 
@@ -147,6 +239,7 @@ namespace ArrowSwarm.Arrow
             if (tailDistance >= _totalTrajectoryLength)
             {
                 _isMoving = false;
+                _mode = MovementMode.None;
                 CompleteMovement();
                 return;
             }
@@ -173,6 +266,78 @@ namespace ArrowSwarm.Arrow
             if (_arrow != null && _arrow.Visuals != null)
             {
                 _arrow.Visuals.UpdateSlitheringBody(_bodyPointsBuffer, new Vector3(headPos.x, headPos.y, -0.05f), headRot, isHeadActive);
+            }
+        }
+
+        private void UpdateBlockedBounce()
+        {
+            if (_blockedState == BlockedState.MovingForward)
+            {
+                float forwardSpeed = _speed * 1.3f;
+                _currentHeadDistance += forwardSpeed * Time.deltaTime;
+
+                if (_currentHeadDistance >= _maxForwardDistance)
+                {
+                    _currentHeadDistance = _maxForwardDistance;
+                    _blockedState = BlockedState.ImpactShake;
+                    _shakeTimer = 0.08f;
+
+                    // Trigger impact effects
+                    _arrow.Visuals?.PlayBlockedEffect();
+
+                    if (_obstacleArrow != null && _obstacleArrow.Visuals != null)
+                    {
+                        Vector2 impactDir = (_trajectory[_trajectory.Count - 1] - _trajectory[_trajectory.Count - 2]).normalized;
+                        _obstacleArrow.Visuals.PlayBumpedReactionEffect(impactDir);
+                    }
+                }
+            }
+            else if (_blockedState == BlockedState.ImpactShake)
+            {
+                _shakeTimer -= Time.deltaTime;
+                if (_shakeTimer <= 0f)
+                {
+                    _blockedState = BlockedState.ReturningReverse;
+                }
+            }
+            else if (_blockedState == BlockedState.ReturningReverse)
+            {
+                float returnSpeed = _speed * 1.5f;
+                _currentHeadDistance -= returnSpeed * Time.deltaTime;
+
+                if (_currentHeadDistance <= _bodyLength)
+                {
+                    _currentHeadDistance = _bodyLength;
+                    _isMoving = false;
+                    _mode = MovementMode.None;
+
+                    // Restore exact resting appearance on grid
+                    _arrow.Visuals?.RestoreRestingVisuals();
+                    _onBounceComplete?.Invoke();
+                    return;
+                }
+            }
+
+            float tailDistance = Mathf.Max(0f, _currentHeadDistance - _bodyLength);
+            Vector2 headPos = SamplePolyline(_currentHeadDistance, out Vector2 headTangent);
+            Vector2 tailPos = SamplePolyline(tailDistance, out _);
+
+            Quaternion headRot = transform.rotation;
+            if (headTangent.sqrMagnitude > 0.001f)
+            {
+                float rawAngle = Mathf.Atan2(headTangent.y, headTangent.x) * Mathf.Rad2Deg - 90f;
+                float snappedAngle = Mathf.Round(rawAngle / 90f) * 90f;
+                headRot = Quaternion.Euler(0, 0, snappedAngle);
+            }
+
+            ExtractSubPolyline(tailDistance, _currentHeadDistance, tailPos, headPos);
+
+            transform.position = new Vector3(headPos.x, headPos.y, 0f);
+            transform.rotation = headRot;
+
+            if (_arrow != null && _arrow.Visuals != null)
+            {
+                _arrow.Visuals.UpdateSlitheringBody(_bodyPointsBuffer, new Vector3(headPos.x, headPos.y, -0.05f), headRot, true);
             }
         }
 
@@ -247,11 +412,11 @@ namespace ArrowSwarm.Arrow
         }
 
         /// <summary>
-        /// Handles collision with mobs while arrow is moving.
+        /// Handles collision with mobs while arrow is moving in normal flight mode.
         /// </summary>
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (!IsMoving) return;
+            if (!IsMoving || _mode != MovementMode.NormalFlight) return;
 
             var mob = other.GetComponent<ArrowSwarm.Mob.Mob>();
             if (mob != null)
@@ -266,6 +431,9 @@ namespace ArrowSwarm.Arrow
         public void ResetMovement()
         {
             _isMoving = false;
+            _mode = MovementMode.None;
+            _obstacleArrow = null;
+            _onBounceComplete = null;
             _trajectory.Clear();
             _trajectoryDistances.Clear();
             _bodyPointsBuffer.Clear();

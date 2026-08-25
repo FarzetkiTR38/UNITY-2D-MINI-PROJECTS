@@ -29,8 +29,14 @@ namespace ArrowSwarm.Arrow
         private float _pulseTimer;
         private bool _isPulsing;
         private bool _isRainbow;
+        private bool _isSpawning;
+        private Coroutine _spawnCoroutine;
+        private readonly List<Vector3> _spawnPointsBuffer = new List<Vector3>();
         private float _baseLineWidth;
         private Vector3 _baseHeadScale;
+
+        /// <summary>Whether this arrow is currently playing its birth/spawn animation.</summary>
+        public bool IsSpawning => _isSpawning;
 
         // Cached rainbow colors
         private static readonly Color[] RainbowColors = new Color[]
@@ -64,9 +70,11 @@ namespace ArrowSwarm.Arrow
 
         /// <summary>
         /// Sets up arrow visuals: draws path with LineRenderer and positions arrowhead.
+        /// Supports progressive spawn animation where the head pops in first, followed by body growth.
         /// </summary>
-        public void SetupVisuals(Arrow arrow)
+        public void SetupVisuals(Arrow arrow, float spawnDelay = 0f, bool animateSpawn = true)
         {
+            _arrow = arrow;
             _isRainbow = arrow.IsRainbow;
             EnsureLineRenderer();
             EnsureHeadSprite();
@@ -110,15 +118,6 @@ namespace ArrowSwarm.Arrow
                 
                 _boxCollider.size = size;
                 _boxCollider.offset = (min + max) / 2f;
-            }
-
-            // Setup LineRenderer path
-            _lineRenderer.positionCount = pathPoints.Count;
-
-            for (int i = 0; i < pathPoints.Count; i++)
-            {
-                Vector2 worldPos = pathPoints[i].PointToWorld(spacing, origin);
-                _lineRenderer.SetPosition(i, new Vector3(worldPos.x, worldPos.y, 0f));
             }
 
             // Calculate bold, juicy line width and arrowhead size proportional to grid spacing
@@ -172,6 +171,141 @@ namespace ArrowSwarm.Arrow
                 _trailRenderer.enabled = false; // Disabled until fired
                 _trailRenderer.Clear();
             }
+
+            if (animateSpawn && Application.isPlaying)
+            {
+                if (_spawnCoroutine != null) StopCoroutine(_spawnCoroutine);
+                _spawnCoroutine = StartCoroutine(AnimateSpawnRoutine(spawnDelay, 0.55f));
+            }
+            else
+            {
+                // Setup LineRenderer path immediately
+                _lineRenderer.positionCount = pathPoints.Count;
+                for (int i = 0; i < pathPoints.Count; i++)
+                {
+                    Vector2 worldPos = pathPoints[i].PointToWorld(spacing, origin);
+                    _lineRenderer.SetPosition(i, new Vector3(worldPos.x, worldPos.y, 0f));
+                }
+            }
+        }
+
+        private System.Collections.IEnumerator AnimateSpawnRoutine(float delay, float duration)
+        {
+            _isSpawning = true;
+            _lineRenderer.positionCount = 0;
+            if (_headTransform != null)
+            {
+                _headTransform.localScale = Vector3.zero;
+            }
+
+            if (delay > 0f)
+            {
+                yield return new WaitForSeconds(delay);
+            }
+
+            GridManager grid = GridManager.Instance;
+            IReadOnlyList<Vector2Int> pathPoints = _arrow != null ? _arrow.PathPoints : null;
+            if (pathPoints == null || pathPoints.Count == 0)
+            {
+                _isSpawning = false;
+                yield break;
+            }
+
+            float spacing = grid.PointSpacing;
+            Vector2 origin = grid.Origin;
+            int n = pathPoints.Count;
+
+            Vector2[] worldPoints = new Vector2[n];
+            for (int i = 0; i < n; i++)
+            {
+                worldPoints[i] = pathPoints[i].PointToWorld(spacing, origin);
+            }
+
+            float totalLen = 0f;
+            for (int i = 0; i < n - 1; i++)
+            {
+                totalLen += Vector2.Distance(worldPoints[i], worldPoints[i + 1]);
+            }
+
+            // Phase 1: Head Pop in with overshoot bounce curve
+            float popDur = 0.15f;
+            float popElapsed = 0f;
+            while (popElapsed < popDur)
+            {
+                popElapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(popElapsed / popDur);
+                float scaleMult = t < 0.7f ? (t / 0.7f) * 1.25f : 1.25f - ((t - 0.7f) / 0.3f) * 0.25f;
+                if (_headTransform != null)
+                {
+                    _headTransform.localScale = _baseHeadScale * scaleMult;
+                }
+                yield return null;
+            }
+            if (_headTransform != null) _headTransform.localScale = _baseHeadScale;
+
+            // Phase 2: Progressive Body Growth from Head (P0) to Tail (Pn-1)
+            if (n > 1 && totalLen > 0.001f)
+            {
+                float growDur = Mathf.Max(0.15f, duration - popDur);
+                float growElapsed = 0f;
+
+                while (growElapsed < growDur)
+                {
+                    growElapsed += Time.deltaTime;
+                    float t = Mathf.Clamp01(growElapsed / growDur);
+                    float progress = Mathf.Sin(t * Mathf.PI * 0.5f); // Smooth ease out
+                    float currentDist = progress * totalLen;
+
+                    _spawnPointsBuffer.Clear();
+                    _spawnPointsBuffer.Add(new Vector3(worldPoints[0].x, worldPoints[0].y, 0f));
+
+                    float accumulated = 0f;
+                    for (int i = 0; i < n - 1; i++)
+                    {
+                        float segLen = Vector2.Distance(worldPoints[i], worldPoints[i + 1]);
+                        if (currentDist >= accumulated + segLen)
+                        {
+                            _spawnPointsBuffer.Add(new Vector3(worldPoints[i + 1].x, worldPoints[i + 1].y, 0f));
+                            accumulated += segLen;
+                        }
+                        else
+                        {
+                            float remain = currentDist - accumulated;
+                            float segT = segLen > 0.0001f ? remain / segLen : 0f;
+                            Vector2 tip = Vector2.Lerp(worldPoints[i], worldPoints[i + 1], segT);
+                            _spawnPointsBuffer.Add(new Vector3(tip.x, tip.y, 0f));
+                            break;
+                        }
+                    }
+
+                    if (_lineRenderer != null)
+                    {
+                        _lineRenderer.positionCount = _spawnPointsBuffer.Count;
+                        _lineRenderer.SetPositions(_spawnPointsBuffer.ToArray());
+                    }
+
+                    yield return null;
+                }
+            }
+
+            // Phase 3: Final exact resting state
+            RestoreRestingVisuals();
+            _isSpawning = false;
+            _spawnCoroutine = null;
+        }
+
+        /// <summary>
+        /// Instantly completes the spawn animation (e.g. on early player click).
+        /// </summary>
+        public void CompleteSpawnImmediately()
+        {
+            if (_spawnCoroutine != null)
+            {
+                StopCoroutine(_spawnCoroutine);
+                _spawnCoroutine = null;
+            }
+            _isSpawning = false;
+            RestoreRestingVisuals();
         }
 
         /// <summary>
@@ -304,7 +438,117 @@ namespace ArrowSwarm.Arrow
         /// </summary>
         public void PlayBlockedEffect()
         {
-            StartCoroutine(FlashColor(Color.red, 0.2f));
+            StartCoroutine(FlashColor(new Color(1f, 0.25f, 0.25f, 1f), 0.25f));
+        }
+
+        /// <summary>
+        /// Restores resting position and line positions when a blocked arrow finishes its return bounce animation.
+        /// </summary>
+        public void RestoreRestingVisuals()
+        {
+            if (_arrow == null) return;
+
+            GridManager grid = GridManager.Instance;
+            IReadOnlyList<Vector2Int> pathPoints = _arrow.PathPoints;
+            float spacing = grid.PointSpacing;
+            Vector2 origin = grid.Origin;
+
+            Vector2 headWorldPos = _arrow.HeadPoint.PointToWorld(spacing, origin);
+            transform.position = new Vector3(headWorldPos.x, headWorldPos.y, 0f);
+            transform.rotation = Quaternion.identity;
+
+            if (_lineRenderer != null)
+            {
+                _lineRenderer.positionCount = pathPoints.Count;
+                for (int i = 0; i < pathPoints.Count; i++)
+                {
+                    Vector2 worldPos = pathPoints[i].PointToWorld(spacing, origin);
+                    _lineRenderer.SetPosition(i, new Vector3(worldPos.x, worldPos.y, 0f));
+                }
+            }
+
+            if (_headTransform != null)
+            {
+                float zRotation = _arrow.HeadDirection switch
+                {
+                    ArrowDirection.Up => 0f,
+                    ArrowDirection.Right => -90f,
+                    ArrowDirection.Down => 180f,
+                    ArrowDirection.Left => 90f,
+                    _ => 0f
+                };
+                _headTransform.position = new Vector3(headWorldPos.x, headWorldPos.y, -0.05f);
+                _headTransform.localRotation = Quaternion.Euler(0, 0, zRotation);
+                _headTransform.localScale = _baseHeadScale != Vector3.zero ? _baseHeadScale : Vector3.one * _headSize;
+                if (_headRenderer != null) _headRenderer.enabled = true;
+            }
+
+            // Restore BoxCollider to full path bounds
+            if (_boxCollider != null && pathPoints.Count > 1)
+            {
+                Vector2 min = Vector2.positiveInfinity;
+                Vector2 max = Vector2.negativeInfinity;
+                foreach (var p in pathPoints)
+                {
+                    Vector2 localPos = p.PointToWorld(spacing, origin) - (Vector2)transform.position;
+                    min = Vector2.Min(min, localPos);
+                    max = Vector2.Max(max, localPos);
+                }
+                Vector2 size = max - min;
+                size.x += spacing * 0.7f;
+                size.y += spacing * 0.7f;
+                _boxCollider.size = size;
+                _boxCollider.offset = (min + max) / 2f;
+            }
+        }
+
+        /// <summary>
+        /// Plays a subtle bump reaction shake on the obstacle arrow that was hit.
+        /// </summary>
+        public void PlayBumpedReactionEffect(Vector2 impactDir)
+        {
+            StartCoroutine(BumpReactionRoutine(impactDir));
+        }
+
+        private System.Collections.IEnumerator BumpReactionRoutine(Vector2 impactDir)
+        {
+            Vector3 originalPos = transform.position;
+            float elapsed = 0f;
+            float dur = 0.12f;
+            Vector2 normDir = impactDir.normalized;
+            
+            while (elapsed < dur)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / dur;
+                float offset = Mathf.Sin(t * Mathf.PI) * 0.08f;
+                transform.position = originalPos + (Vector3)(normDir * offset);
+                yield return null;
+            }
+            transform.position = originalPos;
+        }
+
+        /// <summary>
+        /// Plays a subtle harmless wiggle feedback when an already blocked arrow is clicked (missclick).
+        /// </summary>
+        public void PlayMissclickFeedback()
+        {
+            StartCoroutine(MissclickWiggleRoutine());
+        }
+
+        private System.Collections.IEnumerator MissclickWiggleRoutine()
+        {
+            Vector3 originalPos = transform.position;
+            float elapsed = 0f;
+            float duration = 0.14f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float offset = Mathf.Sin(elapsed * 50f) * 0.05f;
+                transform.position = originalPos + new Vector3(offset, 0f, 0f);
+                yield return null;
+            }
+            transform.position = originalPos;
         }
 
         /// <summary>
@@ -329,6 +573,12 @@ namespace ArrowSwarm.Arrow
         /// </summary>
         public void ResetVisuals()
         {
+            if (_spawnCoroutine != null)
+            {
+                StopCoroutine(_spawnCoroutine);
+                _spawnCoroutine = null;
+            }
+            _isSpawning = false;
             _isPulsing = false;
             _isRainbow = false;
             _pulseTimer = 0f;

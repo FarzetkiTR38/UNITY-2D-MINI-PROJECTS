@@ -105,6 +105,9 @@ namespace ArrowSwarm.Arrow
             float spacing = grid.PointSpacing;
             Vector2 origin = grid.Origin;
 
+            Vector2 gridCenter = origin + new Vector2((grid.Width - 1) * spacing * 0.5f, (grid.Height - 1) * spacing * 0.5f);
+            float maxDistFromCenter = Vector2.Distance(gridCenter, origin);
+
             for (int i = 0; i < placements.Count; i++)
             {
                 var placement = placements[i];
@@ -115,8 +118,13 @@ namespace ArrowSwarm.Arrow
                 Vector2 headWorld = placement.PathPoints[0].PointToWorld(spacing, origin);
                 arrow.transform.position = new Vector3(headWorld.x, headWorld.y, 0f);
 
-                // Initialize with path data (rainbow = false initially)
-                arrow.Initialize(placement.PathPoints, placement.HeadDirection, false);
+                // Radial wave delay from center outward (smooth 0 to 0.22s ripple)
+                float distFromCenter = Vector2.Distance(headWorld, gridCenter);
+                float normDist = maxDistFromCenter > 0.001f ? distFromCenter / maxDistFromCenter : 0f;
+                float staggerDelay = normDist * 0.22f;
+
+                // Initialize with path data, rainbow = false, and trigger birth growth animation
+                arrow.Initialize(placement.PathPoints, placement.HeadDirection, false, staggerDelay, true);
 
                 // Register on grid
                 grid.PlaceArrowOnPoints(placement.PathPoints, arrow);
