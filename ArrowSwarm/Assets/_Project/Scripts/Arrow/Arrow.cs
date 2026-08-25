@@ -21,6 +21,7 @@ namespace ArrowSwarm.Arrow
         private ArrowMovement _movement;
         private ArrowVisuals _visuals;
         private bool _isBlockedAnimating;
+        private bool _isMarkedBlocked;
 
         /// <summary>Direction the arrow head faces.</summary>
         public ArrowDirection HeadDirection => _headDirection;
@@ -49,6 +50,9 @@ namespace ArrowSwarm.Arrow
         /// <summary>Whether this arrow is currently performing its blocked bounce animation.</summary>
         public bool IsBlockedAnimating => _isBlockedAnimating;
 
+        /// <summary>Whether this arrow has already been tried and marked as blocked.</summary>
+        public bool IsMarkedBlocked => _isMarkedBlocked;
+
         /// <summary>Whether this is the rainbow (last) arrow.</summary>
         public bool IsRainbow => _isRainbow;
 
@@ -61,6 +65,31 @@ namespace ArrowSwarm.Arrow
 
         /// <summary>Fired when an arrow finishes its movement and is done.</summary>
         public static event Action<Arrow> OnArrowCompleted;
+
+        private void OnEnable()
+        {
+            OnArrowFiredEvent += HandleAnyArrowFired;
+        }
+
+        private void OnDisable()
+        {
+            OnArrowFiredEvent -= HandleAnyArrowFired;
+        }
+
+        /// <summary>
+        /// When another arrow fires away, this blocked arrow re-checks its own path.
+        /// If the blocking obstacle is gone, the blocked mark is cleared.
+        /// </summary>
+        private void HandleAnyArrowFired(Arrow firedArrow)
+        {
+            if (!_isMarkedBlocked || _isFired || firedArrow == this) return;
+            if (GridManager.Instance == null) return;
+
+            if (GridManager.Instance.IsPathClear(HeadPoint, _headDirection))
+            {
+                _isMarkedBlocked = false;
+            }
+        }
 
         /// <summary>
         /// Initializes the arrow with multi-point path data.
@@ -78,6 +107,7 @@ namespace ArrowSwarm.Arrow
             _headDirection = headDirection;
             _isFired = false;
             _isBlockedAnimating = false;
+            _isMarkedBlocked = false;
             _isRainbow = isRainbow;
 
             _movement = GetComponent<ArrowMovement>();
@@ -91,6 +121,7 @@ namespace ArrowSwarm.Arrow
         /// <summary>
         /// Called when the player taps/clicks this arrow.
         /// Arrow fires if its path is clear; otherwise slithers forward, impacts the obstacle, and bounces back.
+        /// If already marked blocked, subsequent clicks are treated as harmless missclicks with 0 penalty.
         /// </summary>
         public void OnPlayerClick()
         {
@@ -107,13 +138,24 @@ namespace ArrowSwarm.Arrow
 
             if (canFire)
             {
+                _isMarkedBlocked = false;
                 Fire();
                 OnArrowClicked?.Invoke(this, true);
             }
             else
             {
-                // Wrong click: slither forward, impact obstacle, shake/flash red, and slither back in reverse
+                if (_isMarkedBlocked)
+                {
+                    // 2nd+ click on an already-known blocked arrow: Missclick!
+                    // No heart loss, no penalty, just a subtle wiggle feedback.
+                    _visuals?.PlayMissclickFeedback();
+                    LogDebug($"Arrow at {HeadPoint} MISSCLICK IGNORED (Already marked blocked, no penalty)");
+                    return;
+                }
+
+                // 1st wrong click: penalize, slither forward, impact obstacle, shake/flash red, and slither back in reverse
                 _isBlockedAnimating = true;
+                _isMarkedBlocked = true;
                 OnArrowClicked?.Invoke(this, false);
                 GameManager.Instance.HandleWrongClick();
 
@@ -191,6 +233,7 @@ namespace ArrowSwarm.Arrow
         {
             _isFired = false;
             _isBlockedAnimating = false;
+            _isMarkedBlocked = false;
             _isRainbow = false;
             _pathPoints.Clear();
             _movement?.ResetMovement();

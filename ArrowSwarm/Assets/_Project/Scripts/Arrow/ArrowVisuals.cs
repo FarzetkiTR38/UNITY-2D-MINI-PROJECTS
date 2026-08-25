@@ -529,6 +529,29 @@ namespace ArrowSwarm.Arrow
         }
 
         /// <summary>
+        /// Plays a subtle harmless wiggle feedback when an already blocked arrow is clicked (missclick).
+        /// </summary>
+        public void PlayMissclickFeedback()
+        {
+            StartCoroutine(MissclickWiggleRoutine());
+        }
+
+        private System.Collections.IEnumerator MissclickWiggleRoutine()
+        {
+            Vector3 originalPos = transform.position;
+            float elapsed = 0f;
+            float duration = 0.14f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float offset = Mathf.Sin(elapsed * 50f) * 0.05f;
+                transform.position = originalPos + new Vector3(offset, 0f, 0f);
+                yield return null;
+            }
+            transform.position = originalPos;
+        }
+
+        /// <summary>
         /// Highlights this arrow (used by tip system).
         /// </summary>
         public void SetHighlight(bool highlighted)
