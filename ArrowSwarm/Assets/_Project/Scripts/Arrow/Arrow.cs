@@ -69,7 +69,9 @@ namespace ArrowSwarm.Arrow
         /// <param name="pathPoints">Ordered list of grid points. First = head, last = tail.</param>
         /// <param name="headDirection">Direction the arrow head faces (for click/fire direction).</param>
         /// <param name="isRainbow">Whether this arrow is the rainbow (last) arrow.</param>
-        public void Initialize(List<Vector2Int> pathPoints, ArrowDirection headDirection, bool isRainbow = false)
+        /// <param name="spawnDelay">Stagger delay before spawn animation begins.</param>
+        /// <param name="animateSpawn">Whether to play the birth/growth spawn animation.</param>
+        public void Initialize(List<Vector2Int> pathPoints, ArrowDirection headDirection, bool isRainbow = false, float spawnDelay = 0f, bool animateSpawn = true)
         {
             _pathPoints.Clear();
             _pathPoints.AddRange(pathPoints);
@@ -81,7 +83,7 @@ namespace ArrowSwarm.Arrow
             _movement = GetComponent<ArrowMovement>();
             _visuals = GetComponent<ArrowVisuals>();
 
-            _visuals?.SetupVisuals(this);
+            _visuals?.SetupVisuals(this, spawnDelay, animateSpawn);
 
             LogDebug($"Arrow initialized: Head={HeadPoint}, Dir={headDirection}, W={Weight}, Rainbow={isRainbow}, Points={_pathPoints.Count}");
         }
@@ -94,6 +96,12 @@ namespace ArrowSwarm.Arrow
         {
             if (_isFired || _isBlockedAnimating) return;
             if (GameManager.Instance.CurrentState != GameState.Playing) return;
+
+            // If tapped while still playing spawn growth animation, complete immediately
+            if (_visuals != null && _visuals.IsSpawning)
+            {
+                _visuals.CompleteSpawnImmediately();
+            }
 
             bool canFire = GridManager.Instance.IsPathClear(HeadPoint, _headDirection);
 
