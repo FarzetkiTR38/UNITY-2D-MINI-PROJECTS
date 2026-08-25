@@ -6,7 +6,7 @@ namespace ArrowSwarm.Mob
 
     /// <summary>
     /// Main mob component that coordinates MobHealth, MobMovement, and MobVisuals.
-    /// Handles initialization, damage, death, and pool recycling.
+    /// Handles initialization, scaling, damage, death, and pool recycling.
     /// </summary>
     public class Mob : MonoBehaviour
     {
@@ -21,6 +21,15 @@ namespace ArrowSwarm.Mob
 
         /// <summary>Whether this mob is alive.</summary>
         public bool IsAlive => _health != null && _health.IsAlive;
+
+        /// <summary>Movement component of this mob.</summary>
+        public MobMovement Movement => _movement;
+
+        /// <summary>Health component of this mob.</summary>
+        public MobHealth Health => _health;
+
+        /// <summary>Visuals component of this mob.</summary>
+        public MobVisuals Visuals => _visuals;
 
         // --- Static Events ---
         /// <summary>Fired when any mob is killed (mob instance).</summary>
@@ -42,12 +51,14 @@ namespace ArrowSwarm.Mob
         }
 
         /// <summary>
-        /// Initializes the mob with given parameters.
+        /// Initializes the mob with given parameters and scale factor.
         /// </summary>
-        public void Initialize(int id, int hp, float speed)
+        public void Initialize(int id, int hp, float speed, float scaleFactor = 1.0f)
         {
             _mobId = id;
             EnsureComponents();
+
+            transform.localScale = Vector3.one * scaleFactor;
 
             _health?.Initialize(hp);
             _visuals?.Initialize(hp);
@@ -62,7 +73,7 @@ namespace ArrowSwarm.Mob
                 if (pf != null) pf.OnDirectionChanged += HandleDirectionChanged;
             }
 
-            LogDebug($"Mob #{id} initialized. HP={hp}, Speed={speed}");
+            LogDebug($"Mob #{id} initialized. HP={hp}, Speed={speed}, Scale={scaleFactor:F2}x");
         }
 
         /// <summary>
@@ -88,6 +99,7 @@ namespace ArrowSwarm.Mob
             _health?.ResetHealth();
             _movement?.ResetMovement();
             _visuals?.ResetVisuals();
+            transform.localScale = Vector3.one;
         }
 
         private void HandleDeath()

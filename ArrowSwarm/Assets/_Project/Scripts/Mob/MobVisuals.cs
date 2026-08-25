@@ -5,14 +5,14 @@ namespace ArrowSwarm.Mob
 
     /// <summary>
     /// Manages mob visual representation: sprite selection,
-    /// HP text display, damage shake animation, and death effect.
+    /// HP text display, damage flash animation, and facing direction.
     /// </summary>
     public class MobVisuals : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private TextMeshPro _hpText;
-        [SerializeField] private Sprite[] _mobVariants; // 5 visual variants
-        [SerializeField] private float _flashDuration = 0.5f;
+        [SerializeField] private Sprite[] _mobVariants; // Visual variants
+        [SerializeField] private float _flashDuration = 0.4f;
 
         private Vector3 _originalLocalPosition;
         private MobHealth _health;
@@ -28,21 +28,21 @@ namespace ArrowSwarm.Mob
         }
 
         /// <summary>
-        /// Sets up mob visuals with a random variant and initial HP display.
+        /// Sets up mob visuals with variant sprite and initial HP display.
         /// Sets sorting orders: sprite=20 (above portals), HP text=25 (frontmost).
         /// </summary>
         public void Initialize(int hp)
         {
-            // Random visual variant
-            if (_mobVariants != null && _mobVariants.Length > 0)
-            {
-                _spriteRenderer.sprite = _mobVariants[Random.Range(0, _mobVariants.Length)];
-            }
-
-            // Sorting order: mobs render above portals (15) and arrows (5-6)
             if (_spriteRenderer != null)
             {
+                if (_mobVariants != null && _mobVariants.Length > 0)
+                {
+                    _spriteRenderer.sprite = _mobVariants[Random.Range(0, _mobVariants.Length)];
+                }
+
+                // Sorting order: mobs render above portals (15) and arrows (5-6)
                 _spriteRenderer.sortingOrder = 20;
+                _spriteRenderer.color = Color.white;
             }
 
             // HP text renders above everything
@@ -56,7 +56,10 @@ namespace ArrowSwarm.Mob
             }
 
             UpdateHPDisplay(hp);
-            _originalLocalPosition = _spriteRenderer.transform.localPosition;
+            if (_spriteRenderer != null)
+            {
+                _originalLocalPosition = _spriteRenderer.transform.localPosition;
+            }
 
             // Subscribe to health events
             if (_health != null)
@@ -81,8 +84,7 @@ namespace ArrowSwarm.Mob
         /// </summary>
         public void PlayDeathEffect()
         {
-            // Particle effects added in Phase 8
-            // For now, just disable the sprite
+            // Particle effects hook
         }
 
         /// <summary>
@@ -91,6 +93,7 @@ namespace ArrowSwarm.Mob
         public void ResetVisuals()
         {
             _isShaking = false;
+
             if (_spriteRenderer != null)
             {
                 _spriteRenderer.transform.localPosition = _originalLocalPosition;
@@ -123,7 +126,7 @@ namespace ArrowSwarm.Mob
         private void HandleDamageTaken(int damage, int remainingHP)
         {
             UpdateHPDisplay(remainingHP);
-            if (!_isShaking)
+            if (!_isShaking && gameObject.activeInHierarchy)
             {
                 StartCoroutine(FlashCoroutine());
             }
@@ -135,20 +138,23 @@ namespace ArrowSwarm.Mob
             float elapsed = 0f;
             WaitForEndOfFrame waitFrame = new WaitForEndOfFrame();
             
-            // Set color to red
-            Color originalColor = Color.white; // Or whatever default is
             _spriteRenderer.color = Color.red;
 
             while (elapsed < _flashDuration)
             {
-                // Fade color back to original during flash
-                _spriteRenderer.color = Color.Lerp(Color.red, originalColor, elapsed / _flashDuration);
+                if (_spriteRenderer != null)
+                {
+                    _spriteRenderer.color = Color.Lerp(Color.red, Color.white, elapsed / _flashDuration);
+                }
                 
                 elapsed += Time.deltaTime;
                 yield return waitFrame;
             }
 
-            _spriteRenderer.color = originalColor;
+            if (_spriteRenderer != null)
+            {
+                _spriteRenderer.color = Color.white;
+            }
             _isShaking = false;
         }
     }

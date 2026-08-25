@@ -47,6 +47,9 @@ namespace ArrowSwarm.Path
             float s = GridManager.Instance.PointSpacing;
             Vector2 o = GridManager.Instance.Origin;
             
+            float scaleFactor = DifficultyCalculator.GetMapScaleFactor(mapData.GridWidth, mapData.GridHeight);
+            _pathOffsetMultiplier = 0.50f + 0.60f * scaleFactor;
+
             float minX = -_pathOffsetMultiplier * s;
             float maxX = (mapData.GridWidth - 1 + _pathOffsetMultiplier) * s;
             float minY = -_pathOffsetMultiplier * s;
