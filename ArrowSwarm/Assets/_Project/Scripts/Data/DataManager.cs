@@ -313,6 +313,26 @@ namespace ArrowSwarm.Data
         }
 
         /// <summary>
+        /// Sets the visual theme mode and saves.
+        /// </summary>
+        public void SetTheme(ThemeMode theme)
+        {
+            if (_playerData == null) return;
+            _playerData.theme = theme;
+            NotifyAndSave();
+        }
+
+        /// <summary>
+        /// Sets the player display name and saves.
+        /// </summary>
+        public void SetPlayerName(string name)
+        {
+            if (_playerData == null || string.IsNullOrWhiteSpace(name)) return;
+            _playerData.playerName = name.Trim();
+            NotifyAndSave();
+        }
+
+        /// <summary>
         /// Deletes all saved data and resets to default.
         /// </summary>
         public void DeleteAllData()

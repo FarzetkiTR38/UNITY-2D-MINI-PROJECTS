@@ -109,6 +109,15 @@ namespace ArrowSwarm.UI
                 var t = transform.Find("ContentPill/StarsText") ?? transform.Find("StarsText");
                 if (t != null) _starsText = t.GetComponent<TextMeshProUGUI>();
             }
+
+            if (_playerNameText == null)
+            {
+                var t = transform.Find("ContentPill/PlayerNameText") 
+                     ?? transform.Find("ContentPill/NameText") 
+                     ?? transform.Find("PlayerNameText") 
+                     ?? transform.Find("NameText");
+                if (t != null) _playerNameText = t.GetComponent<TextMeshProUGUI>();
+            }
         }
     }
 }
