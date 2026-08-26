@@ -66,8 +66,10 @@ namespace ArrowSwarm.Core
                 }
             }
             
-            // Initialize global input manager
+            // Initialize global managers
             var inputMgr = InputManager.Instance;
+            var hapticMgr = HapticManager.Instance;
+            var touchEffectMgr = ArrowSwarm.Effects.TouchEffectManager.Instance;
         }
 
         /// <summary>
