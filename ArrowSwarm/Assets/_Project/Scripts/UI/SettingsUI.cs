@@ -8,7 +8,7 @@ namespace ArrowSwarm.UI
     using UnityEngine.UI;
 
     /// <summary>
-    /// Controls the Settings panel with SFX, VFX, Vibration toggles, and Language selector.
+    /// Controls the Settings panel with SFX, VFX, Vibration toggles, Language selector, and Theme selector.
     /// Matches the visual mockup layout and integrates directly with DataManager, AudioManager, and ParticleManager.
     /// </summary>
     public class SettingsUI : MonoBehaviour
@@ -27,7 +27,21 @@ namespace ArrowSwarm.UI
         [SerializeField] private TextMeshProUGUI _languageText;
         [SerializeField] private Button _prevLanguageButton;
         [SerializeField] private Button _nextLanguageButton;
-        [SerializeField] private Button _languageButton; // Clicking the whole pill also cycles
+        [SerializeField] private Button _languageButton;
+
+        [Header("Theme Selector")]
+        [Tooltip("Target Image component to swap theme sprites (e.g. ThemeSelector)")]
+        [SerializeField] private Image _themeSelectorImage;
+        [Tooltip("Button to toggle theme on click (optional)")]
+        [SerializeField] private Button _themeToggleButton;
+        [Tooltip("Sprite displayed when Light theme is selected")]
+        [SerializeField] private Sprite _lightThemeSprite;
+        [Tooltip("Sprite displayed when Dark theme is selected")]
+        [SerializeField] private Sprite _darkThemeSprite;
+        [Tooltip("Direct button to select Light theme (optional)")]
+        [SerializeField] private Button _lightThemeButton;
+        [Tooltip("Direct button to select Dark theme (optional)")]
+        [SerializeField] private Button _darkThemeButton;
 
         [Header("Decoration & Board")]
         [SerializeField] private Image _boardImage;
@@ -38,12 +52,14 @@ namespace ArrowSwarm.UI
         [SerializeField] private Image _vfxRowCard;
         [SerializeField] private Image _vibrationRowCard;
         [SerializeField] private Image _languageRowCard;
+        [SerializeField] private Image _themeRowCard;
 
         [Header("Row Icons")]
         [SerializeField] private Image _sfxIcon;
         [SerializeField] private Image _vfxIcon;
         [SerializeField] private Image _vibrationIcon;
         [SerializeField] private Image _languageIcon;
+        [SerializeField] private Image _themeIcon;
 
         [Header("Animation")]
         [SerializeField] private float _fadeSpeed = 5f;
@@ -72,6 +88,10 @@ namespace ArrowSwarm.UI
             _prevLanguageButton?.onClick.AddListener(PrevLanguage);
             _nextLanguageButton?.onClick.AddListener(NextLanguage);
             _languageButton?.onClick.AddListener(NextLanguage);
+
+            _themeToggleButton?.onClick.AddListener(ToggleTheme);
+            _lightThemeButton?.onClick.AddListener(OnSelectLightTheme);
+            _darkThemeButton?.onClick.AddListener(OnSelectDarkTheme);
 
             if (_titleText != null && string.IsNullOrEmpty(_titleText.text))
                 _titleText.text = "SETTINGS";
@@ -111,7 +131,13 @@ namespace ArrowSwarm.UI
                 if (f != null) _footerImage = f.GetComponent<Image>();
             }
 
-            // Auto-wire toggles
+            AutoWireToggles();
+            AutoWireLanguage();
+            AutoWireTheme();
+        }
+
+        private void AutoWireToggles()
+        {
             if (_sfxToggle == null)
             {
                 var row = transform.Find("BoardFrame/SettingsContainer/SettingRow_SFX/Toggle");
@@ -129,11 +155,14 @@ namespace ArrowSwarm.UI
                 var row = transform.Find("BoardFrame/SettingsContainer/SettingRow_Vibration/Toggle");
                 if (row != null) _vibrationToggle = row.GetComponent<SettingsToggleUI>();
             }
+        }
 
-            // Auto-wire Language
+        private void AutoWireLanguage()
+        {
             if (_languageText == null)
             {
-                var txt = transform.Find("BoardFrame/SettingsContainer/SettingRow_Language/LanguageSelector/LanguageText");
+                var txt = transform.Find("BoardFrame/SettingsContainer/SettingRow_Language/LanguageSelector/LanguageText")
+                       ?? transform.Find("BoardFrame/SettingsContainer/SettingRow_Language/LanguageSelector/Text");
                 if (txt != null) _languageText = txt.GetComponent<TextMeshProUGUI>();
             }
 
@@ -153,6 +182,36 @@ namespace ArrowSwarm.UI
             {
                 var btn = transform.Find("BoardFrame/SettingsContainer/SettingRow_Language/LanguageSelector");
                 if (btn != null) _languageButton = btn.GetComponent<Button>();
+            }
+        }
+
+        private void AutoWireTheme()
+        {
+            if (_themeSelectorImage == null)
+            {
+                var selector = transform.Find("BoardFrame/SettingsContainer/SettingRow_Theme/ThemeSelector")
+                            ?? transform.Find("BoardFrame/SettingsContainer/SettingRow_Theme/ThemeToggle")
+                            ?? transform.Find("BoardFrame/SettingsContainer/SettingRow_Theme");
+                if (selector != null) _themeSelectorImage = selector.GetComponent<Image>();
+            }
+
+            if (_themeToggleButton == null && _themeSelectorImage != null)
+            {
+                _themeToggleButton = _themeSelectorImage.GetComponent<Button>();
+            }
+
+            if (_lightThemeButton == null)
+            {
+                var btn = transform.Find("BoardFrame/SettingsContainer/SettingRow_Theme/ThemeSelector/LightButton")
+                       ?? transform.Find("BoardFrame/SettingsContainer/SettingRow_Theme/LightButton");
+                if (btn != null) _lightThemeButton = btn.GetComponent<Button>();
+            }
+
+            if (_darkThemeButton == null)
+            {
+                var btn = transform.Find("BoardFrame/SettingsContainer/SettingRow_Theme/ThemeSelector/DarkButton")
+                       ?? transform.Find("BoardFrame/SettingsContainer/SettingRow_Theme/DarkButton");
+                if (btn != null) _darkThemeButton = btn.GetComponent<Button>();
             }
         }
 
@@ -196,20 +255,9 @@ namespace ArrowSwarm.UI
             PlayerData data = DataManager.Instance?.PlayerData;
             if (data == null) return;
 
-            if (_sfxToggle != null)
-            {
-                _sfxToggle.SetIsOn(data.sfxEnabled, false);
-            }
-
-            if (_vfxToggle != null)
-            {
-                _vfxToggle.SetIsOn(data.vfxEnabled, false);
-            }
-
-            if (_vibrationToggle != null)
-            {
-                _vibrationToggle.SetIsOn(data.vibrationEnabled, false);
-            }
+            if (_sfxToggle != null) _sfxToggle.SetIsOn(data.sfxEnabled, false);
+            if (_vfxToggle != null) _vfxToggle.SetIsOn(data.vfxEnabled, false);
+            if (_vibrationToggle != null) _vibrationToggle.SetIsOn(data.vibrationEnabled, false);
 
             // Find current language index
             string lang = !string.IsNullOrEmpty(data.selectedLanguage) ? data.selectedLanguage.ToUpper() : "ENGLISH";
@@ -223,6 +271,7 @@ namespace ArrowSwarm.UI
                 }
             }
             UpdateLanguageDisplay();
+            UpdateThemeDisplay(data.theme);
         }
 
         private void OnSFXChanged(bool isEnabled)
@@ -275,6 +324,41 @@ namespace ArrowSwarm.UI
             }
         }
 
+        /// <summary>
+        /// Toggles theme between Light and Dark mode.
+        /// </summary>
+        public void ToggleTheme()
+        {
+            var currentTheme = DataManager.Instance?.PlayerData?.theme ?? ThemeMode.Light;
+            var nextTheme = currentTheme == ThemeMode.Light ? ThemeMode.Dark : ThemeMode.Light;
+            SetTheme(nextTheme);
+        }
+
+        /// <summary>
+        /// Sets a specific theme mode and saves to DataManager.
+        /// </summary>
+        public void SetTheme(ThemeMode theme)
+        {
+            DataManager.Instance?.SetTheme(theme);
+            UpdateThemeDisplay(theme);
+        }
+
+        private void OnSelectLightTheme() => SetTheme(ThemeMode.Light);
+        private void OnSelectDarkTheme() => SetTheme(ThemeMode.Dark);
+
+        private void UpdateThemeDisplay(ThemeMode theme)
+        {
+            if (_themeSelectorImage != null)
+            {
+                Sprite targetSprite = theme == ThemeMode.Light ? _lightThemeSprite : _darkThemeSprite;
+                if (targetSprite != null)
+                {
+                    _themeSelectorImage.sprite = targetSprite;
+                    _themeSelectorImage.color = Color.white;
+                }
+            }
+        }
+
         private System.Collections.IEnumerator FadeTo(float target, bool disableOnComplete = false)
         {
             while (Mathf.Abs(_canvasGroup.alpha - target) > 0.01f)
@@ -301,6 +385,10 @@ namespace ArrowSwarm.UI
             _prevLanguageButton?.onClick.RemoveListener(PrevLanguage);
             _nextLanguageButton?.onClick.RemoveListener(NextLanguage);
             _languageButton?.onClick.RemoveListener(NextLanguage);
+
+            _themeToggleButton?.onClick.RemoveListener(ToggleTheme);
+            _lightThemeButton?.onClick.RemoveAllListeners();
+            _darkThemeButton?.onClick.RemoveAllListeners();
         }
     }
 }

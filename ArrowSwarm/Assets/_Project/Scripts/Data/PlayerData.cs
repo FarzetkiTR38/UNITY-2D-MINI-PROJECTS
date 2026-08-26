@@ -39,6 +39,9 @@ namespace ArrowSwarm.Data
         /// <summary>Haptic vibration enabled toggle.</summary>
         public bool vibrationEnabled = true;
 
+        /// <summary>Current visual theme mode.</summary>
+        public ThemeMode theme = ThemeMode.Light;
+
         /// <summary>Selected language code/name.</summary>
         public string selectedLanguage = "ENGLISH";
 
@@ -95,6 +98,7 @@ namespace ArrowSwarm.Data
                 sfxEnabled = true,
                 vfxEnabled = true,
                 vibrationEnabled = true,
+                theme = ThemeMode.Light,
                 selectedLanguage = "ENGLISH",
                 playerName = "Player",
                 playerId = Guid.NewGuid().ToString()

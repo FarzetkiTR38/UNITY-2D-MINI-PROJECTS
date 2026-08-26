@@ -37,8 +37,11 @@ namespace ArrowSwarm.Debug
         [Header("--- Resources & Cheats ---")]
         [Tooltip("Target tip token balance.")]
         [SerializeField] private int _targetTips = 10;
+        [Tooltip("Target player username.")]
+        [SerializeField] private string _targetPlayerName = "Player";
 
         [Header("--- Live Monitor (Read-Only) ---")]
+        [SerializeField] private string _livePlayerName;
         [SerializeField] private int _liveCurrentLevel;
         [SerializeField] private int _liveHighestLevel;
         [SerializeField] private int _liveTotalStars;
@@ -105,6 +108,7 @@ namespace ArrowSwarm.Debug
             _targetHighestLevel = data.highestLevel;
             _targetTotalStars = data.GetTotalStars();
             _targetTips = data.tipCount;
+            _targetPlayerName = data.playerName;
             _specificLevel = data.currentLevel;
             _starsForSpecificLevel = data.GetStarsForLevel(data.currentLevel);
 
@@ -121,6 +125,7 @@ namespace ArrowSwarm.Debug
             ApplyLevel();
             ApplyHighestLevel();
             ApplyTips();
+            ApplyPlayerName();
             ApplyTotalStars();
             LogDebug("Applied all Admin edits to PlayerData.");
         }
@@ -204,6 +209,17 @@ namespace ArrowSwarm.Debug
         }
 
         /// <summary>
+        /// Applies the target player username.
+        /// </summary>
+        [ContextMenu("Apply Player Name")]
+        public void ApplyPlayerName()
+        {
+            if (DataManager.Instance == null) return;
+            DataManager.Instance.SetPlayerName(_targetPlayerName);
+            LogDebug($"Set Player Name to {_targetPlayerName}");
+        }
+
+        /// <summary>
         /// Resets all player data to factory default.
         /// </summary>
         [ContextMenu("🔄 Reset All Player Data (Default)")]
@@ -220,6 +236,7 @@ namespace ArrowSwarm.Debug
             if (DataManager.Instance?.PlayerData == null) return;
             var data = DataManager.Instance.PlayerData;
 
+            _livePlayerName = data.playerName;
             _liveCurrentLevel = data.currentLevel;
             _liveHighestLevel = data.highestLevel;
             _liveTotalStars = data.GetTotalStars();

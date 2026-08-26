@@ -8,7 +8,7 @@ namespace ArrowSwarm.UI
 
     /// <summary>
     /// Leaderboard screen showing top 10 players matching the popup dialog visual design.
-    /// Handles animated transitions, data loading, and back/close buttons.
+    /// Handles animated transitions, data loading, username display/editing, and back/close buttons.
     /// </summary>
     public class LeaderboardUI : MonoBehaviour
     {
@@ -19,6 +19,14 @@ namespace ArrowSwarm.UI
         [SerializeField] private TextMeshProUGUI _titleText;
         [SerializeField] private Transform _entriesContainer;
         [SerializeField] private LeaderboardEntryUI[] _entryRows; // 10 entries (1, 2, 3 scene objects + 4..10 prefab instances)
+
+        [Header("Current Player Bar (Optional)")]
+        [SerializeField] private TextMeshProUGUI _currentPlayerNameText;
+        [SerializeField] private TextMeshProUGUI _currentPlayerRankText;
+        [SerializeField] private TextMeshProUGUI _currentPlayerLevelText;
+        [SerializeField] private TextMeshProUGUI _currentPlayerStarsText;
+        [SerializeField] private TMP_InputField _nameInputField;
+        [SerializeField] private Button _saveNameButton;
 
         [Header("Decoration & Board")]
         [SerializeField] private Image _boardImage;
@@ -36,6 +44,9 @@ namespace ArrowSwarm.UI
         {
             _backButton?.onClick.AddListener(Hide);
             _closeButton?.onClick.AddListener(Hide);
+            _nameInputField?.onEndEdit.AddListener(OnNameInputEndEdit);
+            _saveNameButton?.onClick.AddListener(OnSaveNameClicked);
+
             if (_titleText != null && string.IsNullOrEmpty(_titleText.text))
             {
                 _titleText.text = "LEADERBOARD";
@@ -88,6 +99,36 @@ namespace ArrowSwarm.UI
             {
                 var f = transform.Find("BoardFrame/Footer") ?? transform.Find("BoardFrame/FooterArea/TrophyBadge") ?? transform.Find("FooterArea/TrophyBadge");
                 if (f != null) _footerTrophyImage = f.GetComponent<Image>();
+            }
+
+            // AutoWire Current Player bar if present
+            if (_currentPlayerNameText == null)
+            {
+                var t = transform.Find("BoardFrame/PlayerBar/NameText") 
+                     ?? transform.Find("BoardFrame/Footer/PlayerNameText")
+                     ?? transform.Find("PlayerNameText");
+                if (t != null) _currentPlayerNameText = t.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (_currentPlayerRankText == null)
+            {
+                var t = transform.Find("BoardFrame/PlayerBar/RankText")
+                     ?? transform.Find("BoardFrame/Footer/RankText");
+                if (t != null) _currentPlayerRankText = t.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (_nameInputField == null)
+            {
+                var input = transform.Find("BoardFrame/PlayerBar/NameInputField")
+                         ?? transform.Find("NameInputField");
+                if (input != null) _nameInputField = input.GetComponent<TMP_InputField>();
+            }
+
+            if (_saveNameButton == null)
+            {
+                var btn = transform.Find("BoardFrame/PlayerBar/SaveNameButton")
+                       ?? transform.Find("SaveNameButton");
+                if (btn != null) _saveNameButton = btn.GetComponent<Button>();
             }
         }
 
@@ -164,6 +205,59 @@ namespace ArrowSwarm.UI
                     }
                 }
             }
+
+            // Update current player info bar if assigned
+            var playerData = DataManager.Instance?.PlayerData;
+            if (playerData != null)
+            {
+                if (_currentPlayerNameText != null)
+                {
+                    _currentPlayerNameText.text = playerData.playerName;
+                }
+
+                if (_currentPlayerRankText != null && LeaderboardManager.Instance != null)
+                {
+                    _currentPlayerRankText.text = $"#{LeaderboardManager.Instance.GetPlayerRank()}";
+                }
+
+                if (_currentPlayerLevelText != null)
+                {
+                    _currentPlayerLevelText.text = $"Lv.{playerData.highestLevel}";
+                }
+
+                if (_currentPlayerStarsText != null)
+                {
+                    _currentPlayerStarsText.text = playerData.GetTotalStars().ToString();
+                }
+
+                if (_nameInputField != null && !_nameInputField.isFocused)
+                {
+                    _nameInputField.text = playerData.playerName;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Updates player username and refreshes ranking.
+        /// </summary>
+        public void SetPlayerName(string newName)
+        {
+            if (string.IsNullOrWhiteSpace(newName)) return;
+            LeaderboardManager.Instance?.SetPlayerName(newName);
+            RefreshLeaderboardData();
+        }
+
+        private void OnNameInputEndEdit(string text)
+        {
+            SetPlayerName(text);
+        }
+
+        private void OnSaveNameClicked()
+        {
+            if (_nameInputField != null)
+            {
+                SetPlayerName(_nameInputField.text);
+            }
         }
 
         private System.Collections.IEnumerator FadeTo(float target, bool disableOnComplete = false)
@@ -185,6 +279,8 @@ namespace ArrowSwarm.UI
         {
             _backButton?.onClick.RemoveListener(Hide);
             _closeButton?.onClick.RemoveListener(Hide);
+            _nameInputField?.onEndEdit.RemoveListener(OnNameInputEndEdit);
+            _saveNameButton?.onClick.RemoveListener(OnSaveNameClicked);
         }
     }
 }
