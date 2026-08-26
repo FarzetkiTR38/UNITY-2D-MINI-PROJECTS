@@ -8,47 +8,48 @@ namespace ArrowSwarm.Effects
     using UnityEngine.UI;
 
     /// <summary>
-    /// Manages modern, responsive touch ripple effects across all screen interactions.
-    /// Spawns a glowing blue double-wave ripple on tap/click with zero GC allocations.
+    /// Manages modern concentric touch indicator effects across all screen interactions.
+    /// Features a fixed semi-transparent outer blue circle and an opaque solid inner blue circle
+    /// that shrinks inward into itself on tap/click with zero GC allocations.
     /// </summary>
     public class TouchEffectManager : Singleton<TouchEffectManager>
     {
         [Header("Visual Settings")]
-        [SerializeField] private Color _innerDotColor = new Color(0.40f, 0.78f, 1.0f, 0.85f);
-        [SerializeField] private Color _outerWaveColor = new Color(0.20f, 0.85f, 1.0f, 0.80f);
-        [SerializeField] private float _baseRadius = 16f;                                  // Compact touch radius (32px diameter)
-        [SerializeField] private float _animationDuration = 0.28f;                         // Snappy 280ms duration
+        [SerializeField] private Color _outerCircleColor = new Color(0.20f, 0.72f, 1.0f, 0.35f); // Semi-transparent blue
+        [SerializeField] private Color _innerCircleColor = new Color(0.10f, 0.62f, 1.0f, 1.0f);  // Solid opaque blue
+        [SerializeField] private float _baseRadius = 20f;                                       // Outer circle radius (~13px diameter)
+        [SerializeField] private float _innerRadiusRatio = 0.5f;                                // Inner circle radius ratio (delicate center dot)
+        [SerializeField] private float _animationDuration = 0.2f;                               // Super snappy 140ms duration
         [SerializeField] private int _poolSize = 12;
 
         private Canvas _touchCanvas;
         private RectTransform _canvasRect;
         private Sprite _circleSprite;
-        private Sprite _ringSprite;
 
-        private readonly List<RippleInstance> _pool = new List<RippleInstance>();
+        private readonly List<ConcentricTouchInstance> _pool = new List<ConcentricTouchInstance>();
 
-        /// <summary>Base radius in pixels for the touch ripple effect.</summary>
+        /// <summary>Base radius in pixels for the outer circle.</summary>
         public float BaseRadius
         {
             get => _baseRadius;
             set => _baseRadius = value;
         }
 
-        /// <summary>Total duration of the ripple animation.</summary>
+        /// <summary>Total duration of the touch animation.</summary>
         public float AnimationDuration
         {
             get => _animationDuration;
             set => _animationDuration = value;
         }
 
-        private class RippleInstance
+        private class ConcentricTouchInstance
         {
             public GameObject RootObj;
             public RectTransform RootRect;
-            public Image InnerDotImage;
-            public Image OuterWaveImage;
-            public RectTransform InnerDotRect;
-            public RectTransform OuterWaveRect;
+            public Image OuterCircleImage;
+            public Image InnerCircleImage;
+            public RectTransform OuterCircleRect;
+            public RectTransform InnerCircleRect;
             public Coroutine ActiveCoroutine;
         }
 
@@ -111,78 +112,74 @@ namespace ArrowSwarm.Effects
         }
 
         /// <summary>
-        /// Spawns a glowing touch ripple wave at the specified screen position.
+        /// Spawns a concentric touch effect (fixed semi-transparent outer + shrinking solid inner) at screen position.
         /// </summary>
         /// <param name="screenPosition">Screen coordinates of the touch/click event.</param>
         public void SpawnTouchEffect(Vector2 screenPosition)
         {
             if (_canvasRect == null) return;
 
-            RippleInstance ripple = GetAvailableRipple();
-            if (ripple == null) return;
+            ConcentricTouchInstance instance = GetAvailableInstance();
+            if (instance == null) return;
 
             // Dynamically update sizes from live _baseRadius
-            float diameter = _baseRadius * 2f;
-            ripple.RootRect.sizeDelta = new Vector2(diameter, diameter);
-            ripple.OuterWaveRect.sizeDelta = new Vector2(diameter, diameter);
-            ripple.InnerDotRect.sizeDelta = new Vector2(diameter * 0.5f, diameter * 0.5f);
+            float outerDiameter = _baseRadius * 2f;
+            float innerDiameter = outerDiameter * _innerRadiusRatio;
+
+            instance.RootRect.sizeDelta = new Vector2(outerDiameter, outerDiameter);
+            instance.OuterCircleRect.sizeDelta = new Vector2(outerDiameter, outerDiameter);
+            instance.InnerCircleRect.sizeDelta = new Vector2(innerDiameter, innerDiameter);
 
             // Position ripple on screen-space canvas
             Vector2 localPoint;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 _canvasRect, screenPosition, null, out localPoint);
 
-            ripple.RootRect.anchoredPosition = localPoint;
-            ripple.RootObj.SetActive(true);
+            instance.RootRect.anchoredPosition = localPoint;
+            instance.RootObj.SetActive(true);
 
-            if (ripple.ActiveCoroutine != null)
+            if (instance.ActiveCoroutine != null)
             {
-                StopCoroutine(ripple.ActiveCoroutine);
+                StopCoroutine(instance.ActiveCoroutine);
             }
 
-            ripple.ActiveCoroutine = StartCoroutine(AnimateRippleRoutine(ripple));
+            instance.ActiveCoroutine = StartCoroutine(AnimateConcentricShrinkRoutine(instance));
         }
 
-        private IEnumerator AnimateRippleRoutine(RippleInstance ripple)
+        private IEnumerator AnimateConcentricShrinkRoutine(ConcentricTouchInstance instance)
         {
             float elapsed = 0f;
 
-            // Initial setup
-            ripple.InnerDotRect.localScale = Vector3.one * 0.25f;
-            ripple.OuterWaveRect.localScale = Vector3.one * 0.20f;
+            // Initial state: outer circle fixed, inner circle full size
+            instance.OuterCircleRect.localScale = Vector3.one;
+            instance.OuterCircleImage.color = _outerCircleColor;
 
-            ripple.InnerDotImage.color = _innerDotColor;
-            ripple.OuterWaveImage.color = _outerWaveColor;
+            instance.InnerCircleRect.localScale = Vector3.one;
+            instance.InnerCircleImage.color = _innerCircleColor;
 
             while (elapsed < _animationDuration)
             {
                 elapsed += Time.unscaledDeltaTime;
                 float t = Mathf.Clamp01(elapsed / _animationDuration);
 
-                // Smooth cubic ease-out
-                float easeOut = 1f - Mathf.Pow(1f - t, 3f);
-                float easeOutFast = 1f - Mathf.Pow(1f - Mathf.Clamp01(t * 1.8f), 2f);
+                // Smooth ease-in-out shrink: inner circle collapses into its center (1 -> 0)
+                float shrink = 1f - (t * t * (3f - 2f * t)); // Smoothstep curve
+                instance.InnerCircleRect.localScale = Vector3.one * Mathf.Max(0f, shrink);
 
-                // Outer wave expands slightly and fades out
-                float waveScale = Mathf.Lerp(0.20f, 1.05f, easeOut);
-                float waveAlpha = Mathf.Lerp(_outerWaveColor.a, 0f, easeOut);
-                ripple.OuterWaveRect.localScale = Vector3.one * waveScale;
-                ripple.OuterWaveImage.color = new Color(_outerWaveColor.r, _outerWaveColor.g, _outerWaveColor.b, waveAlpha);
-
-                // Inner dot expands slightly and fades fast
-                float dotScale = Mathf.Lerp(0.25f, 0.70f, easeOutFast);
-                float dotAlpha = Mathf.Lerp(_innerDotColor.a, 0f, easeOutFast);
-                ripple.InnerDotRect.localScale = Vector3.one * dotScale;
-                ripple.InnerDotImage.color = new Color(_innerDotColor.r, _innerDotColor.g, _innerDotColor.b, dotAlpha);
+                // Outer circle remains fixed size throughout, then fades out at the very end as inner disappears
+                float outerAlpha = (t > 0.85f)
+                    ? Mathf.Lerp(_outerCircleColor.a, 0f, (t - 0.85f) / 0.15f)
+                    : _outerCircleColor.a;
+                instance.OuterCircleImage.color = new Color(_outerCircleColor.r, _outerCircleColor.g, _outerCircleColor.b, outerAlpha);
 
                 yield return null;
             }
 
-            ripple.RootObj.SetActive(false);
-            ripple.ActiveCoroutine = null;
+            instance.RootObj.SetActive(false);
+            instance.ActiveCoroutine = null;
         }
 
-        private RippleInstance GetAvailableRipple()
+        private ConcentricTouchInstance GetAvailableInstance()
         {
             for (int i = 0; i < _pool.Count; i++)
             {
@@ -233,10 +230,6 @@ namespace ArrowSwarm.Effects
             {
                 _circleSprite = GenerateCircleSprite(128);
             }
-            if (_ringSprite == null)
-            {
-                _ringSprite = GenerateRingSprite(128, 0.76f);
-            }
         }
 
         private void InitializePool()
@@ -252,51 +245,52 @@ namespace ArrowSwarm.Effects
             }
             _pool.Clear();
 
-            float diameter = _baseRadius * 2f;
+            float outerDiameter = _baseRadius * 2f;
+            float innerDiameter = outerDiameter * _innerRadiusRatio;
 
             for (int i = 0; i < _poolSize; i++)
             {
-                var root = new GameObject($"TouchRipple_{i}");
+                var root = new GameObject($"ConcentricTouch_{i}");
                 root.transform.SetParent(_touchCanvas.transform, false);
                 var rootRect = root.AddComponent<RectTransform>();
-                rootRect.sizeDelta = new Vector2(diameter, diameter);
+                rootRect.sizeDelta = new Vector2(outerDiameter, outerDiameter);
 
-                // Outer wave ring
-                var waveObj = new GameObject("OuterWave");
-                waveObj.transform.SetParent(root.transform, false);
-                var waveRect = waveObj.AddComponent<RectTransform>();
-                waveRect.sizeDelta = new Vector2(diameter, diameter);
-                var waveImg = waveObj.AddComponent<Image>();
-                waveImg.sprite = _ringSprite;
-                waveImg.color = _outerWaveColor;
-                waveImg.raycastTarget = false;
+                // Layer 1: Outer Semi-Transparent Blue Circle (Fixed Size)
+                var outerObj = new GameObject("OuterCircle");
+                outerObj.transform.SetParent(root.transform, false);
+                var outerRect = outerObj.AddComponent<RectTransform>();
+                outerRect.sizeDelta = new Vector2(outerDiameter, outerDiameter);
+                var outerImg = outerObj.AddComponent<Image>();
+                outerImg.sprite = _circleSprite;
+                outerImg.color = _outerCircleColor;
+                outerImg.raycastTarget = false;
 
-                // Inner dot
-                var dotObj = new GameObject("InnerDot");
-                dotObj.transform.SetParent(root.transform, false);
-                var dotRect = dotObj.AddComponent<RectTransform>();
-                dotRect.sizeDelta = new Vector2(diameter * 0.5f, diameter * 0.5f);
-                var dotImg = dotObj.AddComponent<Image>();
-                dotImg.sprite = _circleSprite;
-                dotImg.color = _innerDotColor;
-                dotImg.raycastTarget = false;
+                // Layer 2: Inner Solid Opaque Blue Circle (Shrinks inward)
+                var innerObj = new GameObject("InnerCircle");
+                innerObj.transform.SetParent(root.transform, false);
+                var innerRect = innerObj.AddComponent<RectTransform>();
+                innerRect.sizeDelta = new Vector2(innerDiameter, innerDiameter);
+                var innerImg = innerObj.AddComponent<Image>();
+                innerImg.sprite = _circleSprite;
+                innerImg.color = _innerCircleColor;
+                innerImg.raycastTarget = false;
 
                 root.SetActive(false);
 
-                _pool.Add(new RippleInstance
+                _pool.Add(new ConcentricTouchInstance
                 {
                     RootObj = root,
                     RootRect = rootRect,
-                    OuterWaveImage = waveImg,
-                    OuterWaveRect = waveRect,
-                    InnerDotImage = dotImg,
-                    InnerDotRect = dotRect
+                    OuterCircleImage = outerImg,
+                    OuterCircleRect = outerRect,
+                    InnerCircleImage = innerImg,
+                    InnerCircleRect = innerRect
                 });
             }
         }
 
         /// <summary>
-        /// Procedurally generates a smooth, anti-aliased filled circle sprite.
+        /// Procedurally generates a smooth, anti-aliased solid circle sprite.
         /// </summary>
         private static Sprite GenerateCircleSprite(int size)
         {
@@ -305,7 +299,7 @@ namespace ArrowSwarm.Effects
             tex.wrapMode = TextureWrapMode.Clamp;
 
             float center = (size - 1) * 0.5f;
-            float radius = center - 1.5f;
+            float radius = center - 1.2f;
 
             Color[] colors = new Color[size * size];
             for (int y = 0; y < size; y++)
@@ -314,37 +308,6 @@ namespace ArrowSwarm.Effects
                 {
                     float dist = Vector2.Distance(new Vector2(x, y), new Vector2(center, center));
                     float alpha = Mathf.Clamp01(radius - dist + 0.5f);
-                    colors[y * size + x] = new Color(1f, 1f, 1f, alpha);
-                }
-            }
-
-            tex.SetPixels(colors);
-            tex.Apply();
-            return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 100f);
-        }
-
-        /// <summary>
-        /// Procedurally generates a smooth, anti-aliased hollow ring sprite.
-        /// </summary>
-        private static Sprite GenerateRingSprite(int size, float innerRatio)
-        {
-            Texture2D tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
-            tex.filterMode = FilterMode.Bilinear;
-            tex.wrapMode = TextureWrapMode.Clamp;
-
-            float center = (size - 1) * 0.5f;
-            float outerRadius = center - 1.5f;
-            float innerRadius = outerRadius * innerRatio;
-
-            Color[] colors = new Color[size * size];
-            for (int y = 0; y < size; y++)
-            {
-                for (int x = 0; x < size; x++)
-                {
-                    float dist = Vector2.Distance(new Vector2(x, y), new Vector2(center, center));
-                    float outerAlpha = Mathf.Clamp01(outerRadius - dist + 0.5f);
-                    float innerAlpha = Mathf.Clamp01(dist - innerRadius + 0.5f);
-                    float alpha = Mathf.Min(outerAlpha, innerAlpha);
                     colors[y * size + x] = new Color(1f, 1f, 1f, alpha);
                 }
             }
