@@ -51,6 +51,9 @@ namespace ArrowSwarm.Data
         /// <summary>Unique player identifier.</summary>
         public string playerId = "";
 
+        /// <summary>Whether the interactive tutorial (Level 0) has been completed.</summary>
+        public bool isTutorialCompleted = false;
+
         /// <summary>
         /// Calculates the total stars earned across all levels.
         /// </summary>
@@ -101,7 +104,8 @@ namespace ArrowSwarm.Data
                 theme = ThemeMode.Light,
                 selectedLanguage = "ENGLISH",
                 playerName = "Player",
-                playerId = Guid.NewGuid().ToString()
+                playerId = Guid.NewGuid().ToString(),
+                isTutorialCompleted = false
             };
         }
     }

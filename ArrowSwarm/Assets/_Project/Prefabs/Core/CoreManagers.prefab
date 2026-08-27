@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 2416592008265847882}
   - component: {fileID: 4338240835624392683}
   - component: {fileID: 8753500331722121072}
+  - component: {fileID: 647803647902238504}
   m_Layer: 0
   m_Name: CoreManagers
   m_TagString: Untagged
@@ -164,10 +165,14 @@ MonoBehaviour:
   _specificLevel: 1
   _starsForSpecificLevel: 3
   _targetTips: 10
+  _targetPlayerName: Player
+  _targetTutorialCompleted: 0
+  _livePlayerName: 
   _liveCurrentLevel: 0
   _liveHighestLevel: 0
   _liveTotalStars: 0
   _liveTipCount: 0
+  _liveTutorialCompleted: 0
 --- !u!114 &2416592008265847882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -230,3 +235,15 @@ MonoBehaviour:
   _innerRadiusRatio: 0.5
   _animationDuration: 0.2
   _poolSize: 12
+--- !u!114 &647803647902238504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036625359666785736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e73b1a6816de74d43948cae8c22d5357, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Core.HapticManager

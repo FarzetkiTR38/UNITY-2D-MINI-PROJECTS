@@ -3,6 +3,7 @@ namespace ArrowSwarm.Core
     using UnityEngine;
     using UnityEngine.InputSystem;
     using ArrowSwarm.Arrow;
+    using ArrowSwarm.Grid;
     using ArrowSwarm.Utils;
 
     /// <summary>
@@ -91,7 +92,10 @@ namespace ArrowSwarm.Core
                     var arrow = ArrowSpawner.Instance.GetArrowAt(gPoint.GridPosition);
                     if (arrow != null && !arrow.IsFired)
                     {
-                        arrow.OnPlayerClick();
+                        if (IsAllowedInTutorial(arrow))
+                        {
+                            arrow.OnPlayerClick();
+                        }
                         return;
                     }
                 }
@@ -106,11 +110,26 @@ namespace ArrowSwarm.Core
                     var arrow = hits[i].collider.GetComponentInParent<ArrowSwarm.Arrow.Arrow>();
                     if (arrow != null && !arrow.IsFired)
                     {
-                        arrow.OnPlayerClick();
+                        if (IsAllowedInTutorial(arrow))
+                        {
+                            arrow.OnPlayerClick();
+                        }
                         break;
                     }
                 }
             }
+        }
+
+        private bool IsAllowedInTutorial(Arrow arrow)
+        {
+            if (ArrowSwarm.Tutorial.TutorialManager.Instance != null &&
+                ArrowSwarm.Tutorial.TutorialManager.Instance.IsTutorialActive)
+            {
+                // In tutorial, player can tap the highlighted target or any clear unblocked arrow
+                return arrow.HeadPoint == ArrowSwarm.Tutorial.TutorialManager.Instance.CurrentTargetGridPos ||
+                       GridManager.Instance.IsPathClear(arrow.HeadPoint, arrow.HeadDirection);
+            }
+            return true;
         }
     }
 }

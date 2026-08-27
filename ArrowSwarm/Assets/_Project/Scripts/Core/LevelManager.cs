@@ -65,17 +65,17 @@ namespace ArrowSwarm.Core
 
         private System.Collections.IEnumerator DeferredLoadLevel()
         {
-            // Wait for end of frame so all scene components finish Awake, OnEnable, and Start
-            yield return new WaitForEndOfFrame();
-            LoadLevel();
+            // Wait 1 frame so all scene components finish Awake, OnEnable, and Start
+            yield return null;
+            if (IsPlayableGameScene(SceneManager.GetActiveScene().name))
+            {
+                LoadLevel();
+            }
         }
 
         private void Start()
         {
-            if (IsPlayableGameScene(SceneManager.GetActiveScene().name))
-            {
-                StartCoroutine(DeferredLoadLevel());
-            }
+            StartCoroutine(DeferredLoadLevel());
         }
 
         private bool IsPlayableGameScene(string sceneName)
@@ -97,9 +97,15 @@ namespace ArrowSwarm.Core
                 return;
             }
 
-            int level = ArrowSwarm.Debug.DebugManager.Instance != null 
-                ? ArrowSwarm.Debug.DebugManager.Instance.GetEffectiveLevel() 
-                : (DataManager.Instance?.PlayerData?.currentLevel ?? 1);
+            int level;
+            if (ArrowSwarm.Debug.DebugManager.Instance != null && ArrowSwarm.Debug.DebugManager.Instance.UseDebugLevel)
+            {
+                level = ArrowSwarm.Debug.DebugManager.Instance.GetEffectiveLevel();
+            }
+            else
+            {
+                level = DataManager.Instance?.PlayerData?.currentLevel ?? 1;
+            }
             LoadLevel(level);
         }
 

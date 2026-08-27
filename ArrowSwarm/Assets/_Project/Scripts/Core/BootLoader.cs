@@ -27,7 +27,14 @@ namespace ArrowSwarm.Core
                 yield return new WaitForSeconds(waitTime);
             }
 
-            AsyncOperation op = SceneManager.LoadSceneAsync("MainMenuScene");
+            string targetScene = "MainMenuScene";
+            if (Data.DataManager.Instance != null && !Data.DataManager.Instance.IsTutorialCompleted)
+            {
+                Data.DataManager.Instance.SetCurrentLevel(1);
+                targetScene = "GameScene";
+            }
+
+            AsyncOperation op = SceneManager.LoadSceneAsync(targetScene);
             while (op != null && !op.isDone)
             {
                 yield return null;

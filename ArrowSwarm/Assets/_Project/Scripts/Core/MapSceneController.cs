@@ -21,6 +21,37 @@ namespace ArrowSwarm.Core
         [Tooltip("Active level to load when starting, switching maps, or clicking Restart.")]
         [SerializeField] private int _defaultLevel = 1;
 
+        [Header("Tutorial Testing")]
+        [Tooltip("When enabled, runs the interactive tutorial guidance on the current map/level.")]
+        [SerializeField] private bool _enableTutorialTest = false;
+
+        /// <summary>Whether tutorial test mode is active in MapTestScene.</summary>
+        public bool EnableTutorialTest
+        {
+            get => _enableTutorialTest;
+            set => _enableTutorialTest = value;
+        }
+
+        [ContextMenu("🎯 Start Interactive Tutorial")]
+        public void StartTutorialTest()
+        {
+            _enableTutorialTest = true;
+            if (Application.isPlaying && ArrowSwarm.Tutorial.TutorialManager.Instance != null)
+            {
+                ArrowSwarm.Tutorial.TutorialManager.Instance.StartTutorial();
+            }
+        }
+
+        [ContextMenu("⏹ Stop Interactive Tutorial")]
+        public void StopTutorialTest()
+        {
+            _enableTutorialTest = false;
+            if (Application.isPlaying && ArrowSwarm.Tutorial.TutorialManager.Instance != null)
+            {
+                ArrowSwarm.Tutorial.TutorialManager.Instance.EndTutorialSilently();
+            }
+        }
+
         /// <summary>Currently selected map index (0 to 11).</summary>
         public int ActiveMapIndex
         {
