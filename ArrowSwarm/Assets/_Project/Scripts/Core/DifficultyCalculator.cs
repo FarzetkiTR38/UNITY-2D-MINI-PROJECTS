@@ -16,6 +16,7 @@ namespace ArrowSwarm.Core
         /// </summary>
         public static int GetDifficultyTier(int level)
         {
+            if (level <= 0) return 1;
             return Mathf.FloorToInt((level - 1) / 5f) + 1;
         }
 
@@ -25,6 +26,7 @@ namespace ArrowSwarm.Core
         /// </summary>
         public static int GetArrowCount(int level, int gridWidth, int gridHeight)
         {
+            if (level <= 0) return 3;
             int totalPoints = gridWidth * gridHeight;
             int avgWeight = GetMinWeight(level) + (GetMaxWeight(level) - GetMinWeight(level)) / 2;
             int avgPointsPerArrow = avgWeight + 1;
@@ -42,6 +44,7 @@ namespace ArrowSwarm.Core
         /// </summary>
         public static float GetOutwardChance(int level)
         {
+            if (level <= 0) return 1f;
             int tier = GetDifficultyTier(level);
             float chance = 0.70f - (tier - 1) * 0.01f;
             return Mathf.Max(0.25f, chance);
@@ -52,6 +55,7 @@ namespace ArrowSwarm.Core
         /// </summary>
         public static int GetMobHP(int level)
         {
+            if (level <= 0) return 1;
             int tier = GetDifficultyTier(level);
             return 5 + (tier - 1) * 2 + Mathf.FloorToInt(tier / 10f) * 5;
         }
@@ -62,6 +66,7 @@ namespace ArrowSwarm.Core
         /// </summary>
         public static float GetMobSpeed(int level, float maxMobSpeed)
         {
+            if (level <= 0) return 1.0f;
             int tier = GetDifficultyTier(level);
             float speed = 1.0f + (tier - 1) * 0.1f + Mathf.FloorToInt(tier / 20f) * 0.5f;
             return Mathf.Min(speed, maxMobSpeed);
@@ -73,6 +78,7 @@ namespace ArrowSwarm.Core
         /// </summary>
         public static float GetSpawnInterval(int level, float minSpawnInterval)
         {
+            if (level <= 0) return 2.5f;
             int tier = GetDifficultyTier(level);
             float interval = 3.0f - (tier - 1) * 0.05f;
             return Mathf.Max(minSpawnInterval, interval);
@@ -83,6 +89,7 @@ namespace ArrowSwarm.Core
         /// </summary>
         public static int GetTotalMobs(int level)
         {
+            if (level <= 0) return 3;
             int tier = GetDifficultyTier(level);
             return Mathf.FloorToInt(5 + tier * 1.2f + Mathf.FloorToInt(tier / 10f) * 3);
         }

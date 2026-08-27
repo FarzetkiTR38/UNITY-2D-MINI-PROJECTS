@@ -39,6 +39,8 @@ namespace ArrowSwarm.Debug
         [SerializeField] private int _targetTips = 10;
         [Tooltip("Target player username.")]
         [SerializeField] private string _targetPlayerName = "Player";
+        [Tooltip("Target tutorial completion status.")]
+        [SerializeField] private bool _targetTutorialCompleted = false;
 
         [Header("--- Live Monitor (Read-Only) ---")]
         [SerializeField] private string _livePlayerName;
@@ -46,6 +48,7 @@ namespace ArrowSwarm.Debug
         [SerializeField] private int _liveHighestLevel;
         [SerializeField] private int _liveTotalStars;
         [SerializeField] private int _liveTipCount;
+        [SerializeField] private bool _liveTutorialCompleted;
 
         /// <summary>Target current level property.</summary>
         public int TargetLevel { get => _targetLevel; set => _targetLevel = value; }
@@ -109,6 +112,7 @@ namespace ArrowSwarm.Debug
             _targetTotalStars = data.GetTotalStars();
             _targetTips = data.tipCount;
             _targetPlayerName = data.playerName;
+            _targetTutorialCompleted = data.isTutorialCompleted;
             _specificLevel = data.currentLevel;
             _starsForSpecificLevel = data.GetStarsForLevel(data.currentLevel);
 
@@ -127,6 +131,7 @@ namespace ArrowSwarm.Debug
             ApplyTips();
             ApplyPlayerName();
             ApplyTotalStars();
+            ApplyTutorialStatus();
             LogDebug("Applied all Admin edits to PlayerData.");
         }
 
@@ -220,6 +225,47 @@ namespace ArrowSwarm.Debug
         }
 
         /// <summary>
+        /// Applies the target tutorial completed status.
+        /// </summary>
+        [ContextMenu("Apply Tutorial Status")]
+        public void ApplyTutorialStatus()
+        {
+            if (DataManager.Instance == null) return;
+            DataManager.Instance.SetTutorialCompleted(_targetTutorialCompleted);
+            LogDebug($"Set Tutorial Completed to {_targetTutorialCompleted}");
+        }
+
+        /// <summary>
+        /// Resets tutorial status to uncompleted (false).
+        /// </summary>
+        [ContextMenu("🎯 Tutorial: Reset (Set Uncompleted)")]
+        public void ResetTutorial()
+        {
+            _targetTutorialCompleted = false;
+            if (DataManager.Instance != null)
+            {
+                DataManager.Instance.SetTutorialCompleted(false);
+                PullFromPlayerData();
+            }
+            LogDebug("Tutorial reset to UNCOMPLETED (false).");
+        }
+
+        /// <summary>
+        /// Marks tutorial as completed (true).
+        /// </summary>
+        [ContextMenu("✅ Tutorial: Mark As Completed")]
+        public void CompleteTutorial()
+        {
+            _targetTutorialCompleted = true;
+            if (DataManager.Instance != null)
+            {
+                DataManager.Instance.SetTutorialCompleted(true);
+                PullFromPlayerData();
+            }
+            LogDebug("Tutorial set to COMPLETED (true).");
+        }
+
+        /// <summary>
         /// Resets all player data to factory default.
         /// </summary>
         [ContextMenu("🔄 Reset All Player Data (Default)")]
@@ -241,6 +287,7 @@ namespace ArrowSwarm.Debug
             _liveHighestLevel = data.highestLevel;
             _liveTotalStars = data.GetTotalStars();
             _liveTipCount = data.tipCount;
+            _liveTutorialCompleted = data.isTutorialCompleted;
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]

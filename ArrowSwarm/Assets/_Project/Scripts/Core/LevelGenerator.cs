@@ -45,6 +45,11 @@ namespace ArrowSwarm.Core
                 return new LevelData { IsValid = false };
             }
 
+            if (level <= 0)
+            {
+                return GenerateTutorialLevel(map, config, 0);
+            }
+
             LevelParams levelParams = DifficultyCalculator.CalculateAll(
                 level, map.GridWidth, map.GridHeight,
                 config.MaxMobSpeed, config.MinSpawnInterval);
@@ -1699,6 +1704,68 @@ namespace ArrowSwarm.Core
 
             RestoreArrowState(placements, fallbackIndex, fallbackOrigPath, fallbackOrigDir);
             return false;
+        }
+
+        /// <summary>
+        /// Generates a handcrafted, deterministic Introductory Level (Level 1).
+        /// Sets up 3 clear arrows to teach firing, unblocking, and rainbow mechanics.
+        /// </summary>
+        private static LevelData GenerateTutorialLevel(MapData map, GameConfig config, int level = 1)
+        {
+            LevelParams levelParams = new LevelParams
+            {
+                Level = level,
+                DifficultyTier = 1,
+                MapIndex = 0,
+                ArrowCount = 3,
+                OutwardChance = 1f,
+                MobHP = 1,
+                MobSpeed = 1.0f,
+                SpawnInterval = 2.5f,
+                TotalMobs = 3,
+                MinWeight = 1,
+                MaxWeight = 1,
+                MapScaleFactor = 1f,
+                WaveConfig = new WaveConfig
+                {
+                    Waves = new WaveData[]
+                    {
+                        new WaveData { MobCount = 3, MobHP = 1, IsBossWave = false }
+                    },
+                    WavePauseDuration = 2f
+                }
+            };
+
+            var placements = new List<SolvabilityChecker.ArrowPlacement>
+            {
+                // Arrow 1 (Step 1): Direct outward arrow facing Up into the top path
+                new SolvabilityChecker.ArrowPlacement(
+                    new List<Vector2Int> { new Vector2Int(2, 6), new Vector2Int(2, 5) },
+                    ArrowDirection.Up
+                ),
+                // Arrow 2 (Step 2): Blocked behind Arrow 1; path clears when Arrow 1 fires
+                new SolvabilityChecker.ArrowPlacement(
+                    new List<Vector2Int> { new Vector2Int(2, 4), new Vector2Int(2, 3) },
+                    ArrowDirection.Up
+                ),
+                // Arrow 3 (Step 3): Side arrow, becomes final Rainbow arrow
+                new SolvabilityChecker.ArrowPlacement(
+                    new List<Vector2Int> { new Vector2Int(4, 3), new Vector2Int(3, 3) },
+                    ArrowDirection.Right
+                )
+            };
+
+            LogDebug($"Handcrafted Introductory Level (Level {level}) generated successfully.");
+
+            return new LevelData
+            {
+                Level = level,
+                Params = levelParams,
+                Map = map,
+                ArrowPlacements = placements,
+                IsValid = true,
+                GenerationAttempts = 1
+            };
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]

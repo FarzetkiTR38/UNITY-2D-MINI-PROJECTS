@@ -78,7 +78,7 @@ namespace ArrowSwarm.Data
         public void SetCurrentLevel(int level)
         {
             if (_playerData == null) return;
-            _playerData.currentLevel = Mathf.Max(1, level);
+            _playerData.currentLevel = Mathf.Max(0, level);
             if (level > _playerData.highestLevel)
             {
                 _playerData.highestLevel = level;
@@ -94,6 +94,22 @@ namespace ArrowSwarm.Data
             if (_playerData == null) return;
             _playerData.highestLevel = Mathf.Max(1, highest);
             NotifyAndSave();
+        }
+
+        /// <summary>
+        /// Gets whether the interactive tutorial has been completed.
+        /// </summary>
+        public bool IsTutorialCompleted => PlayerData?.isTutorialCompleted ?? false;
+
+        /// <summary>
+        /// Sets whether the tutorial is completed and persists changes.
+        /// </summary>
+        public void SetTutorialCompleted(bool completed)
+        {
+            if (_playerData == null) return;
+            _playerData.isTutorialCompleted = completed;
+            NotifyAndSave();
+            LogDebug($"Tutorial completion status set to: {completed}");
         }
 
         /// <summary>

@@ -47,6 +47,12 @@ namespace ArrowSwarm.UI
 
         private void Show()
         {
+            if (ArrowSwarm.Tutorial.TutorialManager.Instance != null && ArrowSwarm.Tutorial.TutorialManager.Instance.IsTutorialActive)
+            {
+                // Active Tutorial is handled by TutorialManager & TutorialOverlayUI
+                return;
+            }
+
             int level = LevelManager.Instance != null && LevelManager.Instance.CurrentParams.Level > 0 
                 ? LevelManager.Instance.CurrentParams.Level 
                 : (Data.DataManager.Instance?.PlayerData?.currentLevel ?? 1);

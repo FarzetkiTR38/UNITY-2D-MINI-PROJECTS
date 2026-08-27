@@ -113,7 +113,29 @@ namespace ArrowSwarm.Core.Editor
             }
             EditorGUILayout.EndHorizontal();
 
-            // 4. Camera Preview Fit
+            // 4. Tutorial Testing Controls
+            EditorGUILayout.Space(10);
+            EditorGUILayout.LabelField("🎯 Tutorial Testing", EditorStyles.boldLabel);
+            EditorGUILayout.BeginHorizontal();
+            
+            bool tutActive = controller.EnableTutorialTest;
+            GUI.backgroundColor = tutActive ? new Color(0.2f, 0.9f, 0.4f) : Color.white;
+            if (GUILayout.Button(tutActive ? "✅ Tutorial: ACTIVE" : "▶ Start Tutorial Test", GUILayout.Height(30)))
+            {
+                controller.StartTutorialTest();
+                EditorUtility.SetDirty(controller);
+            }
+
+            GUI.backgroundColor = tutActive ? new Color(1f, 0.4f, 0.4f) : Color.white;
+            if (GUILayout.Button("⏹ Stop Tutorial", GUILayout.Height(30)))
+            {
+                controller.StopTutorialTest();
+                EditorUtility.SetDirty(controller);
+            }
+            GUI.backgroundColor = Color.white;
+            EditorGUILayout.EndHorizontal();
+
+            // 5. Camera Preview Fit
             EditorGUILayout.Space(8);
             if (GUILayout.Button("📷 Fit Camera to Preview (9:16)", GUILayout.Height(26)))
             {
