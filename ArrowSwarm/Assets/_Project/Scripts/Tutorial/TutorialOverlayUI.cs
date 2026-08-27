@@ -126,16 +126,25 @@ namespace ArrowSwarm.Tutorial
         {
             if (_bannerRect == null) yield break;
 
-            Vector3 startScale = Vector3.one * 0.9f;
+            Vector3 punchScale = Vector3.one * 1.08f;
             Vector3 targetScale = Vector3.one;
             float elapsed = 0f;
-            float duration = 0.25f;
+            float duration = 0.28f;
 
             while (elapsed < duration)
             {
                 elapsed += Time.unscaledDeltaTime;
-                float t = Mathf.SmoothStep(0f, 1f, elapsed / duration);
-                _bannerRect.localScale = Vector3.Lerp(startScale, targetScale, t);
+                float progress = elapsed / duration;
+                if (progress < 0.45f)
+                {
+                    float t = Mathf.SmoothStep(0f, 1f, progress / 0.45f);
+                    _bannerRect.localScale = Vector3.Lerp(Vector3.one * 0.92f, punchScale, t);
+                }
+                else
+                {
+                    float t = Mathf.SmoothStep(0f, 1f, (progress - 0.45f) / 0.55f);
+                    _bannerRect.localScale = Vector3.Lerp(punchScale, targetScale, t);
+                }
                 yield return null;
             }
 

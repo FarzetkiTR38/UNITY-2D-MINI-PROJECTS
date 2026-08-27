@@ -75,6 +75,36 @@ namespace ArrowSwarm.UI
             }
 
             UpdateTipCount();
+
+            bool isTutorial = ArrowSwarm.Tutorial.TutorialManager.Instance != null &&
+                              ArrowSwarm.Tutorial.TutorialManager.Instance.IsTutorialActive;
+
+            // In tutorial mode, hide both top and bottom bars for ultra-clean cinematic immersion
+            SetBarsVisible(!isTutorial, !isTutorial);
+        }
+
+        /// <summary>
+        /// Controls individual visibility of the Top and Bottom HUD bars.
+        /// </summary>
+        public void SetBarsVisible(bool showTop, bool showBottom)
+        {
+            if (_topPanelRect != null)
+            {
+                var topCG = _topPanelRect.GetComponent<CanvasGroup>();
+                if (topCG == null) topCG = _topPanelRect.gameObject.AddComponent<CanvasGroup>();
+                topCG.alpha = showTop ? 1f : 0f;
+                topCG.interactable = showTop;
+                topCG.blocksRaycasts = showTop;
+            }
+
+            if (_bottomPanelRect != null)
+            {
+                var bottomCG = _bottomPanelRect.GetComponent<CanvasGroup>();
+                if (bottomCG == null) bottomCG = _bottomPanelRect.gameObject.AddComponent<CanvasGroup>();
+                bottomCG.alpha = showBottom ? 1f : 0f;
+                bottomCG.interactable = showBottom;
+                bottomCG.blocksRaycasts = showBottom;
+            }
         }
 
         private void UpdateLives(int lives)

@@ -82,6 +82,10 @@ namespace ArrowSwarm.Tutorial
             _currentStep = 0;
 
             EnsureCanvas();
+
+            // Hide HUD bars for clean immersion during tutorial
+            FindFirstObjectByType<ArrowSwarm.UI.GameHUD>()?.SetBarsVisible(false, false);
+
             if (_overlayUI != null) _overlayUI.Show();
 
             // Advance to step 1
@@ -105,13 +109,15 @@ namespace ArrowSwarm.Tutorial
 
             int remainingArrows = ArrowSpawner.Instance != null ? ArrowSpawner.Instance.RemainingArrows : 1;
             string instruction;
+            string actionTag;
 
             if (remainingArrows == 1 || targetArrow.IsRainbow)
             {
                 instruction = GetLocalizedText(
-                    "Son Rainbow oku ateşle ve tüm düşmanları yok et!",
-                    "Fire the final Rainbow arrow to wipe out all enemies!"
+                    "Son <color=#FF66B2>Rainbow</color> oku ateşle ve <color=#FFE066>kazan</color>!",
+                    "Fire the final <color=#FF66B2>Rainbow</color> arrow to <color=#FFE066>win</color>!"
                 );
+                actionTag = "<color=#FF66B2>RAINBOW!</color>";
             }
             else
             {
@@ -119,44 +125,51 @@ namespace ArrowSwarm.Tutorial
                 {
                     case 1:
                         instruction = GetLocalizedText(
-                            "Düşmanları vurmak için serbest oka dokun!",
-                            "Tap the clear arrow to fire and hit enemies!"
+                            "Düşmanları vurmak için <color=#FFE066>serbest oka</color> dokun!",
+                            "Tap the <color=#FFE066>clear arrow</color> to hit enemies!"
                         );
+                        actionTag = GetLocalizedText("DOKUN!", "TAP!");
                         break;
                     case 2:
                         instruction = GetLocalizedText(
-                            "Harika! Şimdi yolu açılan bir sonraki oka dokun!",
-                            "Great! Now tap the next unblocked arrow!"
+                            "Harika! Şimdi <color=#66E0FF>yolu açılan</color> oka dokun!",
+                            "Great! Now tap the <color=#66E0FF>unblocked</color> arrow!"
                         );
+                        actionTag = GetLocalizedText("YOLU AÇ!", "FIRE!");
                         break;
                     case 3:
                         instruction = GetLocalizedText(
-                            "Çok iyi! Zincirleme olarak okları temizlemeye devam et!",
-                            "Awesome! Keep clearing the unblocked arrows!"
+                            "Çok iyi! <color=#FFE066>Zincirleme</color> okları temizlemeye devam et!",
+                            "Awesome! Keep <color=#FFE066>chaining</color> clear arrows!"
                         );
+                        actionTag = GetLocalizedText("ZİNCİRLE!", "CHAIN!");
                         break;
                     case 4:
                         instruction = GetLocalizedText(
-                            "Düşmanların geçmesine izin verme, okları ateşle!",
-                            "Don't let enemies pass, keep firing arrows!"
+                            "Düşmanları durdur, <color=#66E0FF>okları ateşle</color>!",
+                            "Stop enemies, <color=#66E0FF>keep firing arrows</color>!"
                         );
+                        actionTag = GetLocalizedText("ATEŞLE!", "SHOOT!");
                         break;
                     case 5:
                         instruction = GetLocalizedText(
-                            "Neredeyse bitti! Kalan okları serbest bırak!",
-                            "Almost there! Clear the remaining arrows!"
+                            "Neredeyse bitti! <color=#FFE066>Kalan okları</color> temizle!",
+                            "Almost there! Clear the <color=#FFE066>remaining arrows</color>!"
                         );
+                        actionTag = GetLocalizedText("AZ KALDI!", "ALMOST!");
                         break;
                     default:
                         instruction = GetLocalizedText(
-                            "Tüm okları temizle ve seviyeyi kazan!",
-                            "Clear all arrows to win the level!"
+                            "Tüm okları temizle ve <color=#FFE066>seviyeyi kazan</color>!",
+                            "Clear all arrows to <color=#FFE066>win the level</color>!"
                         );
+                        actionTag = GetLocalizedText("TEMİZLE!", "CLEAR!");
                         break;
                 }
             }
 
             _overlayUI?.SetInstruction(instruction);
+            _handUI?.SetActionTag(actionTag);
             PointHandAtArrow(targetArrow);
         }
 
@@ -245,6 +258,9 @@ namespace ArrowSwarm.Tutorial
             if (_stepTransitionRoutine != null) StopCoroutine(_stepTransitionRoutine);
             _handUI?.HideImmediately();
 
+            // Restore HUD bars for level complete and next levels
+            FindFirstObjectByType<ArrowSwarm.UI.GameHUD>()?.SetBarsVisible(true, true);
+
             string title = GetLocalizedText("EĞİTİM TAMAMLANDI!", "TUTORIAL COMPLETED!");
             string subtitle = GetLocalizedText(
                 "Artık savaşa hazırsın! Ana Menüye dön ve maceraya başla.",
@@ -286,6 +302,7 @@ namespace ArrowSwarm.Tutorial
             _isTutorialActive = false;
             _handUI?.HideImmediately();
             _overlayUI?.Hide();
+            FindFirstObjectByType<ArrowSwarm.UI.GameHUD>()?.SetBarsVisible(true, true);
             Time.timeScale = 1f;
 
             if (GameManager.Instance != null)
@@ -306,6 +323,7 @@ namespace ArrowSwarm.Tutorial
             _isTutorialActive = false;
             _handUI?.HideImmediately();
             _overlayUI?.Hide();
+            FindFirstObjectByType<ArrowSwarm.UI.GameHUD>()?.SetBarsVisible(true, true);
         }
 
         private string GetLocalizedText(string tr, string en)

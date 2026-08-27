@@ -18,6 +18,10 @@ namespace ArrowSwarm.Tutorial
         [SerializeField] private CanvasGroup _rippleGroup;
         [SerializeField] private CanvasGroup _handCanvasGroup;
 
+        [Header("--- Floating Action Bubble ---")]
+        [SerializeField] private RectTransform _bubbleRect;
+        [SerializeField] private TMPro.TextMeshProUGUI _bubbleText;
+
         [Header("--- Animation Tuning ---")]
         [SerializeField] private float _tapScaleDown = 0.84f;
         [SerializeField] private float _tapCycleDuration = 0.85f;
@@ -50,6 +54,21 @@ namespace ArrowSwarm.Tutorial
 
             _mainCamera = Camera.main;
             HideImmediately();
+        }
+
+        /// <summary>
+        /// Updates the action callout text in the floating speech bubble on the hand cursor.
+        /// </summary>
+        public void SetActionTag(string text)
+        {
+            if (_bubbleText != null)
+            {
+                _bubbleText.text = text;
+            }
+            if (_bubbleRect != null)
+            {
+                _bubbleRect.gameObject.SetActive(!string.IsNullOrEmpty(text));
+            }
         }
 
         /// <summary>
