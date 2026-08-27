@@ -2,6 +2,7 @@ namespace ArrowSwarm.Tutorial
 {
     using System;
     using System.Collections;
+    using ArrowSwarm.Core;
     using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
@@ -104,6 +105,7 @@ namespace ArrowSwarm.Tutorial
             if (overlayCG != null)
             {
                 overlayCG.blocksRaycasts = true;
+                overlayCG.interactable = true;
             }
 
             if (_bannerGroup != null) _bannerGroup.alpha = 0f;
@@ -115,6 +117,25 @@ namespace ArrowSwarm.Tutorial
             if (_completeCard != null)
             {
                 _completeCard.SetActive(true);
+
+                if (_continueButton == null)
+                {
+                    _continueButton = _completeCard.GetComponentInChildren<Button>(true);
+                }
+
+                if (_continueButton != null)
+                {
+                    _continueButton.onClick.RemoveAllListeners();
+                    _continueButton.onClick.AddListener(OnContinueClicked);
+                    _continueButton.interactable = true;
+                }
+
+                if (_completeGroup != null)
+                {
+                    _completeGroup.interactable = true;
+                    _completeGroup.blocksRaycasts = true;
+                }
+
                 if (gameObject.activeInHierarchy)
                 {
                     StartCoroutine(PopCompletionRoutine());
@@ -155,7 +176,7 @@ namespace ArrowSwarm.Tutorial
         private IEnumerator PopCompletionRoutine()
         {
             if (_completeGroup != null) _completeGroup.alpha = 0f;
-            RectTransform cardRect = _completeCard.transform as RectTransform;
+            RectTransform cardRect = _completeCard != null ? _completeCard.transform as RectTransform : null;
             if (cardRect != null) cardRect.localScale = Vector3.one * 0.7f;
 
             float elapsed = 0f;
@@ -170,7 +191,12 @@ namespace ArrowSwarm.Tutorial
                 yield return null;
             }
 
-            if (_completeGroup != null) _completeGroup.alpha = 1f;
+            if (_completeGroup != null)
+            {
+                _completeGroup.alpha = 1f;
+                _completeGroup.interactable = true;
+                _completeGroup.blocksRaycasts = true;
+            }
             if (cardRect != null) cardRect.localScale = Vector3.one;
         }
 
@@ -181,7 +207,19 @@ namespace ArrowSwarm.Tutorial
 
         private void OnContinueClicked()
         {
-            TutorialManager.Instance?.CompleteAndReturnToMenu();
+            Debug.Log("[ArrowSwarm] TutorialOverlayUI: Continue Button Clicked! Returning to MainMenuScene...");
+            if (TutorialManager.Instance != null)
+            {
+                TutorialManager.Instance.CompleteAndReturnToMenu();
+            }
+            else if (SceneTransitionManager.Instance != null)
+            {
+                SceneTransitionManager.Instance.LoadScene("MainMenuScene");
+            }
+            else
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenuScene");
+            }
         }
     }
 }

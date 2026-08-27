@@ -33,6 +33,12 @@ namespace ArrowSwarm.Tutorial
         private Coroutine _moveRoutine;
         private Camera _mainCamera;
 
+        // Real-time world target tracking
+        private Transform _targetTransform;
+        private Vector3 _targetWorldPos;
+        private bool _hasTargetWorldPos;
+        private Canvas _parentCanvas;
+
         private void Awake()
         {
             if (_handContainer == null) _handContainer = GetComponent<RectTransform>();
@@ -56,6 +62,35 @@ namespace ArrowSwarm.Tutorial
             HideImmediately();
         }
 
+        private void LateUpdate()
+        {
+            if (!_isPointing || !_hasTargetWorldPos || _parentCanvas == null) return;
+
+            UpdateCanvasPositionFromWorld();
+
+            if (_moveRoutine == null && _handContainer != null)
+            {
+                _handContainer.anchoredPosition = _targetCanvasPos;
+            }
+        }
+
+        private void UpdateCanvasPositionFromWorld()
+        {
+            if (_mainCamera == null) _mainCamera = Camera.main;
+            if (_mainCamera == null) _mainCamera = FindFirstObjectByType<Camera>();
+            if (_mainCamera == null || _parentCanvas == null) return;
+
+            Vector3 worldPos = _targetTransform != null ? _targetTransform.position : _targetWorldPos;
+            Vector2 screenPos = _mainCamera.WorldToScreenPoint(worldPos);
+            RectTransform canvasRect = _parentCanvas.transform as RectTransform;
+
+            if (canvasRect != null && RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                canvasRect, screenPos, _parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _mainCamera, out Vector2 localPoint))
+            {
+                _targetCanvasPos = localPoint;
+            }
+        }
+
         /// <summary>
         /// Updates the action callout text in the floating speech bubble on the hand cursor.
         /// </summary>
@@ -72,27 +107,51 @@ namespace ArrowSwarm.Tutorial
         }
 
         /// <summary>
+        /// Freezes tracking of a moving transform and locks to its current static world position.
+        /// Prevents the hand from flying along with a launched arrow.
+        /// </summary>
+        public void FreezeCurrentWorldPosition()
+        {
+            if (_targetTransform != null)
+            {
+                _targetWorldPos = _targetTransform.position;
+                _targetTransform = null;
+            }
+            StopTapAnimation();
+            StopRippleAnimation();
+        }
+
+        /// <summary>
+        /// Points the hand cursor to a target transform (e.g. arrow), dynamically locking to it even if camera moves.
+        /// </summary>
+        public void PointToWorldPosition(Transform targetTransform, Canvas parentCanvas, bool animateMove = true)
+        {
+            _targetTransform = targetTransform;
+            _targetWorldPos = targetTransform != null ? targetTransform.position : Vector3.zero;
+            _hasTargetWorldPos = targetTransform != null;
+            _parentCanvas = parentCanvas;
+
+            UpdateCanvasPositionFromWorld();
+            PointToLocalPosition(_targetCanvasPos, animateMove);
+        }
+
+        /// <summary>
         /// Points the hand cursor to a target world position (e.g. arrow position).
         /// </summary>
         public void PointToWorldPosition(Vector3 worldPos, Canvas parentCanvas, bool animateMove = true)
         {
-            if (_mainCamera == null) _mainCamera = Camera.main;
-            if (_mainCamera == null) _mainCamera = FindFirstObjectByType<Camera>();
-            if (_mainCamera == null || parentCanvas == null) return;
+            _targetTransform = null;
+            _targetWorldPos = worldPos;
+            _hasTargetWorldPos = true;
+            _parentCanvas = parentCanvas;
 
-            Vector2 screenPos = _mainCamera.WorldToScreenPoint(worldPos);
-            RectTransform canvasRect = parentCanvas.transform as RectTransform;
-
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                canvasRect, screenPos, parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _mainCamera, out Vector2 localPoint))
-            {
-                // Pivot (0.2, 0.9) is index finger tip. Place right on arrow center.
-                PointToLocalPosition(localPoint, animateMove);
-            }
+            UpdateCanvasPositionFromWorld();
+            PointToLocalPosition(_targetCanvasPos, animateMove);
         }
 
         /// <summary>
         /// Points the hand cursor to a local canvas position.
+        /// If already visible, smoothly glides from current position to the target.
         /// </summary>
         public void PointToLocalPosition(Vector2 localPos, bool animateMove = true)
         {
@@ -100,25 +159,32 @@ namespace ArrowSwarm.Tutorial
             if (_handCanvasGroup == null) _handCanvasGroup = GetComponent<CanvasGroup>();
 
             _targetCanvasPos = localPos;
+            bool wasActive = gameObject.activeInHierarchy && _handCanvasGroup != null && _handCanvasGroup.alpha > 0.5f;
+
             gameObject.SetActive(true);
             _isPointing = true;
-
-            if (_handContainer != null)
-            {
-                _handContainer.localScale = Vector3.one;
-                _handContainer.anchoredPosition = _targetCanvasPos;
-            }
             if (_handCanvasGroup != null) _handCanvasGroup.alpha = 1f;
 
             if (_moveRoutine != null) StopCoroutine(_moveRoutine);
 
-            if (animateMove && _handContainer != null && gameObject.activeInHierarchy)
+            if (animateMove && wasActive && _handContainer != null && gameObject.activeInHierarchy)
             {
-                _moveRoutine = StartCoroutine(MoveToTargetRoutine(_targetCanvasPos));
+                // Smoothly glide from current hand position to the new target
+                StopTapAnimation();
+                StopRippleAnimation();
+                _moveRoutine = StartCoroutine(MoveToTargetRoutine());
             }
-
-            StartTapAnimation();
-            StartRippleAnimation();
+            else
+            {
+                // First appearance: snap immediately to target
+                if (_handContainer != null)
+                {
+                    _handContainer.localScale = Vector3.one;
+                    _handContainer.anchoredPosition = _targetCanvasPos;
+                }
+                StartTapAnimation();
+                StartRippleAnimation();
+            }
         }
 
         /// <summary>
@@ -127,6 +193,8 @@ namespace ArrowSwarm.Tutorial
         public void Hide()
         {
             _isPointing = false;
+            _hasTargetWorldPos = false;
+            _targetTransform = null;
             StopTapAnimation();
             StopRippleAnimation();
 
@@ -146,6 +214,8 @@ namespace ArrowSwarm.Tutorial
         public void HideImmediately()
         {
             _isPointing = false;
+            _hasTargetWorldPos = false;
+            _targetTransform = null;
             StopTapAnimation();
             StopRippleAnimation();
 
@@ -154,22 +224,27 @@ namespace ArrowSwarm.Tutorial
             gameObject.SetActive(false);
         }
 
-        private IEnumerator MoveToTargetRoutine(Vector2 target)
+        private IEnumerator MoveToTargetRoutine()
         {
             Vector2 start = _handContainer.anchoredPosition;
             float elapsed = 0f;
-            float duration = 0.3f;
+            float duration = 0.42f; // Smooth, juicy glide duration
 
             while (elapsed < duration)
             {
                 elapsed += Time.unscaledDeltaTime;
-                float t = Mathf.SmoothStep(0f, 1f, elapsed / duration);
-                _handContainer.anchoredPosition = Vector2.Lerp(start, target, t);
+                float progress = elapsed / duration;
+                float t = Mathf.SmoothStep(0f, 1f, progress);
+                _handContainer.anchoredPosition = Vector2.Lerp(start, _targetCanvasPos, t);
                 yield return null;
             }
 
-            _handContainer.anchoredPosition = target;
+            _handContainer.anchoredPosition = _targetCanvasPos;
             _moveRoutine = null;
+
+            // Arrived at target arrow head: resume tap pulsing & ripple rings
+            StartTapAnimation();
+            StartRippleAnimation();
         }
 
         private void StartTapAnimation()

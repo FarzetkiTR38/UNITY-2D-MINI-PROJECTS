@@ -215,7 +215,7 @@ namespace ArrowSwarm.Tutorial
 
             if (_handUI != null && _parentCanvas != null)
             {
-                _handUI.PointToWorldPosition(arrow.transform.position, _parentCanvas);
+                _handUI.PointToWorldPosition(arrow.transform, _parentCanvas);
             }
         }
 
@@ -236,10 +236,12 @@ namespace ArrowSwarm.Tutorial
         {
             if (!_isTutorialActive) return;
 
-            _handUI?.Hide();
+            // Freeze the hand at the launch site so it doesn't fly with the projectile
+            _handUI?.FreezeCurrentWorldPosition();
 
+            // Advance step smoothly with glide to the next arrow
             if (_stepTransitionRoutine != null) StopCoroutine(_stepTransitionRoutine);
-            _stepTransitionRoutine = StartCoroutine(AdvanceStepDelayed(_currentStep + 1, 0.45f));
+            _stepTransitionRoutine = StartCoroutine(AdvanceStepDelayed(_currentStep + 1, 0.28f));
         }
 
         private IEnumerator AdvanceStepDelayed(int nextStep, float delay)
@@ -261,10 +263,13 @@ namespace ArrowSwarm.Tutorial
             // Restore HUD bars for level complete and next levels
             FindFirstObjectByType<ArrowSwarm.UI.GameHUD>()?.SetBarsVisible(true, true);
 
-            string title = GetLocalizedText("EĞİTİM TAMAMLANDI!", "TUTORIAL COMPLETED!");
+            // Spawn celebration fireworks barrage
+            ArrowSwarm.Effects.ParticleManager.Instance?.SpawnFireworksCelebration();
+
+            string title = GetLocalizedText("<color=#FFE066>TEBRİKLER!</color>\nTUTORİAL'I TAMAMLADIN", "<color=#FFE066>CONGRATULATIONS!</color>\nTUTORIAL COMPLETED!");
             string subtitle = GetLocalizedText(
-                "Artık savaşa hazırsın! Ana Menüye dön ve maceraya başla.",
-                "You are ready to play! Return to Main Menu to start your adventure."
+                "Tüm temel kuralları öğrendin!\nŞimdi büyük maceraya başla.",
+                "You mastered all the basics!\nNow start your grand adventure."
             );
 
             _overlayUI?.ShowCompletionCard(title, subtitle);
@@ -295,7 +300,7 @@ namespace ArrowSwarm.Tutorial
         }
 
         /// <summary>
-        /// Finishes the tutorial and transitions back to MainMenuScene.
+        /// Finishes the tutorial and transitions back to MainMenuScene with Iris Circle Wipe.
         /// </summary>
         public void CompleteAndReturnToMenu()
         {
@@ -305,7 +310,11 @@ namespace ArrowSwarm.Tutorial
             FindFirstObjectByType<ArrowSwarm.UI.GameHUD>()?.SetBarsVisible(true, true);
             Time.timeScale = 1f;
 
-            if (GameManager.Instance != null)
+            if (SceneTransitionManager.Instance != null)
+            {
+                SceneTransitionManager.Instance.LoadScene("MainMenuScene");
+            }
+            else if (GameManager.Instance != null)
             {
                 GameManager.Instance.GoToMainMenu();
             }
