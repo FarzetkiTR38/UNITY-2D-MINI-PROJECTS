@@ -134,31 +134,52 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Loads the game scene to start playing.
+        /// Loads the game scene to start playing with smooth transition.
         /// </summary>
         public void StartGame()
         {
-            SceneManager.LoadScene("GameScene");
+            if (SceneTransitionManager.Instance != null)
+            {
+                SceneTransitionManager.Instance.LoadScene("GameScene");
+            }
+            else
+            {
+                SceneManager.LoadScene("GameScene");
+            }
         }
 
         /// <summary>
-        /// Returns to the main menu scene.
+        /// Returns to the main menu scene with smooth transition.
         /// </summary>
         public void GoToMainMenu()
         {
             Time.timeScale = 1f;
             SetState(GameState.Menu);
-            SceneManager.LoadScene("MainMenuScene");
+            if (SceneTransitionManager.Instance != null)
+            {
+                SceneTransitionManager.Instance.LoadScene("MainMenuScene");
+            }
+            else
+            {
+                SceneManager.LoadScene("MainMenuScene");
+            }
         }
 
         /// <summary>
-        /// Restarts the current level.
+        /// Restarts the current level with smooth transition.
         /// </summary>
         public void RestartLevel()
         {
             Time.timeScale = 1f;
             SetState(GameState.Loading);
-            SceneManager.LoadScene("GameScene");
+            if (SceneTransitionManager.Instance != null)
+            {
+                SceneTransitionManager.Instance.LoadScene("GameScene");
+            }
+            else
+            {
+                SceneManager.LoadScene("GameScene");
+            }
         }
 
         /// <summary>

@@ -16,9 +16,10 @@ namespace ArrowSwarm.Effects
         [Header("Particle Prefabs")]
         [SerializeField] private ParticleSystem _arrowTrailPrefab;
         [SerializeField] private ParticleSystem _mobDeathPrefab;
-        [SerializeField] private ParticleSystem _hitSparkPrefab;
-        [SerializeField] private ParticleSystem _confettiPrefab;
-        [SerializeField] private ParticleSystem _rainbowTrailPrefab;
+        [Header("Fireworks Prefabs")]
+        [SerializeField] private ParticleSystem _fireworkRainbowPrefab;
+        [SerializeField] private ParticleSystem _firework1Prefab;
+        [SerializeField] private ParticleSystem _fireworkBasicPrefab;
 
         private readonly Dictionary<string, Queue<ParticleSystem>> _pools = new();
 
@@ -75,18 +76,44 @@ namespace ArrowSwarm.Effects
             return ps;
         }
 
+        /// <summary>
+        /// Spawns the celebration fireworks barrage.
+        /// </summary>
+        public void SpawnFireworksCelebration(Vector3? position = null)
+        {
+            if (Data.DataManager.Instance != null && Data.DataManager.Instance.PlayerData != null && !Data.DataManager.Instance.PlayerData.vfxEnabled) return;
 
+            Vector3 center = position ?? (UnityEngine.Camera.main != null
+                ? UnityEngine.Camera.main.transform.position
+                : Vector3.zero);
+            center.z = 0;
+
+            StartCoroutine(FireworksBarrageRoutine(center));
+        }
+
+        private System.Collections.IEnumerator FireworksBarrageRoutine(Vector3 center)
+        {
+            if (_firework1Prefab == null) yield break;
+
+            // 1. Center Burst
+            SpawnEffect(_firework1Prefab, center + new Vector3(0f, 0.4f, 0f));
+            yield return new WaitForSeconds(0.20f);
+
+            // 2. Left Burst
+            SpawnEffect(_firework1Prefab, center + new Vector3(-1.5f, -0.3f, 0f));
+            yield return new WaitForSeconds(0.16f);
+
+            // 3. Right Burst
+            SpawnEffect(_firework1Prefab, center + new Vector3(1.5f, 0.2f, 0f));
+            yield return new WaitForSeconds(0.22f);
+
+            // 4. Upper Center Climax Burst
+            SpawnEffect(_firework1Prefab, center + new Vector3(0f, 1.5f, 0f));
+        }
 
         private void HandleLevelWon()
         {
-            if (_confettiPrefab != null)
-            {
-                Vector3 center = UnityEngine.Camera.main != null
-                    ? UnityEngine.Camera.main.transform.position
-                    : Vector3.zero;
-                center.z = 0;
-                SpawnEffect(_confettiPrefab, center);
-            }
+            // Fireworks disabled per user preference
         }
 
         private ParticleSystem GetFromPool(ParticleSystem prefab)

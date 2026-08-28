@@ -150,6 +150,31 @@ namespace ArrowSwarm.Core
             GameManager.Instance.InitializeLives();
             GameManager.Instance.SetState(GameState.Playing);
 
+            // Handle Tutorial activation if TutorialManager / Tutorial_Root is in the scene (even if inactive)
+            var tutorial = UnityEngine.Object.FindFirstObjectByType<Tutorial.TutorialManager>(FindObjectsInactive.Include);
+            if (tutorial != null)
+            {
+                var mapCtrl = UnityEngine.Object.FindFirstObjectByType<MapSceneController>();
+                bool isMapTestTutorial = mapCtrl != null && mapCtrl.EnableTutorialTest;
+                bool isTutorial = isMapTestTutorial || (level <= 1 && (DataManager.Instance == null || !DataManager.Instance.IsTutorialCompleted));
+
+                if (isTutorial)
+                {
+                    if (!tutorial.gameObject.activeSelf)
+                    {
+                        tutorial.gameObject.SetActive(true);
+                    }
+                    tutorial.StartTutorial();
+                }
+                else
+                {
+                    if (tutorial.gameObject.activeSelf)
+                    {
+                        tutorial.EndTutorialSilently();
+                    }
+                }
+            }
+
             OnLevelReady?.Invoke(_currentParams);
             OnArrowCountChanged?.Invoke(_arrowsFired, _totalArrows);
 
