@@ -48,6 +48,12 @@ namespace ArrowSwarm.Data
         /// <summary>Player display name for leaderboard.</summary>
         public string playerName = "Player";
 
+        /// <summary>Country code / name for leaderboard (e.g. TR, US, GB).</summary>
+        public string playerCountry = "TR";
+
+        /// <summary>Whether the initial post-tutorial profile setup modal was completed or dismissed.</summary>
+        public bool isProfileSetupCompleted = false;
+
         /// <summary>Unique player identifier.</summary>
         public string playerId = "";
 

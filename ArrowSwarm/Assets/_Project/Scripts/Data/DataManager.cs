@@ -349,6 +349,28 @@ namespace ArrowSwarm.Data
         }
 
         /// <summary>
+        /// Sets the player profile (name and country) and persists.
+        /// </summary>
+        public void SetPlayerProfile(string name, string country, bool markSetupCompleted = true)
+        {
+            if (_playerData == null) return;
+            if (!string.IsNullOrWhiteSpace(name)) _playerData.playerName = name.Trim();
+            if (!string.IsNullOrWhiteSpace(country)) _playerData.playerCountry = country.Trim();
+            if (markSetupCompleted) _playerData.isProfileSetupCompleted = true;
+            NotifyAndSave();
+        }
+
+        /// <summary>
+        /// Sets whether the profile setup modal has been completed.
+        /// </summary>
+        public void SetProfileSetupCompleted(bool completed)
+        {
+            if (_playerData == null) return;
+            _playerData.isProfileSetupCompleted = completed;
+            NotifyAndSave();
+        }
+
+        /// <summary>
         /// Deletes all saved data and resets to default.
         /// </summary>
         public void DeleteAllData()

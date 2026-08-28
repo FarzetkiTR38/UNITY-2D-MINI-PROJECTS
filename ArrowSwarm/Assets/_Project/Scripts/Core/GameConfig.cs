@@ -33,8 +33,8 @@ namespace ArrowSwarm.Core
         [SerializeField] private float _minSpawnInterval = 1.6f;
         [SerializeField] private float _targetTransitSeconds = 25.0f;
         [SerializeField] private float _baseMobScale = 1.0f;
-        [SerializeField] private float _gapCloseSpeedMultiplier = 1.5f;
-        [SerializeField] private float _mobSpacingMultiplier = 2.0f;
+        [SerializeField] private float _gapCloseSpeedMultiplier = 5.0f;
+        [SerializeField] private float _mobSpacingMultiplier = 1.18f;
 
         [Header("Camera")]
         [SerializeField] private float _minZoom = 1f;

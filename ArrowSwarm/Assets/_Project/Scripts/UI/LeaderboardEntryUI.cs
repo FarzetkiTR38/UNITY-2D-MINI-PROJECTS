@@ -23,9 +23,9 @@ namespace ArrowSwarm.UI
         [SerializeField] private TextMeshProUGUI _playerNameText;
 
         /// <summary>
-        /// Populates the leaderboard entry with rank, level, and star counts.
+        /// Populates the leaderboard entry with rank, level, star counts, and country flag.
         /// </summary>
-        public void Setup(int rank, string playerName, int level, int stars, bool isPlayer)
+        public void Setup(int rank, string playerName, int level, int stars, bool isPlayer, string countryCode = "TR")
         {
             AutoWire();
 
@@ -44,15 +44,38 @@ namespace ArrowSwarm.UI
                 _starsText.text = stars.ToString();
             }
 
+            string flag = GetCountryFlag(countryCode);
             if (_playerNameText != null)
             {
-                _playerNameText.text = playerName;
+                _playerNameText.text = string.IsNullOrEmpty(flag) ? playerName : $"{flag} {playerName}";
             }
 
             if (_crownIcon != null)
             {
                 _crownIcon.gameObject.SetActive(rank <= 3);
             }
+        }
+
+        private static string GetCountryFlag(string code)
+        {
+            if (string.IsNullOrEmpty(code)) return "🌐";
+            return code.ToUpperInvariant() switch
+            {
+                "TR" => "🇹🇷",
+                "US" => "🇺🇸",
+                "GB" => "🇬🇧",
+                "DE" => "🇩🇪",
+                "FR" => "🇫🇷",
+                "ES" => "🇪🇸",
+                "IT" => "🇮🇹",
+                "BR" => "🇧🇷",
+                "JP" => "🇯🇵",
+                "KR" => "🇰🇷",
+                "CA" => "🇨🇦",
+                "AU" => "🇦🇺",
+                "NL" => "🇳🇱",
+                _ => "🌐"
+            };
         }
 
         /// <summary>
