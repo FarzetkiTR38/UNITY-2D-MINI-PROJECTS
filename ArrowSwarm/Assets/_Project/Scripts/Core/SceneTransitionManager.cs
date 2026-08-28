@@ -2,18 +2,42 @@ namespace ArrowSwarm.Core
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;
 
     /// <summary>
-    /// Global Scene Transition Manager.
-    /// Dedicated indestructible singleton providing smooth, glowing Iris Circle Wipe transitions.
+    /// Available visual styles for scene transitions.
+    /// </summary>
+    public enum TransitionStyle
+    {
+        [Tooltip("45-degree diagonal sweep with a glowing neon cyan/pink blade.")]
+        NeonCyberBlade,
+
+        [Tooltip("High-tech neon hexagon honeycomb grid wave.")]
+        HexagonHoneycomb,
+
+        [Tooltip("Geometric diamond tile matrix expansion.")]
+        DiamondGrid,
+
+        [Tooltip("Modern circular iris wipe with neon ring.")]
+        IrisCircle,
+
+        [Tooltip("Minimalist dark navy fade with subtle cyan vignette.")]
+        SmoothFade
+    }
+
+    /// <summary>
+    /// Centralized Scene Transition Manager.
+    /// Manages shader-based screen transitions between scenes and UI states.
+    /// Fully configurable via Inspector on CoreManagers or runtime script.
     /// </summary>
     [DisallowMultipleComponent]
     public class SceneTransitionManager : MonoBehaviour
     {
         private static SceneTransitionManager _instance;
+
         public static SceneTransitionManager Instance
         {
             get
@@ -40,24 +64,64 @@ namespace ArrowSwarm.Core
             }
         }
 
-        [Header("--- Transition Settings ---")]
-        [SerializeField] private Material _transitionMaterial;
+        [Header("--- Transition Style & Preset ---")]
+        [Tooltip("Select the visual transition effect to use across all scene loads.")]
+        [SerializeField] private TransitionStyle _activeStyle = TransitionStyle.NeonCyberBlade;
+
+        [Header("--- Timing Settings ---")]
+        [Tooltip("Total duration of the transition in seconds (0.70s = 0.35s close + 0.35s open).")]
+        [Range(0.2f, 2.0f)]
         [SerializeField] private float _defaultDuration = 0.70f;
+
+        [Header("--- Theme Colors ---")]
+        [Tooltip("Deep background color behind the transition.")]
+        [SerializeField] private Color _backgroundColor = new Color(0.063f, 0.078f, 0.145f, 1.0f); // #101425
+
+        [Tooltip("Primary neon glow blade/border color.")]
+        [SerializeField] private Color _neonGlowColor = new Color(0.400f, 0.880f, 1.000f, 1.0f); // #66E0FF (Cyan)
+
+        [Tooltip("Secondary accent glow color.")]
+        [SerializeField] private Color _secondaryGlowColor = new Color(1.000f, 0.400f, 0.700f, 1.0f); // #FF66B2 (Pink)
+
+        [Header("--- Custom Material Override (Optional) ---")]
+        [Tooltip("Optional custom material override. If null, automatically loads the shader for the selected Active Style.")]
+        [SerializeField] private Material _customMaterialOverride;
 
         private Canvas _transitionCanvas;
         private Image _overlayImage;
-        private Material _materialInstance;
         private Coroutine _currentTransition;
         private bool _isTransitioning;
+
+        // Cached runtime materials per style
+        private readonly Dictionary<TransitionStyle, Material> _materialCache = new Dictionary<TransitionStyle, Material>();
 
         private static readonly int PropProgress = Shader.PropertyToID("_Progress");
         private static readonly int PropCenter = Shader.PropertyToID("_Center");
         private static readonly int PropAspectRatio = Shader.PropertyToID("_AspectRatio");
+        private static readonly int PropColor = Shader.PropertyToID("_Color");
+        private static readonly int PropBorderColor = Shader.PropertyToID("_BorderColor");
+        private static readonly int PropSecondaryGlow = Shader.PropertyToID("_SecondaryGlow");
 
-        /// <summary>
-        /// Gets whether a scene transition is currently in progress.
-        /// </summary>
+        /// <summary>Gets whether a scene transition is currently in progress.</summary>
         public bool IsTransitioning => _isTransitioning;
+
+        /// <summary>Gets or sets the current active transition style.</summary>
+        public TransitionStyle ActiveStyle
+        {
+            get => _activeStyle;
+            set
+            {
+                _activeStyle = value;
+                ApplyActiveMaterial();
+            }
+        }
+
+        /// <summary>Total duration of the transition.</summary>
+        public float DefaultDuration
+        {
+            get => _defaultDuration;
+            set => _defaultDuration = Mathf.Max(0.1f, value);
+        }
 
         private void Awake()
         {
@@ -76,11 +140,16 @@ namespace ArrowSwarm.Core
             EnsureUI();
         }
 
+        private void OnValidate()
+        {
+            if (Application.isPlaying && _overlayImage != null)
+            {
+                ApplyActiveMaterial();
+            }
+        }
+
         private void EnsureUI()
         {
-            if (_transitionCanvas != null && _overlayImage != null && _materialInstance != null) return;
-
-            // 1. Create dedicated top-level Canvas (Order 9999) under this indestructible object
             if (_transitionCanvas == null)
             {
                 var canvasGO = new GameObject("Canvas_SceneTransition");
@@ -97,7 +166,6 @@ namespace ArrowSwarm.Core
 
                 canvasGO.AddComponent<GraphicRaycaster>();
 
-                // 2. Fullscreen Overlay Image
                 var imageGO = new GameObject("TransitionOverlay");
                 imageGO.transform.SetParent(canvasGO.transform, false);
 
@@ -112,37 +180,74 @@ namespace ArrowSwarm.Core
                 _overlayImage.raycastTarget = false;
             }
 
-            // 3. Material setup
-            if (_materialInstance == null)
+            ApplyActiveMaterial();
+        }
+
+        private Material GetOrCreateMaterial(TransitionStyle style)
+        {
+            if (_customMaterialOverride != null)
             {
-                if (_transitionMaterial != null)
-                {
-                    _materialInstance = new Material(_transitionMaterial);
-                }
-                else
-                {
-                    var shader = Shader.Find("UI/NeonDiamondWipe") ?? Shader.Find("UI/IrisCircleWipe");
-                    if (shader != null)
-                    {
-                        _materialInstance = new Material(shader);
-                    }
-                }
+                return _customMaterialOverride;
             }
 
-            if (_materialInstance != null && _overlayImage != null)
+            if (_materialCache.TryGetValue(style, out Material cached) && cached != null)
             {
-                _materialInstance.SetFloat(PropProgress, 0f);
-                _overlayImage.material = _materialInstance;
+                return cached;
+            }
+
+            string shaderName = style switch
+            {
+                TransitionStyle.NeonCyberBlade => "UI/NeonDiamondWipe",
+                TransitionStyle.HexagonHoneycomb => "UI/HexagonHoneycombWipe",
+                TransitionStyle.DiamondGrid => "UI/DiamondGridWipe",
+                TransitionStyle.IrisCircle => "UI/IrisCircleWipe",
+                TransitionStyle.SmoothFade => "UI/SmoothFadeWipe",
+                _ => "UI/NeonDiamondWipe"
+            };
+
+            Shader shader = Shader.Find(shaderName) ?? Shader.Find("UI/NeonDiamondWipe") ?? Shader.Find("UI/IrisCircleWipe");
+            if (shader == null)
+            {
+                Debug.LogError($"[ArrowSwarm] SceneTransitionManager: Could not find shader '{shaderName}'!");
+                return null;
+            }
+
+            var mat = new Material(shader)
+            {
+                name = $"Mat_Runtime_{style}"
+            };
+
+            UpdateMaterialParameters(mat);
+            _materialCache[style] = mat;
+            return mat;
+        }
+
+        private void UpdateMaterialParameters(Material mat)
+        {
+            if (mat == null) return;
+            if (mat.HasProperty(PropColor)) mat.SetColor(PropColor, _backgroundColor);
+            if (mat.HasProperty(PropBorderColor)) mat.SetColor(PropBorderColor, _neonGlowColor);
+            if (mat.HasProperty(PropSecondaryGlow)) mat.SetColor(PropSecondaryGlow, _secondaryGlowColor);
+        }
+
+        private void ApplyActiveMaterial()
+        {
+            Material mat = GetOrCreateMaterial(_activeStyle);
+            if (mat != null && _overlayImage != null)
+            {
+                UpdateMaterialParameters(mat);
+                mat.SetFloat(PropProgress, 0f);
+                _overlayImage.material = mat;
                 _overlayImage.gameObject.SetActive(false);
             }
         }
 
         /// <summary>
-        /// Loads a target scene with an Iris Circle Wipe transition.
+        /// Loads a target scene using the currently configured transition style and timing.
         /// </summary>
-        /// <param name="sceneName">Name of the scene to load.</param>
-        /// <param name="duration">Total transition duration in seconds.</param>
-        /// <param name="screenCenter">Normalized screen center (0-1 UV), default is (0.5, 0.5).</param>
+        /// <param name="sceneName">Name of the target scene.</param>
+        /// <param name="duration">Custom total duration (<=0 uses default 0.70s).</param>
+        /// <param name="screenCenter">Optional focus center (0-1 UV).</param>
         public void LoadScene(string sceneName, float duration = -1f, Vector2? screenCenter = null)
         {
             float d = duration > 0f ? duration : _defaultDuration;
@@ -153,7 +258,7 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Executes a custom action at the transition midpoint with the Iris Circle Wipe effect.
+        /// Executes a custom callback action at the transition midpoint (e.g. reload board or popup transition).
         /// </summary>
         public void PlayTransition(Action onMidpoint, float duration = -1f, Vector2? screenCenter = null)
         {
@@ -169,16 +274,19 @@ namespace ArrowSwarm.Core
             _isTransitioning = true;
             EnsureUI();
 
-            float halfDuration = Mathf.Max(0.12f, duration * 0.5f);
+            Material mat = GetOrCreateMaterial(_activeStyle);
+            float halfDuration = Mathf.Max(0.15f, duration * 0.5f);
             float aspect = (float)Screen.width / Mathf.Max(1, Screen.height);
 
             try
             {
-                if (_materialInstance != null)
+                if (mat != null)
                 {
-                    _materialInstance.SetVector(PropCenter, new Vector4(center.x, center.y, 0f, 0f));
-                    _materialInstance.SetFloat(PropAspectRatio, aspect);
-                    _materialInstance.SetFloat(PropProgress, 0f);
+                    UpdateMaterialParameters(mat);
+                    mat.SetVector(PropCenter, new Vector4(center.x, center.y, 0f, 0f));
+                    mat.SetFloat(PropAspectRatio, aspect);
+                    mat.SetFloat(PropProgress, 0f);
+                    _overlayImage.material = mat;
                 }
 
                 if (_overlayImage != null)
@@ -187,51 +295,48 @@ namespace ArrowSwarm.Core
                     _overlayImage.raycastTarget = true;
                 }
 
-                // 1. Close Iris Circle (0 -> 1)
+                // 1. Close / Wipe In (0 -> 1) over halfDuration (0.35s)
                 float startTime = Time.realtimeSinceStartup;
                 while (Time.realtimeSinceStartup - startTime < halfDuration)
                 {
                     float elapsed = Time.realtimeSinceStartup - startTime;
                     float t = Mathf.SmoothStep(0f, 1f, elapsed / halfDuration);
-                    _materialInstance?.SetFloat(PropProgress, t);
+                    mat?.SetFloat(PropProgress, t);
                     yield return null;
                 }
-                _materialInstance?.SetFloat(PropProgress, 1f);
+                mat?.SetFloat(PropProgress, 1f);
 
-                // 2. Load target scene while screen is fully closed
+                // 2. Load target scene while screen is fully covered
                 Time.timeScale = 1f;
-                Debug.Log($"[ArrowSwarm] SceneTransitionManager: Loading scene '{sceneName}'...");
+                Debug.Log($"[ArrowSwarm] SceneTransitionManager: Loading '{sceneName}' with {_activeStyle}...");
                 SceneManager.LoadScene(sceneName);
 
                 // Wait 1 frame for new scene Awake & Start to resolve
                 yield return null;
 
-                // Recalculate aspect in case resolution adjusted
+                // Recompute aspect ratio in case screen geometry adjusted
                 aspect = (float)Screen.width / Mathf.Max(1, Screen.height);
-                if (_materialInstance != null)
+                if (mat != null)
                 {
-                    _materialInstance.SetFloat(PropAspectRatio, aspect);
-                    _materialInstance.SetVector(PropCenter, new Vector4(center.x, center.y, 0f, 0f));
+                    mat.SetFloat(PropAspectRatio, aspect);
+                    mat.SetVector(PropCenter, new Vector4(center.x, center.y, 0f, 0f));
                 }
 
-                // 3. Open Iris Circle (1 -> 0)
+                // 3. Open / Wipe Out (1 -> 0) over halfDuration (0.35s)
                 startTime = Time.realtimeSinceStartup;
                 while (Time.realtimeSinceStartup - startTime < halfDuration)
                 {
                     float elapsed = Time.realtimeSinceStartup - startTime;
                     float t = Mathf.SmoothStep(1f, 0f, elapsed / halfDuration);
-                    _materialInstance?.SetFloat(PropProgress, t);
+                    mat?.SetFloat(PropProgress, t);
                     yield return null;
                 }
-                _materialInstance?.SetFloat(PropProgress, 0f);
+                mat?.SetFloat(PropProgress, 0f);
             }
             finally
             {
                 // 4. Guaranteed Cleanup
-                if (_materialInstance != null)
-                {
-                    _materialInstance.SetFloat(PropProgress, 0f);
-                }
+                if (mat != null) mat.SetFloat(PropProgress, 0f);
 
                 if (_overlayImage != null)
                 {
@@ -250,16 +355,19 @@ namespace ArrowSwarm.Core
             _isTransitioning = true;
             EnsureUI();
 
-            float halfDuration = Mathf.Max(0.12f, duration * 0.5f);
+            Material mat = GetOrCreateMaterial(_activeStyle);
+            float halfDuration = Mathf.Max(0.15f, duration * 0.5f);
             float aspect = (float)Screen.width / Mathf.Max(1, Screen.height);
 
             try
             {
-                if (_materialInstance != null)
+                if (mat != null)
                 {
-                    _materialInstance.SetVector(PropCenter, new Vector4(center.x, center.y, 0f, 0f));
-                    _materialInstance.SetFloat(PropAspectRatio, aspect);
-                    _materialInstance.SetFloat(PropProgress, 0f);
+                    UpdateMaterialParameters(mat);
+                    mat.SetVector(PropCenter, new Vector4(center.x, center.y, 0f, 0f));
+                    mat.SetFloat(PropAspectRatio, aspect);
+                    mat.SetFloat(PropProgress, 0f);
+                    _overlayImage.material = mat;
                 }
 
                 if (_overlayImage != null)
@@ -268,39 +376,32 @@ namespace ArrowSwarm.Core
                     _overlayImage.raycastTarget = true;
                 }
 
-                // 1. Close Iris Circle (0 -> 1)
                 float startTime = Time.realtimeSinceStartup;
                 while (Time.realtimeSinceStartup - startTime < halfDuration)
                 {
                     float elapsed = Time.realtimeSinceStartup - startTime;
                     float t = Mathf.SmoothStep(0f, 1f, elapsed / halfDuration);
-                    _materialInstance?.SetFloat(PropProgress, t);
+                    mat?.SetFloat(PropProgress, t);
                     yield return null;
                 }
-                _materialInstance?.SetFloat(PropProgress, 1f);
+                mat?.SetFloat(PropProgress, 1f);
 
-                // 2. Midpoint action
                 onMidpoint?.Invoke();
                 yield return null;
 
-                // 3. Open Iris Circle (1 -> 0)
                 startTime = Time.realtimeSinceStartup;
                 while (Time.realtimeSinceStartup - startTime < halfDuration)
                 {
                     float elapsed = Time.realtimeSinceStartup - startTime;
                     float t = Mathf.SmoothStep(1f, 0f, elapsed / halfDuration);
-                    _materialInstance?.SetFloat(PropProgress, t);
+                    mat?.SetFloat(PropProgress, t);
                     yield return null;
                 }
-                _materialInstance?.SetFloat(PropProgress, 0f);
+                mat?.SetFloat(PropProgress, 0f);
             }
             finally
             {
-                // 4. Guaranteed Cleanup
-                if (_materialInstance != null)
-                {
-                    _materialInstance.SetFloat(PropProgress, 0f);
-                }
+                if (mat != null) mat.SetFloat(PropProgress, 0f);
 
                 if (_overlayImage != null)
                 {
@@ -310,6 +411,19 @@ namespace ArrowSwarm.Core
 
                 _isTransitioning = false;
                 _currentTransition = null;
+            }
+        }
+
+        [ContextMenu("⚡ Test Transition Preview (Play Mode)")]
+        private void TestTransitionContext()
+        {
+            if (Application.isPlaying)
+            {
+                PlayTransition(() => Debug.Log("[ArrowSwarm] SceneTransitionManager: Preview midpoint reached!"));
+            }
+            else
+            {
+                Debug.LogWarning("[ArrowSwarm] SceneTransitionManager: Please enter Play mode to preview transitions in real-time.");
             }
         }
     }

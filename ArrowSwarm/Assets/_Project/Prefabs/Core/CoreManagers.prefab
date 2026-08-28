@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 8753500331722121072}
   - component: {fileID: 647803647902238504}
   - component: {fileID: 8736305475578862592}
+  - component: {fileID: 8208843418394020252}
   m_Layer: 0
   m_Name: CoreManagers
   m_TagString: Untagged
@@ -266,6 +267,24 @@ MonoBehaviour:
   _fireworkRainbowPrefab: {fileID: 7750853977139984562, guid: 6a7b26737f4a19a40b5f385c66dc96a9, type: 3}
   _firework1Prefab: {fileID: 3425026211840218638, guid: 40a08865e12e93d4a8954444c54c525a, type: 3}
   _fireworkBasicPrefab: {fileID: 7291838540196593265, guid: eebd4198cae929f4883e70594350f6af, type: 3}
+--- !u!114 &8208843418394020252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036625359666785736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4cc185478ff6e0479f4a8ae7dac5106, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Core.SceneTransitionManager
+  _activeStyle: 3
+  _defaultDuration: 1
+  _backgroundColor: {r: 0.99607843, g: 0.9607843, b: 0.8980392, a: 0.78431374}
+  _neonGlowColor: {r: 0.8018868, g: 0.8018868, b: 0.8018868, a: 1}
+  _secondaryGlowColor: {r: 0, g: 0, b: 0, a: 0}
+  _customMaterialOverride: {fileID: 0}
 --- !u!1 &1532447086922548065
 GameObject:
   m_ObjectHideFlags: 0
