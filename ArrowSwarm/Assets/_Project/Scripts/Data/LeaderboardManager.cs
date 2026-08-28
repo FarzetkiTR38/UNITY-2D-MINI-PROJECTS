@@ -15,6 +15,7 @@ namespace ArrowSwarm.Data
             public int HighestLevel;
             public int TotalStars;
             public bool IsPlayer;
+            public string CountryCode = "TR";
         }
 
         private List<LeaderboardEntry> _cachedEntries;
@@ -37,6 +38,7 @@ namespace ArrowSwarm.Data
             {
                 _cachedEntries = new List<LeaderboardEntry>();
                 string[] fakeNames = { "ArrowGod", "Sniper99", "NoobSlayer", "RobinHood", "Legolas", "Hawkeye", "BowMaster", "SwiftArrow", "EagleEye", "ShadowArcher" };
+                string[] fakeCountries = { "US", "DE", "TR", "GB", "FR", "JP", "BR", "KR", "ES", "IT" };
                 int[] baseLevels = { 123, 118, 112, 108, 101, 96, 89, 84, 79, 74 };
                 int[] baseStars = { 320, 309, 294, 281, 268, 251, 233, 220, 208, 195 };
                 
@@ -44,7 +46,8 @@ namespace ArrowSwarm.Data
                 {
                     int fakeLevel = i < baseLevels.Length ? baseLevels[i] : (70 - i * 5);
                     int fakeStars = i < baseStars.Length ? baseStars[i] : (fakeLevel * 2 + 10);
-                    _cachedEntries.Add(new LeaderboardEntry { PlayerName = fakeNames[i], HighestLevel = fakeLevel, TotalStars = fakeStars, IsPlayer = false });
+                    string fakeCountry = i < fakeCountries.Length ? fakeCountries[i] : "GL";
+                    _cachedEntries.Add(new LeaderboardEntry { PlayerName = fakeNames[i], HighestLevel = fakeLevel, TotalStars = fakeStars, IsPlayer = false, CountryCode = fakeCountry });
                 }
 
                 SaveLeaderboard();
@@ -74,13 +77,15 @@ namespace ArrowSwarm.Data
             int playerLevel = currentData?.highestLevel ?? 1;
             int playerStars = currentData?.GetTotalStars() ?? 0;
             string playerName = currentData?.playerName ?? "Player";
+            string country = currentData?.playerCountry ?? "TR";
 
             var playerEntry = new LeaderboardEntry 
             { 
                 PlayerName = playerName, 
                 HighestLevel = playerLevel, 
                 TotalStars = playerStars,
-                IsPlayer = true
+                IsPlayer = true,
+                CountryCode = country
             };
 
             var allEntries = new List<LeaderboardEntry>(_cachedEntries);

@@ -196,7 +196,8 @@ namespace ArrowSwarm.UI
                             playerName: entry.PlayerName,
                             level: entry.HighestLevel,
                             stars: entry.TotalStars,
-                            isPlayer: entry.IsPlayer
+                            isPlayer: entry.IsPlayer,
+                            countryCode: entry.CountryCode
                         );
                     }
                     else
@@ -212,7 +213,8 @@ namespace ArrowSwarm.UI
             {
                 if (_currentPlayerNameText != null)
                 {
-                    _currentPlayerNameText.text = playerData.playerName;
+                    string flag = GetCountryFlag(playerData.playerCountry);
+                    _currentPlayerNameText.text = string.IsNullOrEmpty(flag) ? playerData.playerName : $"{flag} {playerData.playerName}";
                 }
 
                 if (_currentPlayerRankText != null && LeaderboardManager.Instance != null)
@@ -273,6 +275,28 @@ namespace ArrowSwarm.UI
             {
                 gameObject.SetActive(false);
             }
+        }
+
+        private static string GetCountryFlag(string code)
+        {
+            if (string.IsNullOrEmpty(code)) return "🌐";
+            return code.ToUpperInvariant() switch
+            {
+                "TR" => "🇹🇷",
+                "US" => "🇺🇸",
+                "GB" => "🇬🇧",
+                "DE" => "🇩🇪",
+                "FR" => "🇫🇷",
+                "ES" => "🇪🇸",
+                "IT" => "🇮🇹",
+                "BR" => "🇧🇷",
+                "JP" => "🇯🇵",
+                "KR" => "🇰🇷",
+                "CA" => "🇨🇦",
+                "AU" => "🇦🇺",
+                "NL" => "🇳🇱",
+                _ => "🌐"
+            };
         }
 
         private void OnDestroy()

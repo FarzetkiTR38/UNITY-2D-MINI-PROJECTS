@@ -98,18 +98,24 @@ namespace ArrowSwarm.Path
         /// </summary>
         public void ClearPortals()
         {
-            EnsurePortalsContainer();
-
-            for (int i = _portalsContainer.childCount - 1; i >= 0; i--)
+            if (_portalsContainer == null)
             {
-                GameObject child = _portalsContainer.GetChild(i).gameObject;
-                if (Application.isPlaying)
+                _portalsContainer = transform.Find("PathPortalsContainer");
+            }
+
+            if (_portalsContainer != null)
+            {
+                for (int i = _portalsContainer.childCount - 1; i >= 0; i--)
                 {
-                    Destroy(child);
-                }
-                else
-                {
-                    DestroyImmediate(child);
+                    GameObject child = _portalsContainer.GetChild(i).gameObject;
+                    if (Application.isPlaying)
+                    {
+                        Destroy(child);
+                    }
+                    else
+                    {
+                        DestroyImmediate(child);
+                    }
                 }
             }
 
@@ -136,7 +142,7 @@ namespace ArrowSwarm.Path
             {
                 _portalsContainer = existing;
             }
-            else
+            else if (gameObject.activeInHierarchy)
             {
                 var obj = new GameObject("PathPortalsContainer");
                 obj.transform.SetParent(transform, false);

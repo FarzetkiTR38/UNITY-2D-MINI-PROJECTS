@@ -39,6 +39,9 @@ namespace ArrowSwarm.UI
         [SerializeField] private TextMeshProUGUI _starsText;
         [SerializeField] private TextMeshProUGUI _titleText;
 
+        [Header("Profile Modal")]
+        [SerializeField] private ProfileSetupModalUI _profileModal;
+
         [Header("Animation")]
         [SerializeField] private CanvasGroup _canvasGroup;
 
@@ -65,6 +68,32 @@ namespace ArrowSwarm.UI
             SetupUI();
             SetupButtons();
             OpenMainPanel();
+            CheckInitialProfileSetup();
+        }
+
+        private void CheckInitialProfileSetup()
+        {
+            if (DataManager.Instance != null && DataManager.Instance.IsTutorialCompleted)
+            {
+                var data = DataManager.Instance.PlayerData;
+                if (data != null && !data.isProfileSetupCompleted)
+                {
+                    if (_profileModal == null) _profileModal = GetComponentInChildren<ProfileSetupModalUI>(true);
+                    if (_profileModal != null)
+                    {
+                        _profileModal.Show();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Opens the Profile setup / edit modal.
+        /// </summary>
+        public void OpenProfileModal()
+        {
+            if (_profileModal == null) _profileModal = GetComponentInChildren<ProfileSetupModalUI>(true);
+            _profileModal?.Show();
         }
 
         private void HandlePlayerDataChanged(PlayerData data)
