@@ -42,7 +42,7 @@ namespace ArrowSwarm.Core
 
         [Header("--- Transition Settings ---")]
         [SerializeField] private Material _transitionMaterial;
-        [SerializeField] private float _defaultDuration = 0.45f;
+        [SerializeField] private float _defaultDuration = 0.70f;
 
         private Canvas _transitionCanvas;
         private Image _overlayImage;
@@ -121,7 +121,7 @@ namespace ArrowSwarm.Core
                 }
                 else
                 {
-                    var shader = Shader.Find("UI/IrisCircleWipe");
+                    var shader = Shader.Find("UI/NeonDiamondWipe") ?? Shader.Find("UI/IrisCircleWipe");
                     if (shader != null)
                     {
                         _materialInstance = new Material(shader);

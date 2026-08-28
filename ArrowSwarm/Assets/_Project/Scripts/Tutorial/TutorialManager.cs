@@ -39,13 +39,9 @@ namespace ArrowSwarm.Tutorial
             Instance = this;
         }
 
-        private void OnDestroy()
-        {
-            if (Instance == this) Instance = null;
-        }
-
         private void OnEnable()
         {
+            Instance = this;
             LevelManager.OnLevelReady += HandleLevelReady;
             Arrow.OnArrowFiredEvent += HandleArrowFired;
             GameManager.OnLevelWon += HandleLevelWon;
@@ -53,6 +49,7 @@ namespace ArrowSwarm.Tutorial
 
         private void OnDisable()
         {
+            if (Instance == this) Instance = null;
             LevelManager.OnLevelReady -= HandleLevelReady;
             Arrow.OnArrowFiredEvent -= HandleArrowFired;
             GameManager.OnLevelWon -= HandleLevelWon;
@@ -65,6 +62,7 @@ namespace ArrowSwarm.Tutorial
 
             if (isMapTestTutorial || (levelParams.Level <= 1 && (DataManager.Instance == null || !DataManager.Instance.IsTutorialCompleted)))
             {
+                if (!gameObject.activeSelf) gameObject.SetActive(true);
                 StartTutorial();
             }
             else
@@ -263,16 +261,14 @@ namespace ArrowSwarm.Tutorial
             // Restore HUD bars for level complete and next levels
             FindFirstObjectByType<ArrowSwarm.UI.GameHUD>()?.SetBarsVisible(true, true);
 
-            // Spawn celebration fireworks barrage
-            ArrowSwarm.Effects.ParticleManager.Instance?.SpawnFireworksCelebration();
-
-            string title = GetLocalizedText("<color=#FFE066>TEBRİKLER!</color>\nTUTORİAL'I TAMAMLADIN", "<color=#FFE066>CONGRATULATIONS!</color>\nTUTORIAL COMPLETED!");
+            string title = GetLocalizedText("<color=#FFE066>TEBRİKLER!</color>\nTUTORİAL TAMAMLANDI", "<color=#FFE066>CONGRATULATIONS!</color>\nTUTORIAL COMPLETED!");
             string subtitle = GetLocalizedText(
                 "Tüm temel kuralları öğrendin!\nŞimdi büyük maceraya başla.",
                 "You mastered all the basics!\nNow start your grand adventure."
             );
+            string buttonText = GetLocalizedText("ANA MENÜ", "MAIN MENU");
 
-            _overlayUI?.ShowCompletionCard(title, subtitle);
+            _overlayUI?.ShowCompletionCard(title, subtitle, buttonText);
 
             // Persist tutorial completion and advance to Level 2
             if (DataManager.Instance != null)
@@ -322,6 +318,8 @@ namespace ArrowSwarm.Tutorial
             {
                 SceneManager.LoadScene("MainMenuScene");
             }
+
+            gameObject.SetActive(false);
         }
 
         /// <summary>
@@ -333,6 +331,7 @@ namespace ArrowSwarm.Tutorial
             _handUI?.HideImmediately();
             _overlayUI?.Hide();
             FindFirstObjectByType<ArrowSwarm.UI.GameHUD>()?.SetBarsVisible(true, true);
+            gameObject.SetActive(false);
         }
 
         private string GetLocalizedText(string tr, string en)

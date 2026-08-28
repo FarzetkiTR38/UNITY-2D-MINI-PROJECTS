@@ -113,7 +113,7 @@ namespace ArrowSwarm.Effects
 
         private void HandleLevelWon()
         {
-            SpawnFireworksCelebration();
+            // Fireworks disabled per user preference
         }
 
         private ParticleSystem GetFromPool(ParticleSystem prefab)

@@ -25,6 +25,7 @@ namespace ArrowSwarm.Tutorial
         [SerializeField] private GameObject _completeCard;
         [SerializeField] private CanvasGroup _completeGroup;
         [SerializeField] private Button _continueButton;
+        [SerializeField] private TextMeshProUGUI _continueButtonText;
         [SerializeField] private TextMeshProUGUI _completeTitleText;
         [SerializeField] private TextMeshProUGUI _completeSubtitleText;
 
@@ -97,9 +98,9 @@ namespace ArrowSwarm.Tutorial
         }
 
         /// <summary>
-        /// Shows the completion celebration card with victory text.
+        /// Shows the completion celebration card with victory text and localized button.
         /// </summary>
-        public void ShowCompletionCard(string title, string subtitle)
+        public void ShowCompletionCard(string title, string subtitle, string buttonText = "MAIN MENU")
         {
             var overlayCG = GetComponent<CanvasGroup>();
             if (overlayCG != null)
@@ -121,6 +122,16 @@ namespace ArrowSwarm.Tutorial
                 if (_continueButton == null)
                 {
                     _continueButton = _completeCard.GetComponentInChildren<Button>(true);
+                }
+
+                if (_continueButtonText == null && _continueButton != null)
+                {
+                    _continueButtonText = _continueButton.GetComponentInChildren<TextMeshProUGUI>(true);
+                }
+
+                if (_continueButtonText != null && !string.IsNullOrEmpty(buttonText))
+                {
+                    _continueButtonText.text = buttonText;
                 }
 
                 if (_continueButton != null)
