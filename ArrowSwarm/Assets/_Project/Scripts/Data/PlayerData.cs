@@ -15,8 +15,11 @@ namespace ArrowSwarm.Data
         /// <summary>Highest level ever reached.</summary>
         public int highestLevel = 1;
 
-        /// <summary>Number of available tip (hint) tokens.</summary>
-        public int tipCount = 3;
+        /// <summary>Number of available tip tokens.</summary>
+        public int tipCount = 1;
+
+        /// <summary>Number of available freeze skill charges.</summary>
+        public int freezeCount = 1;
 
         /// <summary>Stars earned per level.</summary>
         public System.Collections.Generic.List<LevelStarData> levelStars = new System.Collections.Generic.List<LevelStarData>();
@@ -99,7 +102,8 @@ namespace ArrowSwarm.Data
             {
                 currentLevel = 1,
                 highestLevel = 1,
-                tipCount = 3,
+                tipCount = 1,
+                freezeCount = 1,
                 levelStars = new System.Collections.Generic.List<LevelStarData>(),
                 lastDailyLoginDate = "",
                 musicVolume = 0.7f,

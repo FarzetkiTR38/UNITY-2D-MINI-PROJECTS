@@ -1,13 +1,16 @@
 namespace ArrowSwarm.UI
 {
     using ArrowSwarm.Core;
+    using ArrowSwarm.Data;
+    using ArrowSwarm.Skills;
+    using ArrowSwarm.Tips;
     using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
 
     /// <summary>
     /// Manages the in-game HUD: level display, lives (hearts),
-    /// tip count, arrow counter, and pause button.
+    /// arrow counter, active skills (Tips &amp; Freeze), and pause menu.
     /// </summary>
     public class GameHUD : MonoBehaviour
     {
@@ -24,6 +27,17 @@ namespace ArrowSwarm.UI
         [SerializeField] private TextMeshProUGUI _arrowCountText;
         [SerializeField] private Slider _zoomSlider;
 
+        [Header("Active Skills (Bottom Bar)")]
+        [SerializeField] private Button _skill1TipButton;
+        [SerializeField] private TextMeshProUGUI _skill1CountText;
+        [SerializeField] private GameObject _skill1AdBadge;
+
+        [SerializeField] private Button _skill2FreezeButton;
+        [SerializeField] private TextMeshProUGUI _skill2CountText;
+        [SerializeField] private GameObject _skill2AdBadge;
+        [SerializeField] private GameObject _skill2ActiveTimerRoot;
+        [SerializeField] private TextMeshProUGUI _skill2ActiveTimerText;
+
         /// <summary>RectTransform of the top HUD bar.</summary>
         public RectTransform TopPanelRect => _topPanelRect;
 
@@ -36,6 +50,7 @@ namespace ArrowSwarm.UI
         private void Awake()
         {
             EnsurePanels();
+            AutoWireSkillButtons();
         }
 
         private void EnsurePanels()
@@ -54,12 +69,57 @@ namespace ArrowSwarm.UI
             }
         }
 
+        private void AutoWireSkillButtons()
+        {
+            if (_skill1TipButton == null)
+            {
+                _skill1TipButton = transform.Find("BottomBar/Skill1")?.GetComponent<Button>();
+            }
+            if (_skill1CountText == null && _skill1TipButton != null)
+            {
+                _skill1CountText = _skill1TipButton.transform.Find("Badge/Text")?.GetComponent<TextMeshProUGUI>()
+                                ?? _skill1TipButton.GetComponentInChildren<TextMeshProUGUI>(true);
+            }
+            if (_skill1AdBadge == null && _skill1TipButton != null)
+            {
+                _skill1AdBadge = _skill1TipButton.transform.Find("AdBadge")?.gameObject;
+            }
+
+            if (_skill2FreezeButton == null)
+            {
+                _skill2FreezeButton = transform.Find("BottomBar/Skill2")?.GetComponent<Button>();
+            }
+            if (_skill2CountText == null && _skill2FreezeButton != null)
+            {
+                _skill2CountText = _skill2FreezeButton.transform.Find("Badge/Text")?.GetComponent<TextMeshProUGUI>()
+                                ?? _skill2FreezeButton.GetComponentInChildren<TextMeshProUGUI>(true);
+            }
+            if (_skill2AdBadge == null && _skill2FreezeButton != null)
+            {
+                _skill2AdBadge = _skill2FreezeButton.transform.Find("AdBadge")?.gameObject;
+            }
+            if (_skill2ActiveTimerRoot == null && _skill2FreezeButton != null)
+            {
+                _skill2ActiveTimerRoot = _skill2FreezeButton.transform.Find("ActiveTimer")?.gameObject;
+            }
+            if (_skill2ActiveTimerText == null && _skill2FreezeButton != null)
+            {
+                _skill2ActiveTimerText = _skill2FreezeButton.transform.Find("ActiveTimer/Text")?.GetComponent<TextMeshProUGUI>();
+            }
+        }
+
         private void OnEnable()
         {
             GameManager.OnLivesChanged += UpdateLives;
             GameManager.OnGameStateChanged += HandleStateChanged;
             LevelManager.OnArrowCountChanged += UpdateArrowCount;
             LevelManager.OnLevelReady += HandleLevelReady;
+            DataManager.OnPlayerDataChanged += HandlePlayerDataChanged;
+
+            TipManager.OnTipUsed += HandleTipUsed;
+            FreezeManager.OnFreezeStarted += HandleFreezeStarted;
+            FreezeManager.OnFreezeTick += HandleFreezeTick;
+            FreezeManager.OnFreezeEnded += HandleFreezeEnded;
         }
 
         private void OnDisable()
@@ -68,21 +128,40 @@ namespace ArrowSwarm.UI
             GameManager.OnGameStateChanged -= HandleStateChanged;
             LevelManager.OnArrowCountChanged -= UpdateArrowCount;
             LevelManager.OnLevelReady -= HandleLevelReady;
+            DataManager.OnPlayerDataChanged -= HandlePlayerDataChanged;
+
+            TipManager.OnTipUsed -= HandleTipUsed;
+            FreezeManager.OnFreezeStarted -= HandleFreezeStarted;
+            FreezeManager.OnFreezeTick -= HandleFreezeTick;
+            FreezeManager.OnFreezeEnded -= HandleFreezeEnded;
         }
 
         private void Start()
         {
             EnsurePanels();
+            AutoWireSkillButtons();
 
             if (_canvasGroup == null)
             {
-                _canvasGroup = GetComponent<CanvasGroup>();
-                if (_canvasGroup == null)
-                    _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+                _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
             }
 
             _pauseButton?.onClick.AddListener(OnPauseClicked);
             _tipButton?.onClick.AddListener(OnTipClicked);
+
+            if (_skill1TipButton != null)
+            {
+                _skill1TipButton.onClick.RemoveAllListeners();
+                _skill1TipButton.onClick.AddListener(OnTipClicked);
+            }
+
+            if (_skill2FreezeButton != null)
+            {
+                _skill2FreezeButton.onClick.RemoveAllListeners();
+                _skill2FreezeButton.onClick.AddListener(OnFreezeClicked);
+            }
+
+            UpdateSkillBadges();
 
             if (GameManager.Instance != null)
             {
@@ -99,13 +178,98 @@ namespace ArrowSwarm.UI
                 _levelText.text = $"Lv.{levelParams.Level}";
             }
 
-            UpdateTipCount();
+            UpdateSkillBadges();
 
-            bool isTutorial = (levelParams.Level <= 1 && (Data.DataManager.Instance == null || !Data.DataManager.Instance.IsTutorialCompleted))
+            bool isTutorial = (levelParams.Level <= 1 && (DataManager.Instance == null || !DataManager.Instance.IsTutorialCompleted))
                            || (ArrowSwarm.Tutorial.TutorialManager.Instance != null && ArrowSwarm.Tutorial.TutorialManager.Instance.IsTutorialActive);
 
-            // In tutorial mode, hide both top and bottom bars for ultra-clean cinematic immersion
+            // In tutorial mode, hide both top and bottom bars for cinematic immersion
             SetBarsVisible(!isTutorial, !isTutorial);
+        }
+
+        private void HandlePlayerDataChanged(PlayerData data)
+        {
+            UpdateSkillBadges();
+        }
+
+        private void HandleTipUsed(int remaining)
+        {
+            UpdateSkillBadges();
+        }
+
+        private void HandleFreezeStarted(float duration)
+        {
+            UpdateSkillBadges();
+            if (_skill2ActiveTimerRoot != null)
+            {
+                _skill2ActiveTimerRoot.SetActive(true);
+            }
+            if (_skill2ActiveTimerText != null)
+            {
+                _skill2ActiveTimerText.gameObject.SetActive(true);
+                _skill2ActiveTimerText.text = $"{duration:F1}s";
+            }
+        }
+
+        private void HandleFreezeTick(float remaining, float total)
+        {
+            if (_skill2ActiveTimerRoot != null && !_skill2ActiveTimerRoot.activeSelf)
+            {
+                _skill2ActiveTimerRoot.SetActive(true);
+            }
+            if (_skill2ActiveTimerText != null)
+            {
+                _skill2ActiveTimerText.text = $"{remaining:F1}s";
+            }
+        }
+
+        private void HandleFreezeEnded()
+        {
+            if (_skill2ActiveTimerRoot != null)
+            {
+                _skill2ActiveTimerRoot.SetActive(false);
+            }
+            UpdateSkillBadges();
+        }
+
+        /// <summary>
+        /// Updates the badges and remaining counts for Tips and Freeze skills.
+        /// </summary>
+        public void UpdateSkillBadges()
+        {
+            PlayerData data = DataManager.Instance?.PlayerData;
+            int tips = data?.tipCount ?? 0;
+            int freezes = data?.freezeCount ?? 0;
+
+            // Legacy top bar tip text
+            if (_tipCountText != null) _tipCountText.text = $"x{tips}";
+
+            // Bottom Bar Skill 1 (Tip)
+            if (_skill1CountText != null)
+            {
+                _skill1CountText.gameObject.SetActive(tips > 0);
+                _skill1CountText.text = tips.ToString();
+            }
+            if (_skill1AdBadge != null)
+            {
+                _skill1AdBadge.SetActive(tips <= 0);
+            }
+
+            // Bottom Bar Skill 2 (Freeze)
+            bool isFrozen = FreezeManager.Instance != null && FreezeManager.Instance.IsFrozen;
+            if (_skill2ActiveTimerRoot != null)
+            {
+                _skill2ActiveTimerRoot.SetActive(isFrozen);
+            }
+            if (_skill2CountText != null)
+            {
+                _skill2CountText.gameObject.SetActive(!isFrozen && freezes > 0);
+                _skill2CountText.text = freezes.ToString();
+            }
+            if (_skill2AdBadge != null)
+            {
+                _skill2AdBadge.SetActive(!isFrozen && freezes <= 0);
+            }
         }
 
         /// <summary>
@@ -117,8 +281,7 @@ namespace ArrowSwarm.UI
 
             if (_topPanelRect != null)
             {
-                var topCG = _topPanelRect.GetComponent<CanvasGroup>();
-                if (topCG == null) topCG = _topPanelRect.gameObject.AddComponent<CanvasGroup>();
+                var topCG = _topPanelRect.GetComponent<CanvasGroup>() ?? _topPanelRect.gameObject.AddComponent<CanvasGroup>();
                 topCG.alpha = showTop ? 1f : 0f;
                 topCG.interactable = showTop;
                 topCG.blocksRaycasts = showTop;
@@ -127,8 +290,7 @@ namespace ArrowSwarm.UI
 
             if (_bottomPanelRect != null)
             {
-                var bottomCG = _bottomPanelRect.GetComponent<CanvasGroup>();
-                if (bottomCG == null) bottomCG = _bottomPanelRect.gameObject.AddComponent<CanvasGroup>();
+                var bottomCG = _bottomPanelRect.GetComponent<CanvasGroup>() ?? _bottomPanelRect.gameObject.AddComponent<CanvasGroup>();
                 bottomCG.alpha = showBottom ? 1f : 0f;
                 bottomCG.interactable = showBottom;
                 bottomCG.blocksRaycasts = showBottom;
@@ -157,16 +319,9 @@ namespace ArrowSwarm.UI
             }
         }
 
-        private void UpdateTipCount()
-        {
-            if (_tipCountText == null) return;
-            int tips = Data.DataManager.Instance?.PlayerData?.tipCount ?? 0;
-            _tipCountText.text = $"x{tips}";
-        }
-
         private void HandleStateChanged(GameState state)
         {
-            bool isTutorial = (LevelManager.Instance != null && LevelManager.Instance.CurrentParams.Level <= 1 && (Data.DataManager.Instance == null || !Data.DataManager.Instance.IsTutorialCompleted))
+            bool isTutorial = (LevelManager.Instance != null && LevelManager.Instance.CurrentParams.Level <= 1 && (DataManager.Instance == null || !DataManager.Instance.IsTutorialCompleted))
                            || (ArrowSwarm.Tutorial.TutorialManager.Instance != null && ArrowSwarm.Tutorial.TutorialManager.Instance.IsTutorialActive);
 
             if (isTutorial)
@@ -184,9 +339,7 @@ namespace ArrowSwarm.UI
         {
             if (_canvasGroup == null)
             {
-                _canvasGroup = GetComponent<CanvasGroup>();
-                if (_canvasGroup == null)
-                    _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+                _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
             }
 
             _canvasGroup.alpha = visible ? 1f : 0f;
@@ -201,13 +354,44 @@ namespace ArrowSwarm.UI
 
         private void OnTipClicked()
         {
-            ArrowSwarm.Tips.TipManager.Instance?.UseTip();
+            int tips = DataManager.Instance?.PlayerData?.tipCount ?? 0;
+            if (tips > 0)
+            {
+                TipManager.Instance?.UseTip();
+            }
+            else
+            {
+                // Ad watch reward flow (mock: +1 charge)
+                Debug.Log("[ArrowSwarm] GameHUD: Watching ad for Tip reward...");
+                DataManager.Instance?.ModifyTipCount(1);
+                TipManager.Instance?.UseTip();
+            }
+            UpdateSkillBadges();
+        }
+
+        private void OnFreezeClicked()
+        {
+            int freezes = DataManager.Instance?.PlayerData?.freezeCount ?? 0;
+            if (freezes > 0)
+            {
+                FreezeManager.Instance?.UseFreeze();
+            }
+            else
+            {
+                // Ad watch reward flow (mock: +1 charge)
+                Debug.Log("[ArrowSwarm] GameHUD: Watching ad for Freeze reward...");
+                DataManager.Instance?.ModifyFreezeCount(1);
+                FreezeManager.Instance?.UseFreeze();
+            }
+            UpdateSkillBadges();
         }
 
         private void OnDestroy()
         {
             _pauseButton?.onClick.RemoveListener(OnPauseClicked);
             _tipButton?.onClick.RemoveListener(OnTipClicked);
+            _skill1TipButton?.onClick.RemoveListener(OnTipClicked);
+            _skill2FreezeButton?.onClick.RemoveListener(OnFreezeClicked);
         }
     }
 }

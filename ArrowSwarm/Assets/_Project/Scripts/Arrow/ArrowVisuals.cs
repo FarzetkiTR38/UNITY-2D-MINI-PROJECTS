@@ -36,6 +36,11 @@ namespace ArrowSwarm.Arrow
         private Vector3 _baseHeadScale;
         private Color _originalColor;
 
+        // Tip highlight state
+        private bool _isHighlighted;
+        private float _highlightTimer;
+        private Color _preHighlightColor;
+
         /// <summary>Whether this arrow is currently playing its birth/spawn animation.</summary>
         public bool IsSpawning => _isSpawning;
 
@@ -372,9 +377,55 @@ namespace ArrowSwarm.Arrow
             }
         }
 
+        /// <summary>
+        /// Enables or disables the glowing tip hint highlight effect on this arrow.
+        /// </summary>
+        public void SetHighlight(bool highlight)
+        {
+            if (_isHighlighted == highlight) return;
+            _isHighlighted = highlight;
+
+            if (highlight)
+            {
+                _highlightTimer = 0f;
+                _preHighlightColor = _headRenderer != null ? _headRenderer.color : _originalColor;
+            }
+            else
+            {
+                // Restore original appearance
+                if (!_isRainbow)
+                {
+                    if (_lineRenderer != null)
+                    {
+                        _lineRenderer.startColor = _preHighlightColor;
+                        _lineRenderer.endColor = _preHighlightColor;
+                        _lineRenderer.startWidth = _baseLineWidth;
+                        _lineRenderer.endWidth = _baseLineWidth;
+                    }
+                    if (_headRenderer != null)
+                    {
+                        _headRenderer.color = _preHighlightColor;
+                    }
+                }
+                if (_headTransform != null)
+                {
+                    _headTransform.localScale = _baseHeadScale != Vector3.zero ? _baseHeadScale : Vector3.one * _headSize;
+                }
+            }
+        }
+
+        private void OnDisable()
+        {
+            SetHighlight(false);
+        }
+
         private void Update()
         {
-            if (_isPulsing)
+            if (_isHighlighted)
+            {
+                UpdateHighlight();
+            }
+            else if (_isPulsing)
             {
                 UpdatePulse();
             }
@@ -382,6 +433,37 @@ namespace ArrowSwarm.Arrow
             if (_isRainbow)
             {
                 UpdateRainbowColor();
+            }
+        }
+
+        private void UpdateHighlight()
+        {
+            _highlightTimer += Time.deltaTime * 6.0f;
+            float wave = (Mathf.Sin(_highlightTimer) + 1f) * 0.5f; // 0..1 smooth oscillation
+            float scaleMul = Mathf.Lerp(1.0f, 1.45f, wave);
+
+            // Dynamic pulsating gold/yellow highlight color
+            Color goldColor = Color.Lerp(new Color(1f, 0.82f, 0.15f, 1f), new Color(1f, 0.98f, 0.55f, 1f), wave);
+
+            if (_lineRenderer != null)
+            {
+                if (!_isRainbow)
+                {
+                    _lineRenderer.startColor = goldColor;
+                    _lineRenderer.endColor = goldColor;
+                }
+                _lineRenderer.startWidth = _baseLineWidth * scaleMul;
+                _lineRenderer.endWidth = _baseLineWidth * scaleMul;
+            }
+
+            if (_headRenderer != null && !_isRainbow)
+            {
+                _headRenderer.color = goldColor;
+            }
+
+            if (_headTransform != null)
+            {
+                _headTransform.localScale = _baseHeadScale * scaleMul;
             }
         }
 
@@ -604,23 +686,6 @@ namespace ArrowSwarm.Arrow
                 yield return null;
             }
             transform.position = originalPos;
-        }
-
-        /// <summary>
-        /// Highlights this arrow (used by tip system).
-        /// </summary>
-        public void SetHighlight(bool highlighted)
-        {
-            if (highlighted)
-            {
-                _pulseAmount = 0.12f;
-                _pulseSpeed = 4f;
-            }
-            else
-            {
-                _pulseAmount = 0.05f;
-                _pulseSpeed = 2f;
-            }
         }
 
         /// <summary>

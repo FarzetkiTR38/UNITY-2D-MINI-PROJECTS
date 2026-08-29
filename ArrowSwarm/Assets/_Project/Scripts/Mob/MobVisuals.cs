@@ -80,6 +80,17 @@ namespace ArrowSwarm.Mob
         }
 
         /// <summary>
+        /// Applies an icy blue freeze tint or restores default color.
+        /// </summary>
+        public void SetFrozen(bool frozen)
+        {
+            if (_spriteRenderer != null)
+            {
+                _spriteRenderer.color = frozen ? new Color(0.45f, 0.85f, 1.0f, 1f) : Color.white;
+            }
+        }
+
+        /// <summary>
         /// Plays the death visual effect.
         /// </summary>
         public void PlayDeathEffect()

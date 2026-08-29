@@ -23,8 +23,10 @@ namespace ArrowSwarm.Core
             new Color(0.23f, 0.51f, 0.96f, 1f), // #3B82F6 Mavi/Royal Blue
         };
 
-        [Header("Tips")]
-        [SerializeField] private int _startingTips = 3;
+        [Header("Skills")]
+        [SerializeField] private int _startingTips = 1;
+        [SerializeField] private int _startingFreezes = 1;
+        [SerializeField] private float _freezeDuration = 5.0f;
         [SerializeField] private int _dailyLoginTipBonus = 1;
         [SerializeField] private int _adWatchTipReward = 1;
 
@@ -64,8 +66,14 @@ namespace ArrowSwarm.Core
         /// <summary>Arrow color array indexed by weight bracket.</summary>
         public Color[] ArrowColors => _arrowColors;
 
-        /// <summary>Number of tips the player starts with.</summary>
+        /// <summary>Starting number of tips.</summary>
         public int StartingTips => _startingTips;
+
+        /// <summary>Starting number of freeze charges.</summary>
+        public int StartingFreezes => _startingFreezes;
+
+        /// <summary>Duration of the freeze skill in seconds.</summary>
+        public float FreezeDuration => _freezeDuration;
 
         /// <summary>Tips granted per daily login.</summary>
         public int DailyLoginTipBonus => _dailyLoginTipBonus;

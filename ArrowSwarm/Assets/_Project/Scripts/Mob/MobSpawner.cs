@@ -30,6 +30,7 @@ namespace ArrowSwarm.Mob
         private float _mobScaleFactor = 1.0f;
         private float _desiredSpacing = 1.6f;
         private float _gapCloseMultiplier = 1.5f;
+        private bool _isFrozen;
 
         /// <summary>List of currently active mobs.</summary>
         public IReadOnlyList<Mob> ActiveMobs => _activeMobs;
@@ -96,6 +97,11 @@ namespace ArrowSwarm.Mob
             Mob.OnMobFinished -= HandleMobFinished;
             Mob.OnMobKilled += HandleMobKilled;
             Mob.OnMobFinished += HandleMobFinished;
+
+            ArrowSwarm.Skills.FreezeManager.OnFreezeStarted -= HandleFreezeStarted;
+            ArrowSwarm.Skills.FreezeManager.OnFreezeEnded -= HandleFreezeEnded;
+            ArrowSwarm.Skills.FreezeManager.OnFreezeStarted += HandleFreezeStarted;
+            ArrowSwarm.Skills.FreezeManager.OnFreezeEnded += HandleFreezeEnded;
         }
 
         /// <summary>
@@ -205,6 +211,11 @@ namespace ArrowSwarm.Mob
                     yield return new WaitForSeconds(0.5f);
                 }
 
+                while (_isFrozen)
+                {
+                    yield return null;
+                }
+
                 // Gradual HP progression over time
                 int groupIndex = _spawnedCount / 4;
                 int mobHP = baseHP + (groupIndex * 2);
@@ -218,8 +229,35 @@ namespace ArrowSwarm.Mob
         {
             Mob mob = _mobPool.Get();
             mob.Initialize(_spawnedCount, hp, _baseMobSpeed, _mobScaleFactor);
+            if (_isFrozen) mob.SetFrozen(true);
             _activeMobs.Add(mob);
             _spawnedCount++;
+        }
+
+        private void HandleFreezeStarted(float duration)
+        {
+            _isFrozen = true;
+            for (int i = 0; i < _activeMobs.Count; i++)
+            {
+                Mob m = _activeMobs[i];
+                if (m != null && m.IsAlive)
+                {
+                    m.SetFrozen(true);
+                }
+            }
+        }
+
+        private void HandleFreezeEnded()
+        {
+            _isFrozen = false;
+            for (int i = 0; i < _activeMobs.Count; i++)
+            {
+                Mob m = _activeMobs[i];
+                if (m != null && m.IsAlive)
+                {
+                    m.SetFrozen(false);
+                }
+            }
         }
 
         private void HandleMobKilled(Mob mob)
@@ -313,6 +351,8 @@ namespace ArrowSwarm.Mob
         {
             Mob.OnMobKilled -= HandleMobKilled;
             Mob.OnMobFinished -= HandleMobFinished;
+            ArrowSwarm.Skills.FreezeManager.OnFreezeStarted -= HandleFreezeStarted;
+            ArrowSwarm.Skills.FreezeManager.OnFreezeEnded -= HandleFreezeEnded;
             base.OnDestroy();
         }
 

@@ -71,6 +71,17 @@ namespace ArrowSwarm.Mob
         }
 
         /// <summary>
+        /// Pauses or unpauses mob movement along the path during freeze.
+        /// </summary>
+        public void SetFrozen(bool frozen)
+        {
+            if (_pathFollower != null)
+            {
+                _pathFollower.IsPaused = frozen;
+            }
+        }
+
+        /// <summary>
         /// Stops mob movement.
         /// </summary>
         public void StopMoving()

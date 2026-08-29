@@ -278,6 +278,29 @@ namespace ArrowSwarm.Data
             NotifyAndSave();
         }
 
+        /// <summary>Number of available freeze charges.</summary>
+        public int FreezeCount => _playerData != null ? _playerData.freezeCount : 0;
+
+        /// <summary>
+        /// Directly sets the freeze skill charge balance.
+        /// </summary>
+        public void SetFreezeCount(int count)
+        {
+            if (_playerData == null) return;
+            _playerData.freezeCount = Mathf.Max(0, count);
+            NotifyAndSave();
+        }
+
+        /// <summary>
+        /// Adds or removes freeze skill charges.
+        /// </summary>
+        public void ModifyFreezeCount(int delta)
+        {
+            if (_playerData == null) return;
+            _playerData.freezeCount = Mathf.Max(0, _playerData.freezeCount + delta);
+            NotifyAndSave();
+        }
+
         /// <summary>
         /// Updates audio volume settings.
         /// </summary>

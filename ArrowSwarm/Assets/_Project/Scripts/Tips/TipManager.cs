@@ -23,6 +23,14 @@ namespace ArrowSwarm.Tips
         /// <summary>Fired when tip count is zero and user tries to use.</summary>
         public static event Action OnNoTipsAvailable;
 
+        protected override void OnSingletonAwake()
+        {
+            if (_highlighter == null)
+            {
+                _highlighter = GetComponent<TipHighlighter>() ?? gameObject.AddComponent<TipHighlighter>();
+            }
+        }
+
         /// <summary>
         /// Uses a tip to highlight the best arrow.
         /// </summary>
@@ -52,6 +60,10 @@ namespace ArrowSwarm.Tips
             OnTipUsed?.Invoke(data.tipCount);
 
             // Highlight the arrow
+            if (_highlighter == null)
+            {
+                _highlighter = GetComponent<TipHighlighter>() ?? gameObject.AddComponent<TipHighlighter>();
+            }
             _highlighter?.Highlight(bestArrow);
 
             LogDebug($"Tip used! Highlighted arrow at {bestArrow.HeadPoint}. Tips remaining: {data.tipCount}");
