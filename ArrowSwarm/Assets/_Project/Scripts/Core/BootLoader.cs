@@ -1,32 +1,45 @@
 namespace ArrowSwarm.Core
 {
     using System.Collections;
+    using ArrowSwarm.UI;
     using UnityEngine;
     using UnityEngine.SceneManagement;
 
     /// <summary>
-    /// Boot scene loader. Initializes core systems then loads Main Menu rapidly.
+    /// Boot scene loader. Initializes core systems, coordinates the animated
+    /// BootLoadingUI progress, and seamlessly transitions into MainMenuScene or GameScene.
     /// </summary>
     public class BootLoader : MonoBehaviour
     {
-        [SerializeField] private float _splashDuration = 0.2f;
         [SerializeField] private GameObject _coreManagersPrefab;
+        [SerializeField] private BootLoadingUI _loadingUI;
 
-        private IEnumerator Start()
+        private void Start()
         {
+            // Ensure CoreManagers are instantiated
             if (_coreManagersPrefab != null && Object.FindFirstObjectByType<GameManager>() == null)
             {
                 var go = Instantiate(_coreManagersPrefab);
                 DontDestroyOnLoad(go);
             }
-            
-            // Fast transition delay (max 0.2s)
-            float waitTime = Mathf.Min(_splashDuration, 0.2f);
-            if (waitTime > 0f)
+
+            if (_loadingUI == null)
             {
-                yield return new WaitForSeconds(waitTime);
+                _loadingUI = Object.FindFirstObjectByType<BootLoadingUI>();
             }
 
+            if (_loadingUI != null)
+            {
+                _loadingUI.StartLoading(OnLoadingCompleted);
+            }
+            else
+            {
+                StartCoroutine(FallbackLoadRoutine());
+            }
+        }
+
+        private void OnLoadingCompleted()
+        {
             string targetScene = "MainMenuScene";
             if (Data.DataManager.Instance != null && !Data.DataManager.Instance.IsTutorialCompleted)
             {
@@ -34,11 +47,20 @@ namespace ArrowSwarm.Core
                 targetScene = "GameScene";
             }
 
-            AsyncOperation op = SceneManager.LoadSceneAsync(targetScene);
-            while (op != null && !op.isDone)
+            if (SceneTransitionManager.Instance != null)
             {
-                yield return null;
+                SceneTransitionManager.Instance.LoadScene(targetScene);
             }
+            else
+            {
+                SceneManager.LoadScene(targetScene);
+            }
+        }
+
+        private IEnumerator FallbackLoadRoutine()
+        {
+            yield return new WaitForSeconds(1.0f);
+            OnLoadingCompleted();
         }
     }
 }
