@@ -358,15 +358,21 @@ namespace ArrowSwarm.UI
             if (tips > 0)
             {
                 TipManager.Instance?.UseTip();
+                UpdateSkillBadges();
             }
             else
             {
-                // Ad watch reward flow (mock: +1 charge)
-                Debug.Log("[ArrowSwarm] GameHUD: Watching ad for Tip reward...");
-                DataManager.Instance?.ModifyTipCount(1);
-                TipManager.Instance?.UseTip();
+                // Request rewarded ad via AdManager
+                ArrowSwarm.Ads.AdManager.Instance?.ShowRewardedAd(rewardGranted =>
+                {
+                    if (rewardGranted)
+                    {
+                        DataManager.Instance?.ModifyTipCount(1);
+                        TipManager.Instance?.UseTip();
+                        UpdateSkillBadges();
+                    }
+                });
             }
-            UpdateSkillBadges();
         }
 
         private void OnFreezeClicked()
@@ -375,15 +381,21 @@ namespace ArrowSwarm.UI
             if (freezes > 0)
             {
                 FreezeManager.Instance?.UseFreeze();
+                UpdateSkillBadges();
             }
             else
             {
-                // Ad watch reward flow (mock: +1 charge)
-                Debug.Log("[ArrowSwarm] GameHUD: Watching ad for Freeze reward...");
-                DataManager.Instance?.ModifyFreezeCount(1);
-                FreezeManager.Instance?.UseFreeze();
+                // Request rewarded ad via AdManager
+                ArrowSwarm.Ads.AdManager.Instance?.ShowRewardedAd(rewardGranted =>
+                {
+                    if (rewardGranted)
+                    {
+                        DataManager.Instance?.ModifyFreezeCount(1);
+                        FreezeManager.Instance?.UseFreeze();
+                        UpdateSkillBadges();
+                    }
+                });
             }
-            UpdateSkillBadges();
         }
 
         private void OnDestroy()
