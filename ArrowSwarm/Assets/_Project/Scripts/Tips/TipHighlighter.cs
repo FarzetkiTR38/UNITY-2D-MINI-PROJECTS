@@ -9,12 +9,31 @@ namespace ArrowSwarm.Tips
     /// </summary>
     public class TipHighlighter : MonoBehaviour
     {
-        [SerializeField] private float _highlightDuration = 3f;
+        [SerializeField] private float _highlightDuration = 6f;
         [SerializeField] private float _pulseSpeed = 4f;
 
         private Arrow _highlightedArrow;
         private float _timer;
         private bool _isHighlighting;
+
+        private void OnEnable()
+        {
+            Arrow.OnArrowFiredEvent += HandleArrowFired;
+        }
+
+        private void OnDisable()
+        {
+            Arrow.OnArrowFiredEvent -= HandleArrowFired;
+            ClearHighlight();
+        }
+
+        private void HandleArrowFired(Arrow arrow)
+        {
+            if (_highlightedArrow != null && _highlightedArrow == arrow)
+            {
+                ClearHighlight();
+            }
+        }
 
         /// <summary>
         /// Highlights the given arrow with a glowing pulse effect.
@@ -23,6 +42,8 @@ namespace ArrowSwarm.Tips
         {
             // Clear previous highlight
             ClearHighlight();
+
+            if (arrow == null) return;
 
             _highlightedArrow = arrow;
             _timer = _highlightDuration;
@@ -57,11 +78,6 @@ namespace ArrowSwarm.Tips
             {
                 ClearHighlight();
             }
-        }
-
-        private void OnDisable()
-        {
-            ClearHighlight();
         }
     }
 }

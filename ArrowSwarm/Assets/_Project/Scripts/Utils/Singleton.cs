@@ -33,7 +33,7 @@ namespace ArrowSwarm.Utils
                 {
                     if (_instance == null)
                     {
-                        _instance = FindFirstObjectByType<T>();
+                        _instance = FindFirstObjectByType<T>(FindObjectsInactive.Include);
 
                         if (_instance == null && Application.isPlaying)
                         {
@@ -53,7 +53,15 @@ namespace ArrowSwarm.Utils
 
             if (_instance != null && _instance != this)
             {
-                Destroy(gameObject);
+                // If this GameObject hosts multiple managers (like CoreManagers), only destroy this duplicate component!
+                if (GetComponents<Component>().Length > 3)
+                {
+                    Destroy(this);
+                }
+                else
+                {
+                    Destroy(gameObject);
+                }
                 return;
             }
 

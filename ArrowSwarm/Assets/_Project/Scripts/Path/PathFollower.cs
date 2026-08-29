@@ -16,9 +16,17 @@ namespace ArrowSwarm.Path
         private float _currentDistance;
         private float _speed;
         private bool _isFollowing;
+        private bool _isPaused;
 
         /// <summary>Whether the follower is currently moving.</summary>
         public bool IsFollowing => _isFollowing;
+
+        /// <summary>Whether movement along the path is temporarily paused (e.g. during freeze).</summary>
+        public bool IsPaused
+        {
+            get => _isPaused;
+            set => _isPaused = value;
+        }
 
         /// <summary>Current distance traveled along the path in world units.</summary>
         public float CurrentDistance => _currentDistance;
@@ -100,7 +108,7 @@ namespace ArrowSwarm.Path
 
         private void Update()
         {
-            if (!_isFollowing || _waypoints == null || _waypoints.Count < 2) return;
+            if (!_isFollowing || _isPaused || _waypoints == null || _waypoints.Count < 2) return;
 
             if (_speed != 0f)
             {

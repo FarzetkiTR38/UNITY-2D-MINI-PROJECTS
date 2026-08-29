@@ -17,7 +17,24 @@ namespace ArrowSwarm.Core
         private int _currentLives;
 
         /// <summary>Current game configuration asset.</summary>
-        public GameConfig Config => _gameConfig;
+        public GameConfig Config
+        {
+            get
+            {
+                if (_gameConfig == null)
+                {
+#if UNITY_EDITOR
+                    string[] guids = UnityEditor.AssetDatabase.FindAssets("t:GameConfig");
+                    if (guids.Length > 0)
+                    {
+                        string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
+                        _gameConfig = UnityEditor.AssetDatabase.LoadAssetAtPath<GameConfig>(path);
+                    }
+#endif
+                }
+                return _gameConfig;
+            }
+        }
 
         /// <summary>Current game state.</summary>
         public GameState CurrentState => _currentState;

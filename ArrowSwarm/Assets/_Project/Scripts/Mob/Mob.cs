@@ -85,6 +85,15 @@ namespace ArrowSwarm.Mob
         }
 
         /// <summary>
+        /// Freezes or unfreezes this mob (movement and visual icy tint).
+        /// </summary>
+        public void SetFrozen(bool frozen)
+        {
+            _movement?.SetFrozen(frozen);
+            _visuals?.SetFrozen(frozen);
+        }
+
+        /// <summary>
         /// Resets the mob for object pool reuse.
         /// </summary>
         public void ResetMob()

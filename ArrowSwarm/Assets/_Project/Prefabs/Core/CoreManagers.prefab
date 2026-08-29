@@ -24,6 +24,9 @@ GameObject:
   - component: {fileID: 647803647902238504}
   - component: {fileID: 8736305475578862592}
   - component: {fileID: 8208843418394020252}
+  - component: {fileID: 6587928466210979112}
+  - component: {fileID: 7888695290940344275}
+  - component: {fileID: 8900555007096158829}
   m_Layer: 0
   m_Name: CoreManagers
   m_TagString: Untagged
@@ -285,6 +288,46 @@ MonoBehaviour:
   _neonGlowColor: {r: 0.8018868, g: 0.8018868, b: 0.8018868, a: 1}
   _secondaryGlowColor: {r: 0, g: 0, b: 0, a: 0}
   _customMaterialOverride: {fileID: 0}
+--- !u!114 &6587928466210979112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036625359666785736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6faf962c0c356b4d8238bcdb8dd007e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Skills.FreezeManager
+  _fallbackDuration: 5
+--- !u!114 &7888695290940344275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036625359666785736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bf4327c9b9205d4495ea0e45fdba631, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Tips.TipHighlighter
+  _highlightDuration: 3
+  _pulseSpeed: 4
+--- !u!114 &8900555007096158829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036625359666785736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: affa07f910c74be4d9a5ff5e247025f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Tips.TipManager
+  _highlighter: {fileID: 7888695290940344275}
 --- !u!1 &1532447086922548065
 GameObject:
   m_ObjectHideFlags: 0
