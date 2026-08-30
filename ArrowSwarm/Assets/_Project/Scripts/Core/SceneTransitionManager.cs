@@ -307,6 +307,11 @@ namespace ArrowSwarm.Core
                 mat?.SetFloat(PropProgress, 1f);
 
                 // 2. Load target scene while screen is fully covered
+#if UNITY_EDITOR
+                // Clear the Inspector selection before unloading the current scene.
+                // Otherwise Unity can briefly serialize a destroyed UI/GameObject target.
+                UnityEditor.Selection.objects = Array.Empty<UnityEngine.Object>();
+#endif
                 Time.timeScale = 1f;
                 Debug.Log($"[ArrowSwarm] SceneTransitionManager: Loading '{sceneName}' with {_activeStyle}...");
                 SceneManager.LoadScene(sceneName);

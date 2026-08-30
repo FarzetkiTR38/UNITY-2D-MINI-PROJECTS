@@ -63,11 +63,24 @@ namespace ArrowSwarm.UI
             OpenMainPanel();
         }
 
+        /// <summary>Flag to open the Levels sub-panel directly upon loading MainMenuScene.</summary>
+        public static bool OpenLevelsOnLoad { get; set; } = false;
+
         private void Start()
         {
             SetupUI();
             SetupButtons();
-            OpenMainPanel();
+
+            if (OpenLevelsOnLoad)
+            {
+                OpenLevelsOnLoad = false;
+                OpenLevels();
+            }
+            else
+            {
+                OpenMainPanel();
+            }
+
             CheckInitialProfileSetup();
         }
 
