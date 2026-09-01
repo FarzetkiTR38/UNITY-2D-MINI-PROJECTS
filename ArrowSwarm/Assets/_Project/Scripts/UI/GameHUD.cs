@@ -112,6 +112,8 @@ namespace ArrowSwarm.UI
         {
             GameManager.OnLivesChanged += UpdateLives;
             GameManager.OnGameStateChanged += HandleStateChanged;
+            GameManager.OnLevelWon += HandleLevelWon;
+            GameManager.OnLevelLost += HandleLevelLost;
             LevelManager.OnArrowCountChanged += UpdateArrowCount;
             LevelManager.OnLevelReady += HandleLevelReady;
             DataManager.OnPlayerDataChanged += HandlePlayerDataChanged;
@@ -126,6 +128,8 @@ namespace ArrowSwarm.UI
         {
             GameManager.OnLivesChanged -= UpdateLives;
             GameManager.OnGameStateChanged -= HandleStateChanged;
+            GameManager.OnLevelWon -= HandleLevelWon;
+            GameManager.OnLevelLost -= HandleLevelLost;
             LevelManager.OnArrowCountChanged -= UpdateArrowCount;
             LevelManager.OnLevelReady -= HandleLevelReady;
             DataManager.OnPlayerDataChanged -= HandlePlayerDataChanged;
@@ -134,6 +138,26 @@ namespace ArrowSwarm.UI
             FreezeManager.OnFreezeStarted -= HandleFreezeStarted;
             FreezeManager.OnFreezeTick -= HandleFreezeTick;
             FreezeManager.OnFreezeEnded -= HandleFreezeEnded;
+        }
+
+        private void HandleLevelWon()
+        {
+            var winUI = FindFirstObjectByType<LevelCompleteUI>(FindObjectsInactive.Include);
+            if (winUI != null)
+            {
+                winUI.gameObject.SetActive(true);
+                winUI.Show();
+            }
+        }
+
+        private void HandleLevelLost()
+        {
+            var loseUI = FindFirstObjectByType<GameOverUI>(FindObjectsInactive.Include);
+            if (loseUI != null)
+            {
+                loseUI.gameObject.SetActive(true);
+                loseUI.Show();
+            }
         }
 
         private void Start()
@@ -350,6 +374,12 @@ namespace ArrowSwarm.UI
         private void OnPauseClicked()
         {
             GameManager.Instance?.PauseGame();
+            var pauseUI = FindFirstObjectByType<PauseMenuUI>(FindObjectsInactive.Include);
+            if (pauseUI != null)
+            {
+                pauseUI.gameObject.SetActive(true);
+                pauseUI.Show();
+            }
         }
 
         private void OnTipClicked()

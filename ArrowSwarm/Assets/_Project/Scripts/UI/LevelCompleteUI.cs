@@ -36,6 +36,8 @@ namespace ArrowSwarm.UI
 
         private Coroutine _fadeCoroutine;
 
+        private bool _isShowing;
+
         private void Awake()
         {
             AutoWire();
@@ -55,7 +57,10 @@ namespace ArrowSwarm.UI
 
         private void Start()
         {
-            Hide(instant: true);
+            if (!_isShowing)
+            {
+                Hide(instant: true);
+            }
         }
 
         /// <summary>
@@ -162,6 +167,18 @@ namespace ArrowSwarm.UI
                 return;
             }
 
+            _isShowing = true;
+
+            if (!gameObject.activeSelf)
+            {
+                gameObject.SetActive(true);
+            }
+
+            if (_canvasGroup == null)
+            {
+                AutoWire();
+            }
+
             int level = LevelManager.Instance != null && LevelManager.Instance.CurrentParams.Level > 0
                 ? LevelManager.Instance.CurrentParams.Level
                 : (DataManager.Instance?.PlayerData?.currentLevel ?? 1);
@@ -205,16 +222,19 @@ namespace ArrowSwarm.UI
         /// <param name="instant">If true, snaps alpha immediately to 0.</param>
         public void Hide(bool instant = false)
         {
-            if (_canvasGroup == null) return;
-
-            _canvasGroup.interactable = false;
-            _canvasGroup.blocksRaycasts = false;
+            _isShowing = false;
+            if (_canvasGroup != null)
+            {
+                _canvasGroup.interactable = false;
+                _canvasGroup.blocksRaycasts = false;
+            }
 
             if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
 
             if (instant)
             {
-                _canvasGroup.alpha = 0f;
+                if (_canvasGroup != null) _canvasGroup.alpha = 0f;
+                gameObject.SetActive(false);
             }
             else
             {
@@ -222,10 +242,21 @@ namespace ArrowSwarm.UI
             }
         }
 
-        private void OnNextLevel() => LevelManager.Instance?.NextLevel();
-        private void OnMainMenu() => GameManager.Instance?.GoToMainMenu();
+        private void OnNextLevel()
+        {
+            Hide(instant: true);
+            LevelManager.Instance?.NextLevel();
+        }
+
+        private void OnMainMenu()
+        {
+            Hide(instant: true);
+            GameManager.Instance?.GoToMainMenu();
+        }
+
         private void OnLevels()
         {
+            Hide(instant: true);
             MainMenuUI.OpenLevelsOnLoad = true;
             GameManager.Instance?.GoToMainMenu();
         }
@@ -239,6 +270,11 @@ namespace ArrowSwarm.UI
             }
             if (_canvasGroup != null) _canvasGroup.alpha = target;
             _fadeCoroutine = null;
+
+            if (target <= 0.01f)
+            {
+                gameObject.SetActive(false);
+            }
         }
     }
 }
