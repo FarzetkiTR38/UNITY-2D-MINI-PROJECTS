@@ -10,8 +10,26 @@ namespace ArrowSwarm.Camera
     /// Controls the orthographic camera: auto-fit to map,
     /// pinch-to-zoom, pan with touch/mouse, and zoom limits.
     /// </summary>
-    public class CameraController : Singleton<CameraController>
+    public class CameraController : MonoBehaviour
     {
+        private static CameraController _instance;
+
+        /// <summary>Global access point to the active scene's CameraController.</summary>
+        public static CameraController Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = FindFirstObjectByType<CameraController>(FindObjectsInactive.Include);
+                }
+                return _instance;
+            }
+        }
+
+        /// <summary>True if a valid CameraController instance exists in the active scene.</summary>
+        public static bool HasInstance => _instance != null || FindFirstObjectByType<CameraController>() != null;
+
         [SerializeField] private float _zoomSpeed = 0.5f;
         [SerializeField] private float _smoothTime = 0.1f;
         [SerializeField] private float _padding = 1f;
@@ -69,15 +87,25 @@ namespace ArrowSwarm.Camera
         /// <summary>Fired when zoom level changes (normalized 0-1).</summary>
         public static event Action<float> OnZoomChanged;
 
-        protected override void OnSingletonAwake()
+        private void Awake()
         {
-            _camera = UnityEngine.Camera.main;
-            if (_camera == null)
+            if (_instance != null && _instance != this)
             {
-                _camera = GetComponent<UnityEngine.Camera>();
+                Destroy(gameObject);
+                return;
             }
 
+            _instance = this;
+            _camera = GetComponent<UnityEngine.Camera>() ?? UnityEngine.Camera.main;
             AutoFindHudPanels();
+        }
+
+        private void OnDestroy()
+        {
+            if (_instance == this)
+            {
+                _instance = null;
+            }
         }
 
         /// <summary>

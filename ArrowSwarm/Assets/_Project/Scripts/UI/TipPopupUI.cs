@@ -17,6 +17,8 @@ namespace ArrowSwarm.UI
         [SerializeField] private Button _closeButton;
         [SerializeField] private float _fadeSpeed = 5f;
 
+        private bool _isShowing;
+
         private void OnEnable()
         {
             ArrowSwarm.Tips.TipManager.OnNoTipsAvailable += Show;
@@ -31,12 +33,27 @@ namespace ArrowSwarm.UI
         {
             _watchAdButton?.onClick.AddListener(OnWatchAd);
             _closeButton?.onClick.AddListener(Hide);
-            Hide(instant: true);
+            if (!_isShowing)
+            {
+                Hide(instant: true);
+            }
         }
 
         /// <summary>Shows the tip popup.</summary>
         public void Show()
         {
+            _isShowing = true;
+
+            if (!gameObject.activeSelf)
+            {
+                gameObject.SetActive(true);
+            }
+
+            if (_canvasGroup == null)
+            {
+                _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+            }
+
             if (_messageText != null)
             {
                 _messageText.text = "No tips left!\nWatch an ad to get +1 tip?";
@@ -56,21 +73,39 @@ namespace ArrowSwarm.UI
 
         public void Hide(bool instant = false)
         {
-            _canvasGroup.interactable = false;
-            _canvasGroup.blocksRaycasts = false;
-            if (instant) _canvasGroup.alpha = 0f;
-            else { StopAllCoroutines(); StartCoroutine(FadeTo(0f)); }
+            _isShowing = false;
+            if (_canvasGroup != null)
+            {
+                _canvasGroup.interactable = false;
+                _canvasGroup.blocksRaycasts = false;
+            }
+
+            if (instant)
+            {
+                if (_canvasGroup != null) _canvasGroup.alpha = 0f;
+                gameObject.SetActive(false);
+            }
+            else
+            {
+                StopAllCoroutines();
+                StartCoroutine(FadeTo(0f));
+            }
         }
 
         private System.Collections.IEnumerator FadeTo(float target)
         {
-            while (Mathf.Abs(_canvasGroup.alpha - target) > 0.01f)
+            while (_canvasGroup != null && Mathf.Abs(_canvasGroup.alpha - target) > 0.01f)
             {
                 _canvasGroup.alpha = Mathf.MoveTowards(
                     _canvasGroup.alpha, target, Time.unscaledDeltaTime * _fadeSpeed);
                 yield return null;
             }
-            _canvasGroup.alpha = target;
+            if (_canvasGroup != null) _canvasGroup.alpha = target;
+
+            if (target <= 0.01f)
+            {
+                gameObject.SetActive(false);
+            }
         }
 
         private void OnWatchAd()
