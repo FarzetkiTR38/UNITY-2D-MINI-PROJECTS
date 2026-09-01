@@ -30,9 +30,14 @@ namespace ArrowSwarm.Tutorial
         [SerializeField] private TextMeshProUGUI _completeSubtitleText;
 
         private Coroutine _bannerFadeRoutine;
+        private Vector3 _originalCardScale = Vector3.one;
+        private Vector3 _originalBannerScale = Vector3.one;
+        private bool _scalesCached = false;
 
         private void Awake()
         {
+            CacheOriginalScales();
+
             var overlayCG = GetComponent<CanvasGroup>();
             if (overlayCG != null)
             {
@@ -54,6 +59,23 @@ namespace ArrowSwarm.Tutorial
             {
                 _completeCard.SetActive(false);
             }
+        }
+
+        private void CacheOriginalScales()
+        {
+            if (_scalesCached) return;
+
+            if (_completeCard != null)
+            {
+                _originalCardScale = _completeCard.transform.localScale;
+            }
+
+            if (_bannerRect != null)
+            {
+                _originalBannerScale = _bannerRect.localScale;
+            }
+
+            _scalesCached = true;
         }
 
         private void OnDestroy()
@@ -157,9 +179,11 @@ namespace ArrowSwarm.Tutorial
         private IEnumerator PunchBannerRoutine()
         {
             if (_bannerRect == null) yield break;
+            CacheOriginalScales();
 
-            Vector3 punchScale = Vector3.one * 1.08f;
-            Vector3 targetScale = Vector3.one;
+            Vector3 baseScale = _originalBannerScale;
+            Vector3 punchScale = baseScale * 1.08f;
+            Vector3 startScale = baseScale * 0.92f;
             float elapsed = 0f;
             float duration = 0.28f;
 
@@ -170,25 +194,31 @@ namespace ArrowSwarm.Tutorial
                 if (progress < 0.45f)
                 {
                     float t = Mathf.SmoothStep(0f, 1f, progress / 0.45f);
-                    _bannerRect.localScale = Vector3.Lerp(Vector3.one * 0.92f, punchScale, t);
+                    _bannerRect.localScale = Vector3.Lerp(startScale, punchScale, t);
                 }
                 else
                 {
                     float t = Mathf.SmoothStep(0f, 1f, (progress - 0.45f) / 0.55f);
-                    _bannerRect.localScale = Vector3.Lerp(punchScale, targetScale, t);
+                    _bannerRect.localScale = Vector3.Lerp(punchScale, baseScale, t);
                 }
                 yield return null;
             }
 
-            _bannerRect.localScale = targetScale;
+            _bannerRect.localScale = baseScale;
             _bannerFadeRoutine = null;
         }
 
         private IEnumerator PopCompletionRoutine()
         {
+            CacheOriginalScales();
+
             if (_completeGroup != null) _completeGroup.alpha = 0f;
             RectTransform cardRect = _completeCard != null ? _completeCard.transform as RectTransform : null;
-            if (cardRect != null) cardRect.localScale = Vector3.one * 0.7f;
+            
+            Vector3 targetScale = _originalCardScale;
+            Vector3 startScale = targetScale * 0.7f;
+
+            if (cardRect != null) cardRect.localScale = startScale;
 
             float elapsed = 0f;
             float duration = 0.35f;
@@ -198,7 +228,7 @@ namespace ArrowSwarm.Tutorial
                 elapsed += Time.unscaledDeltaTime;
                 float t = Mathf.SmoothStep(0f, 1f, elapsed / duration);
                 if (_completeGroup != null) _completeGroup.alpha = t;
-                if (cardRect != null) cardRect.localScale = Vector3.Lerp(Vector3.one * 0.7f, Vector3.one, t);
+                if (cardRect != null) cardRect.localScale = Vector3.Lerp(startScale, targetScale, t);
                 yield return null;
             }
 
@@ -208,7 +238,7 @@ namespace ArrowSwarm.Tutorial
                 _completeGroup.interactable = true;
                 _completeGroup.blocksRaycasts = true;
             }
-            if (cardRect != null) cardRect.localScale = Vector3.one;
+            if (cardRect != null) cardRect.localScale = targetScale;
         }
 
         private void OnSkipClicked()
