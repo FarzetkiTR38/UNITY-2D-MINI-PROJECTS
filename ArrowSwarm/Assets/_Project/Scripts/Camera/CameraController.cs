@@ -241,12 +241,11 @@ namespace ArrowSwarm.Camera
 
             _mapCenter = origin + new Vector2(totalGridWidth * 0.5f, totalGridHeight * 0.5f);
 
-            // Full visual dimensions including cards, track channel, portal, mobs, and spawn VFX
+            // Full visual dimensions of outer track container card (Layer 2)
             float scaleFactor = DifficultyCalculator.GetMapScaleFactor(mapData.GridWidth, mapData.GridHeight);
             float cardMargin = 0.50f * spacing;
             float halfTrackWidth = 0.60f * scaleFactor * spacing;
-            float mobAndPortalPadding = 0.75f * scaleFactor * spacing;
-            float boardPadding = cardMargin + 2f * halfTrackWidth + mobAndPortalPadding;
+            float boardPadding = cardMargin + 2f * halfTrackWidth;
 
             float visualBoardWidth = totalGridWidth + 2f * boardPadding;
             float visualBoardHeight = totalGridHeight + 2f * boardPadding;
@@ -260,10 +259,10 @@ namespace ArrowSwarm.Camera
             if (float.IsNaN(aspect) || float.IsInfinity(aspect) || aspect <= 0.01f) aspect = 9f / 16f;
 
             // Target playable coverage:
-            // 84% width coverage guarantees generous ~8% side margins so mobs never touch screen edges.
-            // 60% max height coverage guarantees generous ~20% top and bottom margins, completely clearing HUDs.
-            const float targetWidthRatio = 0.84f;
-            const float maxTargetHeightRatio = 0.60f;
+            // 92% width coverage fills the screen comfortably while keeping clean ~4% side margins.
+            // 72% max height coverage guarantees generous margins, completely clearing HUDs.
+            const float targetWidthRatio = 0.92f;
+            const float maxTargetHeightRatio = 0.72f;
 
             float orthoFromWidth = visualBoardWidth / (2f * aspect * targetWidthRatio);
             float orthoFromHeight = visualBoardHeight / (2f * maxTargetHeightRatio);
@@ -283,14 +282,10 @@ namespace ArrowSwarm.Camera
             if (Cam != null) Cam.orthographicSize = _defaultOrthoSize;
             _targetOrthoSize = _defaultOrthoSize;
 
-            // Center camera on map with subtle HUD balance offset
             float camZ = float.IsNaN(transform.position.z) ? -10f : transform.position.z;
             if (Mathf.Abs(camZ) < 0.1f) camZ = -10f;
 
-            GetHudRatios(out float topRatio, out float bottomRatio);
-            float hudOffsetY = (bottomRatio - topRatio) * _defaultOrthoSize * 0.5f;
-
-            transform.position = new Vector3(_mapCenter.x, _mapCenter.y + hudOffsetY, camZ);
+            transform.position = new Vector3(_mapCenter.x, _mapCenter.y, camZ);
 
             LogDebug($"Camera fit: Center={_mapCenter}, OrthoSize={_defaultOrthoSize}, " +
                      $"BoardSize={visualBoardWidth}x{visualBoardHeight}");

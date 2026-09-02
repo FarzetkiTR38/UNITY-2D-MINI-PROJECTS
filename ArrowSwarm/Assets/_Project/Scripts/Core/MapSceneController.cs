@@ -248,14 +248,13 @@ namespace ArrowSwarm.Core
             float scaleFactor = DifficultyCalculator.GetMapScaleFactor(map.GridWidth, map.GridHeight);
             float cardMargin = 0.50f * spacing;
             float halfTrackWidth = 0.60f * scaleFactor * spacing;
-            float mobAndPortalPadding = 0.75f * scaleFactor * spacing;
-            float boardPadding = cardMargin + 2f * halfTrackWidth + mobAndPortalPadding;
+            float boardPadding = cardMargin + 2f * halfTrackWidth;
 
             float visualBoardWidth = totalWidth + 2f * boardPadding;
             float visualBoardHeight = totalHeight + 2f * boardPadding;
 
-            const float targetWidthRatio = 0.84f;
-            const float maxTargetHeightRatio = 0.60f;
+            const float targetWidthRatio = 0.92f;
+            const float maxTargetHeightRatio = 0.72f;
 
             float orthoFromWidth = visualBoardWidth / (2f * aspect * targetWidthRatio);
             float orthoFromHeight = visualBoardHeight / (2f * maxTargetHeightRatio);
