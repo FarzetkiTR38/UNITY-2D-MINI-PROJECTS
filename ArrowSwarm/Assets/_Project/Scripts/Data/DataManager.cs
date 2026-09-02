@@ -426,9 +426,9 @@ namespace ArrowSwarm.Data
             if (_autoSaveOnChange)
             {
                 Save();
-                if (MockCloudService.Instance != null)
+                if (LeaderboardManager.HasInstance)
                 {
-                    MockCloudService.Instance.SavePlayerData(_playerData, null);
+                    _ = LeaderboardManager.Instance.SubmitScoreAsync(_playerData.highestLevel, _playerData.GetTotalStars());
                 }
             }
         }
