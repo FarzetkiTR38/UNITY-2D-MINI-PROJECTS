@@ -83,7 +83,7 @@ namespace ArrowSwarm.Core.Editor
             if (scaler == null) scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1080, 1920);
-            scaler.matchWidthOrHeight = 0.5f;
+            scaler.matchWidthOrHeight = 0f;
 
             var raycaster = canvasGo.GetComponent<GraphicRaycaster>();
             if (raycaster == null) raycaster = canvasGo.AddComponent<GraphicRaycaster>();

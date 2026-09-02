@@ -241,11 +241,13 @@ namespace ArrowSwarm.Camera
 
             _mapCenter = origin + new Vector2(totalGridWidth * 0.5f, totalGridHeight * 0.5f);
 
-            // Full visual dimensions including cards, track channel, portal, and mobs
+            // Full visual dimensions including cards, track channel, portal, mobs, and spawn VFX
             float scaleFactor = DifficultyCalculator.GetMapScaleFactor(mapData.GridWidth, mapData.GridHeight);
             float cardMargin = 0.50f * spacing;
             float halfTrackWidth = 0.60f * scaleFactor * spacing;
-            float boardPadding = cardMargin + 2f * halfTrackWidth;
+            float mobAndPortalPadding = 0.75f * scaleFactor * spacing;
+            float boardPadding = cardMargin + 2f * halfTrackWidth + mobAndPortalPadding;
+
             float visualBoardWidth = totalGridWidth + 2f * boardPadding;
             float visualBoardHeight = totalGridHeight + 2f * boardPadding;
 
@@ -257,15 +259,15 @@ namespace ArrowSwarm.Camera
             float aspect = (Screen.height > 0) ? ((float)Screen.width / Screen.height) : (9f / 16f);
             if (float.IsNaN(aspect) || float.IsInfinity(aspect) || aspect <= 0.01f) aspect = 9f / 16f;
 
-            // Target playable window scale:
-            // 62% vertical coverage gives ~19% top margin and ~19% bottom margin
-            // perfectly clearing Top HUD (~10%) and Bottom HUD (~14%) with equal gaps.
-            const float targetHeightRatio = 0.620f;
-            const float targetWidthRatio = 0.880f;
+            // Target playable coverage:
+            // 84% width coverage guarantees generous ~8% side margins so mobs never touch screen edges.
+            // 60% max height coverage guarantees generous ~20% top and bottom margins, completely clearing HUDs.
+            const float targetWidthRatio = 0.84f;
+            const float maxTargetHeightRatio = 0.60f;
 
-            float orthoHeight = visualBoardHeight / (2f * targetHeightRatio);
-            float orthoWidth = visualBoardWidth / (2f * aspect * targetWidthRatio);
-            _defaultOrthoSize = Mathf.Max(orthoWidth, orthoHeight);
+            float orthoFromWidth = visualBoardWidth / (2f * aspect * targetWidthRatio);
+            float orthoFromHeight = visualBoardHeight / (2f * maxTargetHeightRatio);
+            _defaultOrthoSize = Mathf.Max(orthoFromWidth, orthoFromHeight);
             if (float.IsNaN(_defaultOrthoSize) || float.IsInfinity(_defaultOrthoSize) || _defaultOrthoSize <= 0.1f)
             {
                 _defaultOrthoSize = 10f;
@@ -281,10 +283,14 @@ namespace ArrowSwarm.Camera
             if (Cam != null) Cam.orthographicSize = _defaultOrthoSize;
             _targetOrthoSize = _defaultOrthoSize;
 
-            // Camera is centered PRECISELY on map center: Top Gap == Bottom Gap, Left Gap == Right Gap
+            // Center camera on map with subtle HUD balance offset
             float camZ = float.IsNaN(transform.position.z) ? -10f : transform.position.z;
             if (Mathf.Abs(camZ) < 0.1f) camZ = -10f;
-            transform.position = new Vector3(_mapCenter.x, _mapCenter.y, camZ);
+
+            GetHudRatios(out float topRatio, out float bottomRatio);
+            float hudOffsetY = (bottomRatio - topRatio) * _defaultOrthoSize * 0.5f;
+
+            transform.position = new Vector3(_mapCenter.x, _mapCenter.y + hudOffsetY, camZ);
 
             LogDebug($"Camera fit: Center={_mapCenter}, OrthoSize={_defaultOrthoSize}, " +
                      $"BoardSize={visualBoardWidth}x{visualBoardHeight}");

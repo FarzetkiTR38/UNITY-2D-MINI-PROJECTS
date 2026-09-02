@@ -220,7 +220,7 @@ namespace ArrowSwarm.Effects
                     var scaler = canvasObj.AddComponent<CanvasScaler>();
                     scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
                     scaler.referenceResolution = new Vector2(1080, 1920);
-                    scaler.matchWidthOrHeight = 0.5f;
+                    scaler.matchWidthOrHeight = 0f;
 
                     _canvasRect = canvasObj.GetComponent<RectTransform>();
                 }
