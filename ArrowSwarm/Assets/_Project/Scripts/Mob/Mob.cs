@@ -32,6 +32,9 @@ namespace ArrowSwarm.Mob
         public MobVisuals Visuals => _visuals;
 
         // --- Static Events ---
+        /// <summary>Fired when any mob is damaged (mob instance, damage amount).</summary>
+        public static event Action<Mob, int> OnMobDamaged;
+
         /// <summary>Fired when any mob is killed (mob instance).</summary>
         public static event Action<Mob> OnMobKilled;
 
@@ -82,6 +85,7 @@ namespace ArrowSwarm.Mob
         public void TakeDamage(int damage)
         {
             _health?.ApplyDamage(damage);
+            OnMobDamaged?.Invoke(this, damage);
         }
 
         /// <summary>

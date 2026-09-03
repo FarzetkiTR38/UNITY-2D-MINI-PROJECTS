@@ -80,6 +80,7 @@ namespace ArrowSwarm.UI
             new CountryItem("BR", "[BR] Brazil"),
             new CountryItem("JP", "[JP] Japan"),
             new CountryItem("KR", "[KR] South Korea"),
+            new CountryItem("RU", "[RU] Russia"),
             new CountryItem("CA", "[CA] Canada"),
             new CountryItem("AU", "[AU] Australia"),
             new CountryItem("NL", "[NL] Netherlands"),
@@ -349,6 +350,24 @@ namespace ArrowSwarm.UI
             if (LeaderboardManager.Instance != null)
             {
                 LeaderboardManager.Instance.SetPlayerName(finalName);
+            }
+
+            if (Localization.LocalizationManager.HasInstance)
+            {
+                string lang = selectedCode switch
+                {
+                    "TR" => "tr",
+                    "DE" => "de",
+                    "FR" => "fr",
+                    "ES" => "es",
+                    "IT" => "it",
+                    "BR" => "pt",
+                    "JP" => "ja",
+                    "KR" => "ko",
+                    "RU" => "ru",
+                    _ => "en"
+                };
+                Localization.LocalizationManager.Instance.SetLanguage(lang);
             }
 
             // Save and seamlessly launch GameScene (Play Level)

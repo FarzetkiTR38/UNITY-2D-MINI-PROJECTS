@@ -8,48 +8,43 @@ namespace ArrowSwarm.Audio
     using UnityEngine;
 
     /// <summary>
-    /// Central audio manager. Handles BGM playback and SFX triggering.
-    /// Subscribes to game events and plays appropriate sounds.
+    /// Central audio manager. Manages background music and multi-channel sound effects.
+    /// Subscribes to gameplay events and provides public hooks for UI/skill audio.
     /// </summary>
     public class AudioManager : Singleton<AudioManager>
     {
+        [Header("Sound Library")]
         [SerializeField] private SFXLibrary _sfxLibrary;
-        [SerializeField] private AudioSource _bgmSource;
-        [SerializeField] private AudioSource _sfxSource;
 
+        [Header("Audio Sources (Auto-created if null)")]
+        [SerializeField] private AudioSource _bgmSource;
+        [SerializeField] private AudioSource[] _sfxSources;
+
+        private const int SfxChannelCount = 6;
+        private int _currentSfxIndex;
         private float _musicVolume = 0.7f;
         private float _sfxVolume = 1f;
 
+        public SFXLibrary Library => _sfxLibrary;
+
         protected override void OnSingletonAwake()
         {
-            if (_bgmSource == null)
-            {
-                _bgmSource = gameObject.AddComponent<AudioSource>();
-                _bgmSource.loop = true;
-                _bgmSource.playOnAwake = false;
-            }
-
-            if (_sfxSource == null)
-            {
-                _sfxSource = gameObject.AddComponent<AudioSource>();
-                _sfxSource.loop = false;
-                _sfxSource.playOnAwake = false;
-            }
-
+            EnsureAudioSources();
+            AutoLinkLibrary();
             LoadVolumeSettings();
         }
 
         private void OnEnable()
         {
-            // Subscribe to game events
             GameManager.OnGameStateChanged += HandleStateChanged;
             GameManager.OnLevelWon += HandleLevelWon;
             GameManager.OnLevelLost += HandleLevelLost;
             GameManager.OnWrongClick += HandleWrongClick;
             GameManager.OnMobReachedFinish += HandleMobFinish;
-            GameManager.OnLivesChanged += HandleLivesChanged;
             Arrow.OnArrowClicked += HandleArrowClicked;
             Mob.OnMobKilled += HandleMobKilled;
+            Mob.OnMobDamaged += HandleMobDamaged;
+            Skills.FreezeManager.OnFreezeStarted += HandleFreezeStarted;
             DataManager.OnPlayerDataChanged += HandleDataChanged;
         }
 
@@ -60,21 +55,27 @@ namespace ArrowSwarm.Audio
             GameManager.OnLevelLost -= HandleLevelLost;
             GameManager.OnWrongClick -= HandleWrongClick;
             GameManager.OnMobReachedFinish -= HandleMobFinish;
-            GameManager.OnLivesChanged -= HandleLivesChanged;
             Arrow.OnArrowClicked -= HandleArrowClicked;
             Mob.OnMobKilled -= HandleMobKilled;
+            Mob.OnMobDamaged -= HandleMobDamaged;
+            Skills.FreezeManager.OnFreezeStarted -= HandleFreezeStarted;
             DataManager.OnPlayerDataChanged -= HandleDataChanged;
         }
 
-        /// <summary>Plays a one-shot SFX clip.</summary>
-        public void PlaySFX(AudioClip clip)
+        /// <summary>Plays a sound effect on an available channel with pitch modulation.</summary>
+        public void PlaySFX(AudioClip clip, float pitch = 1f, float volumeScale = 1f)
         {
-            if (clip == null || _sfxSource == null) return;
-            if (DataManager.Instance != null && DataManager.Instance.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled) return;
-            _sfxSource.PlayOneShot(clip, _sfxVolume);
+            if (clip == null || _sfxSources == null || _sfxSources.Length == 0) return;
+            if (DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled) return;
+
+            var src = _sfxSources[_currentSfxIndex];
+            _currentSfxIndex = (_currentSfxIndex + 1) % _sfxSources.Length;
+
+            src.pitch = pitch;
+            src.PlayOneShot(clip, _sfxVolume * volumeScale);
         }
 
-        /// <summary>Starts BGM playback.</summary>
+        /// <summary>Plays background music with looping enabled.</summary>
         public void PlayBGM(AudioClip clip)
         {
             if (clip == null || _bgmSource == null) return;
@@ -86,10 +87,7 @@ namespace ArrowSwarm.Audio
         }
 
         /// <summary>Stops BGM playback.</summary>
-        public void StopBGM()
-        {
-            _bgmSource?.Stop();
-        }
+        public void StopBGM() => _bgmSource?.Stop();
 
         /// <summary>Updates volume levels.</summary>
         public void SetVolumes(float music, float sfx)
@@ -99,12 +97,24 @@ namespace ArrowSwarm.Audio
             if (_bgmSource != null) _bgmSource.volume = _musicVolume;
         }
 
-        /// <summary>Plays the button click SFX. Call from UI buttons.</summary>
-        public void PlayButtonClick()
-        {
-            PlaySFX(_sfxLibrary?.ButtonClick);
-        }
+        // --- Explicit UI & Gameplay Audio Methods ---
+        public void PlayButtonClick() => PlaySFX(_sfxLibrary?.ButtonClick, Random.Range(0.96f, 1.04f));
+        public void PlayPopupOpen() => PlaySFX(_sfxLibrary?.PopupOpen);
+        public void PlayPopupClose() => PlaySFX(_sfxLibrary?.PopupClose);
+        public void PlayToggle() => PlaySFX(_sfxLibrary?.ToggleSwitch);
+        public void PlayStarEarn(int starIndex) => PlaySFX(_sfxLibrary?.StarEarn, 1.0f + (starIndex * 0.15f));
+        public void PlayArrowFire(bool rainbow) => PlaySFX(rainbow ? _sfxLibrary?.RainbowArrow : _sfxLibrary?.ArrowFire, Random.Range(0.95f, 1.05f));
+        public void PlayArrowWrong() => PlaySFX(_sfxLibrary?.ArrowWrong);
+        public void PlayArrowHit() => PlaySFX(_sfxLibrary?.ArrowHitEnemy, Random.Range(0.93f, 1.07f));
+        public void PlayMobDie() => PlaySFX(_sfxLibrary?.MobDie, Random.Range(0.95f, 1.05f));
+        public void PlayMobFinish() => PlaySFX(_sfxLibrary?.MobFinish);
+        public void PlaySkillFreeze() => PlaySFX(_sfxLibrary?.SkillFreeze);
+        public void PlaySkillTips() => PlaySFX(_sfxLibrary?.SkillTips);
+        public void PlayLevelWin() => PlaySFX(_sfxLibrary?.LevelWin);
+        public void PlayLevelLose() => PlaySFX(_sfxLibrary?.LevelLose);
+        public void PlayHeartBreak() => PlaySFX(_sfxLibrary?.HeartBreak);
 
+        // --- Event Handlers ---
         private void HandleStateChanged(GameState state)
         {
             switch (state)
@@ -116,37 +126,61 @@ namespace ArrowSwarm.Audio
                     PlayBGM(_sfxLibrary?.GameBGM);
                     break;
                 case GameState.Paused:
-                    _bgmSource.volume = _musicVolume * 0.3f; // Dim BGM
+                    if (_bgmSource != null) _bgmSource.volume = _musicVolume * 0.3f;
                     break;
             }
         }
 
         private void HandleArrowClicked(Arrow arrow, bool success)
         {
-            if (success)
+            if (success) PlayArrowFire(arrow.IsRainbow);
+            else PlayArrowWrong();
+        }
+
+        private void HandleMobKilled(Mob mob) => PlayMobDie();
+        private void HandleMobDamaged(Mob mob, int dmg) => PlayArrowHit();
+        private void HandleLevelWon() => PlayLevelWin();
+        private void HandleLevelLost() => PlayLevelLose();
+        private void HandleWrongClick() => PlayHeartBreak();
+        private void HandleMobFinish() => PlayMobFinish();
+        private void HandleFreezeStarted(float dur) => PlaySkillFreeze();
+        private void HandleDataChanged(PlayerData data) => SetVolumes(data.musicVolume, data.sfxVolume);
+
+        private void EnsureAudioSources()
+        {
+            if (_bgmSource == null)
             {
-                PlaySFX(arrow.IsRainbow ? _sfxLibrary?.RainbowArrow : _sfxLibrary?.ArrowFire);
+                _bgmSource = gameObject.AddComponent<AudioSource>();
+                _bgmSource.loop = true;
+                _bgmSource.playOnAwake = false;
             }
-            else
+
+            if (_sfxSources == null || _sfxSources.Length == 0)
             {
-                PlaySFX(_sfxLibrary?.ArrowWrong);
+                _sfxSources = new AudioSource[SfxChannelCount];
+                for (int i = 0; i < SfxChannelCount; i++)
+                {
+                    var src = gameObject.AddComponent<AudioSource>();
+                    src.loop = false;
+                    src.playOnAwake = false;
+                    _sfxSources[i] = src;
+                }
             }
         }
 
-        private void HandleMobKilled(Mob mob) => PlaySFX(_sfxLibrary?.MobDie);
-        private void HandleLevelWon() => PlaySFX(_sfxLibrary?.LevelWin);
-        private void HandleLevelLost() => PlaySFX(_sfxLibrary?.LevelLose);
-        private void HandleWrongClick() => PlaySFX(_sfxLibrary?.HeartBreak);
-        private void HandleMobFinish() => PlaySFX(_sfxLibrary?.MobFinish);
-
-        private void HandleLivesChanged(int lives)
+        private void AutoLinkLibrary()
         {
-            // Heart break sound is handled by HandleWrongClick and HandleMobFinish
-        }
-
-        private void HandleDataChanged(PlayerData data)
-        {
-            SetVolumes(data.musicVolume, data.sfxVolume);
+#if UNITY_EDITOR
+            if (_sfxLibrary == null)
+            {
+                string[] guids = UnityEditor.AssetDatabase.FindAssets("t:SFXLibrary");
+                if (guids.Length > 0)
+                {
+                    string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
+                    _sfxLibrary = UnityEditor.AssetDatabase.LoadAssetAtPath<SFXLibrary>(path);
+                }
+            }
+#endif
         }
 
         private void LoadVolumeSettings()

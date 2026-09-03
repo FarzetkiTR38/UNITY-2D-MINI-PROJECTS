@@ -87,6 +87,8 @@ namespace ArrowSwarm.Core
             var inputMgr = InputManager.Instance;
             var hapticMgr = HapticManager.Instance;
             var touchEffectMgr = ArrowSwarm.Effects.TouchEffectManager.Instance;
+            var audioMgr = ArrowSwarm.Audio.AudioManager.Instance;
+            var locMgr = ArrowSwarm.Localization.LocalizationManager.Instance;
         }
 
         /// <summary>
