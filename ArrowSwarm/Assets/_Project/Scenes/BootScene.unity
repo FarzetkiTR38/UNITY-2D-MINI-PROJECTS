@@ -178,20 +178,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de379590988e5c44d803fd5fc139d962, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Debug.AdminManager
+  _targetPlayerName: Player
+  _targetPlayerCountry: TR
+  _targetProfileCompleted: 1
+  _targetTutorialCompleted: 0
   _targetLevel: 1
   _targetHighestLevel: 1
   _targetTotalStars: 0
-  _specificLevel: 1
-  _starsForSpecificLevel: 3
   _targetTips: 10
-  _targetPlayerName: Player
-  _targetTutorialCompleted: 0
-  _livePlayerName: 
-  _liveCurrentLevel: 0
-  _liveHighestLevel: 0
-  _liveTotalStars: 0
-  _liveTipCount: 0
-  _liveTutorialCompleted: 0
+  _targetFreeze: 5
+  _targetLanguage: TURKISH
+  _targetTheme: 0
+  _targetSfx: 1
+  _targetVfx: 1
+  _targetVibration: 1
+  _liveProfile: 
+  _liveProgress: 
+  _liveResources: 
 --- !u!1 &8947899
 GameObject:
   m_ObjectHideFlags: 0
@@ -1582,6 +1585,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: CoreManagers
       objectReference: {fileID: 0}
+    - target: {fileID: 1984038596682423607, guid: d8486559637857843b87c776dee4cc1e, type: 3}
+      propertyPath: _targetProfileCompleted
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1984038596682423607, guid: d8486559637857843b87c776dee4cc1e, type: 3}
+      propertyPath: _targetTutorialCompleted
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1747,6 +1758,7 @@ GameObject:
   - component: {fileID: 1368667907}
   - component: {fileID: 1368667906}
   - component: {fileID: 1368667905}
+  - component: {fileID: 1368667908}
   m_Layer: 0
   m_Name: StatusText
   m_TagString: Untagged
@@ -1873,6 +1885,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 97}
   m_SizeDelta: {x: 800, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1368667908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1368667904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d28c7748e7d2bc54889b04fa1f99918a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Localization.LocalizedText
+  _localizationKey: boot_loading
+  _prefix: 
+  _suffix: 
 --- !u!1 &1443461895
 GameObject:
   m_ObjectHideFlags: 0
@@ -2009,6 +2036,7 @@ GameObject:
   - component: {fileID: 1587815356}
   - component: {fileID: 1587815357}
   - component: {fileID: 1587815358}
+  - component: {fileID: 1587815359}
   m_Layer: 0
   m_Name: TipText
   m_TagString: Untagged
@@ -2135,6 +2163,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1587815359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1587815355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d28c7748e7d2bc54889b04fa1f99918a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Localization.LocalizedText
+  _localizationKey: boot_tip
+  _prefix: 
+  _suffix: 
 --- !u!1 &1627839212
 GameObject:
   m_ObjectHideFlags: 0
