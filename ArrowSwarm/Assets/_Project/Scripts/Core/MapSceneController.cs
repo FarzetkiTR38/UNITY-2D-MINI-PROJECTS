@@ -245,18 +245,20 @@ namespace ArrowSwarm.Core
             Vector2 origin = new Vector2(-totalWidth / 2f, -totalHeight / 2f);
             Vector2 center = origin + new Vector2(totalWidth * 0.5f, totalHeight * 0.5f);
 
-            float pathOffset = 1.10f;
-            float outerMargin = 0.60f;
-            float boardPadding = (pathOffset + outerMargin) * spacing;
+            float scaleFactor = DifficultyCalculator.GetMapScaleFactor(map.GridWidth, map.GridHeight);
+            float cardMargin = 0.50f * spacing;
+            float halfTrackWidth = 0.60f * scaleFactor * spacing;
+            float boardPadding = cardMargin + 2f * halfTrackWidth;
+
             float visualBoardWidth = totalWidth + 2f * boardPadding;
             float visualBoardHeight = totalHeight + 2f * boardPadding;
 
-            const float targetHeightRatio = 0.620f;
-            const float targetWidthRatio = 0.880f;
+            const float targetWidthRatio = 0.92f;
+            const float maxTargetHeightRatio = 0.72f;
 
-            float orthoHeight = visualBoardHeight / (2f * targetHeightRatio);
-            float orthoWidth = visualBoardWidth / (2f * aspect * targetWidthRatio);
-            float orthoSize = Mathf.Max(orthoWidth, orthoHeight);
+            float orthoFromWidth = visualBoardWidth / (2f * aspect * targetWidthRatio);
+            float orthoFromHeight = visualBoardHeight / (2f * maxTargetHeightRatio);
+            float orthoSize = Mathf.Max(orthoFromWidth, orthoFromHeight);
             if (float.IsNaN(orthoSize) || float.IsInfinity(orthoSize) || orthoSize <= 0.1f)
             {
                 orthoSize = 10f;

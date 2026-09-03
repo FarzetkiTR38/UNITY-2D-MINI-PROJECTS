@@ -258,18 +258,6 @@ namespace ArrowSwarm.UI
             if (_sfxToggle != null) _sfxToggle.SetIsOn(data.sfxEnabled, false);
             if (_vfxToggle != null) _vfxToggle.SetIsOn(data.vfxEnabled, false);
             if (_vibrationToggle != null) _vibrationToggle.SetIsOn(data.vibrationEnabled, false);
-
-            // Find current language index
-            string lang = !string.IsNullOrEmpty(data.selectedLanguage) ? data.selectedLanguage.ToUpper() : "ENGLISH";
-            _currentLanguageIndex = 0;
-            for (int i = 0; i < SUPPORTED_LANGUAGES.Length; i++)
-            {
-                if (SUPPORTED_LANGUAGES[i] == lang)
-                {
-                    _currentLanguageIndex = i;
-                    break;
-                }
-            }
             UpdateLanguageDisplay();
             UpdateThemeDisplay(data.theme);
         }
@@ -298,30 +286,39 @@ namespace ArrowSwarm.UI
 
         private void PrevLanguage()
         {
-            _currentLanguageIndex--;
-            if (_currentLanguageIndex < 0) _currentLanguageIndex = SUPPORTED_LANGUAGES.Length - 1;
-            ApplyLanguageChange();
+            if (Localization.LocalizationManager.HasInstance)
+            {
+                Localization.LocalizationManager.Instance.PrevLanguage();
+            }
+            UpdateLanguageDisplay();
         }
 
         private void NextLanguage()
         {
-            _currentLanguageIndex = (_currentLanguageIndex + 1) % SUPPORTED_LANGUAGES.Length;
-            ApplyLanguageChange();
-        }
-
-        private void ApplyLanguageChange()
-        {
-            string newLang = SUPPORTED_LANGUAGES[_currentLanguageIndex];
-            DataManager.Instance?.SetLanguage(newLang);
+            if (Localization.LocalizationManager.HasInstance)
+            {
+                Localization.LocalizationManager.Instance.NextLanguage();
+            }
             UpdateLanguageDisplay();
         }
 
         private void UpdateLanguageDisplay()
         {
-            if (_languageText != null && _currentLanguageIndex >= 0 && _currentLanguageIndex < SUPPORTED_LANGUAGES.Length)
+            if (_languageText == null) return;
+
+            if (Localization.LocalizationManager.HasInstance)
             {
-                _languageText.text = SUPPORTED_LANGUAGES[_currentLanguageIndex];
+                var mgr = Localization.LocalizationManager.Instance;
+                int idx = mgr.GetCurrentLanguageIndex();
+                var defs = mgr.AvailableLanguages;
+                if (defs != null && idx >= 0 && idx < defs.Length)
+                {
+                    _languageText.text = defs[idx].nativeName.ToUpper();
+                    return;
+                }
             }
+
+            _languageText.text = "ENGLISH";
         }
 
         /// <summary>

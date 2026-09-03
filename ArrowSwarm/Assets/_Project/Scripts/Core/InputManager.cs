@@ -1,6 +1,8 @@
 namespace ArrowSwarm.Core
 {
+    using System.Collections.Generic;
     using UnityEngine;
+    using UnityEngine.EventSystems;
     using UnityEngine.InputSystem;
     using ArrowSwarm.Arrow;
     using ArrowSwarm.Grid;
@@ -8,94 +10,145 @@ namespace ArrowSwarm.Core
 
     /// <summary>
     /// Handles player input globally for clicking/touching arrows
-    /// using the New Input System.
+    /// using the New Input System with strict UI and scene transition bleed-through prevention.
     /// </summary>
     public class InputManager : Singleton<InputManager>
     {
-        private Camera _mainCamera;
+        private const float DefaultBlockDuration = 0.35f;
+        private const float MaxTapDistance = 30f;
 
-        private Camera MainCamera
+        private Camera _mainCamera;
+        private float _inputBlockedUntilTime;
+        private bool _isGameplayPressValid;
+        private bool _isPointerDown;
+        private Vector2 _pointerDownPosition;
+
+        private readonly List<RaycastResult> _raycastResults = new List<RaycastResult>(8);
+        private PointerEventData _cachedPointerData;
+
+        private Camera MainCamera => _mainCamera != null ? _mainCamera : (_mainCamera = Camera.main ?? FindFirstObjectByType<Camera>());
+
+        protected override void OnSingletonAwake() => BlockInput(DefaultBlockDuration);
+        private void OnEnable() => GameManager.OnGameStateChanged += HandleGameStateChanged;
+        private void OnDisable() => GameManager.OnGameStateChanged -= HandleGameStateChanged;
+
+        /// <summary>Blocks gameplay arrow clicks for the specified duration (seconds).</summary>
+        public void BlockInput(float duration = DefaultBlockDuration)
         {
-            get
-            {
-                if (_mainCamera == null)
-                {
-                    _mainCamera = Camera.main;
-                    if (_mainCamera == null)
-                    {
-                        _mainCamera = FindFirstObjectByType<Camera>();
-                    }
-                }
-                return _mainCamera;
-            }
+            _inputBlockedUntilTime = Mathf.Max(_inputBlockedUntilTime, Time.unscaledTime + duration);
+            ResetPointerState();
         }
 
-        protected override void OnSingletonAwake()
+        private void HandleGameStateChanged(GameState state)
         {
+            if (state == GameState.Playing) BlockInput(DefaultBlockDuration);
+            else ResetPointerState();
+        }
+
+        private void ResetPointerState()
+        {
+            _isGameplayPressValid = false;
+            _isPointerDown = false;
         }
 
         private void Update()
         {
-            if (GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.Playing)
+            if (GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.Playing ||
+                Time.unscaledTime < _inputBlockedUntilTime || MainCamera == null ||
+                (ArrowSwarm.Camera.CameraController.Instance != null && ArrowSwarm.Camera.CameraController.Instance.IsDragging))
+            {
+                ResetPointerState();
                 return;
+            }
 
-            if (MainCamera == null) return;
+            HandleMouseInput();
+            HandleTouchInput();
+        }
 
-            // Ignore clicks if the user was dragging/panning the camera
-            if (ArrowSwarm.Camera.CameraController.Instance != null &&
-                ArrowSwarm.Camera.CameraController.Instance.IsDragging)
-                return;
-
-            // Handle Mouse Click on button release (if not dragging)
+        private void HandleMouseInput()
+        {
             var mouse = Mouse.current;
-            if (mouse != null && mouse.leftButton.wasReleasedThisFrame)
+            if (mouse == null) return;
+            Vector2 pos = mouse.position.ReadValue();
+
+            if (mouse.leftButton.wasPressedThisFrame) OnPointerDown(pos, -1);
+            else if (_isPointerDown && mouse.leftButton.isPressed) OnPointerMove(pos);
+
+            if (mouse.leftButton.wasReleasedThisFrame) OnPointerUp(pos, -1);
+        }
+
+        private void HandleTouchInput()
+        {
+            var ts = Touchscreen.current;
+            if (ts == null || ts.touches.Count == 0) return;
+
+            var touch = ts.touches[0];
+            var phase = touch.phase.ReadValue();
+            Vector2 pos = touch.position.ReadValue();
+            int id = touch.touchId.ReadValue();
+
+            if (phase == UnityEngine.InputSystem.TouchPhase.Began) OnPointerDown(pos, id);
+            else if (_isPointerDown && phase == UnityEngine.InputSystem.TouchPhase.Moved) OnPointerMove(pos);
+            else if (phase == UnityEngine.InputSystem.TouchPhase.Ended || phase == UnityEngine.InputSystem.TouchPhase.Canceled) OnPointerUp(pos, id);
+        }
+
+        private void OnPointerDown(Vector2 screenPos, int touchId)
+        {
+            _isPointerDown = true;
+            _pointerDownPosition = screenPos;
+            _isGameplayPressValid = !IsPointerOverUI(screenPos, touchId);
+        }
+
+        private void OnPointerMove(Vector2 screenPos)
+        {
+            if (_isGameplayPressValid && Vector2.Distance(screenPos, _pointerDownPosition) > MaxTapDistance)
             {
-                if (UnityEngine.EventSystems.EventSystem.current != null && 
-                    UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
-                    return;
-
-                ProcessClick(mouse.position.ReadValue());
-                return;
+                _isGameplayPressValid = false;
             }
+        }
 
-            // Handle Touch on release (if not dragging)
-            var touchscreen = Touchscreen.current;
-            if (touchscreen != null && touchscreen.touches.Count > 0)
-            {
-                var touch = touchscreen.touches[0];
-                if (touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Ended)
-                {
-                    if (UnityEngine.EventSystems.EventSystem.current != null && 
-                        UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(touch.touchId.ReadValue()))
-                        return;
+        private void OnPointerUp(Vector2 screenPos, int touchId)
+        {
+            bool wasValid = _isGameplayPressValid;
+            ResetPointerState();
 
-                    ProcessClick(touch.position.ReadValue());
-                }
-            }
+            if (!wasValid || IsPointerOverUI(screenPos, touchId)) return;
+            if (Vector2.Distance(screenPos, _pointerDownPosition) > MaxTapDistance) return;
+
+            ProcessClick(screenPos);
+        }
+
+        private bool IsPointerOverUI(Vector2 screenPos, int touchId = -1)
+        {
+            var es = EventSystem.current;
+            if (es == null) return false;
+            if (touchId >= 0 && es.IsPointerOverGameObject(touchId)) return true;
+            if (es.IsPointerOverGameObject()) return true;
+
+            if (_cachedPointerData == null) _cachedPointerData = new PointerEventData(es);
+            _cachedPointerData.position = screenPos;
+            _raycastResults.Clear();
+            es.RaycastAll(_cachedPointerData, _raycastResults);
+            return _raycastResults.Count > 0;
         }
 
         private void ProcessClick(Vector2 screenPosition)
         {
             if (MainCamera == null) return;
-            float cameraDistance = Mathf.Abs(MainCamera.transform.position.z);
-            if (cameraDistance < 0.1f) cameraDistance = 10f;
-            Vector3 worldPos3 = MainCamera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, cameraDistance));
-            Vector2 worldPos = new Vector2(worldPos3.x, worldPos3.y);
+            float camDist = Mathf.Abs(MainCamera.transform.position.z);
+            if (camDist < 0.1f) camDist = 10f;
+            Vector2 worldPos = MainCamera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, camDist));
 
-            // 1. Grid-based exact lookup: Find the arrow occupying the clicked grid cell
-            if (ArrowSwarm.Grid.GridManager.Instance != null && ArrowSpawner.Instance != null)
+            // 1. Grid-based lookup: Find arrow occupying clicked cell
+            if (GridManager.Instance != null && ArrowSpawner.Instance != null)
             {
-                var gridMgr = ArrowSwarm.Grid.GridManager.Instance;
-                var gPoint = gridMgr.WorldToPoint(worldPos);
+                var gPoint = GridManager.Instance.WorldToPoint(worldPos);
                 if (gPoint != null)
                 {
                     var arrow = ArrowSpawner.Instance.GetArrowAt(gPoint.GridPosition);
-                    if (arrow != null && !arrow.IsFired)
+                    if (arrow != null && !arrow.IsFired && IsAllowedInTutorial(arrow))
                     {
-                        if (IsAllowedInTutorial(arrow))
-                        {
-                            arrow.OnPlayerClick();
-                        }
+                        arrow.OnPlayerClick();
                         return;
                     }
                 }
@@ -107,13 +160,10 @@ namespace ArrowSwarm.Core
             {
                 if (hits[i].collider != null)
                 {
-                    var arrow = hits[i].collider.GetComponentInParent<ArrowSwarm.Arrow.Arrow>();
-                    if (arrow != null && !arrow.IsFired)
+                    var arrow = hits[i].collider.GetComponentInParent<Arrow>();
+                    if (arrow != null && !arrow.IsFired && IsAllowedInTutorial(arrow))
                     {
-                        if (IsAllowedInTutorial(arrow))
-                        {
-                            arrow.OnPlayerClick();
-                        }
+                        arrow.OnPlayerClick();
                         break;
                     }
                 }
@@ -122,11 +172,10 @@ namespace ArrowSwarm.Core
 
         private bool IsAllowedInTutorial(Arrow arrow)
         {
-            if (ArrowSwarm.Tutorial.TutorialManager.Instance != null &&
-                ArrowSwarm.Tutorial.TutorialManager.Instance.IsTutorialActive)
+            var tut = ArrowSwarm.Tutorial.TutorialManager.Instance;
+            if (tut != null && tut.IsTutorialActive)
             {
-                // In tutorial, player can tap the highlighted target or any clear unblocked arrow
-                return arrow.HeadPoint == ArrowSwarm.Tutorial.TutorialManager.Instance.CurrentTargetGridPos ||
+                return arrow.HeadPoint == tut.CurrentTargetGridPos ||
                        GridManager.Instance.IsPathClear(arrow.HeadPoint, arrow.HeadDirection);
             }
             return true;

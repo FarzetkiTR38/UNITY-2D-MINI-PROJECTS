@@ -109,7 +109,6 @@ namespace ArrowSwarm.Path
         private void Update()
         {
             if (!_isFollowing || _isPaused || _waypoints == null || _waypoints.Count < 2) return;
-
             if (_speed != 0f)
             {
                 _currentDistance += _speed * Time.deltaTime;
@@ -183,7 +182,6 @@ namespace ArrowSwarm.Path
             {
                 float dStart = _cumulativeDistances[i];
                 float dEnd = _cumulativeDistances[i + 1];
-
                 if (distance >= dStart && distance <= dEnd)
                 {
                     float segLen = dEnd - dStart;

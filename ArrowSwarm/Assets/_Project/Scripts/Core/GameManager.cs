@@ -87,6 +87,8 @@ namespace ArrowSwarm.Core
             var inputMgr = InputManager.Instance;
             var hapticMgr = HapticManager.Instance;
             var touchEffectMgr = ArrowSwarm.Effects.TouchEffectManager.Instance;
+            var audioMgr = ArrowSwarm.Audio.AudioManager.Instance;
+            var locMgr = ArrowSwarm.Localization.LocalizationManager.Instance;
         }
 
         /// <summary>
@@ -216,6 +218,7 @@ namespace ArrowSwarm.Core
         {
             if (_currentState != GameState.Paused) return;
             Time.timeScale = 1f;
+            InputManager.Instance?.BlockInput(0.35f);
             SetState(GameState.Playing);
         }
 

@@ -44,10 +44,17 @@ namespace ArrowSwarm.UI
                 _starsText.text = stars.ToString();
             }
 
-            string flag = GetCountryFlag(countryCode);
             if (_playerNameText != null)
             {
-                _playerNameText.text = string.IsNullOrEmpty(flag) ? playerName : $"{flag} {playerName}";
+                if (string.IsNullOrEmpty(playerName))
+                {
+                    _playerNameText.text = "";
+                }
+                else
+                {
+                    string tag = GetCountryTag(countryCode);
+                    _playerNameText.text = string.IsNullOrEmpty(tag) ? playerName : $"{tag} {playerName}";
+                }
             }
 
             if (_crownIcon != null)
@@ -56,26 +63,12 @@ namespace ArrowSwarm.UI
             }
         }
 
-        private static string GetCountryFlag(string code)
+        private static string GetCountryTag(string code)
         {
-            if (string.IsNullOrEmpty(code)) return "🌐";
-            return code.ToUpperInvariant() switch
-            {
-                "TR" => "🇹🇷",
-                "US" => "🇺🇸",
-                "GB" => "🇬🇧",
-                "DE" => "🇩🇪",
-                "FR" => "🇫🇷",
-                "ES" => "🇪🇸",
-                "IT" => "🇮🇹",
-                "BR" => "🇧🇷",
-                "JP" => "🇯🇵",
-                "KR" => "🇰🇷",
-                "CA" => "🇨🇦",
-                "AU" => "🇦🇺",
-                "NL" => "🇳🇱",
-                _ => "🌐"
-            };
+            if (string.IsNullOrWhiteSpace(code)) return "";
+            string clean = code.Trim().ToUpperInvariant();
+            if (clean.Length > 3) clean = clean.Substring(0, 3);
+            return $"[{clean}]";
         }
 
         /// <summary>

@@ -35,6 +35,21 @@ namespace ArrowSwarm.UI
         [Header("Animation")]
         [SerializeField] private float _fadeSpeed = 5f;
 
+        private void OnEnable()
+        {
+            LeaderboardManager.OnLeaderboardUpdated += HandleLeaderboardUpdated;
+        }
+
+        private void OnDisable()
+        {
+            LeaderboardManager.OnLeaderboardUpdated -= HandleLeaderboardUpdated;
+        }
+
+        private void HandleLeaderboardUpdated()
+        {
+            RefreshLeaderboardData();
+        }
+
         private void Awake()
         {
             AutoWire();
@@ -84,9 +99,9 @@ namespace ArrowSwarm.UI
                 _entriesContainer = transform.Find("BoardFrame/EntriesContainer") ?? transform.Find("EntriesContainer");
             }
 
-            if (_entriesContainer != null && (_entryRows == null || _entryRows.Length == 0))
+            if (_entryRows == null || _entryRows.Length == 0 || _entryRows[0] == null)
             {
-                _entryRows = _entriesContainer.GetComponentsInChildren<LeaderboardEntryUI>(true);
+                _entryRows = GetComponentsInChildren<LeaderboardEntryUI>(true);
             }
 
             if (_boardImage == null)
@@ -150,6 +165,10 @@ namespace ArrowSwarm.UI
             }
 
             RefreshLeaderboardData();
+            if (LeaderboardManager.HasInstance)
+            {
+                _ = LeaderboardManager.Instance.RefreshFromCloudAsync();
+            }
         }
 
         /// <summary>
@@ -173,24 +192,52 @@ namespace ArrowSwarm.UI
         }
 
         /// <summary>
-        /// Loads and displays top 10 player entries from LeaderboardManager.
+        /// Loads and displays top player entries from LeaderboardManager or local player.
         /// </summary>
         public void RefreshLeaderboardData()
         {
-            int rowCount = _entryRows != null && _entryRows.Length > 0 ? _entryRows.Length : 10;
-            var entries = LeaderboardManager.Instance?.GetTopPlayers(rowCount);
+            AutoWire();
 
-            if (entries != null && _entryRows != null)
+            int rowCount = _entryRows != null && _entryRows.Length > 0 ? _entryRows.Length : 10;
+            List<LeaderboardEntry> entries = null;
+
+            if (LeaderboardManager.HasInstance)
+            {
+                entries = LeaderboardManager.Instance.GetTopPlayers(rowCount);
+            }
+            else
+            {
+                var currentData = DataManager.HasInstance ? DataManager.Instance.PlayerData : null;
+                int playerLevel = currentData?.highestLevel ?? 1;
+                int playerStars = currentData?.GetTotalStars() ?? 0;
+                string playerName = currentData?.playerName ?? "Player";
+                string country = currentData?.playerCountry ?? "TR";
+
+                entries = new List<LeaderboardEntry>
+                {
+                    new LeaderboardEntry
+                    {
+                        PlayerName = playerName,
+                        HighestLevel = playerLevel,
+                        TotalStars = playerStars,
+                        IsPlayer = true,
+                        CountryCode = country
+                    }
+                };
+            }
+
+            if (_entryRows != null)
             {
                 for (int i = 0; i < _entryRows.Length; i++)
                 {
                     if (_entryRows[i] == null) continue;
 
-                    if (i < entries.Count)
+                    int rank = i + 1;
+                    _entryRows[i].gameObject.SetActive(true);
+
+                    if (entries != null && i < entries.Count)
                     {
-                        int rank = i + 1;
                         var entry = entries[i];
-                        _entryRows[i].gameObject.SetActive(true);
                         _entryRows[i].Setup(
                             rank: rank,
                             playerName: entry.PlayerName,
@@ -202,7 +249,15 @@ namespace ArrowSwarm.UI
                     }
                     else
                     {
-                        _entryRows[i].gameObject.SetActive(false);
+                        // Active empty slot: Lv.1, 0 Stars, blank username
+                        _entryRows[i].Setup(
+                            rank: rank,
+                            playerName: "",
+                            level: 1,
+                            stars: 0,
+                            isPlayer: false,
+                            countryCode: ""
+                        );
                     }
                 }
             }
@@ -213,8 +268,8 @@ namespace ArrowSwarm.UI
             {
                 if (_currentPlayerNameText != null)
                 {
-                    string flag = GetCountryFlag(playerData.playerCountry);
-                    _currentPlayerNameText.text = string.IsNullOrEmpty(flag) ? playerData.playerName : $"{flag} {playerData.playerName}";
+                    string tag = GetCountryTag(playerData.playerCountry);
+                    _currentPlayerNameText.text = string.IsNullOrEmpty(tag) ? playerData.playerName : $"{tag} {playerData.playerName}";
                 }
 
                 if (_currentPlayerRankText != null && LeaderboardManager.Instance != null)
@@ -277,26 +332,12 @@ namespace ArrowSwarm.UI
             }
         }
 
-        private static string GetCountryFlag(string code)
+        private static string GetCountryTag(string code)
         {
-            if (string.IsNullOrEmpty(code)) return "🌐";
-            return code.ToUpperInvariant() switch
-            {
-                "TR" => "🇹🇷",
-                "US" => "🇺🇸",
-                "GB" => "🇬🇧",
-                "DE" => "🇩🇪",
-                "FR" => "🇫🇷",
-                "ES" => "🇪🇸",
-                "IT" => "🇮🇹",
-                "BR" => "🇧🇷",
-                "JP" => "🇯🇵",
-                "KR" => "🇰🇷",
-                "CA" => "🇨🇦",
-                "AU" => "🇦🇺",
-                "NL" => "🇳🇱",
-                _ => "🌐"
-            };
+            if (string.IsNullOrWhiteSpace(code)) return "";
+            string clean = code.Trim().ToUpperInvariant();
+            if (clean.Length > 3) clean = clean.Substring(0, 3);
+            return $"[{clean}]";
         }
 
         private void OnDestroy()
