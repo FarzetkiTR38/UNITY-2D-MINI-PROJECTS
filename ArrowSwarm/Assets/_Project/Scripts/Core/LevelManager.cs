@@ -148,6 +148,7 @@ namespace ArrowSwarm.Core
 
             // Start playing
             GameManager.Instance.InitializeLives();
+            InputManager.Instance?.BlockInput(0.4f);
             GameManager.Instance.SetState(GameState.Playing);
 
             // Handle Tutorial activation if TutorialManager / Tutorial_Root is in the scene (even if inactive)

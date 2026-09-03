@@ -282,18 +282,21 @@ namespace ArrowSwarm.UI
 
         private void OnContinueClicked()
         {
+            InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
             GameManager.Instance?.ResumeGame();
         }
 
         private void OnRetryClicked()
         {
+            InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
             LevelManager.Instance?.RetryLevel();
         }
 
         private void OnLevelsClicked()
         {
+            InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
             MainMenuUI.OpenLevelsOnLoad = true;
             GameManager.Instance?.GoToMainMenu();
@@ -301,6 +304,7 @@ namespace ArrowSwarm.UI
 
         private void OnMainMenuClicked()
         {
+            InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
             GameManager.Instance?.GoToMainMenu();
         }

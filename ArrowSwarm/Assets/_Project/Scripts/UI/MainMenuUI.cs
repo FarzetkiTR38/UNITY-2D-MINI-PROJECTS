@@ -360,6 +360,7 @@ namespace ArrowSwarm.UI
         private void OnPlayClicked()
         {
             Debug.Log("[ArrowSwarm] MainMenuUI: Play button clicked! Transitioning to GameScene...");
+            InputManager.Instance?.BlockInput(0.5f);
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.StartGame();

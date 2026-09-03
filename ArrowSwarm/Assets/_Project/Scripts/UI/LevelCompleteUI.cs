@@ -244,18 +244,21 @@ namespace ArrowSwarm.UI
 
         private void OnNextLevel()
         {
+            InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
             LevelManager.Instance?.NextLevel();
         }
 
         private void OnMainMenu()
         {
+            InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
             GameManager.Instance?.GoToMainMenu();
         }
 
         private void OnLevels()
         {
+            InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
             MainMenuUI.OpenLevelsOnLoad = true;
             GameManager.Instance?.GoToMainMenu();

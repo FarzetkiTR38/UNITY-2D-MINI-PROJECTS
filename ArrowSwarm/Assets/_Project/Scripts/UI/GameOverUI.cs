@@ -212,12 +212,14 @@ namespace ArrowSwarm.UI
 
         private void OnRetry()
         {
+            InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
             LevelManager.Instance?.RetryLevel();
         }
 
         private void OnMainMenu()
         {
+            InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
             GameManager.Instance?.GoToMainMenu();
         }
