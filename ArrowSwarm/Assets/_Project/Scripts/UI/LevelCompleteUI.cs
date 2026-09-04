@@ -249,7 +249,19 @@ namespace ArrowSwarm.UI
         {
             InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
-            LevelManager.Instance?.NextLevel();
+
+            int currentLevel = DataManager.Instance?.PlayerData != null ? DataManager.Instance.PlayerData.currentLevel : 1;
+            if (ArrowSwarm.Ads.AdManager.Instance != null)
+            {
+                ArrowSwarm.Ads.AdManager.Instance.ShowInterstitialWithPacing(currentLevel, () =>
+                {
+                    LevelManager.Instance?.NextLevel();
+                });
+            }
+            else
+            {
+                LevelManager.Instance?.NextLevel();
+            }
         }
 
         private void OnMainMenu()

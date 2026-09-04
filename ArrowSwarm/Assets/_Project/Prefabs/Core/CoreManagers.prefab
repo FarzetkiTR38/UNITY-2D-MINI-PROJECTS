@@ -28,6 +28,8 @@ GameObject:
   - component: {fileID: 7888695290940344275}
   - component: {fileID: 8900555007096158829}
   - component: {fileID: 3139879539791091678}
+  - component: {fileID: 2824551310307618531}
+  - component: {fileID: 5067867423604473748}
   m_Layer: 0
   m_Name: CoreManagers
   m_TagString: Untagged
@@ -344,6 +346,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e73b1a6816de74d43948cae8c22d5357, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Core.HapticManager
+--- !u!114 &2824551310307618531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036625359666785736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e13fb636f2b46d46afa24bde58202a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Ads.GoogleMobileAdsService
+  _useTestAds: 1
+  _rewardedAdUnitId: ca-app-pub-8886494112442790/6418619942
+  _interstitialAdUnitId: ca-app-pub-8886494112442790/9421906431
+--- !u!114 &5067867423604473748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036625359666785736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6884f7c9e3bd5246ab8500884bf2575, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Ads.AdManager
+  _adServiceProvider: {fileID: 0}
+  _interstitialCooldownSeconds: 90
+  _minLevelForInterstitials: 4
 --- !u!1 &1532447086922548065
 GameObject:
   m_ObjectHideFlags: 0

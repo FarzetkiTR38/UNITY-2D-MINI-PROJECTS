@@ -114,7 +114,7 @@ namespace ArrowSwarm.UI
 
         private void OnWatchAd()
         {
-            ArrowSwarm.Ads.MockAdService.Instance?.ShowRewardedAd(success =>
+            ArrowSwarm.Ads.AdManager.Instance?.ShowRewardedAd(success =>
             {
                 if (success)
                 {
