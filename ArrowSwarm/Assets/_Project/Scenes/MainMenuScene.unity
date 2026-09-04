@@ -802,7 +802,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &96708596
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -817,6 +817,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ProfileSetupModalUI
   _canvasGroup: {fileID: 96708597}
   _modalRect: {fileID: 0}
+  _targetScale: {x: 0.73, y: 0.73, z: 0.73}
   _titleText: {fileID: 0}
   _subtitleText: {fileID: 0}
   _nameInput: {fileID: 1575798699}
@@ -1817,7 +1818,6 @@ GameObject:
   - component: {fileID: 221762211}
   - component: {fileID: 221762213}
   - component: {fileID: 221762212}
-  - component: {fileID: 221762214}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -1944,21 +1944,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 221762210}
   m_CullTransparentMesh: 1
---- !u!114 &221762214
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 221762210}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d28c7748e7d2bc54889b04fa1f99918a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Localization.LocalizedText
-  _localizationKey: profile_skip
-  _prefix: 
-  _suffix: 
 --- !u!1 &231319279
 GameObject:
   m_ObjectHideFlags: 0
@@ -4628,7 +4613,6 @@ GameObject:
   - component: {fileID: 511822125}
   - component: {fileID: 511822127}
   - component: {fileID: 511822126}
-  - component: {fileID: 511822128}
   m_Layer: 0
   m_Name: Text (TMP) (1)
   m_TagString: Untagged
@@ -4755,21 +4739,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 511822124}
   m_CullTransparentMesh: 1
---- !u!114 &511822128
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 511822124}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d28c7748e7d2bc54889b04fa1f99918a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Localization.LocalizedText
-  _localizationKey: profile_skip
-  _prefix: 
-  _suffix: 
 --- !u!1001 &522129960
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8742,7 +8711,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u200B"
+  m_text: "FarzetkiTR38\u200B"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 252aba2c5fd35484a8d86cc1ed92779b, type: 2}
   m_sharedMaterial: {fileID: 2164040, guid: 252aba2c5fd35484a8d86cc1ed92779b, type: 2}
@@ -8769,8 +8738,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 100
-  m_fontSizeBase: 100
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -15616,7 +15585,7 @@ MonoBehaviour:
   m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_CustomCaretColor: 0
   m_SelectionColor: {r: 0.65882355, g: 0.80784315, b: 1, a: 0.7529412}
-  m_Text: 
+  m_Text: FarzetkiTR38
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0

@@ -6,26 +6,6 @@ namespace ArrowSwarm.Localization
     using UnityEngine;
 
     /// <summary>
-    /// Supported language metadata definition.
-    /// </summary>
-    [Serializable]
-    public struct LanguageDefinition
-    {
-        public string code;
-        public string displayName;
-        public string nativeName;
-        public TextAsset jsonAsset;
-
-        public LanguageDefinition(string c, string d, string n, TextAsset a = null)
-        {
-            code = c;
-            displayName = d;
-            nativeName = n;
-            jsonAsset = a;
-        }
-    }
-
-    /// <summary>
     /// Central manager for game-wide multi-language localization.
     /// Loads key-value JSON dictionaries, notifies listeners, and persists selected language.
     /// </summary>
@@ -54,17 +34,20 @@ namespace ArrowSwarm.Localization
             InitializeLanguagesList();
             AutoLinkJsonFiles();
 
+            // Default is strictly English until a language has been explicitly selected by the player.
             string saved = PlayerPrefs.GetString(PrefsLanguageKey, string.Empty);
             if (string.IsNullOrEmpty(saved))
             {
-                saved = DetectSystemLanguage();
+                SetLanguage(DefaultLanguage, saveToPrefs: false);
             }
-
-            SetLanguage(saved);
+            else
+            {
+                SetLanguage(saved, saveToPrefs: false);
+            }
         }
 
         /// <summary>Changes the current language and reloads strings.</summary>
-        public void SetLanguage(string langCode)
+        public void SetLanguage(string langCode, bool saveToPrefs = true)
         {
             if (string.IsNullOrEmpty(langCode)) langCode = DefaultLanguage;
 
@@ -76,12 +59,21 @@ namespace ArrowSwarm.Localization
             }
 
             _currentLanguage = langCode;
-            PlayerPrefs.SetString(PrefsLanguageKey, _currentLanguage);
-            PlayerPrefs.Save();
+
+            if (saveToPrefs)
+            {
+                PlayerPrefs.SetString(PrefsLanguageKey, _currentLanguage);
+                PlayerPrefs.Save();
+
+                if (ArrowSwarm.Data.DataManager.HasInstance)
+                {
+                    ArrowSwarm.Data.DataManager.Instance.SetLanguage(_currentLanguage);
+                }
+            }
 
             ParseJsonStrings(asset != null ? asset.text : string.Empty);
             OnLanguageChanged?.Invoke();
-            Debug.Log($"[ArrowSwarm] Language set to: {_currentLanguage} ({_localizedStrings.Count} keys loaded)");
+            Debug.Log($"[ArrowSwarm] Language set to: {_currentLanguage} (Saved: {saveToPrefs}, {_localizedStrings.Count} keys loaded)");
         }
 
         /// <summary>Cycles to the next available language.</summary>
@@ -90,7 +82,7 @@ namespace ArrowSwarm.Localization
             if (_languages == null || _languages.Length == 0) return;
             int idx = GetCurrentLanguageIndex();
             idx = (idx + 1) % _languages.Length;
-            SetLanguage(_languages[idx].code);
+            SetLanguage(_languages[idx].code, saveToPrefs: true);
         }
 
         /// <summary>Cycles to the previous available language.</summary>
@@ -99,7 +91,7 @@ namespace ArrowSwarm.Localization
             if (_languages == null || _languages.Length == 0) return;
             int idx = GetCurrentLanguageIndex();
             idx = (idx - 1 + _languages.Length) % _languages.Length;
-            SetLanguage(_languages[idx].code);
+            SetLanguage(_languages[idx].code, saveToPrefs: true);
         }
 
         /// <summary>Gets the current language index in the available languages array.</summary>
@@ -158,22 +150,6 @@ namespace ArrowSwarm.Localization
             }
         }
 
-        private string DetectSystemLanguage()
-        {
-            return Application.systemLanguage switch
-            {
-                SystemLanguage.Turkish => "tr",
-                SystemLanguage.Spanish => "es",
-                SystemLanguage.German => "de",
-                SystemLanguage.French => "fr",
-                SystemLanguage.Portuguese => "pt",
-                SystemLanguage.Italian => "it",
-                SystemLanguage.Russian => "ru",
-                SystemLanguage.Japanese => "ja",
-                SystemLanguage.Korean => "ko",
-                _ => DefaultLanguage
-            };
-        }
 
         private void InitializeLanguagesList()
         {

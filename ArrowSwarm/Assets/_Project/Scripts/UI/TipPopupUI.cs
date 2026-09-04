@@ -77,12 +77,15 @@ namespace ArrowSwarm.UI
             if (_canvasGroup != null)
             {
                 _canvasGroup.interactable = false;
-                _canvasGroup.blocksRaycasts = false;
             }
 
             if (instant)
             {
-                if (_canvasGroup != null) _canvasGroup.alpha = 0f;
+                if (_canvasGroup != null)
+                {
+                    _canvasGroup.alpha = 0f;
+                    _canvasGroup.blocksRaycasts = false;
+                }
                 gameObject.SetActive(false);
             }
             else
@@ -104,6 +107,7 @@ namespace ArrowSwarm.UI
 
             if (target <= 0.01f)
             {
+                if (_canvasGroup != null) _canvasGroup.blocksRaycasts = false;
                 gameObject.SetActive(false);
             }
         }

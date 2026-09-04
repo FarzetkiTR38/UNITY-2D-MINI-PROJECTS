@@ -37,6 +37,6 @@ namespace ArrowSwarm.Data
         public int TotalStars;
         public bool IsPlayer;
         public string LastUpdated;
-        public string CountryCode = "TR";
+        public string CountryCode = "US";
     }
 }

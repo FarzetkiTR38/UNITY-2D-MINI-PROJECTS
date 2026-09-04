@@ -18,7 +18,7 @@ namespace ArrowSwarm.Debug
 
         [Header("👤 Player Profile")]
         [SerializeField] private string _targetPlayerName = "Player";
-        [SerializeField] private string _targetPlayerCountry = "TR";
+        [SerializeField] private string _targetPlayerCountry = "US";
         [SerializeField] private bool _targetProfileCompleted = true;
         [SerializeField] private bool _targetTutorialCompleted = true;
 
@@ -32,7 +32,7 @@ namespace ArrowSwarm.Debug
         [SerializeField] private int _targetFreeze = 5;
 
         [Header("⚙️ Settings & Preferences")]
-        [SerializeField] private string _targetLanguage = "TURKISH";
+        [SerializeField] private string _targetLanguage = "ENGLISH";
         [SerializeField] private ThemeMode _targetTheme = ThemeMode.Light;
         [SerializeField] private bool _targetSfx = true;
         [SerializeField] private bool _targetVfx = true;
