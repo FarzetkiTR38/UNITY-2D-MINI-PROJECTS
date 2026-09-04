@@ -30,6 +30,7 @@ GameObject:
   - component: {fileID: 3139879539791091678}
   - component: {fileID: 2824551310307618531}
   - component: {fileID: 5067867423604473748}
+  - component: {fileID: 4508617039702199181}
   m_Layer: 0
   m_Name: CoreManagers
   m_TagString: Untagged
@@ -376,6 +377,59 @@ MonoBehaviour:
   _adServiceProvider: {fileID: 0}
   _interstitialCooldownSeconds: 90
   _minLevelForInterstitials: 4
+--- !u!114 &4508617039702199181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036625359666785736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ac9d04aad9071b4ab8363b7d24e0cc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Localization.LocalizationManager
+  _languages:
+  - code: en
+    displayName: English
+    nativeName: English
+    jsonAsset: {fileID: 4900000, guid: 0bab02997ed7fd747888a31f737ebd11, type: 3}
+  - code: tr
+    displayName: Turkish
+    nativeName: "T\xFCrk\xE7e"
+    jsonAsset: {fileID: 4900000, guid: cc8da7ae423818745b4311fef65197f9, type: 3}
+  - code: es
+    displayName: Spanish
+    nativeName: "Espa\xF1ol"
+    jsonAsset: {fileID: 4900000, guid: f34afb09cf1d1ca4988d1a1c399d4d6c, type: 3}
+  - code: de
+    displayName: German
+    nativeName: Deutsch
+    jsonAsset: {fileID: 4900000, guid: fa46cdb93335c464e9f00ec3250754cc, type: 3}
+  - code: fr
+    displayName: French
+    nativeName: "Fran\xE7ais"
+    jsonAsset: {fileID: 4900000, guid: 56db3268d48510942b99963daeff0407, type: 3}
+  - code: pt
+    displayName: Portuguese
+    nativeName: "Portugu\xEAs"
+    jsonAsset: {fileID: 4900000, guid: 15215742625503143a951cc4025c0998, type: 3}
+  - code: it
+    displayName: Italian
+    nativeName: Italiano
+    jsonAsset: {fileID: 4900000, guid: 66cfa5a38a88e8d47afea0af8d3dd602, type: 3}
+  - code: ru
+    displayName: Russian
+    nativeName: "\u0420\u0443\u0441\u0441\u043A\u0438\u0439"
+    jsonAsset: {fileID: 4900000, guid: b634ab73beb6ca54bbd35e1c990cc47c, type: 3}
+  - code: ja
+    displayName: Japanese
+    nativeName: "\u65E5\u672C\u8A9E"
+    jsonAsset: {fileID: 4900000, guid: 05ea6d1a7bbf2d64aae3f91b6062d19f, type: 3}
+  - code: ko
+    displayName: Korean
+    nativeName: "\uD55C\uAD6D\uC5B4"
+    jsonAsset: {fileID: 4900000, guid: a7ca53794b0c89b4f867959bbd167518, type: 3}
 --- !u!1 &1532447086922548065
 GameObject:
   m_ObjectHideFlags: 0

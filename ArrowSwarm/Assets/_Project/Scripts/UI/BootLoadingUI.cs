@@ -2,35 +2,24 @@ namespace ArrowSwarm.UI
 {
     using System;
     using System.Collections;
+    using ArrowSwarm.Localization;
     using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
 
     /// <summary>
     /// Manages the Boot / Loading Screen UI visuals, animated progress bar (0-100%),
-    /// rotating gameplay tips, status messages, and center hero pulse animation.
-    /// Provides customizable sprite and color slots for easy designer customization.
+    /// rotating localized gameplay tips, and localized status messages during startup.
     /// </summary>
     public class BootLoadingUI : MonoBehaviour
     {
         [Header("Visual Slots (Sprites & Graphics)")]
-        [Tooltip("Background wallpaper image.")]
         [SerializeField] private Image _backgroundImage;
-
-        [Tooltip("Game title logo (e.g. Arrow Swarm 3D Logo).")]
         [SerializeField] private Image _titleLogoImage;
-
-        [Tooltip("Glow badge under title (e.g. LOADING badge).")]
         [SerializeField] private Image _loadingBadgeImage;
-
-        [Tooltip("Center circular arrows wheel graphic.")]
         [SerializeField] private RectTransform _centerHeroTransform;
         [SerializeField] private Image _centerHeroImage;
-
-        [Tooltip("Glowing center star graphic.")]
         [SerializeField] private Image _centerStarImage;
-
-        [Tooltip("Bottom company/studio branding logo.")]
         [SerializeField] private Image _brandingLogoImage;
 
         [Header("Progress Bar & Status")]
@@ -44,54 +33,62 @@ namespace ArrowSwarm.UI
         [SerializeField] private Image _tipIcon;
         [SerializeField] private CanvasGroup _tipCanvasGroup;
 
-        [Header("Animation & Timing")]
-        [Tooltip("Simulated load duration in seconds.")]
-        [SerializeField] private float _loadingDuration = 2.4f;
-
-        [Tooltip("Whether the center hero graphic plays an ambient breathing animation.")]
+        [Header("Hero Animation & Timing")]
         [SerializeField] private bool _animateCenterHero = true;
         [SerializeField] private float _heroPulseSpeed = 2.5f;
         [SerializeField] private float _heroPulseAmount = 0.035f;
+        [SerializeField] private float _loadingDuration = 2.4f;
 
-        [Header("Text Configuration")]
-        [SerializeField] private string[] _statusSteps = new string[]
-        {
-            "Initializing systems...",
-            "Preparing arrows...",
-            "Calibrating swarm path...",
-            "Almost ready!"
-        };
+        private static readonly string[] StatusKeys = { "boot_status_0", "boot_status_1", "boot_status_2", "boot_status_3" };
+        private static readonly string[] StatusFallbacks = { "Initializing systems...", "Preparing arrows...", "Calibrating swarm path...", "Almost ready!" };
 
-        [SerializeField] private string[] _gameplayTips = new string[]
+        private static readonly string[] TipKeys = { "boot_tip_0", "boot_tip_1", "boot_tip_2", "boot_tip_3", "boot_tip_4" };
+        private static readonly string[] TipFallbacks =
         {
-            "TIP: Match arrow paths to guide every bot!",
-            "TIP: Blocked arrows bounce back safely without losing lives!",
-            "TIP: Use Freeze skill when enemies get too close to the portal!",
-            "TIP: Solvable arrows always have an unblocked exit path!",
+            "TIP: Match arrow paths to guide every bot!", "TIP: Blocked arrows bounce back safely without losing lives!",
+            "TIP: Use Freeze skill when enemies get too close to the portal!", "TIP: Solvable arrows always have an unblocked exit path!",
             "TIP: The final Rainbow Arrow clears the remaining wave in style!"
         };
 
         private Coroutine _loadingCoroutine;
         private Coroutine _tipsCoroutine;
         private Vector3 _originalHeroScale = Vector3.one;
+        private int _currentStatusIndex;
+        private int _currentTipIndex;
 
         private void Awake()
         {
-            if (_centerHeroTransform != null)
-            {
-                _originalHeroScale = _centerHeroTransform.localScale;
-            }
+            if (_centerHeroTransform != null) _originalHeroScale = _centerHeroTransform.localScale;
 
+            DisableStaticLocalizedText(_statusText);
+            DisableStaticLocalizedText(_tipText);
+
+            _currentTipIndex = UnityEngine.Random.Range(0, TipKeys.Length);
+            UpdateTipMessage(_currentTipIndex);
             SetProgress(0f);
+        }
+
+        private void DisableStaticLocalizedText(TextMeshProUGUI tmp)
+        {
+            if (tmp != null && tmp.TryGetComponent<LocalizedText>(out var loc))
+            {
+                loc.enabled = false;
+            }
+        }
+
+        private void OnEnable()
+        {
+            LocalizationManager.OnLanguageChanged += RefreshLocalizedTexts;
+            RefreshLocalizedTexts();
+        }
+
+        private void OnDisable()
+        {
+            LocalizationManager.OnLanguageChanged -= RefreshLocalizedTexts;
         }
 
         private void Start()
         {
-            if (_gameplayTips != null && _gameplayTips.Length > 0 && _tipText != null)
-            {
-                _tipText.text = _gameplayTips[UnityEngine.Random.Range(0, _gameplayTips.Length)];
-            }
-
             _tipsCoroutine = StartCoroutine(CycleTipsRoutine());
         }
 
@@ -104,49 +101,47 @@ namespace ArrowSwarm.UI
             }
         }
 
-        /// <summary>
-        /// Starts the animated loading progression from 0% to 100%.
-        /// Calls onComplete when 100% is reached and ready to transition.
-        /// </summary>
+        /// <summary>Starts loading sequence progression from 0% to 100%.</summary>
         public void StartLoading(Action onComplete)
         {
             if (_loadingCoroutine != null) StopCoroutine(_loadingCoroutine);
             _loadingCoroutine = StartCoroutine(LoadingSequenceRoutine(onComplete));
         }
 
-        /// <summary>
-        /// Updates the progress bar fill and percentage text (0.0 to 1.0).
-        /// </summary>
+        /// <summary>Updates progress bar fill and percentage text (0.0 to 1.0).</summary>
         public void SetProgress(float progress)
         {
             float clamped = Mathf.Clamp01(progress);
-
-            if (_progressSlider != null)
-            {
-                _progressSlider.value = clamped;
-            }
-
-            if (_progressFillImage != null && _progressFillImage.type == Image.Type.Filled)
-            {
-                _progressFillImage.fillAmount = clamped;
-            }
-
-            if (_percentText != null)
-            {
-                _percentText.text = $"{Mathf.RoundToInt(clamped * 100f)}%";
-            }
-
+            if (_progressSlider != null) _progressSlider.value = clamped;
+            if (_progressFillImage != null && _progressFillImage.type == Image.Type.Filled) _progressFillImage.fillAmount = clamped;
+            if (_percentText != null) _percentText.text = $"{Mathf.RoundToInt(clamped * 100f)}%";
             UpdateStatusMessage(clamped);
         }
 
         private void UpdateStatusMessage(float progress)
         {
-            if (_statusText == null || _statusSteps == null || _statusSteps.Length == 0) return;
+            if (_statusText == null) return;
+            _currentStatusIndex = Mathf.Clamp(Mathf.FloorToInt(progress * StatusKeys.Length), 0, StatusKeys.Length - 1);
+            if (progress >= 0.98f) _currentStatusIndex = StatusKeys.Length - 1;
+            _statusText.text = GetLocalized(StatusKeys[_currentStatusIndex], StatusFallbacks[_currentStatusIndex]);
+        }
 
-            int stepIndex = Mathf.Clamp(Mathf.FloorToInt(progress * _statusSteps.Length), 0, _statusSteps.Length - 1);
-            if (progress >= 0.98f) stepIndex = _statusSteps.Length - 1;
+        private void UpdateTipMessage(int index)
+        {
+            if (_tipText == null) return;
+            _currentTipIndex = Mathf.Clamp(index, 0, TipKeys.Length - 1);
+            _tipText.text = GetLocalized(TipKeys[_currentTipIndex], TipFallbacks[_currentTipIndex]);
+        }
 
-            _statusText.text = _statusSteps[stepIndex];
+        private string GetLocalized(string key, string fallback)
+        {
+            return LocalizationManager.Instance != null ? LocalizationManager.Instance.GetText(key, fallback) : fallback;
+        }
+
+        private void RefreshLocalizedTexts()
+        {
+            if (_statusText != null) _statusText.text = GetLocalized(StatusKeys[_currentStatusIndex], StatusFallbacks[_currentStatusIndex]);
+            if (_tipText != null) _tipText.text = GetLocalized(TipKeys[_currentTipIndex], TipFallbacks[_currentTipIndex]);
         }
 
         private IEnumerator LoadingSequenceRoutine(Action onComplete)
@@ -158,72 +153,46 @@ namespace ArrowSwarm.UI
             {
                 elapsed += Time.deltaTime;
                 float t = Mathf.Clamp01(elapsed / duration);
-
-                // Smooth cubic ease-out curve for natural loading feel
                 float smoothT = 1f - Mathf.Pow(1f - t, 3f);
                 SetProgress(smoothT);
-
                 yield return null;
             }
 
             SetProgress(1.0f);
             yield return new WaitForSeconds(0.25f);
-
             onComplete?.Invoke();
         }
 
         private IEnumerator CycleTipsRoutine()
         {
-            if (_gameplayTips == null || _gameplayTips.Length <= 1) yield break;
-
-            int tipIndex = UnityEngine.Random.Range(0, _gameplayTips.Length);
             WaitForSeconds waitInterval = new WaitForSeconds(3.5f);
-
             while (true)
             {
                 yield return waitInterval;
-
-                // Fade out
-                if (_tipCanvasGroup != null)
-                {
-                    float fadeOut = 0.25f;
-                    float elapsed = 0f;
-                    while (elapsed < fadeOut)
-                    {
-                        elapsed += Time.deltaTime;
-                        _tipCanvasGroup.alpha = 1f - (elapsed / fadeOut);
-                        yield return null;
-                    }
-                    _tipCanvasGroup.alpha = 0f;
-                }
-
-                // Change tip
-                tipIndex = (tipIndex + 1) % _gameplayTips.Length;
-                if (_tipText != null)
-                {
-                    _tipText.text = _gameplayTips[tipIndex];
-                }
-
-                // Fade in
-                if (_tipCanvasGroup != null)
-                {
-                    float fadeIn = 0.25f;
-                    float elapsed = 0f;
-                    while (elapsed < fadeIn)
-                    {
-                        elapsed += Time.deltaTime;
-                        _tipCanvasGroup.alpha = elapsed / fadeIn;
-                        yield return null;
-                    }
-                    _tipCanvasGroup.alpha = 1f;
-                }
+                if (_tipCanvasGroup != null) yield return FadeCanvasGroup(_tipCanvasGroup, 1f, 0f, 0.25f);
+                _currentTipIndex = (_currentTipIndex + 1) % TipKeys.Length;
+                UpdateTipMessage(_currentTipIndex);
+                if (_tipCanvasGroup != null) yield return FadeCanvasGroup(_tipCanvasGroup, 0f, 1f, 0.25f);
             }
+        }
+
+        private IEnumerator FadeCanvasGroup(CanvasGroup cg, float from, float to, float duration)
+        {
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                cg.alpha = Mathf.Lerp(from, to, elapsed / duration);
+                yield return null;
+            }
+            cg.alpha = to;
         }
 
         private void OnDestroy()
         {
             if (_loadingCoroutine != null) StopCoroutine(_loadingCoroutine);
             if (_tipsCoroutine != null) StopCoroutine(_tipsCoroutine);
+            LocalizationManager.OnLanguageChanged -= RefreshLocalizedTexts;
         }
     }
 }

@@ -14,6 +14,12 @@ namespace ArrowSwarm.Core
         [SerializeField] private GameObject _coreManagersPrefab;
         [SerializeField] private BootLoadingUI _loadingUI;
 
+        private void Awake()
+        {
+            // Eagerly resolve localization so saved language is active before UI displays
+            var loc = ArrowSwarm.Localization.LocalizationManager.Instance;
+        }
+
         private void Start()
         {
             // Ensure CoreManagers are instantiated

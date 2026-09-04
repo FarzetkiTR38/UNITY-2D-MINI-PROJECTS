@@ -64,7 +64,7 @@ namespace ArrowSwarm.Localization
             EnsureTextComponent();
             if (_text == null) return;
 
-            if (LocalizationManager.HasInstance)
+            if (LocalizationManager.Instance != null)
             {
                 string localized = LocalizationManager.Instance.GetText(_localizationKey, _text.text);
                 _text.text = $"{_prefix}{localized}{_suffix}";
