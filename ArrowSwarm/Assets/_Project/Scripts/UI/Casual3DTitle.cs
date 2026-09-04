@@ -51,18 +51,13 @@ namespace ArrowSwarm.UI
         private bool _isDirty;
 
         /// <summary>Gets or sets the text and updates all 3D layers.</summary>
-        public string Text
-        {
-            get => _text;
-            set { if (_text != value) { _text = value; MarkDirty(); } }
-        }
+        public string Text { get => _text; set { if (_text != value) { _text = value; MarkDirty(); } } }
 
         /// <summary>Gets or sets the localization key for automatic translation.</summary>
-        public string LocalizationKey
-        {
-            get => _localizationKey;
-            set { _localizationKey = value; RefreshLocalized(); }
-        }
+        public string LocalizationKey { get => _localizationKey; set { _localizationKey = value; RefreshLocalized(); } }
+
+        /// <summary>Gets or sets font size across all 3D layers.</summary>
+        public float FontSize { get => _fontSize; set { if (Mathf.Abs(_fontSize - value) > 0.01f) { _fontSize = value; MarkDirty(); } } }
 
         private void OnEnable()
         {
@@ -71,21 +66,9 @@ namespace ArrowSwarm.UI
             MarkDirty();
         }
 
-        private void OnDisable()
-        {
-            LocalizationManager.OnLanguageChanged -= RefreshLocalized;
-        }
-
-        private void Start()
-        {
-            RefreshLocalized();
-            ApplyAll();
-        }
-
-        private void OnValidate()
-        {
-            MarkDirty();
-        }
+        private void OnDisable() => LocalizationManager.OnLanguageChanged -= RefreshLocalized;
+        private void Start() { RefreshLocalized(); ApplyAll(); }
+        private void OnValidate() => MarkDirty();
 
         private void LateUpdate()
         {
