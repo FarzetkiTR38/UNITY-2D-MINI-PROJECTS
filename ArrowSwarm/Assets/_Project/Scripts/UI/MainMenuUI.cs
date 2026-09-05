@@ -94,6 +94,7 @@ namespace ArrowSwarm.UI
                     if (_profileModal == null) _profileModal = GetComponentInChildren<ProfileSetupModalUI>(true);
                     if (_profileModal != null)
                     {
+                        _profileModal.gameObject.SetActive(true);
                         _profileModal.Show();
                     }
                 }
@@ -106,7 +107,11 @@ namespace ArrowSwarm.UI
         public void OpenProfileModal()
         {
             if (_profileModal == null) _profileModal = GetComponentInChildren<ProfileSetupModalUI>(true);
-            _profileModal?.Show();
+            if (_profileModal != null)
+            {
+                _profileModal.gameObject.SetActive(true);
+                _profileModal.Show();
+            }
         }
 
         private void HandlePlayerDataChanged(PlayerData data)

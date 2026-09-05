@@ -63,35 +63,12 @@ namespace ArrowSwarm.UI
 
         public void AutoWire()
         {
-            if (_canvasGroup == null)
-                _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
-
-            if (_closeButton == null)
-            {
-                var btn = transform.Find("Header/CloseButton") ?? transform.Find("CloseButton");
-                if (btn != null) _closeButton = btn.GetComponent<Button>();
-            }
-
-            if (_prevPageButton == null)
-            {
-                var btn = transform.Find("Nav/PrevButton") ?? transform.Find("PrevButton");
-                if (btn != null) _prevPageButton = btn.GetComponent<Button>();
-            }
-
-            if (_nextPageButton == null)
-            {
-                var btn = transform.Find("Nav/NextButton") ?? transform.Find("NextButton");
-                if (btn != null) _nextPageButton = btn.GetComponent<Button>();
-            }
-
-            if (_pageText == null)
-            {
-                var txt = transform.Find("Nav/PageText") ?? transform.Find("PageText");
-                if (txt != null) _pageText = txt.GetComponent<TextMeshProUGUI>();
-            }
-
-            if (_levelGridContainer == null)
-                _levelGridContainer = transform.Find("GridContainer") ?? transform.Find("Content/GridContainer");
+            if (_canvasGroup == null) _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+            if (_closeButton == null) _closeButton = (transform.Find("Header/CloseButton") ?? transform.Find("CloseButton"))?.GetComponent<Button>();
+            if (_prevPageButton == null) _prevPageButton = (transform.Find("Nav/PrevButton") ?? transform.Find("PrevButton"))?.GetComponent<Button>();
+            if (_nextPageButton == null) _nextPageButton = (transform.Find("Nav/NextButton") ?? transform.Find("NextButton"))?.GetComponent<Button>();
+            if (_pageText == null) _pageText = (transform.Find("Nav/PageText") ?? transform.Find("PageText"))?.GetComponent<TextMeshProUGUI>();
+            if (_levelGridContainer == null) _levelGridContainer = transform.Find("GridContainer") ?? transform.Find("Content/GridContainer");
         }
 
         public void PrevPage()
@@ -179,7 +156,6 @@ namespace ArrowSwarm.UI
             if (_canvasGroup != null)
             {
                 _canvasGroup.interactable = false;
-                _canvasGroup.blocksRaycasts = false;
                 StopAllCoroutines();
                 StartCoroutine(FadeTo(0f, true));
             }
@@ -200,6 +176,7 @@ namespace ArrowSwarm.UI
 
             if (disableOnComplete)
             {
+                if (_canvasGroup != null) _canvasGroup.blocksRaycasts = false;
                 gameObject.SetActive(false);
             }
         }

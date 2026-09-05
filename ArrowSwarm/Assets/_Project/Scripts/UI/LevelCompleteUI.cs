@@ -226,14 +226,17 @@ namespace ArrowSwarm.UI
             if (_canvasGroup != null)
             {
                 _canvasGroup.interactable = false;
-                _canvasGroup.blocksRaycasts = false;
             }
 
             if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
 
             if (instant)
             {
-                if (_canvasGroup != null) _canvasGroup.alpha = 0f;
+                if (_canvasGroup != null)
+                {
+                    _canvasGroup.alpha = 0f;
+                    _canvasGroup.blocksRaycasts = false;
+                }
                 gameObject.SetActive(false);
             }
             else
@@ -246,7 +249,19 @@ namespace ArrowSwarm.UI
         {
             InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
-            LevelManager.Instance?.NextLevel();
+
+            int currentLevel = DataManager.Instance?.PlayerData != null ? DataManager.Instance.PlayerData.currentLevel : 1;
+            if (ArrowSwarm.Ads.AdManager.Instance != null)
+            {
+                ArrowSwarm.Ads.AdManager.Instance.ShowInterstitialWithPacing(currentLevel, () =>
+                {
+                    LevelManager.Instance?.NextLevel();
+                });
+            }
+            else
+            {
+                LevelManager.Instance?.NextLevel();
+            }
         }
 
         private void OnMainMenu()
@@ -276,6 +291,7 @@ namespace ArrowSwarm.UI
 
             if (target <= 0.01f)
             {
+                if (_canvasGroup != null) _canvasGroup.blocksRaycasts = false;
                 gameObject.SetActive(false);
             }
         }

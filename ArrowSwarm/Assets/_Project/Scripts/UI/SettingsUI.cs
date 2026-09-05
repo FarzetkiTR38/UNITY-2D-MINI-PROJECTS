@@ -240,7 +240,6 @@ namespace ArrowSwarm.UI
             if (_canvasGroup != null)
             {
                 _canvasGroup.interactable = false;
-                _canvasGroup.blocksRaycasts = false;
                 StopAllCoroutines();
                 StartCoroutine(FadeTo(0f, true));
             }
@@ -367,6 +366,7 @@ namespace ArrowSwarm.UI
 
             if (disableOnComplete)
             {
+                if (_canvasGroup != null) _canvasGroup.blocksRaycasts = false;
                 gameObject.SetActive(false);
             }
         }

@@ -16,5 +16,16 @@ namespace ArrowSwarm.Ads
         /// Returns true if a rewarded ad is loaded and ready to show.
         /// </summary>
         bool IsAdReady();
+
+        /// <summary>
+        /// Shows an interstitial ad. Callback executes when ad is closed or fails.
+        /// </summary>
+        void ShowInterstitialAd(Action onClosed);
+
+        /// <summary>
+        /// Returns true if an interstitial ad is loaded and ready to show.
+        /// </summary>
+        bool IsInterstitialAdReady();
     }
 }
+

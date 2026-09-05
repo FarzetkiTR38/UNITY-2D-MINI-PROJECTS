@@ -22,6 +22,9 @@ namespace ArrowSwarm.UI
         [Header("Modal Containers")]
         [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private RectTransform _modalRect;
+        [Tooltip("Base scale of the modal Card. Defaults to 0.73 or whatever scale is configured in the Scene.")]
+        [SerializeField] private Vector3 _targetScale = new Vector3(0.73f, 0.73f, 0.73f);
+        private bool _hasCapturedBaseScale = false;
 
         [Header("Text Labels")]
         [SerializeField] private TextMeshProUGUI _titleText;
@@ -123,6 +126,15 @@ namespace ArrowSwarm.UI
             if (_canvasGroup == null) _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
             if (_modalRect == null) _modalRect = transform.Find("Card") as RectTransform ?? transform as RectTransform;
 
+            if (!_hasCapturedBaseScale && _modalRect != null)
+            {
+                if (_modalRect.localScale != Vector3.zero && _modalRect.localScale != Vector3.one)
+                {
+                    _targetScale = _modalRect.localScale;
+                }
+                _hasCapturedBaseScale = true;
+            }
+
             if (_titleText == null) _titleText = transform.Find("Card/TitleText")?.GetComponent<TextMeshProUGUI>();
             if (_subtitleText == null) _subtitleText = transform.Find("Card/SubtitleText")?.GetComponent<TextMeshProUGUI>();
 
@@ -208,7 +220,16 @@ namespace ArrowSwarm.UI
             }
 
             if (_animateRoutine != null) StopCoroutine(_animateRoutine);
-            _animateRoutine = StartCoroutine(AnimateOpen());
+
+            if (gameObject.activeInHierarchy)
+            {
+                _animateRoutine = StartCoroutine(AnimateOpen());
+            }
+            else
+            {
+                if (_canvasGroup != null) _canvasGroup.alpha = 1f;
+                if (_modalRect != null) _modalRect.localScale = _targetScale;
+            }
         }
 
         /// <summary>
@@ -218,12 +239,22 @@ namespace ArrowSwarm.UI
         {
             if (_canvasGroup != null)
             {
-                _canvasGroup.blocksRaycasts = false;
                 _canvasGroup.interactable = false;
+                // Keep blocksRaycasts = true during fade-out to shield background buttons!
             }
 
             if (_animateRoutine != null) StopCoroutine(_animateRoutine);
-            _animateRoutine = StartCoroutine(AnimateClose(onComplete));
+
+            if (gameObject.activeInHierarchy)
+            {
+                _animateRoutine = StartCoroutine(AnimateClose(onComplete));
+            }
+            else
+            {
+                if (_canvasGroup != null) _canvasGroup.blocksRaycasts = false;
+                gameObject.SetActive(false);
+                onComplete?.Invoke();
+            }
         }
 
         private void UpdateCountryDisplay()
@@ -294,17 +325,7 @@ namespace ArrowSwarm.UI
                 }
             }
 
-            // Auto-detect device system language
-            if (Application.systemLanguage == SystemLanguage.Turkish) return 0; // TR
-            if (Application.systemLanguage == SystemLanguage.German) return 3; // DE
-            if (Application.systemLanguage == SystemLanguage.French) return 4; // FR
-            if (Application.systemLanguage == SystemLanguage.Spanish) return 5; // ES
-            if (Application.systemLanguage == SystemLanguage.Italian) return 6; // IT
-            if (Application.systemLanguage == SystemLanguage.Portuguese) return 7; // BR
-            if (Application.systemLanguage == SystemLanguage.Japanese) return 8; // JP
-            if (Application.systemLanguage == SystemLanguage.Korean) return 9; // KR
-
-            return 1; // Default: US
+            return 1; // Default: US (English)
         }
 
         private string GenerateRandomNickname()
@@ -367,26 +388,11 @@ namespace ArrowSwarm.UI
                     "RU" => "ru",
                     _ => "en"
                 };
-                Localization.LocalizationManager.Instance.SetLanguage(lang);
+                Localization.LocalizationManager.Instance.SetLanguage(lang, saveToPrefs: true);
             }
 
-            // Save and seamlessly launch GameScene (Play Level)
-            Hide(() =>
-            {
-                Debug.Log("[ArrowSwarm] ProfileSetupModalUI: Launching GameScene...");
-                if (GameManager.Instance != null)
-                {
-                    GameManager.Instance.StartGame();
-                }
-                else if (SceneTransitionManager.Instance != null)
-                {
-                    SceneTransitionManager.Instance.LoadScene("GameScene");
-                }
-                else
-                {
-                    SceneManager.LoadScene("GameScene");
-                }
-            });
+            // Save and cleanly close modal (stay on MainMenu)
+            Hide();
         }
 
         private void OnSkipClicked()
@@ -398,7 +404,7 @@ namespace ArrowSwarm.UI
 
             string selectedCode = (_currentCountryIndex >= 0 && _currentCountryIndex < COUNTRIES.Length)
                 ? COUNTRIES[_currentCountryIndex].Code
-                : "TR";
+                : "US";
 
             if (DataManager.Instance != null)
             {
@@ -412,7 +418,8 @@ namespace ArrowSwarm.UI
         {
             if (_canvasGroup == null || _modalRect == null) yield break;
 
-            _modalRect.localScale = Vector3.one * 0.85f;
+            Vector3 baseScale = _targetScale;
+            _modalRect.localScale = baseScale * 0.85f;
             _canvasGroup.alpha = 0f;
 
             float elapsed = 0f;
@@ -428,24 +435,26 @@ namespace ArrowSwarm.UI
                 float scale = (t < 0.7f)
                     ? Mathf.Lerp(0.85f, 1.04f, t / 0.7f)
                     : Mathf.Lerp(1.04f, 1.00f, (t - 0.7f) / 0.3f);
-                _modalRect.localScale = Vector3.one * scale;
+                _modalRect.localScale = baseScale * scale;
 
                 yield return null;
             }
 
             _canvasGroup.alpha = 1f;
-            _modalRect.localScale = Vector3.one;
+            _modalRect.localScale = baseScale;
         }
 
         private IEnumerator AnimateClose(Action onComplete = null)
         {
             if (_canvasGroup == null || _modalRect == null)
             {
+                if (_canvasGroup != null) _canvasGroup.blocksRaycasts = false;
                 gameObject.SetActive(false);
                 onComplete?.Invoke();
                 yield break;
             }
 
+            Vector3 baseScale = _targetScale;
             float elapsed = 0f;
             float duration = 0.18f;
 
@@ -454,11 +463,13 @@ namespace ArrowSwarm.UI
                 elapsed += Time.unscaledDeltaTime;
                 float t = Mathf.Clamp01(elapsed / duration);
                 _canvasGroup.alpha = 1f - t;
-                _modalRect.localScale = Vector3.Lerp(Vector3.one, Vector3.one * 0.9f, t);
+                _modalRect.localScale = Vector3.Lerp(baseScale, baseScale * 0.9f, t);
                 yield return null;
             }
 
             _canvasGroup.alpha = 0f;
+            _canvasGroup.blocksRaycasts = false; // Only drop raycast shield after modal is completely invisible!
+            _modalRect.localScale = baseScale;
             gameObject.SetActive(false);
             onComplete?.Invoke();
         }
@@ -466,7 +477,7 @@ namespace ArrowSwarm.UI
         private IEnumerator PunchTransformRoutine(Transform target)
         {
             if (target == null) yield break;
-            Vector3 origScale = Vector3.one;
+            Vector3 origScale = target.localScale;
             target.localScale = origScale * 1.25f;
             yield return new WaitForSecondsRealtime(0.08f);
             target.localScale = origScale;

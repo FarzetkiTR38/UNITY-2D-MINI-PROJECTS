@@ -394,21 +394,10 @@ MonoBehaviour:
   _tipText: {fileID: 1587815358}
   _tipIcon: {fileID: 385581398}
   _tipCanvasGroup: {fileID: 1521763071}
-  _loadingDuration: 2.4
   _animateCenterHero: 1
   _heroPulseSpeed: 2.5
   _heroPulseAmount: 0.035
-  _statusSteps:
-  - Initializing systems...
-  - Preparing arrows...
-  - Calibrating swarm path...
-  - Almost ready!
-  _gameplayTips:
-  - 'TIP: Match arrow paths to guide every bot!'
-  - 'TIP: Blocked arrows bounce back safely without losing lives!'
-  - 'TIP: Use Freeze skill when enemies get too close to the portal!'
-  - 'TIP: Solvable arrows always have an unblocked exit path!'
-  - 'TIP: The final Rainbow Arrow clears the remaining wave in style!'
+  _loadingDuration: 2.4
 --- !u!114 &55086082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -980,7 +969,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 0.99
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1235,10 +1224,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 72%
+  m_text: 99%
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c7b2177acb546974caed440502bc2055, type: 2}
-  m_sharedMaterial: {fileID: 4096785192480911305, guid: c7b2177acb546974caed440502bc2055, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
+  m_sharedMaterial: {fileID: 2164040, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1262,8 +1251,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 100
-  m_fontSizeBase: 100
+  m_fontSize: 110
+  m_fontSizeBase: 110
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1586,12 +1575,12 @@ PrefabInstance:
       value: CoreManagers
       objectReference: {fileID: 0}
     - target: {fileID: 1984038596682423607, guid: d8486559637857843b87c776dee4cc1e, type: 3}
-      propertyPath: _targetProfileCompleted
-      value: 0
+      propertyPath: _targetLanguage
+      value: ENGLISH
       objectReference: {fileID: 0}
     - target: {fileID: 1984038596682423607, guid: d8486559637857843b87c776dee4cc1e, type: 3}
-      propertyPath: _targetTutorialCompleted
-      value: 1
+      propertyPath: _targetPlayerCountry
+      value: US
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1758,7 +1747,6 @@ GameObject:
   - component: {fileID: 1368667907}
   - component: {fileID: 1368667906}
   - component: {fileID: 1368667905}
-  - component: {fileID: 1368667908}
   m_Layer: 0
   m_Name: StatusText
   m_TagString: Untagged
@@ -1786,7 +1774,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Preparing arrows...
+  m_text: Initializing systems...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 6489d7b7a26b6144e908f00ab303d1e0, type: 2}
   m_sharedMaterial: {fileID: 2164040, guid: 6489d7b7a26b6144e908f00ab303d1e0, type: 2}
@@ -1885,21 +1873,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 97}
   m_SizeDelta: {x: 800, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1368667908
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1368667904}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d28c7748e7d2bc54889b04fa1f99918a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Localization.LocalizedText
-  _localizationKey: boot_loading
-  _prefix: 
-  _suffix: 
 --- !u!1 &1443461895
 GameObject:
   m_ObjectHideFlags: 0
@@ -1970,7 +1943,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 1
+  m_FillAmount: 0.99
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -2036,7 +2009,6 @@ GameObject:
   - component: {fileID: 1587815356}
   - component: {fileID: 1587815357}
   - component: {fileID: 1587815358}
-  - component: {fileID: 1587815359}
   m_Layer: 0
   m_Name: TipText
   m_TagString: Untagged
@@ -2060,8 +2032,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 40, y: 0}
-  m_SizeDelta: {x: 820, y: 60}
+  m_AnchoredPosition: {x: -2.988, y: 3.4855}
+  m_SizeDelta: {x: 734.0239, y: 53.0289}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1587815357
 CanvasRenderer:
@@ -2100,8 +2072,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4284887839
-  m_fontColor: {r: 0.12, g: 0.2, b: 0.4, a: 1}
+    rgba: 4288939008
+  m_fontColor: {r: 0, g: 0.014996528, b: 0.6415094, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2163,21 +2135,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1587815359
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1587815355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d28c7748e7d2bc54889b04fa1f99918a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Localization.LocalizedText
-  _localizationKey: boot_tip
-  _prefix: 
-  _suffix: 
 --- !u!1 &1627839212
 GameObject:
   m_ObjectHideFlags: 0

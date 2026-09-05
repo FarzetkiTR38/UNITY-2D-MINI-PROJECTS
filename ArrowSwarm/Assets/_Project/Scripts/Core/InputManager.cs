@@ -29,8 +29,23 @@ namespace ArrowSwarm.Core
         private Camera MainCamera => _mainCamera != null ? _mainCamera : (_mainCamera = Camera.main ?? FindFirstObjectByType<Camera>());
 
         protected override void OnSingletonAwake() => BlockInput(DefaultBlockDuration);
-        private void OnEnable() => GameManager.OnGameStateChanged += HandleGameStateChanged;
-        private void OnDisable() => GameManager.OnGameStateChanged -= HandleGameStateChanged;
+
+        private void OnEnable()
+        {
+            GameManager.OnGameStateChanged += HandleGameStateChanged;
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += HandleSceneLoaded;
+        }
+
+        private void OnDisable()
+        {
+            GameManager.OnGameStateChanged -= HandleGameStateChanged;
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= HandleSceneLoaded;
+        }
+
+        private void HandleSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+        {
+            BlockInput(DefaultBlockDuration);
+        }
 
         /// <summary>Blocks gameplay arrow clicks for the specified duration (seconds).</summary>
         public void BlockInput(float duration = DefaultBlockDuration)

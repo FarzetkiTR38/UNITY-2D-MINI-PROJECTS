@@ -52,7 +52,7 @@ namespace ArrowSwarm.Data
         public string playerName = "Player";
 
         /// <summary>Country code / name for leaderboard (e.g. TR, US, GB).</summary>
-        public string playerCountry = "TR";
+        public string playerCountry = "US";
 
         /// <summary>Whether the initial post-tutorial profile setup modal was completed or dismissed.</summary>
         public bool isProfileSetupCompleted = false;
