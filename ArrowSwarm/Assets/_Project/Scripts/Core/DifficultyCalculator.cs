@@ -116,7 +116,7 @@ namespace ArrowSwarm.Core
         /// - Map 9  (Index 8)  → Max Weight 22 (Weight 1–22, 2–23 points)
         /// - Map 10 (Index 9)  → Max Weight 26 (Weight 1–26, 2–27 points)
         /// - Map 11 (Index 10) → Max Weight 30 (Weight 1–30, 2–31 points)
-        /// - Map 12 (Index 11) → Max Weight 35 (Weight 1–35, 2–36 points - Mega Boss Maze)
+        /// - Map 12 (Index 11) → Max Weight 22 (Weight 1–22, 2–23 points - Mega Boss Maze)
         /// </summary>
         public static int GetMaxWeight(int level)
         {
@@ -134,7 +134,7 @@ namespace ArrowSwarm.Core
                 8 => 22,  // Map 9  (Weight 1–22)
                 9 => 26,  // Map 10 (Weight 1–26)
                 10 => 30, // Map 11 (Weight 1–30)
-                11 => 35, // Map 12 (Weight 1–35)
+                11 => 22, // Map 12 (Weight 1–22)
                 _ => 5
             };
         }
@@ -204,11 +204,11 @@ namespace ArrowSwarm.Core
         /// <summary>
         /// Calculates wave data (mob count, HP progression, and boss flag) for a given level.
         /// </summary>
-        public static WaveConfig GetWaveConfig(int level)
+        public static WaveConfig GetWaveConfig(int level, int customBaseHP = -1)
         {
             int waveCount = Mathf.Clamp(3 + (level - 1) / 15, 3, 5);
             int totalMobs = GetTotalMobs(level);
-            int baseHP = GetMobHP(level);
+            int baseHP = customBaseHP > 0 ? customBaseHP : GetMobHP(level);
 
             var waves = new WaveData[waveCount];
             int remainingMobs = totalMobs;
@@ -257,7 +257,19 @@ namespace ArrowSwarm.Core
             float maxMobSpeed, float minSpawnInterval)
         {
             float scaleFactor = GetMapScaleFactor(gridWidth, gridHeight);
-            WaveConfig waveConfig = GetWaveConfig(level);
+            int totalMobs = GetTotalMobs(level);
+            int mobHP = GetMobHP(level);
+
+            // Cap total mob HP to the physical damage capacity of the grid so levels are always mathematically winnable
+            int totalGridPoints = gridWidth * gridHeight;
+            int maxTheoreticalDamage = Mathf.FloorToInt(totalGridPoints * 0.82f);
+            int maxAllowedTotalHP = Mathf.FloorToInt(maxTheoreticalDamage / 0.60f); // Default winability ratio 0.6
+            if (totalMobs * mobHP > maxAllowedTotalHP)
+            {
+                mobHP = Mathf.Max(1, maxAllowedTotalHP / totalMobs);
+            }
+
+            WaveConfig waveConfig = GetWaveConfig(level, mobHP);
 
             return new LevelParams
             {
@@ -266,10 +278,10 @@ namespace ArrowSwarm.Core
                 MapIndex = GetMapIndex(level),
                 ArrowCount = GetArrowCount(level, gridWidth, gridHeight),
                 OutwardChance = GetOutwardChance(level),
-                MobHP = GetMobHP(level),
+                MobHP = mobHP,
                 MobSpeed = GetMobSpeed(level, maxMobSpeed),
                 SpawnInterval = GetSpawnInterval(level, minSpawnInterval),
-                TotalMobs = GetTotalMobs(level),
+                TotalMobs = totalMobs,
                 MinWeight = GetMinWeight(level),
                 MaxWeight = GetMaxWeight(level),
                 MapScaleFactor = scaleFactor,

@@ -57,7 +57,12 @@ namespace ArrowSwarm.Core
             int maxAttempts = config.MaxRegenerateAttempts;
             float winabilityRatio = config.WinabilityRatio;
             float difficultyReduction = config.DifficultyReductionOnFail;
-            int totalMobHP = levelParams.TotalMobs * levelParams.MobHP;
+
+            // Cap totalMobHP to the grid's physical damage budget so generation is always winnable
+            int maxGridCapacity = map.GridWidth * map.GridHeight;
+            int maxTheoreticalDamage = Mathf.FloorToInt(maxGridCapacity * 0.82f);
+            int maxAllowedMobHP = Mathf.FloorToInt(maxTheoreticalDamage / winabilityRatio);
+            int totalMobHP = Mathf.Min(levelParams.TotalMobs * levelParams.MobHP, maxAllowedMobHP);
 
             LevelData result = new LevelData
             {
@@ -187,7 +192,7 @@ namespace ArrowSwarm.Core
                     !CreatesHeadToHeadConflict(c.pos, c.dir, placements) &&
                     !CreatesPerimeterCluster(c.pos, c.dir, placements, gridWidth, gridHeight));
 
-                if (validBoundary.Count > 0 && (placements.Count == 0 || Random.value < 0.28f))
+                if (validBoundary.Count > 0 && (placements.Count == 0 || Random.value < 0.32f))
                 {
                     var cand = validBoundary[Random.Range(0, validBoundary.Count)];
                     headPos = cand.pos;
@@ -203,19 +208,38 @@ namespace ArrowSwarm.Core
                 }
                 else
                 {
-                    // Priority 2: Interior cell facing an exit or previously cleared space
+                    // Priority 2: Interior cell - strictly prioritize candidates whose fire ray to boundary has minimal collisions
                     var interiorCands = GetInteriorCandidates(gridWidth, gridHeight, occupied);
                     var validInterior = interiorCands.FindAll(c => !CreatesHeadToHeadConflict(c.pos, c.dir, placements));
                     if (validInterior.Count > 0)
                     {
-                        var cand = validInterior[Random.Range(0, validInterior.Count)];
+                        int minCollisions = int.MaxValue;
+                        var bestCands = new List<CandidateHead>();
+
+                        for (int cIdx = 0; cIdx < validInterior.Count; cIdx++)
+                        {
+                            var c = validInterior[cIdx];
+                            int col = CountRayCollisions(c.pos, c.dir, gridWidth, gridHeight, occupied);
+                            if (col < minCollisions)
+                            {
+                                minCollisions = col;
+                                bestCands.Clear();
+                                bestCands.Add(c);
+                            }
+                            else if (col == minCollisions)
+                            {
+                                bestCands.Add(c);
+                            }
+                        }
+
+                        var cand = bestCands[Random.Range(0, bestCands.Count)];
                         headPos = cand.pos;
                         headDir = cand.dir;
                         foundHead = true;
                     }
-                    else if (interiorCands.Count > 0)
+                    else if (validBoundary.Count > 0)
                     {
-                        var cand = interiorCands[Random.Range(0, interiorCands.Count)];
+                        var cand = validBoundary[Random.Range(0, validBoundary.Count)];
                         headPos = cand.pos;
                         headDir = cand.dir;
                         foundHead = true;
@@ -512,9 +536,9 @@ namespace ArrowSwarm.Core
         {
             if (placements == null || placements.Count == 0) return;
 
-            int maxIterations = 80;
+            int maxIterations = Mathf.Max(120, placements.Count * 2);
             int noProgressCount = 0;
-            int maxNoProgress = 5;
+            int maxNoProgress = Mathf.Max(15, placements.Count / 5);
 
             for (int iteration = 0; iteration < maxIterations; iteration++)
             {
@@ -1116,17 +1140,27 @@ namespace ArrowSwarm.Core
                         // Neck MUST be in bounds and unoccupied for growth to start
                         if (neck.IsInBounds(width, height) && !occupied[neck.x, neck.y])
                         {
-                            Vector2Int target = pos + step;
-                            if (!target.IsInBounds(width, height) || occupied[target.x, target.y])
-                            {
-                                list.Add(new CandidateHead { pos = pos, dir = dir });
-                            }
+                            list.Add(new CandidateHead { pos = pos, dir = dir });
                         }
                     }
                 }
             }
 
             return list;
+        }
+
+        private static int CountRayCollisions(
+            Vector2Int pos, ArrowDirection dir, int width, int height, bool[,] occupied)
+        {
+            Vector2Int step = ArrowSwarm.Grid.GridManager.DirectionToVector(dir);
+            Vector2Int curr = pos + step;
+            int count = 0;
+            while (curr.IsInBounds(width, height))
+            {
+                if (occupied[curr.x, curr.y]) count++;
+                curr += step;
+            }
+            return count;
         }
 
         private static List<Vector2Int> GetUnoccupiedCells(int width, int height, bool[,] occupied)
@@ -1980,6 +2014,22 @@ namespace ArrowSwarm.Core
             List<SolvabilityChecker.ArrowPlacement> placements,
             int gridWidth, int gridHeight)
         {
+            // Build 2D owner grid for fast O(1) ray obstacle checks
+            int[,] owner = new int[gridWidth, gridHeight];
+            for (int x = 0; x < gridWidth; x++)
+                for (int y = 0; y < gridHeight; y++)
+                    owner[x, y] = -1;
+
+            for (int pIdx = 0; pIdx < placements.Count; pIdx++)
+            {
+                var pts = placements[pIdx].PathPoints;
+                if (pts == null) continue;
+                for (int ptIdx = 0; ptIdx < pts.Count; ptIdx++)
+                {
+                    owner[pts[ptIdx].x, pts[ptIdx].y] = pIdx;
+                }
+            }
+
             for (int i = 0; i < placements.Count; i++)
             {
                 var placement = placements[i];
@@ -2013,21 +2063,53 @@ namespace ArrowSwarm.Core
                     continue;
                 }
 
-                // If both are clean, choose the one with fewer steps to grid edge
-                int stepsA = GetStepsToEdge(endA, dirA, gridWidth, gridHeight);
-                int stepsB = GetStepsToEdge(endB, dirB, gridWidth, gridHeight);
+                // Check actual arrow obstacles along each orientation's line of fire
+                int obstaclesA = GetRayObstacles(endA, dirA, gridWidth, gridHeight, owner, i);
+                int obstaclesB = GetRayObstacles(endB, dirB, gridWidth, gridHeight, owner, i);
 
-                if (stepsB < stepsA && !selfBlockB)
+                if (obstaclesB < obstaclesA && !selfBlockB)
                 {
                     placements[i] = placeB;
                 }
-                else
+                else if (obstaclesA < obstaclesB && !selfBlockA)
                 {
                     placements[i] = placeA;
+                }
+                else
+                {
+                    // If obstacles are equal, choose the one with fewer geometric steps to grid edge
+                    int stepsA = GetStepsToEdge(endA, dirA, gridWidth, gridHeight);
+                    int stepsB = GetStepsToEdge(endB, dirB, gridWidth, gridHeight);
+
+                    if (stepsB < stepsA && !selfBlockB)
+                    {
+                        placements[i] = placeB;
+                    }
+                    else
+                    {
+                        placements[i] = placeA;
+                    }
                 }
             }
 
             RemoveHeadToHeadConflicts(placements, gridWidth, gridHeight);
+        }
+
+        private static int GetRayObstacles(
+            Vector2Int pos, Vector2Int dir, int width, int height, int[,] owner, int selfIndex)
+        {
+            int obstacles = 0;
+            Vector2Int curr = pos + dir;
+            while (curr.IsInBounds(width, height))
+            {
+                int o = owner[curr.x, curr.y];
+                if (o != -1 && o != selfIndex)
+                {
+                    obstacles++;
+                }
+                curr += dir;
+            }
+            return obstacles;
         }
 
         private static int GetStepsToEdge(Vector2Int pos, Vector2Int dir, int width, int height)
