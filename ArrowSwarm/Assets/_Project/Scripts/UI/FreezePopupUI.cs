@@ -1,45 +1,55 @@
 namespace ArrowSwarm.UI
 {
+    using System.Collections;
     using ArrowSwarm.Data;
+    using ArrowSwarm.Localization;
+    using ArrowSwarm.Skills;
     using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
 
     /// <summary>
-    /// Popup shown when player has no tips and tries to use one.
-    /// Offers to watch an ad for a free tip.
+    /// Popup shown when the player has no freeze charges left and attempts to use the freeze skill.
+    /// Offers to watch a rewarded ad to gain 1 free freeze charge.
     /// </summary>
-    public class TipPopupUI : MonoBehaviour
+    [DisallowMultipleComponent]
+    public class FreezePopupUI : MonoBehaviour
     {
+        [Header("UI Components")]
         [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private TextMeshProUGUI _messageText;
         [SerializeField] private Button _watchAdButton;
         [SerializeField] private Button _closeButton;
+
+        [Header("Animation Settings")]
         [SerializeField] private float _fadeSpeed = 5f;
 
         private bool _isShowing;
 
         private void OnEnable()
         {
-            ArrowSwarm.Tips.TipManager.OnNoTipsAvailable += Show;
+            FreezeManager.OnNoFreezesAvailable += Show;
         }
 
         private void OnDisable()
         {
-            ArrowSwarm.Tips.TipManager.OnNoTipsAvailable -= Show;
+            FreezeManager.OnNoFreezesAvailable -= Show;
         }
 
         private void Start()
         {
             _watchAdButton?.onClick.AddListener(OnWatchAd);
             _closeButton?.onClick.AddListener(Hide);
+
             if (!_isShowing)
             {
                 Hide(instant: true);
             }
         }
 
-        /// <summary>Shows the tip popup.</summary>
+        /// <summary>
+        /// Displays the freeze popup and initiates fade-in animation.
+        /// </summary>
         public void Show()
         {
             _isShowing = true;
@@ -56,14 +66,14 @@ namespace ArrowSwarm.UI
 
             if (_messageText != null)
             {
-                var localized = _messageText.GetComponent<ArrowSwarm.Localization.LocalizedText>();
+                var localized = _messageText.GetComponent<LocalizedText>();
                 if (localized != null)
                 {
                     localized.RefreshText();
                 }
-                else if (ArrowSwarm.Localization.LocalizationManager.Instance != null)
+                else if (LocalizationManager.Instance != null)
                 {
-                    _messageText.text = ArrowSwarm.Localization.LocalizationManager.Instance.GetText("tip_popup_subtitle", "Watch an ad to get 1 hint");
+                    _messageText.text = LocalizationManager.Instance.GetText("freeze_popup_subtitle", "Watch an ad to get 1 freeze");
                 }
             }
 
@@ -73,12 +83,18 @@ namespace ArrowSwarm.UI
             StartCoroutine(FadeTo(1f));
         }
 
-        /// <summary>Hides the tip popup.</summary>
+        /// <summary>
+        /// Hides the freeze popup smoothly.
+        /// </summary>
         public void Hide()
         {
             Hide(false);
         }
 
+        /// <summary>
+        /// Hides the freeze popup with optional instant transition.
+        /// </summary>
+        /// <param name="instant">If true, dismisses immediately without animation.</param>
         public void Hide(bool instant = false)
         {
             _isShowing = false;
@@ -103,7 +119,7 @@ namespace ArrowSwarm.UI
             }
         }
 
-        private System.Collections.IEnumerator FadeTo(float target)
+        private IEnumerator FadeTo(float target)
         {
             while (_canvasGroup != null && Mathf.Abs(_canvasGroup.alpha - target) > 0.01f)
             {
@@ -111,11 +127,18 @@ namespace ArrowSwarm.UI
                     _canvasGroup.alpha, target, Time.unscaledDeltaTime * _fadeSpeed);
                 yield return null;
             }
-            if (_canvasGroup != null) _canvasGroup.alpha = target;
+
+            if (_canvasGroup != null)
+            {
+                _canvasGroup.alpha = target;
+            }
 
             if (target <= 0.01f)
             {
-                if (_canvasGroup != null) _canvasGroup.blocksRaycasts = false;
+                if (_canvasGroup != null)
+                {
+                    _canvasGroup.blocksRaycasts = false;
+                }
                 gameObject.SetActive(false);
             }
         }
@@ -126,7 +149,7 @@ namespace ArrowSwarm.UI
             {
                 if (success)
                 {
-                    DataManager.Instance?.ModifyTipCount(1);
+                    DataManager.Instance?.ModifyFreezeCount(1);
                     Hide();
                 }
             });

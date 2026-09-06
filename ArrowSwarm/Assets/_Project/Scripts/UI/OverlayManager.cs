@@ -16,6 +16,7 @@ namespace ArrowSwarm.UI
         [SerializeField] private GameOverUI _losePanel;
         [SerializeField] private PauseMenuUI _pausePanel;
         [SerializeField] private TipPopupUI _tipPopup;
+        [SerializeField] private FreezePopupUI _freezePopup;
 
         private void Awake()
         {
@@ -28,6 +29,7 @@ namespace ArrowSwarm.UI
             GameManager.OnLevelLost += HandleLevelLost;
             GameManager.OnGameStateChanged += HandleGameStateChanged;
             ArrowSwarm.Tips.TipManager.OnNoTipsAvailable += HandleNoTipsAvailable;
+            ArrowSwarm.Skills.FreezeManager.OnNoFreezesAvailable += HandleNoFreezesAvailable;
         }
 
         private void OnDisable()
@@ -36,6 +38,7 @@ namespace ArrowSwarm.UI
             GameManager.OnLevelLost -= HandleLevelLost;
             GameManager.OnGameStateChanged -= HandleGameStateChanged;
             ArrowSwarm.Tips.TipManager.OnNoTipsAvailable -= HandleNoTipsAvailable;
+            ArrowSwarm.Skills.FreezeManager.OnNoFreezesAvailable -= HandleNoFreezesAvailable;
         }
 
         /// <summary>
@@ -47,6 +50,7 @@ namespace ArrowSwarm.UI
             if (_losePanel == null) _losePanel = GetComponentInChildren<GameOverUI>(true) ?? FindFirstObjectByType<GameOverUI>(FindObjectsInactive.Include);
             if (_pausePanel == null) _pausePanel = GetComponentInChildren<PauseMenuUI>(true) ?? FindFirstObjectByType<PauseMenuUI>(FindObjectsInactive.Include);
             if (_tipPopup == null) _tipPopup = GetComponentInChildren<TipPopupUI>(true) ?? FindFirstObjectByType<TipPopupUI>(FindObjectsInactive.Include);
+            if (_freezePopup == null) _freezePopup = GetComponentInChildren<FreezePopupUI>(true) ?? FindFirstObjectByType<FreezePopupUI>(FindObjectsInactive.Include);
         }
 
         /// <summary>Activates and displays the Win / Level Complete panel.</summary>
@@ -93,6 +97,17 @@ namespace ArrowSwarm.UI
             }
         }
 
+        /// <summary>Activates and displays the Freeze popup.</summary>
+        public void ShowFreezePopup()
+        {
+            AutoWirePanels();
+            if (_freezePopup != null)
+            {
+                _freezePopup.gameObject.SetActive(true);
+                _freezePopup.Show();
+            }
+        }
+
         private void HandleLevelWon()
         {
             ShowWinPanel();
@@ -114,6 +129,11 @@ namespace ArrowSwarm.UI
         private void HandleNoTipsAvailable()
         {
             ShowTipPopup();
+        }
+
+        private void HandleNoFreezesAvailable()
+        {
+            ShowFreezePopup();
         }
     }
 }
