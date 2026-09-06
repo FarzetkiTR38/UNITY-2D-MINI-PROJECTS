@@ -199,7 +199,7 @@ namespace ArrowSwarm.UI
                 _starsText.text = totalStars.ToString();
             }
 
-            if (_titleText != null)
+            if (_titleText != null && string.IsNullOrEmpty(_titleText.text))
             {
                 _titleText.text = "ARROW SWARM";
             }

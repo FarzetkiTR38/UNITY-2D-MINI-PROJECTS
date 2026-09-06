@@ -11,6 +11,7 @@ namespace ArrowSwarm.Data
     public class DataManager : Singleton<DataManager>
     {
         private const string SAVE_KEY = "ArrowSwarm_PlayerData";
+        private const string BACKUP_KEY = "ArrowSwarm_PlayerData_Backup";
 
         [SerializeField] private bool _autoSaveOnChange = true;
 
@@ -48,27 +49,70 @@ namespace ArrowSwarm.Data
             if (_playerData == null) return;
 
             string json = JsonUtility.ToJson(_playerData);
+
+            // Back up previous valid save if present before writing new one
+            if (PlayerPrefs.HasKey(SAVE_KEY))
+            {
+                string previous = PlayerPrefs.GetString(SAVE_KEY);
+                if (!string.IsNullOrEmpty(previous))
+                {
+                    PlayerPrefs.SetString(BACKUP_KEY, previous);
+                }
+            }
+
             PlayerPrefs.SetString(SAVE_KEY, json);
             PlayerPrefs.Save();
-            LogDebug("Player data saved.");
+            LogDebug("Player data saved (and backed up).");
         }
 
         /// <summary>
-        /// Loads player data from local storage. Creates default if none exists.
+        /// Loads player data from local storage. Recovers from backup if primary save was damaged.
         /// </summary>
         public void Load()
         {
-            if (PlayerPrefs.HasKey(SAVE_KEY))
+            _playerData = TryLoadKey(SAVE_KEY);
+
+            if (_playerData == null)
             {
-                string json = PlayerPrefs.GetString(SAVE_KEY);
-                _playerData = JsonUtility.FromJson<PlayerData>(json);
-                LogDebug("Player data loaded.");
+                // Primary save missing or corrupted: attempt immediate recovery from backup!
+                LogDebug("Primary save missing or damaged. Checking backup save...");
+                _playerData = TryLoadKey(BACKUP_KEY);
+
+                if (_playerData != null)
+                {
+                    Debug.LogWarning("[ArrowSwarm] DataManager: Player progress successfully RESTORED from backup save!");
+                    Save(); // Re-persist healthy data to primary slot
+                    return;
+                }
             }
-            else
+
+            if (_playerData == null)
             {
                 _playerData = PlayerData.CreateDefault();
                 Save();
-                LogDebug("No save found. Created default player data.");
+                LogDebug("No valid save or backup found. Created default player data.");
+            }
+            else
+            {
+                LogDebug("Player data loaded.");
+            }
+        }
+
+        private PlayerData TryLoadKey(string key)
+        {
+            if (!PlayerPrefs.HasKey(key)) return null;
+
+            string json = PlayerPrefs.GetString(key);
+            if (string.IsNullOrWhiteSpace(json)) return null;
+
+            try
+            {
+                return JsonUtility.FromJson<PlayerData>(json);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[ArrowSwarm] DataManager: Failed to parse '{key}' ({ex.Message}).");
+                return null;
             }
         }
 
@@ -306,6 +350,7 @@ namespace ArrowSwarm.Data
         /// </summary>
         public void SetVolumes(float music, float sfx)
         {
+            if (_playerData == null) return;
             _playerData.musicVolume = Mathf.Clamp01(music);
             _playerData.sfxVolume = Mathf.Clamp01(sfx);
             NotifyAndSave();
@@ -399,6 +444,7 @@ namespace ArrowSwarm.Data
         public void DeleteAllData()
         {
             PlayerPrefs.DeleteKey(SAVE_KEY);
+            PlayerPrefs.DeleteKey(BACKUP_KEY);
             _playerData = PlayerData.CreateDefault();
             Save();
             OnPlayerDataChanged?.Invoke(_playerData);
@@ -407,6 +453,7 @@ namespace ArrowSwarm.Data
 
         private void CheckDailyLogin()
         {
+            if (_playerData == null) return;
             string today = DateTime.Now.ToString("yyyy-MM-dd");
             if (_playerData.lastDailyLoginDate != today)
             {

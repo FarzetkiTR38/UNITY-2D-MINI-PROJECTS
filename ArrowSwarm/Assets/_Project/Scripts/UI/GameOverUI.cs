@@ -151,6 +151,7 @@ namespace ArrowSwarm.UI
         /// </summary>
         public void Show()
         {
+            if (_isShowing) return;
             _isShowing = true;
 
             if (!gameObject.activeSelf)

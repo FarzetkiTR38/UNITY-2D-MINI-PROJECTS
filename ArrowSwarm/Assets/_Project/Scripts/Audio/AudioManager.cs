@@ -79,7 +79,11 @@ namespace ArrowSwarm.Audio
         public void PlayBGM(AudioClip clip)
         {
             if (clip == null || _bgmSource == null) return;
-            if (_bgmSource.clip == clip && _bgmSource.isPlaying) return;
+            if (_bgmSource.clip == clip && _bgmSource.isPlaying)
+            {
+                _bgmSource.volume = _musicVolume;
+                return;
+            }
 
             _bgmSource.clip = clip;
             _bgmSource.volume = _musicVolume;

@@ -228,6 +228,12 @@ namespace ArrowSwarm.Arrow
             }
         }
 
+        protected override void OnDestroy()
+        {
+            ClearAllArrows();
+            base.OnDestroy();
+        }
+
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
         private void LogDebug(string message)
         {
