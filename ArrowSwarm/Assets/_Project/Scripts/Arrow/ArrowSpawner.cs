@@ -123,8 +123,18 @@ namespace ArrowSwarm.Arrow
                 float normDist = maxDistFromCenter > 0.001f ? distFromCenter / maxDistFromCenter : 0f;
                 float staggerDelay = normDist * 0.22f;
 
-                // Initialize with path data, rainbow = false, and trigger birth growth animation
-                arrow.Initialize(placement.PathPoints, placement.HeadDirection, false, staggerDelay, true);
+                Color? arrowColor = null;
+                GameConfig config = GameManager.Instance?.Config;
+                if (config != null && config.ArrowColors != null && config.ArrowColors.Length > 0)
+                {
+                    if (placement.ColorIndex >= 0 && placement.ColorIndex < config.ArrowColors.Length)
+                    {
+                        arrowColor = config.ArrowColors[placement.ColorIndex];
+                    }
+                }
+
+                // Initialize with path data, rainbow = false, trigger birth growth animation, and harmonious color
+                arrow.Initialize(placement.PathPoints, placement.HeadDirection, false, staggerDelay, true, arrowColor);
 
                 // Register on grid
                 grid.PlaceArrowOnPoints(placement.PathPoints, arrow);

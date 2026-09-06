@@ -30,10 +30,14 @@ namespace ArrowSwarm.Core
             /// <summary>The head (tip) point of the arrow.</summary>
             public Vector2Int HeadPoint => PathPoints[0];
 
-            public ArrowPlacement(List<Vector2Int> pathPoints, ArrowDirection headDir)
+            /// <summary>Harmonious color palette index (0..4), or -1 if unassigned.</summary>
+            public int ColorIndex;
+
+            public ArrowPlacement(List<Vector2Int> pathPoints, ArrowDirection headDir, int colorIndex = -1)
             {
                 PathPoints = pathPoints;
                 HeadDirection = headDir;
+                ColorIndex = colorIndex;
             }
         }
 

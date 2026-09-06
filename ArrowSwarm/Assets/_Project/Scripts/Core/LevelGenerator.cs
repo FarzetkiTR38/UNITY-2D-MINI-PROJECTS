@@ -93,6 +93,7 @@ namespace ArrowSwarm.Core
                     // If quality criteria met (or on last attempt), accept!
                     if (solvedCheck.IsValid && solvedCheck.InitialUnblockedCount >= 2 && (solvedCheck.InitialUnblockedCount <= targetMaxInitial + 1 || attempt == maxAttempts))
                     {
+                        AssignHarmoniousArrowColors(placements, map.GridWidth, map.GridHeight, config?.ArrowColors?.Length ?? 5);
                         result.ArrowPlacements = placements;
                         result.IsValid = true;
 
@@ -115,6 +116,7 @@ namespace ArrowSwarm.Core
                         var fbCheck = SolvabilityChecker.Check(fallbackPlacements, map.GridWidth, map.GridHeight, totalMobHP, winabilityRatio);
                         if (fbCheck.IsValid && fbCheck.InitialUnblockedCount >= 2)
                         {
+                            AssignHarmoniousArrowColors(fallbackPlacements, map.GridWidth, map.GridHeight, config?.ArrowColors?.Length ?? 5);
                             result.ArrowPlacements = fallbackPlacements;
                             result.IsValid = true;
                             return result;
@@ -123,7 +125,9 @@ namespace ArrowSwarm.Core
                 }
             }
             
-            result.ArrowPlacements = GenerateSimpleGridPlacements(map.GridWidth, map.GridHeight);
+            var simplePlacements = GenerateSimpleGridPlacements(map.GridWidth, map.GridHeight);
+            AssignHarmoniousArrowColors(simplePlacements, map.GridWidth, map.GridHeight, config?.ArrowColors?.Length ?? 5);
+            result.ArrowPlacements = simplePlacements;
             result.IsValid = true;
             return result;
         }
@@ -2293,6 +2297,8 @@ namespace ArrowSwarm.Core
                 )
             };
 
+            AssignHarmoniousArrowColors(placements, map.GridWidth, map.GridHeight, config?.ArrowColors?.Length ?? 5);
+
             LogDebug($"Handcrafted Introductory Level (Level {level}) generated successfully.");
 
             return new LevelData
@@ -2304,6 +2310,240 @@ namespace ArrowSwarm.Core
                 IsValid = true,
                 GenerationAttempts = 1
             };
+        }
+
+        /// <summary>
+        /// Assigns harmonious palette colors (0..paletteCount-1) to all arrow placements so that:
+        /// 1. At most 2 adjacent/touching arrows share the same color (max monochromatic component size <= 2).
+        /// 2. No 3 adjacent arrows in a row, column, or cluster share the same color.
+        /// 3. Colors are distributed evenly across the entire palette.
+        /// </summary>
+        public static void AssignHarmoniousArrowColors(
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int gridWidth, int gridHeight, int paletteCount = 5)
+        {
+            if (placements == null || placements.Count == 0 || paletteCount <= 1) return;
+
+            // 1. Build 2D grid of cell ownership
+            int[,] owner = new int[gridWidth, gridHeight];
+            for (int x = 0; x < gridWidth; x++)
+                for (int y = 0; y < gridHeight; y++)
+                    owner[x, y] = -1;
+
+            for (int i = 0; i < placements.Count; i++)
+            {
+                var pts = placements[i].PathPoints;
+                if (pts == null) continue;
+                for (int j = 0; j < pts.Count; j++)
+                {
+                    owner[pts[j].x, pts[j].y] = i;
+                }
+            }
+
+            // 2. Build adjacency graph
+            var neighbors = new List<int>[placements.Count];
+            for (int i = 0; i < placements.Count; i++)
+            {
+                neighbors[i] = new List<int>();
+            }
+
+            Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+            var neighborSet = new HashSet<int>();
+
+            for (int i = 0; i < placements.Count; i++)
+            {
+                neighborSet.Clear();
+                var pts = placements[i].PathPoints;
+                if (pts == null) continue;
+
+                for (int pIdx = 0; pIdx < pts.Count; pIdx++)
+                {
+                    Vector2Int pt = pts[pIdx];
+                    for (int d = 0; d < dirs.Length; d++)
+                    {
+                        Vector2Int n = pt + dirs[d];
+                        if (n.x >= 0 && n.x < gridWidth && n.y >= 0 && n.y < gridHeight)
+                        {
+                            int o = owner[n.x, n.y];
+                            if (o != -1 && o != i)
+                            {
+                                neighborSet.Add(o);
+                            }
+                        }
+                    }
+                }
+                neighbors[i].AddRange(neighborSet);
+            }
+
+            // 3. Greedy balanced coloring with component size <= 2
+            int[] colorAssign = new int[placements.Count];
+            for (int i = 0; i < colorAssign.Length; i++) colorAssign[i] = -1;
+            int[] colorCounts = new int[paletteCount];
+
+            // Local helper: check if assigning color c to node creates component >= 3
+            bool IsValidAssignment(int node, int c)
+            {
+                int sameColorNeighbors = 0;
+                var nodeNeighbors = neighbors[node];
+                for (int n = 0; n < nodeNeighbors.Count; n++)
+                {
+                    int nb = nodeNeighbors[n];
+                    if (colorAssign[nb] == c)
+                    {
+                        sameColorNeighbors++;
+                        var nbNeighbors = neighbors[nb];
+                        for (int n2 = 0; n2 < nbNeighbors.Count; n2++)
+                        {
+                            int nb2 = nbNeighbors[n2];
+                            if (nb2 != node && colorAssign[nb2] == c)
+                            {
+                                return false; // nb already has another c-neighbor -> chain of 3!
+                            }
+                        }
+                    }
+                }
+                return sameColorNeighbors <= 1;
+            }
+
+            for (int i = 0; i < placements.Count; i++)
+            {
+                var validColors = new List<int>();
+                for (int c = 0; c < paletteCount; c++)
+                {
+                    if (IsValidAssignment(i, c))
+                    {
+                        validColors.Add(c);
+                    }
+                }
+
+                if (validColors.Count > 0)
+                {
+                    int minCount = int.MaxValue;
+                    for (int v = 0; v < validColors.Count; v++)
+                    {
+                        if (colorCounts[validColors[v]] < minCount)
+                            minCount = colorCounts[validColors[v]];
+                    }
+
+                    var leastUsed = new List<int>();
+                    for (int v = 0; v < validColors.Count; v++)
+                    {
+                        if (colorCounts[validColors[v]] == minCount)
+                            leastUsed.Add(validColors[v]);
+                    }
+
+                    int chosen = leastUsed[Random.Range(0, leastUsed.Count)];
+                    colorAssign[i] = chosen;
+                    colorCounts[chosen]++;
+                }
+                else
+                {
+                    // Fallback: pick color that minimizes violations
+                    int bestC = 0;
+                    int minV = int.MaxValue;
+                    for (int c = 0; c < paletteCount; c++)
+                    {
+                        int v = 0;
+                        var nodeNeighbors = neighbors[i];
+                        for (int n = 0; n < nodeNeighbors.Count; n++)
+                        {
+                            if (colorAssign[nodeNeighbors[n]] == c) v++;
+                        }
+                        if (v < minV)
+                        {
+                            minV = v;
+                            bestC = c;
+                        }
+                    }
+                    colorAssign[i] = bestC;
+                    colorCounts[bestC]++;
+                }
+            }
+
+            // 4. Conflict Resolution Pass (breaks any remaining chains of >= 3 same-color adjacent arrows)
+            for (int iter = 0; iter < 50; iter++)
+            {
+                bool anyFixed = false;
+                for (int i = 0; i < placements.Count; i++)
+                {
+                    int c = colorAssign[i];
+                    int sameNeighbors = 0;
+                    bool connectedToAnotherChain = false;
+                    var nodeNeighbors = neighbors[i];
+
+                    for (int n = 0; n < nodeNeighbors.Count; n++)
+                    {
+                        int nb = nodeNeighbors[n];
+                        if (colorAssign[nb] == c)
+                        {
+                            sameNeighbors++;
+                            var nbNeighbors = neighbors[nb];
+                            for (int n2 = 0; n2 < nbNeighbors.Count; n2++)
+                            {
+                                int nb2 = nbNeighbors[n2];
+                                if (nb2 != i && colorAssign[nb2] == c)
+                                {
+                                    connectedToAnotherChain = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (sameNeighbors >= 2 || connectedToAnotherChain)
+                    {
+                        // Recolour 'i' to a color that has NO same-color neighbor
+                        var cleanColors = new List<int>();
+                        for (int newC = 0; newC < paletteCount; newC++)
+                        {
+                            if (newC == c) continue;
+                            bool hasNeighbor = false;
+                            for (int n = 0; n < nodeNeighbors.Count; n++)
+                            {
+                                if (colorAssign[nodeNeighbors[n]] == newC)
+                                {
+                                    hasNeighbor = true;
+                                    break;
+                                }
+                            }
+                            if (!hasNeighbor) cleanColors.Add(newC);
+                        }
+
+                        if (cleanColors.Count > 0)
+                        {
+                            colorCounts[c]--;
+                            int chosen = cleanColors[Random.Range(0, cleanColors.Count)];
+                            colorAssign[i] = chosen;
+                            colorCounts[chosen]++;
+                            anyFixed = true;
+                        }
+                        else
+                        {
+                            for (int newC = 0; newC < paletteCount; newC++)
+                            {
+                                if (newC == c) continue;
+                                if (IsValidAssignment(i, newC))
+                                {
+                                    colorCounts[c]--;
+                                    colorAssign[i] = newC;
+                                    colorCounts[newC]++;
+                                    anyFixed = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (!anyFixed) break;
+            }
+
+            // 5. Apply assigned colors to placements struct
+            for (int i = 0; i < placements.Count; i++)
+            {
+                var p = placements[i];
+                p.ColorIndex = colorAssign[i];
+                placements[i] = p;
+            }
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
