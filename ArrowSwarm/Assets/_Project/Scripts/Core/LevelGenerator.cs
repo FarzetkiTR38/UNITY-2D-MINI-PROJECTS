@@ -33,6 +33,12 @@ namespace ArrowSwarm.Core
         };
 
         /// <summary>
+        /// Probability bias for spawning arrows in the upper half of the weight range.
+        /// Defaults to 0.60f (~60% upper, ~40% lower).
+        /// </summary>
+        public static float TargetUpperWeightRatio = 0.60f;
+
+        /// <summary>
         /// Generates a complete level. Returns LevelData with arrow placements.
         /// Guarantees solvability (retries up to maxAttempts).
         /// </summary>
@@ -915,8 +921,8 @@ namespace ArrowSwarm.Core
 
             int chosenWeight;
 
-            // Target ~60% in upper half
-            if (currentHighRatio < 0.60f || Random.value < 0.60f)
+            // Target configurable ratio in upper half (default 0.60f)
+            if (currentHighRatio < TargetUpperWeightRatio || Random.value < TargetUpperWeightRatio)
             {
                 int lowBound = Mathf.Min(midWeight + 1, maxWeight);
                 chosenWeight = Random.Range(lowBound, maxWeight + 1);

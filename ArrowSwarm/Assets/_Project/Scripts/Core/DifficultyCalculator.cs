@@ -95,46 +95,73 @@ namespace ArrowSwarm.Core
         }
 
         /// <summary>
-        /// Calculates the minimum arrow weight for a given level.
-        /// Always 1 for maximum playability.
+        /// Calculates the minimum arrow weight for a given level based on its active map:
+        /// - Map 1  (Index 0)  → Min Weight 2 (Weight 2–5,  3–6 points)
+        /// - Map 2  (Index 1)  → Min Weight 2 (Weight 2–6,  3–7 points)
+        /// - Map 3  (Index 2)  → Min Weight 2 (Weight 2–7,  3–8 points)
+        /// - Map 4  (Index 3)  → Min Weight 3 (Weight 3–9,  4–10 points)
+        /// - Map 5  (Index 4)  → Min Weight 2 (Weight 2–10, 3–11 points)
+        /// - Map 6  (Index 5)  → Min Weight 3 (Weight 3–10, 4–11 points)
+        /// - Map 7  (Index 6)  → Min Weight 3 (Weight 3–11, 4–12 points)
+        /// - Map 8  (Index 7)  → Min Weight 2 (Weight 2–14, 3–15 points)
+        /// - Map 9  (Index 8)  → Min Weight 2 (Weight 2–14, 3–15 points)
+        /// - Map 10 (Index 9)  → Min Weight 2 (Weight 2–16, 3–17 points)
+        /// - Map 11 (Index 10) → Min Weight 2 (Weight 2–16, 3–17 points)
+        /// - Map 12 (Index 11) → Min Weight 2 (Weight 2–18, 3–19 points - Mega Boss Maze)
         /// </summary>
         public static int GetMinWeight(int level)
         {
-            return 1;
+            int mapIndex = GetMapIndex(level);
+            return mapIndex switch
+            {
+                0 => 2,   // Map 1  (Weight 2–5)
+                1 => 2,   // Map 2  (Weight 2–6)
+                2 => 2,   // Map 3  (Weight 2–7)
+                3 => 3,   // Map 4  (Weight 3–9)
+                4 => 2,   // Map 5  (Weight 2–10)
+                5 => 3,   // Map 6  (Weight 3–10)
+                6 => 3,   // Map 7  (Weight 3–11)
+                7 => 2,   // Map 8  (Weight 2–14)
+                8 => 2,   // Map 9  (Weight 2–14)
+                9 => 2,   // Map 10 (Weight 2–16)
+                10 => 2,  // Map 11 (Weight 2–16)
+                11 => 2,  // Map 12 (Weight 2–18)
+                _ => 2
+            };
         }
 
         /// <summary>
-        /// Calculates the maximum arrow weight for a given level based on its active map (Golden Ratio curve):
-        /// - Map 1  (Index 0)  → Max Weight 5  (Weight 1–5,  2–6 points)
-        /// - Map 2  (Index 1)  → Max Weight 6  (Weight 1–6,  2–7 points)
-        /// - Map 3  (Index 2)  → Max Weight 7  (Weight 1–7,  2–8 points)
-        /// - Map 4  (Index 3)  → Max Weight 8  (Weight 1–8,  2–9 points)
-        /// - Map 5  (Index 4)  → Max Weight 10 (Weight 1–10, 2–11 points)
-        /// - Map 6  (Index 5)  → Max Weight 12 (Weight 1–12, 2–13 points)
-        /// - Map 7  (Index 6)  → Max Weight 15 (Weight 1–15, 2–16 points)
-        /// - Map 8  (Index 7)  → Max Weight 18 (Weight 1–18, 2–19 points)
-        /// - Map 9  (Index 8)  → Max Weight 22 (Weight 1–22, 2–23 points)
-        /// - Map 10 (Index 9)  → Max Weight 26 (Weight 1–26, 2–27 points)
-        /// - Map 11 (Index 10) → Max Weight 30 (Weight 1–30, 2–31 points)
-        /// - Map 12 (Index 11) → Max Weight 22 (Weight 1–22, 2–23 points - Mega Boss Maze)
+        /// Calculates the maximum arrow weight for a given level based on its active map (Champion Tested Golden Curve):
+        /// - Map 1  (Index 0)  → Max Weight 5  (Weight 2–5,  3–6 points)
+        /// - Map 2  (Index 1)  → Max Weight 6  (Weight 2–6,  3–7 points)
+        /// - Map 3  (Index 2)  → Max Weight 7  (Weight 2–7,  3–8 points)
+        /// - Map 4  (Index 3)  → Max Weight 9  (Weight 3–9,  4–10 points)
+        /// - Map 5  (Index 4)  → Max Weight 10 (Weight 2–10, 3–11 points)
+        /// - Map 6  (Index 5)  → Max Weight 10 (Weight 3–10, 4–11 points)
+        /// - Map 7  (Index 6)  → Max Weight 11 (Weight 3–11, 4–12 points)
+        /// - Map 8  (Index 7)  → Max Weight 14 (Weight 2–14, 3–15 points)
+        /// - Map 9  (Index 8)  → Max Weight 14 (Weight 2–14, 3–15 points)
+        /// - Map 10 (Index 9)  → Max Weight 16 (Weight 2–16, 3–17 points)
+        /// - Map 11 (Index 10) → Max Weight 16 (Weight 2–16, 3–17 points)
+        /// - Map 12 (Index 11) → Max Weight 18 (Weight 2–18, 3–19 points - Mega Boss Maze)
         /// </summary>
         public static int GetMaxWeight(int level)
         {
             int mapIndex = GetMapIndex(level);
             return mapIndex switch
             {
-                0 => 5,   // Map 1  (Weight 1–5)
-                1 => 6,   // Map 2  (Weight 1–6)
-                2 => 7,   // Map 3  (Weight 1–7)
-                3 => 8,   // Map 4  (Weight 1–8)
-                4 => 10,  // Map 5  (Weight 1–10)
-                5 => 12,  // Map 6  (Weight 1–12)
-                6 => 15,  // Map 7  (Weight 1–15)
-                7 => 18,  // Map 8  (Weight 1–18)
-                8 => 22,  // Map 9  (Weight 1–22)
-                9 => 26,  // Map 10 (Weight 1–26)
-                10 => 30, // Map 11 (Weight 1–30)
-                11 => 22, // Map 12 (Weight 1–22)
+                0 => 5,   // Map 1  (Weight 2–5)
+                1 => 6,   // Map 2  (Weight 2–6)
+                2 => 7,   // Map 3  (Weight 2–7)
+                3 => 9,   // Map 4  (Weight 3–9)
+                4 => 10,  // Map 5  (Weight 2–10)
+                5 => 10,  // Map 6  (Weight 3–10)
+                6 => 11,  // Map 7  (Weight 3–11)
+                7 => 14,  // Map 8  (Weight 2–14)
+                8 => 14,  // Map 9  (Weight 2–14)
+                9 => 16,  // Map 10 (Weight 2–16)
+                10 => 16, // Map 11 (Weight 2–16)
+                11 => 18, // Map 12 (Weight 2–18)
                 _ => 5
             };
         }
