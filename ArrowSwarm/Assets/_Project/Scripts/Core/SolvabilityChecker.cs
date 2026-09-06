@@ -47,6 +47,7 @@ namespace ArrowSwarm.Core
             public int TotalArrowDamage;
             public int TotalMobHP;
             public int FiringSteps;
+            public int InitialUnblockedCount;
 
             public bool IsValid => IsSolvable && IsWinnable;
         }
@@ -87,6 +88,7 @@ namespace ArrowSwarm.Core
 
             // Iteratively fire arrows whose heads face outward from the edge
             int steps = 0;
+            int initialUnblocked = 0;
             bool progress = true;
 
             while (progress && remaining.Count > 0)
@@ -99,6 +101,11 @@ namespace ArrowSwarm.Core
                     ArrowPlacement arrow = remaining[i];
                     if (CanFireSim(arrow, gridWidth, gridHeight, occupied))
                     {
+                        if (steps == 1)
+                        {
+                            initialUnblocked++;
+                        }
+
                         // Fire: remove all points from occupied
                         var points = arrow.PathPoints;
                         for (int j = 0; j < points.Count; j++)
@@ -113,12 +120,13 @@ namespace ArrowSwarm.Core
 
             result.IsSolvable = remaining.Count == 0;
             result.FiringSteps = steps;
+            result.InitialUnblockedCount = initialUnblocked;
 
             // Winability check
             result.IsWinnable = totalDamage >= Mathf.FloorToInt(totalMobHP * winabilityRatio);
 
             LogDebug($"Solvability: {(result.IsSolvable ? "PASS" : "FAIL")} " +
-                     $"(remaining={remaining.Count}, steps={steps}), " +
+                     $"(remaining={remaining.Count}, steps={steps}, initialUnblocked={initialUnblocked}), " +
                      $"Winnable: {(result.IsWinnable ? "PASS" : "FAIL")} " +
                      $"(damage={totalDamage}, mobHP={totalMobHP}, ratio={winabilityRatio})");
 
