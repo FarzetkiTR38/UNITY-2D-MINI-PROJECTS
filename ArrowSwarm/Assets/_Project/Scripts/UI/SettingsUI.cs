@@ -270,17 +270,20 @@ namespace ArrowSwarm.UI
                     DataManager.Instance.PlayerData.musicVolume,
                     isEnabled ? 1f : 0f
                 );
+                AudioManager.Instance.PlayToggle();
             }
         }
 
         private void OnVFXChanged(bool isEnabled)
         {
             DataManager.Instance?.SetVFXEnabled(isEnabled);
+            AudioManager.Instance?.PlayToggle();
         }
 
         private void OnVibrationChanged(bool isEnabled)
         {
             DataManager.Instance?.SetVibrationEnabled(isEnabled);
+            AudioManager.Instance?.PlayToggle();
         }
 
         private void PrevLanguage()

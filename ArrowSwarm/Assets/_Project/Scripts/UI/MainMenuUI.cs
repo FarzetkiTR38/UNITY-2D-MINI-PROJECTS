@@ -1,6 +1,7 @@
 namespace ArrowSwarm.UI
 {
     using System.Collections.Generic;
+    using ArrowSwarm.Audio;
     using ArrowSwarm.Core;
     using ArrowSwarm.Data;
     using TMPro;
@@ -68,6 +69,11 @@ namespace ArrowSwarm.UI
 
         private void Start()
         {
+            if (GameManager.Instance != null && GameManager.Instance.CurrentState != GameState.Menu)
+            {
+                GameManager.Instance.SetState(GameState.Menu);
+            }
+
             SetupUI();
             SetupButtons();
 
@@ -210,22 +216,22 @@ namespace ArrowSwarm.UI
             if (_playButton != null)
             {
                 _playButton.onClick.RemoveAllListeners();
-                _playButton.onClick.AddListener(OnPlayClicked);
+                _playButton.onClick.AddListener(() => { AudioManager.Instance?.PlayButtonClick(); OnPlayClicked(); });
             }
             if (_leaderboardButton != null)
             {
                 _leaderboardButton.onClick.RemoveAllListeners();
-                _leaderboardButton.onClick.AddListener(OpenLeaderboard);
+                _leaderboardButton.onClick.AddListener(() => { AudioManager.Instance?.PlayButtonClick(); OpenLeaderboard(); });
             }
             if (_levelsButton != null)
             {
                 _levelsButton.onClick.RemoveAllListeners();
-                _levelsButton.onClick.AddListener(OpenLevels);
+                _levelsButton.onClick.AddListener(() => { AudioManager.Instance?.PlayButtonClick(); OpenLevels(); });
             }
             if (_settingsButton != null)
             {
                 _settingsButton.onClick.RemoveAllListeners();
-                _settingsButton.onClick.AddListener(OpenSettings);
+                _settingsButton.onClick.AddListener(() => { AudioManager.Instance?.PlayButtonClick(); OpenSettings(); });
             }
 
             WireExitButtons();
@@ -267,6 +273,7 @@ namespace ArrowSwarm.UI
         {
             if (targetPanel == null) return;
 
+            AudioManager.Instance?.PlayPopupOpen();
             SetPanelState(_mainPanel, false);
 
             if (_activeSubPanel != null && _activeSubPanel != targetPanel)
@@ -298,6 +305,7 @@ namespace ArrowSwarm.UI
         /// </summary>
         public void BackToMain()
         {
+            AudioManager.Instance?.PlayPopupClose();
             OpenMainPanel();
         }
 

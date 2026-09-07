@@ -13,17 +13,13 @@ namespace ArrowSwarm.Audio
     /// </summary>
     public class AudioManager : Singleton<AudioManager>
     {
-        [Header("Sound Library")]
         [SerializeField] private SFXLibrary _sfxLibrary;
-
-        [Header("Audio Sources (Auto-created if null)")]
         [SerializeField] private AudioSource _bgmSource;
         [SerializeField] private AudioSource[] _sfxSources;
 
         private const int SfxChannelCount = 6;
         private int _currentSfxIndex;
-        private float _musicVolume = 0.7f;
-        private float _sfxVolume = 1f;
+        private float _musicVolume = 0.7f, _sfxVolume = 1f;
 
         public SFXLibrary Library => _sfxLibrary;
 
@@ -34,13 +30,20 @@ namespace ArrowSwarm.Audio
             LoadVolumeSettings();
         }
 
+        private void Start()
+        {
+            LoadVolumeSettings();
+            SyncBGMForCurrentScene();
+        }
+
         private void OnEnable()
         {
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += HandleSceneLoaded;
             GameManager.OnGameStateChanged += HandleStateChanged;
-            GameManager.OnLevelWon += HandleLevelWon;
-            GameManager.OnLevelLost += HandleLevelLost;
-            GameManager.OnWrongClick += HandleWrongClick;
-            GameManager.OnMobReachedFinish += HandleMobFinish;
+            GameManager.OnLevelWon += PlayLevelWin;
+            GameManager.OnLevelLost += PlayLevelLose;
+            GameManager.OnWrongClick += PlayHeartBreak;
+            GameManager.OnMobReachedFinish += PlayMobFinish;
             Arrow.OnArrowClicked += HandleArrowClicked;
             Mob.OnMobKilled += HandleMobKilled;
             Mob.OnMobDamaged += HandleMobDamaged;
@@ -50,11 +53,12 @@ namespace ArrowSwarm.Audio
 
         private void OnDisable()
         {
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= HandleSceneLoaded;
             GameManager.OnGameStateChanged -= HandleStateChanged;
-            GameManager.OnLevelWon -= HandleLevelWon;
-            GameManager.OnLevelLost -= HandleLevelLost;
-            GameManager.OnWrongClick -= HandleWrongClick;
-            GameManager.OnMobReachedFinish -= HandleMobFinish;
+            GameManager.OnLevelWon -= PlayLevelWin;
+            GameManager.OnLevelLost -= PlayLevelLose;
+            GameManager.OnWrongClick -= PlayHeartBreak;
+            GameManager.OnMobReachedFinish -= PlayMobFinish;
             Arrow.OnArrowClicked -= HandleArrowClicked;
             Mob.OnMobKilled -= HandleMobKilled;
             Mob.OnMobDamaged -= HandleMobDamaged;
@@ -70,7 +74,6 @@ namespace ArrowSwarm.Audio
 
             var src = _sfxSources[_currentSfxIndex];
             _currentSfxIndex = (_currentSfxIndex + 1) % _sfxSources.Length;
-
             src.pitch = pitch;
             src.PlayOneShot(clip, _sfxVolume * volumeScale);
         }
@@ -84,7 +87,6 @@ namespace ArrowSwarm.Audio
                 _bgmSource.volume = _musicVolume;
                 return;
             }
-
             _bgmSource.clip = clip;
             _bgmSource.volume = _musicVolume;
             _bgmSource.Play();
@@ -93,7 +95,6 @@ namespace ArrowSwarm.Audio
         /// <summary>Stops BGM playback.</summary>
         public void StopBGM() => _bgmSource?.Stop();
 
-        /// <summary>Updates volume levels.</summary>
         public void SetVolumes(float music, float sfx)
         {
             _musicVolume = Mathf.Clamp01(music);
@@ -101,12 +102,11 @@ namespace ArrowSwarm.Audio
             if (_bgmSource != null) _bgmSource.volume = _musicVolume;
         }
 
-        // --- Explicit UI & Gameplay Audio Methods ---
         public void PlayButtonClick() => PlaySFX(_sfxLibrary?.ButtonClick, Random.Range(0.96f, 1.04f));
         public void PlayPopupOpen() => PlaySFX(_sfxLibrary?.PopupOpen);
         public void PlayPopupClose() => PlaySFX(_sfxLibrary?.PopupClose);
         public void PlayToggle() => PlaySFX(_sfxLibrary?.ToggleSwitch);
-        public void PlayStarEarn(int starIndex) => PlaySFX(_sfxLibrary?.StarEarn, 1.0f + (starIndex * 0.15f));
+        public void PlayStarEarn(int idx) => PlaySFX(_sfxLibrary?.StarEarn, 1.0f + (idx * 0.15f));
         public void PlayArrowFire(bool rainbow) => PlaySFX(rainbow ? _sfxLibrary?.RainbowArrow : _sfxLibrary?.ArrowFire, Random.Range(0.95f, 1.05f));
         public void PlayArrowWrong() => PlaySFX(_sfxLibrary?.ArrowWrong);
         public void PlayArrowHit() => PlaySFX(_sfxLibrary?.ArrowHitEnemy, Random.Range(0.93f, 1.07f));
@@ -118,83 +118,82 @@ namespace ArrowSwarm.Audio
         public void PlayLevelLose() => PlaySFX(_sfxLibrary?.LevelLose);
         public void PlayHeartBreak() => PlaySFX(_sfxLibrary?.HeartBreak);
 
-        // --- Event Handlers ---
         private void HandleStateChanged(GameState state)
         {
             switch (state)
             {
-                case GameState.Menu:
-                    PlayBGM(_sfxLibrary?.MenuBGM);
-                    break;
-                case GameState.Playing:
-                    PlayBGM(_sfxLibrary?.GameBGM);
-                    break;
-                case GameState.Paused:
-                    if (_bgmSource != null) _bgmSource.volume = _musicVolume * 0.3f;
-                    break;
+                case GameState.Menu: PlayBGM(_sfxLibrary?.MenuBGM); break;
+                case GameState.Playing: PlayBGM(_sfxLibrary?.GameBGM); break;
+                case GameState.Paused: if (_bgmSource != null) _bgmSource.volume = _musicVolume * 0.3f; break;
             }
         }
 
-        private void HandleArrowClicked(Arrow arrow, bool success)
+        private void HandleSceneLoaded(UnityEngine.SceneManagement.Scene s, UnityEngine.SceneManagement.LoadSceneMode m) => SyncBGMForCurrentScene();
+
+        /// <summary>Synchronizes background music with the active scene and game state.</summary>
+        public void SyncBGMForCurrentScene()
         {
-            if (success) PlayArrowFire(arrow.IsRainbow);
-            else PlayArrowWrong();
+            EnsureAudioSources();
+            if (_sfxLibrary == null) AutoLinkLibrary();
+            string scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            if (scene == "MainMenuScene")
+            {
+                if (GameManager.Instance != null && GameManager.Instance.CurrentState != GameState.Menu)
+                    GameManager.Instance.SetState(GameState.Menu);
+                PlayBGM(_sfxLibrary?.MenuBGM);
+            }
+            else if ((scene == "GameScene" || scene == "MapScene") && GameManager.Instance?.CurrentState == GameState.Playing)
+            {
+                PlayBGM(_sfxLibrary?.GameBGM);
+            }
         }
 
+        private void HandleArrowClicked(Arrow arrow, bool success) => PlaySFX(success ? (arrow.IsRainbow ? _sfxLibrary?.RainbowArrow : _sfxLibrary?.ArrowFire) : _sfxLibrary?.ArrowWrong);
         private void HandleMobKilled(Mob mob) => PlayMobDie();
         private void HandleMobDamaged(Mob mob, int dmg) => PlayArrowHit();
-        private void HandleLevelWon() => PlayLevelWin();
-        private void HandleLevelLost() => PlayLevelLose();
-        private void HandleWrongClick() => PlayHeartBreak();
-        private void HandleMobFinish() => PlayMobFinish();
         private void HandleFreezeStarted(float dur) => PlaySkillFreeze();
         private void HandleDataChanged(PlayerData data) => SetVolumes(data.musicVolume, data.sfxVolume);
 
+        private void EnsureAudioListener()
+        {
+            if (FindFirstObjectByType<AudioListener>(FindObjectsInactive.Exclude) != null) return;
+            var cam = Camera.main ?? FindFirstObjectByType<Camera>();
+            if (cam != null) cam.gameObject.AddComponent<AudioListener>();
+            else gameObject.AddComponent<AudioListener>();
+        }
+
         private void EnsureAudioSources()
         {
+            EnsureAudioListener();
             if (_bgmSource == null)
             {
                 _bgmSource = gameObject.AddComponent<AudioSource>();
                 _bgmSource.loop = true;
-                _bgmSource.playOnAwake = false;
             }
-
-            if (_sfxSources == null || _sfxSources.Length == 0)
+            if (_sfxSources != null && _sfxSources.Length != 0) return;
+            _sfxSources = new AudioSource[SfxChannelCount];
+            for (int i = 0; i < SfxChannelCount; i++)
             {
-                _sfxSources = new AudioSource[SfxChannelCount];
-                for (int i = 0; i < SfxChannelCount; i++)
-                {
-                    var src = gameObject.AddComponent<AudioSource>();
-                    src.loop = false;
-                    src.playOnAwake = false;
-                    _sfxSources[i] = src;
-                }
+                _sfxSources[i] = gameObject.AddComponent<AudioSource>();
+                _sfxSources[i].playOnAwake = false;
             }
         }
 
         private void AutoLinkLibrary()
         {
 #if UNITY_EDITOR
-            if (_sfxLibrary == null)
-            {
-                string[] guids = UnityEditor.AssetDatabase.FindAssets("t:SFXLibrary");
-                if (guids.Length > 0)
-                {
-                    string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
-                    _sfxLibrary = UnityEditor.AssetDatabase.LoadAssetAtPath<SFXLibrary>(path);
-                }
-            }
+            if (_sfxLibrary != null) return;
+            string[] guids = UnityEditor.AssetDatabase.FindAssets("t:SFXLibrary");
+            if (guids.Length > 0) _sfxLibrary = UnityEditor.AssetDatabase.LoadAssetAtPath<SFXLibrary>(UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]));
 #endif
         }
 
         private void LoadVolumeSettings()
         {
             PlayerData data = DataManager.Instance?.PlayerData;
-            if (data != null)
-            {
-                _musicVolume = data.musicVolume;
-                _sfxVolume = data.sfxVolume;
-            }
+            if (data == null) return;
+            _musicVolume = data.musicVolume;
+            _sfxVolume = data.sfxVolume;
         }
     }
 }

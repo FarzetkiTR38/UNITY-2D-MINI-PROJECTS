@@ -52,6 +52,10 @@ namespace ArrowSwarm.Core
                 Data.DataManager.Instance.SetCurrentLevel(1);
                 targetScene = "GameScene";
             }
+            else
+            {
+                GameManager.Instance?.SetState(GameState.Menu);
+            }
 
             if (SceneTransitionManager.Instance != null)
             {
