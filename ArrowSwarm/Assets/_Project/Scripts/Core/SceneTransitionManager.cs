@@ -3,6 +3,7 @@ namespace ArrowSwarm.Core
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using ArrowSwarm.Utils;
     using UnityEngine;
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;
@@ -34,35 +35,8 @@ namespace ArrowSwarm.Core
     /// Fully configurable via Inspector on CoreManagers or runtime script.
     /// </summary>
     [DisallowMultipleComponent]
-    public class SceneTransitionManager : MonoBehaviour
+    public class SceneTransitionManager : Singleton<SceneTransitionManager>
     {
-        private static SceneTransitionManager _instance;
-
-        public static SceneTransitionManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = FindFirstObjectByType<SceneTransitionManager>();
-                    if (_instance == null)
-                    {
-                        var go = new GameObject("SceneTransitionManager");
-                        _instance = go.AddComponent<SceneTransitionManager>();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void AutoInitialize()
-        {
-            if (_instance == null)
-            {
-                var inst = Instance;
-            }
-        }
 
         [Header("--- Transition Style & Preset ---")]
         [Tooltip("Select the visual transition effect to use across all scene loads.")]
@@ -123,20 +97,8 @@ namespace ArrowSwarm.Core
             set => _defaultDuration = Mathf.Max(0.1f, value);
         }
 
-        private void Awake()
+        protected override void OnSingletonAwake()
         {
-            if (_instance == null)
-            {
-                _instance = this;
-                transform.SetParent(null);
-                DontDestroyOnLoad(gameObject);
-            }
-            else if (_instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
             EnsureUI();
         }
 
@@ -150,6 +112,15 @@ namespace ArrowSwarm.Core
 
         private void EnsureUI()
         {
+            if (_transitionCanvas == null)
+            {
+                _transitionCanvas = GetComponentInChildren<Canvas>(true);
+                if (_transitionCanvas != null)
+                {
+                    _overlayImage = _transitionCanvas.GetComponentInChildren<Image>(true);
+                }
+            }
+
             if (_transitionCanvas == null)
             {
                 var canvasGO = new GameObject("Canvas_SceneTransition");

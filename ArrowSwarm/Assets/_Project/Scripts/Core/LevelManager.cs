@@ -55,11 +55,22 @@ namespace ArrowSwarm.Core
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
+        private Coroutine _deferredLoadCoroutine;
+
+        private void TriggerDeferredLoad()
+        {
+            if (_deferredLoadCoroutine != null)
+            {
+                StopCoroutine(_deferredLoadCoroutine);
+            }
+            _deferredLoadCoroutine = StartCoroutine(DeferredLoadLevel());
+        }
+
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             if (IsPlayableGameScene(scene.name))
             {
-                StartCoroutine(DeferredLoadLevel());
+                TriggerDeferredLoad();
             }
         }
 
@@ -67,6 +78,7 @@ namespace ArrowSwarm.Core
         {
             // Wait 1 frame so all scene components finish Awake, OnEnable, and Start
             yield return null;
+            _deferredLoadCoroutine = null;
             if (IsPlayableGameScene(SceneManager.GetActiveScene().name))
             {
                 LoadLevel();
@@ -75,7 +87,7 @@ namespace ArrowSwarm.Core
 
         private void Start()
         {
-            StartCoroutine(DeferredLoadLevel());
+            TriggerDeferredLoad();
         }
 
         private bool IsPlayableGameScene(string sceneName)

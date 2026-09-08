@@ -473,6 +473,14 @@ MonoBehaviour:
   _bottomPanelRect: {fileID: 0}
   _arrowCountText: {fileID: 870071440}
   _zoomSlider: {fileID: 1225764828}
+  _skill1TipButton: {fileID: 0}
+  _skill1CountText: {fileID: 0}
+  _skill1AdBadge: {fileID: 0}
+  _skill2FreezeButton: {fileID: 0}
+  _skill2CountText: {fileID: 0}
+  _skill2AdBadge: {fileID: 0}
+  _skill2ActiveTimerRoot: {fileID: 0}
+  _skill2ActiveTimerText: {fileID: 0}
   _canvasGroup: {fileID: 0}
 --- !u!1 &336616365
 GameObject:
@@ -503,10 +511,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7e2df944bfc43942bcd249b9b9af858, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Core.MapSceneController
-  _mapIndex: 1
-  _mapName: Ocean
+  _mapDataAssets: []
+  _activeMapIndex: 0
   _defaultLevel: 6
-  _levelRange: {x: 6, y: 10}
+  _enableTutorialTest: 0
 --- !u!4 &336616367
 Transform:
   m_ObjectHideFlags: 0
@@ -756,7 +764,7 @@ Camera:
   m_GameObject: {fileID: 377826458}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0.96, g: 0.94, b: 0.9, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -2257,11 +2265,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.PauseMenuUI
   _canvasGroup: {fileID: 696606460}
-  _resumeButton: {fileID: 769214835}
-  _restartButton: {fileID: 0}
-  _mainMenuButton: {fileID: 1237875297}
-  _volumeSlider: {fileID: 0}
+  _dialogBox: {fileID: 0}
   _fadeSpeed: 5
+  _titleText: {fileID: 0}
+  _soundToggle: {fileID: 0}
+  _vibrationToggle: {fileID: 0}
+  _continueButton: {fileID: 0}
+  _retryButton: {fileID: 0}
+  _levelsButton: {fileID: 0}
+  _mainMenuButton: {fileID: 1237875297}
+  _boardFrameImage: {fileID: 0}
+  _bottomBadgeImage: {fileID: 0}
+  _soundIcon: {fileID: 0}
+  _vibrationIcon: {fileID: 0}
 --- !u!114 &696606462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2762,11 +2778,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.GameOverUI
   _canvasGroup: {fileID: 0}
+  _dialogBox: {fileID: 0}
+  _fadeSpeed: 3
   _titleText: {fileID: 0}
   _levelText: {fileID: 0}
+  _stars:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   _retryButton: {fileID: 509933441}
   _mainMenuButton: {fileID: 1715876879}
-  _fadeSpeed: 3
+  _boardFrameImage: {fileID: 0}
+  _bottomBadgeImage: {fileID: 0}
 --- !u!114 &826692465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3714,15 +3737,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.LevelCompleteUI
   _canvasGroup: {fileID: 0}
+  _dialogBox: {fileID: 0}
+  _fadeSpeed: 3
   _titleText: {fileID: 2016792952}
   _levelText: {fileID: 495680570}
-  _nextLevelButton: {fileID: 853209716}
-  _mainMenuButton: {fileID: 1753588357}
-  _fadeSpeed: 3
   _stars:
   - {fileID: 847763305}
   - {fileID: 1729574331}
   - {fileID: 1561306979}
+  _nextLevelButton: {fileID: 853209716}
+  _mainMenuButton: {fileID: 1753588357}
+  _levelsButton: {fileID: 0}
+  _boardFrameImage: {fileID: 0}
+  _bottomBadgeImage: {fileID: 0}
 --- !u!114 &1038218573
 MonoBehaviour:
   m_ObjectHideFlags: 0

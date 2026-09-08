@@ -100,7 +100,8 @@ namespace ArrowSwarm.Arrow
         /// <param name="isRainbow">Whether this arrow is the rainbow (last) arrow.</param>
         /// <param name="spawnDelay">Stagger delay before spawn animation begins.</param>
         /// <param name="animateSpawn">Whether to play the birth/growth spawn animation.</param>
-        public void Initialize(List<Vector2Int> pathPoints, ArrowDirection headDirection, bool isRainbow = false, float spawnDelay = 0f, bool animateSpawn = true)
+        /// <param name="customColor">Optional harmonious palette color.</param>
+        public void Initialize(List<Vector2Int> pathPoints, ArrowDirection headDirection, bool isRainbow = false, float spawnDelay = 0f, bool animateSpawn = true, Color? customColor = null)
         {
             _pathPoints.Clear();
             _pathPoints.AddRange(pathPoints);
@@ -113,9 +114,17 @@ namespace ArrowSwarm.Arrow
             _movement = GetComponent<ArrowMovement>();
             _visuals = GetComponent<ArrowVisuals>();
 
-            _visuals?.SetupVisuals(this, spawnDelay, animateSpawn);
+            _visuals?.SetupVisuals(this, spawnDelay, animateSpawn, customColor);
 
             LogDebug($"Arrow initialized: Head={HeadPoint}, Dir={headDirection}, W={Weight}, Rainbow={isRainbow}, Points={_pathPoints.Count}");
+        }
+
+        /// <summary>
+        /// Sets the arrow's visual color.
+        /// </summary>
+        public void SetColor(Color color)
+        {
+            _visuals?.SetColor(color);
         }
 
         /// <summary>

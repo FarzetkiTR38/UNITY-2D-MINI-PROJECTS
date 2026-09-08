@@ -162,6 +162,7 @@ namespace ArrowSwarm.UI
         /// </summary>
         public void Show()
         {
+            if (_isShowing) return;
             if (ArrowSwarm.Tutorial.TutorialManager.Instance != null && ArrowSwarm.Tutorial.TutorialManager.Instance.IsTutorialActive)
             {
                 return;

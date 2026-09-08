@@ -33,6 +33,13 @@ namespace ArrowSwarm.Core
         };
 
         /// <summary>
+        /// Probability bias for spawning arrows in the upper half of the weight range.
+        /// Defaults to 0.50f (~50% upper, ~50% lower).
+        /// </summary>
+        public static float TargetUpperWeightRatio = 0.50f;
+        public static string LastDiag = "";
+
+        /// <summary>
         /// Generates a complete level. Returns LevelData with arrow placements.
         /// Guarantees solvability (retries up to maxAttempts).
         /// </summary>
@@ -57,7 +64,12 @@ namespace ArrowSwarm.Core
             int maxAttempts = config.MaxRegenerateAttempts;
             float winabilityRatio = config.WinabilityRatio;
             float difficultyReduction = config.DifficultyReductionOnFail;
-            int totalMobHP = levelParams.TotalMobs * levelParams.MobHP;
+
+            // Cap totalMobHP to the grid's physical damage budget so generation is always winnable
+            int maxGridCapacity = map.GridWidth * map.GridHeight;
+            int maxTheoreticalDamage = Mathf.FloorToInt(maxGridCapacity * 0.82f);
+            int maxAllowedMobHP = Mathf.FloorToInt(maxTheoreticalDamage / winabilityRatio);
+            int totalMobHP = Mathf.Min(levelParams.TotalMobs * levelParams.MobHP, maxAllowedMobHP);
 
             LevelData result = new LevelData
             {
@@ -80,43 +92,50 @@ namespace ArrowSwarm.Core
 
                 if (SolveDirectionDeadlocks(placements, map.GridWidth, map.GridHeight, totalMobHP, winabilityRatio))
                 {
-                    result.ArrowPlacements = placements;
-                    result.IsValid = true;
+                    DeepenPuzzleDependencies(placements, map.GridWidth, map.GridHeight, totalMobHP, winabilityRatio);
 
-                    LogDebug($"Level {level} generated and solved: {levelParams} (attempt {attempt}/{maxAttempts})");
-                    return result;
+                    var solvedCheck = SolvabilityChecker.Check(placements, map.GridWidth, map.GridHeight, totalMobHP, winabilityRatio);
+                    float maxInitialRatio = attempt < 4 ? (placements.Count > 60 ? 0.22f : 0.18f) : (attempt < 8 ? 0.28f : 0.35f);
+                    int targetMaxInitial = Mathf.Max(2, Mathf.RoundToInt(placements.Count * maxInitialRatio));
+
+                    // If quality criteria met (or on attempt >= 8), accept!
+                    if (solvedCheck.IsValid && solvedCheck.InitialUnblockedCount >= 2 && (solvedCheck.InitialUnblockedCount <= targetMaxInitial + 1 || attempt >= 8 || attempt == maxAttempts))
+                    {
+                        AssignHarmoniousArrowColors(placements, map.GridWidth, map.GridHeight, config?.ArrowColors?.Length ?? 5);
+                        result.ArrowPlacements = placements;
+                        result.IsValid = true;
+
+                        LogDebug($"Level {level} generated & deepened: {levelParams} (initialUnblocked={solvedCheck.InitialUnblockedCount}/{placements.Count}, steps={solvedCheck.FiringSteps}, attempt {attempt}/{maxAttempts})");
+                        return result;
+                    }
                 }
             }
 
             // Fallback: Guaranteed 100% solvable outward orientation
             LogDebug($"Level {level}: Applying guaranteed solvable outward placement fallback.");
-            var fallbackPlacements = GenerateArrowPlacements(levelParams, map.GridWidth, map.GridHeight);
-            if (fallbackPlacements != null && fallbackPlacements.Count > 0)
+            for (int fbAttempt = 0; fbAttempt < 5; fbAttempt++)
             {
-                ApplyGuaranteedOutwardOrientation(fallbackPlacements, map.GridWidth, map.GridHeight);
-            }
-            
-            result.ArrowPlacements = (fallbackPlacements != null && fallbackPlacements.Count > 0) 
-                ? fallbackPlacements 
-                : GenerateSimpleGridPlacements(map.GridWidth, map.GridHeight);
-
-            // Final Absolute Sanitization: Guarantee 0 self-blocking arrows in the final generated level
-            if (result.ArrowPlacements != null)
-            {
-                for (int i = 0; i < result.ArrowPlacements.Count; i++)
+                var fallbackPlacements = GenerateArrowPlacements(levelParams, map.GridWidth, map.GridHeight);
+                if (fallbackPlacements != null && fallbackPlacements.Count > 0)
                 {
-                    if (IsSelfBlocking(result.ArrowPlacements[i], map.GridWidth, map.GridHeight))
+                    if (SolveDirectionDeadlocks(fallbackPlacements, map.GridWidth, map.GridHeight, totalMobHP, winabilityRatio))
                     {
-                        var flipped = result.ArrowPlacements[i];
-                        FlipArrowOrientation(ref flipped);
-                        if (!IsSelfBlocking(flipped, map.GridWidth, map.GridHeight))
+                        DeepenPuzzleDependencies(fallbackPlacements, map.GridWidth, map.GridHeight, totalMobHP, winabilityRatio);
+                        var fbCheck = SolvabilityChecker.Check(fallbackPlacements, map.GridWidth, map.GridHeight, totalMobHP, winabilityRatio);
+                        if (fbCheck.IsValid && fbCheck.InitialUnblockedCount >= 2)
                         {
-                            result.ArrowPlacements[i] = flipped;
+                            AssignHarmoniousArrowColors(fallbackPlacements, map.GridWidth, map.GridHeight, config?.ArrowColors?.Length ?? 5);
+                            result.ArrowPlacements = fallbackPlacements;
+                            result.IsValid = true;
+                            return result;
                         }
                     }
                 }
             }
-
+            
+            var simplePlacements = GenerateSimpleGridPlacements(map.GridWidth, map.GridHeight);
+            AssignHarmoniousArrowColors(simplePlacements, map.GridWidth, map.GridHeight, config?.ArrowColors?.Length ?? 5);
+            result.ArrowPlacements = simplePlacements;
             result.IsValid = true;
             return result;
         }
@@ -172,6 +191,7 @@ namespace ArrowSwarm.Core
 
             int maxLoopIterations = totalCells * 3;
             int loopCount = 0;
+            int consecutiveFails = 0;
 
             while (filledCells < totalCells && loopCount++ < maxLoopIterations)
             {
@@ -181,8 +201,11 @@ namespace ArrowSwarm.Core
 
                 // Priority 1: Boundary cell facing outward (free exit)
                 var freeBoundary = GetFreeBoundaryCandidates(gridWidth, gridHeight, occupied);
-                var validBoundary = freeBoundary.FindAll(c => !CreatesHeadToHeadConflict(c.pos, c.dir, placements));
-                if (validBoundary.Count > 0 && (placements.Count == 0 || Random.value < 0.30f))
+                var validBoundary = freeBoundary.FindAll(c => 
+                    !CreatesHeadToHeadConflict(c.pos, c.dir, placements) &&
+                    !CreatesPerimeterCluster(c.pos, c.dir, placements, gridWidth, gridHeight));
+
+                if (validBoundary.Count > 0 && (placements.Count == 0 || Random.value < 0.32f))
                 {
                     var cand = validBoundary[Random.Range(0, validBoundary.Count)];
                     headPos = cand.pos;
@@ -198,19 +221,38 @@ namespace ArrowSwarm.Core
                 }
                 else
                 {
-                    // Priority 2: Interior cell facing an exit or previously cleared space
+                    // Priority 2: Interior cell - strictly prioritize candidates whose fire ray to boundary has minimal collisions
                     var interiorCands = GetInteriorCandidates(gridWidth, gridHeight, occupied);
                     var validInterior = interiorCands.FindAll(c => !CreatesHeadToHeadConflict(c.pos, c.dir, placements));
                     if (validInterior.Count > 0)
                     {
-                        var cand = validInterior[Random.Range(0, validInterior.Count)];
+                        int minCollisions = int.MaxValue;
+                        var bestCands = new List<CandidateHead>();
+
+                        for (int cIdx = 0; cIdx < validInterior.Count; cIdx++)
+                        {
+                            var c = validInterior[cIdx];
+                            int col = CountRayCollisions(c.pos, c.dir, gridWidth, gridHeight, occupied);
+                            if (col < minCollisions)
+                            {
+                                minCollisions = col;
+                                bestCands.Clear();
+                                bestCands.Add(c);
+                            }
+                            else if (col == minCollisions)
+                            {
+                                bestCands.Add(c);
+                            }
+                        }
+
+                        var cand = bestCands[Random.Range(0, bestCands.Count)];
                         headPos = cand.pos;
                         headDir = cand.dir;
                         foundHead = true;
                     }
-                    else if (interiorCands.Count > 0)
+                    else if (validBoundary.Count > 0)
                     {
-                        var cand = interiorCands[Random.Range(0, interiorCands.Count)];
+                        var cand = validBoundary[Random.Range(0, validBoundary.Count)];
                         headPos = cand.pos;
                         headDir = cand.dir;
                         foundHead = true;
@@ -226,11 +268,14 @@ namespace ArrowSwarm.Core
                     headDir = GetBestOutwardDir(headPos, gridWidth, gridHeight, occupied);
                 }
 
-                int targetLength = Random.Range(minLength, maxLength + 1);
+                int targetLength = PickTargetArrowLength(levelParams.MinWeight, levelParams.MaxWeight, placements);
                 var path = GrowArrowPathBackwards(headPos, headDir, targetLength, gridWidth, gridHeight, occupied);
 
-                if (path != null && path.Count >= 2)
+                int minAcceptableLength = Mathf.Max(3, levelParams.MinWeight + 1);
+
+                if (path != null && path.Count >= minAcceptableLength)
                 {
+                    consecutiveFails = 0;
                     int arrowIdx = placements.Count;
                     placements.Add(new SolvabilityChecker.ArrowPlacement(path, headDir));
 
@@ -246,10 +291,18 @@ namespace ArrowSwarm.Core
                 }
                 else
                 {
-                    // Single cell or failed to grow backwards: attach to existing placement
+                    consecutiveFails++;
+                    if ((consecutiveFails >= 25 && filledCells >= totalCells * 0.70f) || consecutiveFails >= 40)
+                    {
+                        // Board is densely packed and cannot carve long paths anymore;
+                        // let FillAllUnownedCells absorb all remaining cells into existing arrows!
+                        break;
+                    }
+
+                    // Single cell or failed to reach min acceptable length: attach to existing placement if possible
                     if (cellOwner[headPos.x, headPos.y] == -1)
                     {
-                        bool attached = AttachIsolatedCellToPlacement(headPos, placements, cellOwner, gridWidth, gridHeight);
+                        bool attached = AttachIsolatedCellToPlacement(headPos, placements, cellOwner, gridWidth, gridHeight, false);
                         if (attached)
                         {
                             occupied[headPos.x, headPos.y] = true;
@@ -259,14 +312,25 @@ namespace ArrowSwarm.Core
                 }
             }
 
+            int w1Loop = 0; foreach (var p in placements) if (p.Weight == 1) w1Loop++;
+
             // Post-process: Guarantee zero head-to-head conflicts
             RemoveHeadToHeadConflicts(placements, gridWidth, gridHeight);
 
             // Guarantee zero diagonal steps / zigzags anywhere on the map
             FixDiagonalSegments(placements);
 
+            int w1BeforeFill = 0; foreach (var p in placements) if (p.Weight == 1) w1BeforeFill++;
+
             // Sweep and absorb 100% of unowned grid points so 0 empty dots remain
             FillAllUnownedCells(placements, gridWidth, gridHeight);
+
+            int w1AfterFill = 0; foreach (var p in placements) if (p.Weight == 1) w1AfterFill++;
+
+            // Consolidate excess short arrows (especially weight 1) into adjacent arrows
+            MergeExcessShortArrows(placements, levelParams.MaxWeight, gridWidth, gridHeight);
+
+            int w1AfterMerge = 0; foreach (var p in placements) if (p.Weight == 1) w1AfterMerge++;
 
             // Strictly enforce 100% head-to-body direction alignment (Golden Axiom)
             EnforceStrictHeadAlignment(placements);
@@ -282,6 +346,10 @@ namespace ArrowSwarm.Core
 
             // Audit zero overlaps and full grid coverage
             SolvabilityChecker.ValidateNoOverlaps(placements);
+
+            int w1End = 0; foreach (var p in placements) if (p.Weight == 1) w1End++;
+            LastDiag = $"w1Loop={w1Loop}, w1BeforeFill={w1BeforeFill}, w1AfterFill={w1AfterFill}, w1AfterMerge={w1AfterMerge}, w1End={w1End}, Total={placements.Count}";
+            Debug.Log($"[ArrowSwarm DIAG] {LastDiag}");
 
             return placements;
         }
@@ -507,9 +575,9 @@ namespace ArrowSwarm.Core
         {
             if (placements == null || placements.Count == 0) return;
 
-            int maxIterations = 80;
+            int maxIterations = Mathf.Max(120, placements.Count * 2);
             int noProgressCount = 0;
-            int maxNoProgress = 5;
+            int maxNoProgress = Mathf.Max(15, placements.Count / 5);
 
             for (int iteration = 0; iteration < maxIterations; iteration++)
             {
@@ -596,6 +664,567 @@ namespace ArrowSwarm.Core
             placements[index] = restored;
         }
 
+        /// <summary>
+        /// Checks if placing an outward arrow head at headPos would create an ugly parallel cluster
+        /// of more than maxAllowedConsecutive (default 2) adjacent arrows firing outward on the same border.
+        /// Prevents the "13 parallel arrows pointing right" issue.
+        /// </summary>
+        private static bool CreatesPerimeterCluster(
+            Vector2Int headPos, ArrowDirection headDir,
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int width, int height,
+            int ignoreIndex = -1, int maxAllowedConsecutive = 2)
+        {
+            if (placements == null) return false;
+
+            bool isRightEdge = headPos.x == width - 1 && headDir == ArrowDirection.Right;
+            bool isLeftEdge = headPos.x == 0 && headDir == ArrowDirection.Left;
+            bool isTopEdge = headPos.y == height - 1 && headDir == ArrowDirection.Up;
+            bool isBottomEdge = headPos.y == 0 && headDir == ArrowDirection.Down;
+
+            if (!isRightEdge && !isLeftEdge && !isTopEdge && !isBottomEdge)
+            {
+                return false; // Not firing directly outward into a border
+            }
+
+            int consecutive = 1;
+
+            if (isRightEdge || isLeftEdge)
+            {
+                int checkX = headPos.x;
+                for (int y = headPos.y + 1; y < height; y++)
+                {
+                    if (HasOutwardHeadAt(checkX, y, headDir, placements, ignoreIndex))
+                        consecutive++;
+                    else
+                        break;
+                }
+                for (int y = headPos.y - 1; y >= 0; y--)
+                {
+                    if (HasOutwardHeadAt(checkX, y, headDir, placements, ignoreIndex))
+                        consecutive++;
+                    else
+                        break;
+                }
+            }
+            else
+            {
+                int checkY = headPos.y;
+                for (int x = headPos.x + 1; x < width; x++)
+                {
+                    if (HasOutwardHeadAt(x, checkY, headDir, placements, ignoreIndex))
+                        consecutive++;
+                    else
+                        break;
+                }
+                for (int x = headPos.x - 1; x >= 0; x--)
+                {
+                    if (HasOutwardHeadAt(x, checkY, headDir, placements, ignoreIndex))
+                        consecutive++;
+                    else
+                        break;
+                }
+            }
+
+            return consecutive > maxAllowedConsecutive;
+        }
+
+        private static bool HasOutwardHeadAt(
+            int x, int y, ArrowDirection dir,
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int ignoreIndex)
+        {
+            for (int i = 0; i < placements.Count; i++)
+            {
+                if (i == ignoreIndex) continue;
+                if (placements[i].HeadPoint.x == x &&
+                    placements[i].HeadPoint.y == y &&
+                    placements[i].HeadDirection == dir)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static bool HasAnyPerimeterCluster(
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int gridWidth, int gridHeight)
+        {
+            if (placements == null) return false;
+            for (int i = 0; i < placements.Count; i++)
+            {
+                if (CreatesPerimeterCluster(placements[i].HeadPoint, placements[i].HeadDirection, placements, gridWidth, gridHeight, i))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static int CountCurrentBoundaryExits(
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int width, int height)
+        {
+            if (placements == null) return 0;
+            int count = 0;
+            for (int i = 0; i < placements.Count; i++)
+            {
+                Vector2Int h = placements[i].HeadPoint;
+                ArrowDirection d = placements[i].HeadDirection;
+                if ((h.x == width - 1 && d == ArrowDirection.Right) ||
+                    (h.x == 0 && d == ArrowDirection.Left) ||
+                    (h.y == height - 1 && d == ArrowDirection.Up) ||
+                    (h.y == 0 && d == ArrowDirection.Down))
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        private static List<int> GetInitialUnblockedIndices(
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int gridWidth, int gridHeight)
+        {
+            var list = new List<int>();
+            var occupied = new HashSet<Vector2Int>();
+            for (int i = 0; i < placements.Count; i++)
+            {
+                var pts = placements[i].PathPoints;
+                if (pts == null) continue;
+                for (int j = 0; j < pts.Count; j++)
+                {
+                    occupied.Add(pts[j]);
+                }
+            }
+
+            for (int i = 0; i < placements.Count; i++)
+            {
+                if (CanFireArrow(placements[i], gridWidth, gridHeight, occupied))
+                {
+                    list.Add(i);
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Post-solve puzzle deepener: Transforms a trivial level (where too many arrows are
+        /// immediately fireable at start) into a deep, satisfying disentanglement puzzle.
+        /// Iteratively flips excess unblocked arrows to point into valid blockers, ensuring:
+        /// 1. InitialUnblockedCount is restricted to 2-3 (max 4 on huge maps).
+        /// 2. Zero perimeter clusters (no >= 3 parallel arrows in a row on any edge).
+        /// 3. Level remains 100% solvable and winnable throughout every step.
+        /// </summary>
+        private static void DeepenPuzzleDependencies(
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int gridWidth, int gridHeight,
+            int totalMobHP, float winabilityRatio)
+        {
+            if (placements == null || placements.Count <= 3) return;
+
+            int totalArrows = placements.Count;
+            int targetMaxInitial = Mathf.Max(2, Mathf.RoundToInt(totalArrows * 0.18f));
+
+            int maxDeepenPasses = 40;
+
+            for (int pass = 0; pass < maxDeepenPasses; pass++)
+            {
+                var check = SolvabilityChecker.Check(placements, gridWidth, gridHeight, totalMobHP, winabilityRatio);
+                if (!check.IsValid) break;
+
+                bool hasCluster = HasAnyPerimeterCluster(placements, gridWidth, gridHeight);
+                if (check.InitialUnblockedCount <= targetMaxInitial && !hasCluster)
+                {
+                    break;
+                }
+
+                var unblockedIndices = GetInitialUnblockedIndices(placements, gridWidth, gridHeight);
+                if (unblockedIndices.Count <= targetMaxInitial && !hasCluster)
+                {
+                    break;
+                }
+
+                List<int> candidateIndices;
+                if (hasCluster)
+                {
+                    candidateIndices = new List<int>();
+                    for (int i = 0; i < placements.Count; i++)
+                    {
+                        if (CreatesPerimeterCluster(placements[i].HeadPoint, placements[i].HeadDirection, placements, gridWidth, gridHeight, i))
+                        {
+                            candidateIndices.Add(i);
+                        }
+                    }
+                    for (int i = 0; i < unblockedIndices.Count; i++)
+                    {
+                        if (!candidateIndices.Contains(unblockedIndices[i]))
+                        {
+                            candidateIndices.Add(unblockedIndices[i]);
+                        }
+                    }
+                }
+                else
+                {
+                    candidateIndices = new List<int>(unblockedIndices);
+                }
+
+                ShuffleList(candidateIndices);
+                bool anyFlipped = false;
+
+                for (int c = 0; c < candidateIndices.Count; c++)
+                {
+                    int idx = candidateIndices[c];
+
+                    var originalPath = new List<Vector2Int>(placements[idx].PathPoints);
+                    ArrowDirection originalDir = placements[idx].HeadDirection;
+
+                    var flipped = placements[idx];
+                    FlipArrowOrientation(ref flipped);
+
+                    if (IsSelfBlocking(flipped, gridWidth, gridHeight) ||
+                        CreatesHeadToHeadConflict(flipped.HeadPoint, flipped.HeadDirection, placements, idx) ||
+                        CreatesPerimeterCluster(flipped.HeadPoint, flipped.HeadDirection, placements, gridWidth, gridHeight, idx))
+                    {
+                        RestoreArrowState(placements, idx, originalPath, originalDir);
+                        continue;
+                    }
+
+                    placements[idx] = flipped;
+
+                    var newCheck = SolvabilityChecker.Check(placements, gridWidth, gridHeight, totalMobHP, winabilityRatio);
+
+                    bool improvedInitial = newCheck.InitialUnblockedCount < check.InitialUnblockedCount;
+                    bool improvedCluster = hasCluster && !HasAnyPerimeterCluster(placements, gridWidth, gridHeight);
+                    bool deepenedSteps = newCheck.InitialUnblockedCount == check.InitialUnblockedCount && newCheck.FiringSteps > check.FiringSteps;
+
+                    if (newCheck.IsValid && newCheck.InitialUnblockedCount >= 2 && (improvedInitial || improvedCluster || deepenedSteps))
+                    {
+                        anyFlipped = true;
+                        break;
+                    }
+
+                    RestoreArrowState(placements, idx, originalPath, originalDir);
+                }
+
+                if (!anyFlipped) break;
+            }
+        }
+
+        /// <summary>
+        /// Selects a target arrow length (points = weight + 1) following the user's weight distribution:
+        /// ~50% in the upper half [midWeight + 1 .. maxWeight], ~50% in the lower half [minWeight .. midWeight].
+        /// Dynamically balances lower and upper counts, and strictly respects minWeight.
+        /// </summary>
+        private static int PickTargetArrowLength(
+            int minWeight, int maxWeight,
+            List<SolvabilityChecker.ArrowPlacement> existingPlacements)
+        {
+            if (minWeight >= maxWeight) return minWeight + 1;
+
+            int midWeight = minWeight + (maxWeight - minWeight) / 2;
+
+            int lowCount = 0;
+            int highCount = 0;
+
+            if (existingPlacements != null)
+            {
+                for (int i = 0; i < existingPlacements.Count; i++)
+                {
+                    int w = existingPlacements[i].Weight;
+                    if (w <= midWeight) lowCount++;
+                    else highCount++;
+                }
+            }
+
+            int chosenWeight;
+
+            // Target 50/50 balance between lower half [minWeight .. midWeight] and upper half [midWeight + 1 .. maxWeight]
+            if (highCount < lowCount || (highCount == lowCount && Random.value < TargetUpperWeightRatio))
+            {
+                int lowBound = Mathf.Min(midWeight + 1, maxWeight);
+                chosenWeight = Random.Range(lowBound, maxWeight + 1);
+            }
+            else
+            {
+                chosenWeight = Random.Range(minWeight, midWeight + 1);
+            }
+
+            return chosenWeight + 1;
+        }
+
+        /// <summary>
+        /// Consolidates excess short arrows (especially weight 1) into adjacent arrows
+        /// to ensure a balanced weight distribution (targeting ~5-8% max weight 1 arrows).
+        /// Uses 3 strategies: (1) Tail append, (2) U-Detour segment insertion, (3) Pair merge of two W1 arrows into a W3 arrow.
+        /// Strictly preserves all 8 invariants.
+        /// </summary>
+        private static void MergeExcessShortArrows(
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int maxWeight, int gridWidth, int gridHeight)
+        {
+            if (placements == null || placements.Count <= 4) return;
+
+            int maxLength = maxWeight + 2;
+            int targetMaxWeight1 = Mathf.Max(1, Mathf.RoundToInt(placements.Count * 0.05f));
+
+            bool mergedAny = true;
+            int maxPasses = 25;
+
+            while (mergedAny && maxPasses-- > 0)
+            {
+                mergedAny = false;
+
+                int weight1Count = 0;
+                for (int i = 0; i < placements.Count; i++)
+                {
+                    if (placements[i].Weight == 1) weight1Count++;
+                }
+
+                if (weight1Count <= targetMaxWeight1) break;
+
+                for (int i = placements.Count - 1; i >= 0; i--)
+                {
+                    if (placements[i].Weight != 1) continue;
+
+                    var shortPlacement = placements[i];
+                    var shortPath = shortPlacement.PathPoints;
+                    if (shortPath == null || shortPath.Count != 2) continue;
+
+                    Vector2Int ptA = shortPath[0];
+                    Vector2Int ptB = shortPath[1];
+
+                    bool mergedThis = false;
+
+                    // Strategy 1: Tail Merge (append to adjacent arrow's tail)
+                    for (int j = 0; j < placements.Count; j++)
+                    {
+                        if (i == j) continue;
+
+                        var targetPlacement = placements[j];
+                        var targetPath = targetPlacement.PathPoints;
+                        if (targetPath == null || targetPath.Count == 0) continue;
+
+                        if (targetPath.Count + 2 > maxLength) continue;
+
+                        Vector2Int tail = targetPath[targetPath.Count - 1];
+
+                        // Case 1A: tail connects to ptA
+                        if (IsManhattanOne(tail, ptA))
+                        {
+                            if (!IsInFireRay(ptA, targetPlacement.HeadPoint, targetPlacement.HeadDirection, gridWidth, gridHeight) &&
+                                !IsInFireRay(ptB, targetPlacement.HeadPoint, targetPlacement.HeadDirection, gridWidth, gridHeight))
+                            {
+                                var testPath = new List<Vector2Int>(targetPath) { ptA, ptB };
+                                var testPlace = new SolvabilityChecker.ArrowPlacement(testPath, targetPlacement.HeadDirection);
+
+                                if (!IsSelfBlocking(testPlace, gridWidth, gridHeight))
+                                {
+                                    targetPath.Add(ptA);
+                                    targetPath.Add(ptB);
+                                    placements.RemoveAt(i);
+                                    mergedThis = true;
+                                    mergedAny = true;
+                                    break;
+                                }
+                            }
+                        }
+                        // Case 1B: tail connects to ptB
+                        else if (IsManhattanOne(tail, ptB))
+                        {
+                            if (!IsInFireRay(ptA, targetPlacement.HeadPoint, targetPlacement.HeadDirection, gridWidth, gridHeight) &&
+                                !IsInFireRay(ptB, targetPlacement.HeadPoint, targetPlacement.HeadDirection, gridWidth, gridHeight))
+                            {
+                                var testPath = new List<Vector2Int>(targetPath) { ptB, ptA };
+                                var testPlace = new SolvabilityChecker.ArrowPlacement(testPath, targetPlacement.HeadDirection);
+
+                                if (!IsSelfBlocking(testPlace, gridWidth, gridHeight))
+                                {
+                                    targetPath.Add(ptB);
+                                    targetPath.Add(ptA);
+                                    placements.RemoveAt(i);
+                                    mergedThis = true;
+                                    mergedAny = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (mergedThis)
+                    {
+                        weight1Count--;
+                        if (weight1Count <= targetMaxWeight1) break;
+                        continue;
+                    }
+
+                    // Strategy 2: U-Detour Merge into an adjacent segment of an existing arrow
+                    for (int j = 0; j < placements.Count; j++)
+                    {
+                        if (i == j) continue;
+
+                        var targetPlacement = placements[j];
+                        var targetPath = targetPlacement.PathPoints;
+                        if (targetPath == null || targetPath.Count < 2) continue;
+                        if (targetPath.Count + 2 > maxLength) continue;
+
+                        for (int k = 0; k < targetPath.Count - 1; k++)
+                        {
+                            if (IsManhattanOne(targetPath[k], ptA) && IsManhattanOne(ptB, targetPath[k + 1]))
+                            {
+                                if (!IsInFireRay(ptA, targetPlacement.HeadPoint, targetPlacement.HeadDirection, gridWidth, gridHeight) &&
+                                    !IsInFireRay(ptB, targetPlacement.HeadPoint, targetPlacement.HeadDirection, gridWidth, gridHeight))
+                                {
+                                    var testPath = new List<Vector2Int>(targetPath);
+                                    testPath.Insert(k + 1, ptB);
+                                    testPath.Insert(k + 1, ptA);
+                                    var testPlace = new SolvabilityChecker.ArrowPlacement(testPath, targetPlacement.HeadDirection);
+
+                                    if (!IsSelfBlocking(testPlace, gridWidth, gridHeight))
+                                    {
+                                        targetPath.Insert(k + 1, ptB);
+                                        targetPath.Insert(k + 1, ptA);
+                                        placements.RemoveAt(i);
+                                        mergedThis = true;
+                                        mergedAny = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            else if (IsManhattanOne(targetPath[k], ptB) && IsManhattanOne(ptA, targetPath[k + 1]))
+                            {
+                                if (!IsInFireRay(ptA, targetPlacement.HeadPoint, targetPlacement.HeadDirection, gridWidth, gridHeight) &&
+                                    !IsInFireRay(ptB, targetPlacement.HeadPoint, targetPlacement.HeadDirection, gridWidth, gridHeight))
+                                {
+                                    var testPath = new List<Vector2Int>(targetPath);
+                                    testPath.Insert(k + 1, ptA);
+                                    testPath.Insert(k + 1, ptB);
+                                    var testPlace = new SolvabilityChecker.ArrowPlacement(testPath, targetPlacement.HeadDirection);
+
+                                    if (!IsSelfBlocking(testPlace, gridWidth, gridHeight))
+                                    {
+                                        targetPath.Insert(k + 1, ptA);
+                                        targetPath.Insert(k + 1, ptB);
+                                        placements.RemoveAt(i);
+                                        mergedThis = true;
+                                        mergedAny = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (mergedThis) break;
+                    }
+
+                    if (mergedThis)
+                    {
+                        weight1Count--;
+                        if (weight1Count <= targetMaxWeight1) break;
+                        continue;
+                    }
+
+                    // Strategy 3: Pair Merge with another adjacent W1 arrow into a single W3 arrow
+                    for (int j = 0; j < placements.Count; j++)
+                    {
+                        if (i == j || placements[j].Weight != 1) continue;
+                        var pathB = placements[j].PathPoints;
+                        if (pathB == null || pathB.Count != 2) continue;
+
+                        List<Vector2Int> combined = null;
+                        ArrowDirection newDir = ArrowDirection.Up;
+
+                        if (IsManhattanOne(ptB, pathB[0]))
+                        {
+                            combined = new List<Vector2Int> { ptA, ptB, pathB[0], pathB[1] };
+                            newDir = VectorToDirection(ptA - ptB);
+                        }
+                        else if (IsManhattanOne(ptB, pathB[1]))
+                        {
+                            combined = new List<Vector2Int> { ptA, ptB, pathB[1], pathB[0] };
+                            newDir = VectorToDirection(ptA - ptB);
+                        }
+                        else if (IsManhattanOne(pathB[1], ptA))
+                        {
+                            combined = new List<Vector2Int> { pathB[0], pathB[1], ptA, ptB };
+                            newDir = VectorToDirection(pathB[0] - pathB[1]);
+                        }
+                        else if (IsManhattanOne(pathB[1], ptB))
+                        {
+                            combined = new List<Vector2Int> { pathB[0], pathB[1], ptB, ptA };
+                            newDir = VectorToDirection(pathB[0] - pathB[1]);
+                        }
+
+                        if (combined != null)
+                        {
+                            var testPlace = new SolvabilityChecker.ArrowPlacement(combined, newDir);
+                            if (!IsSelfBlocking(testPlace, gridWidth, gridHeight) &&
+                                !CreatesHeadToHeadConflict(testPlace.HeadPoint, newDir, placements, j))
+                            {
+                                placements[j] = testPlace;
+                                placements.RemoveAt(i);
+                                mergedThis = true;
+                                mergedAny = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (mergedThis)
+                    {
+                        weight1Count -= 2; // Pair merge eliminates 2 weight 1 arrows!
+                        if (weight1Count <= targetMaxWeight1) break;
+                    }
+                }
+            }
+        }
+
+        private static int CountFreeSpaceNeighbors(
+            Vector2Int pt, int width, int height, bool[,] occupied, HashSet<Vector2Int> fireRay, List<Vector2Int> path)
+        {
+            int count = 0;
+            Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+            for (int i = 0; i < dirs.Length; i++)
+            {
+                Vector2Int n = pt + dirs[i];
+                if (n.IsInBounds(width, height) && !occupied[n.x, n.y] && !fireRay.Contains(n) && !path.Contains(n))
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        private static Vector2Int PickBestOpenDirection(
+            List<Vector2Int> candidates, Vector2Int current,
+            int width, int height, bool[,] occupied, HashSet<Vector2Int> fireRay, List<Vector2Int> path)
+        {
+            if (candidates.Count == 1) return candidates[0];
+
+            int bestScore = -1;
+            var bestList = new List<Vector2Int>();
+
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                Vector2Int d = candidates[i];
+                int score = CountFreeSpaceNeighbors(current + d, width, height, occupied, fireRay, path);
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestList.Clear();
+                    bestList.Add(d);
+                }
+                else if (score == bestScore)
+                {
+                    bestList.Add(d);
+                }
+            }
+
+            return bestList[Random.Range(0, bestList.Count)];
+        }
+
         private struct CandidateHead
         {
             public Vector2Int pos;
@@ -641,7 +1270,8 @@ namespace ArrowSwarm.Core
         private static List<CandidateHead> GetInteriorCandidates(
             int width, int height, bool[,] occupied)
         {
-            var list = new List<CandidateHead>();
+            var preferredList = new List<CandidateHead>();
+            var allList = new List<CandidateHead>();
             ArrowDirection[] dirs = { ArrowDirection.Up, ArrowDirection.Down, ArrowDirection.Left, ArrowDirection.Right };
 
             for (int x = 0; x < width; x++)
@@ -660,17 +1290,45 @@ namespace ArrowSwarm.Core
                         // Neck MUST be in bounds and unoccupied for growth to start
                         if (neck.IsInBounds(width, height) && !occupied[neck.x, neck.y])
                         {
-                            Vector2Int target = pos + step;
-                            if (!target.IsInBounds(width, height) || occupied[target.x, target.y])
+                            var cand = new CandidateHead { pos = pos, dir = dir };
+                            allList.Add(cand);
+
+                            // Prioritize candidate heads whose neck can make at least 1 further step (preventing dead-end 2-cell pockets)
+                            bool hasOpenExit = false;
+                            foreach (var d in dirs)
                             {
-                                list.Add(new CandidateHead { pos = pos, dir = dir });
+                                Vector2Int n = neck + ArrowSwarm.Grid.GridManager.DirectionToVector(d);
+                                if (n != pos && n.IsInBounds(width, height) && !occupied[n.x, n.y])
+                                {
+                                    hasOpenExit = true;
+                                    break;
+                                }
+                            }
+
+                            if (hasOpenExit)
+                            {
+                                preferredList.Add(cand);
                             }
                         }
                     }
                 }
             }
 
-            return list;
+            return preferredList.Count > 0 ? preferredList : allList;
+        }
+
+        private static int CountRayCollisions(
+            Vector2Int pos, ArrowDirection dir, int width, int height, bool[,] occupied)
+        {
+            Vector2Int step = ArrowSwarm.Grid.GridManager.DirectionToVector(dir);
+            Vector2Int curr = pos + step;
+            int count = 0;
+            while (curr.IsInBounds(width, height))
+            {
+                if (occupied[curr.x, curr.y]) count++;
+                curr += step;
+            }
+            return count;
         }
 
         private static List<Vector2Int> GetUnoccupiedCells(int width, int height, bool[,] occupied)
@@ -723,8 +1381,6 @@ namespace ArrowSwarm.Core
                 return null; // Cannot form a natural neck pointing in headDir
             }
 
-            List<Vector2Int> path = new List<Vector2Int> { headPos, secondPos };
-
             // Calculate line of fire (laser) for the head: points that this arrow CANNOT occupy under any circumstances
             var fireRay = new HashSet<Vector2Int>();
             Vector2Int rayPt = headPos + headStep;
@@ -734,64 +1390,84 @@ namespace ArrowSwarm.Core
                 rayPt += headStep;
             }
 
-            Vector2Int current = secondPos;
-            Vector2Int currentDir = -headStep;
-            int straightSteps = 0;
+            List<Vector2Int> bestPath = null;
+            int attempts = targetLength >= 5 ? 3 : 1;
 
-            while (path.Count < targetLength)
+            for (int attempt = 0; attempt < attempts; attempt++)
             {
-                List<Vector2Int> validDirs = new List<Vector2Int>();
-                Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+                List<Vector2Int> path = new List<Vector2Int> { headPos, secondPos };
+                Vector2Int current = secondPos;
+                Vector2Int currentDir = -headStep;
+                int straightSteps = 0;
 
-                foreach (var d in dirs)
+                while (path.Count < targetLength)
                 {
-                    Vector2Int neighbor = current + d;
-                    // CRITICAL: Cannot be occupied, cannot be in current path, AND CANNOT BE IN HEAD'S LASER FIRE RAY!
-                    if (neighbor.IsInBounds(width, height) && 
-                        !occupied[neighbor.x, neighbor.y] && 
-                        !path.Contains(neighbor) &&
-                        !fireRay.Contains(neighbor))
+                    List<Vector2Int> validDirs = new List<Vector2Int>();
+                    Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+
+                    foreach (var d in dirs)
                     {
-                        validDirs.Add(d);
+                        Vector2Int neighbor = current + d;
+                        // CRITICAL: Cannot be occupied, cannot be in current path, AND CANNOT BE IN HEAD'S LASER FIRE RAY!
+                        if (neighbor.IsInBounds(width, height) && 
+                            !occupied[neighbor.x, neighbor.y] && 
+                            !path.Contains(neighbor) &&
+                            !fireRay.Contains(neighbor))
+                        {
+                            validDirs.Add(d);
+                        }
                     }
+
+                    if (validDirs.Count == 0) break;
+
+                    List<Vector2Int> turnDirs = new List<Vector2Int>(validDirs);
+                    if (currentDir != Vector2Int.zero)
+                    {
+                        turnDirs.Remove(currentDir);
+                        turnDirs.Remove(-currentDir);
+                    }
+
+                    Vector2Int chosenDir;
+                    int maxStraight = targetLength >= 8 ? 5 : 3;
+                    float straightChance = targetLength >= 8 ? 0.65f : 0.40f;
+
+                    if (straightSteps >= maxStraight && turnDirs.Count > 0)
+                    {
+                        chosenDir = PickBestOpenDirection(turnDirs, current, width, height, occupied, fireRay, path);
+                        straightSteps = 0;
+                    }
+                    else if (currentDir != Vector2Int.zero && validDirs.Contains(currentDir) && Random.value < straightChance)
+                    {
+                        chosenDir = currentDir;
+                        straightSteps++;
+                    }
+                    else
+                    {
+                        chosenDir = PickBestOpenDirection(validDirs, current, width, height, occupied, fireRay, path);
+                        straightSteps = 0;
+                    }
+
+                    current += chosenDir;
+                    currentDir = chosenDir;
+                    path.Add(current);
                 }
 
-                if (validDirs.Count == 0) break;
-
-                List<Vector2Int> turnDirs = new List<Vector2Int>(validDirs);
-                if (currentDir != Vector2Int.zero)
+                if (bestPath == null || path.Count > bestPath.Count)
                 {
-                    turnDirs.Remove(currentDir);
-                    turnDirs.Remove(-currentDir);
+                    bestPath = path;
                 }
 
-                Vector2Int chosenDir;
-                if (straightSteps >= 3 && turnDirs.Count > 0)
+                if (bestPath.Count >= targetLength)
                 {
-                    chosenDir = turnDirs[Random.Range(0, turnDirs.Count)];
-                    straightSteps = 0;
+                    break;
                 }
-                else if (currentDir != Vector2Int.zero && validDirs.Contains(currentDir) && Random.value < 0.40f)
-                {
-                    chosenDir = currentDir;
-                    straightSteps++;
-                }
-                else
-                {
-                    chosenDir = validDirs[Random.Range(0, validDirs.Count)];
-                    straightSteps = 0;
-                }
-
-                current += chosenDir;
-                currentDir = chosenDir;
-                path.Add(current);
             }
 
-            return path;
+            return bestPath;
         }
 
         private static bool AttachIsolatedCellToPlacement(
-            Vector2Int isolated, List<SolvabilityChecker.ArrowPlacement> placements, int[,] cellOwner, int width, int height)
+            Vector2Int isolated, List<SolvabilityChecker.ArrowPlacement> placements, int[,] cellOwner, int width, int height, bool allowNewArrows = false)
         {
             if (placements == null || placements.Count == 0) return false;
 
@@ -832,40 +1508,7 @@ namespace ArrowSwarm.Core
                 }
             }
 
-            // 3. Try forming a 2-point arrow with an UNOWNED adjacent neighbor
-            Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-            foreach (var d in dirs)
-            {
-                Vector2Int neighbor = isolated + d;
-                if (neighbor.IsInBounds(width, height) && cellOwner[neighbor.x, neighbor.y] == -1)
-                {
-                    ArrowDirection dir = VectorToDirection(isolated - neighbor);
-                    if (!CreatesHeadToHeadConflict(isolated, dir, placements))
-                    {
-                        int arrowIdx = placements.Count;
-                        var smallPath = new List<Vector2Int> { isolated, neighbor };
-                        placements.Add(new SolvabilityChecker.ArrowPlacement(smallPath, dir));
-
-                        cellOwner[isolated.x, isolated.y] = arrowIdx;
-                        cellOwner[neighbor.x, neighbor.y] = arrowIdx;
-                        return true;
-                    }
-
-                    ArrowDirection oppDir = VectorToDirection(neighbor - isolated);
-                    if (!CreatesHeadToHeadConflict(neighbor, oppDir, placements))
-                    {
-                        int arrowIdx = placements.Count;
-                        var smallPath = new List<Vector2Int> { neighbor, isolated };
-                        placements.Add(new SolvabilityChecker.ArrowPlacement(smallPath, oppDir));
-
-                        cellOwner[isolated.x, isolated.y] = arrowIdx;
-                        cellOwner[neighbor.x, neighbor.y] = arrowIdx;
-                        return true;
-                    }
-                }
-            }
-
-            // 4. Try Head extension: isolated becomes the new head of an adjacent arrow
+            // 3. Try Head extension: isolated becomes the new head of an adjacent arrow
             for (int pIndex = 0; pIndex < placements.Count; pIndex++)
             {
                 var p = placements[pIndex];
@@ -886,6 +1529,42 @@ namespace ArrowSwarm.Core
                             p.HeadDirection = newDir;
                             placements[pIndex] = p;
                             cellOwner[isolated.x, isolated.y] = pIndex;
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            // 4. Try forming a 2-point arrow with an UNOWNED adjacent neighbor (last resort, only if allowed)
+            if (allowNewArrows)
+            {
+                Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+                foreach (var d in dirs)
+                {
+                    Vector2Int neighbor = isolated + d;
+                    if (neighbor.IsInBounds(width, height) && cellOwner[neighbor.x, neighbor.y] == -1)
+                    {
+                        ArrowDirection dir = VectorToDirection(isolated - neighbor);
+                        if (!CreatesHeadToHeadConflict(isolated, dir, placements))
+                        {
+                            int arrowIdx = placements.Count;
+                            var smallPath = new List<Vector2Int> { isolated, neighbor };
+                            placements.Add(new SolvabilityChecker.ArrowPlacement(smallPath, dir));
+
+                            cellOwner[isolated.x, isolated.y] = arrowIdx;
+                            cellOwner[neighbor.x, neighbor.y] = arrowIdx;
+                            return true;
+                        }
+
+                        ArrowDirection oppDir = VectorToDirection(neighbor - isolated);
+                        if (!CreatesHeadToHeadConflict(neighbor, oppDir, placements))
+                        {
+                            int arrowIdx = placements.Count;
+                            var smallPath = new List<Vector2Int> { neighbor, isolated };
+                            placements.Add(new SolvabilityChecker.ArrowPlacement(smallPath, oppDir));
+
+                            cellOwner[isolated.x, isolated.y] = arrowIdx;
+                            cellOwner[neighbor.x, neighbor.y] = arrowIdx;
                             return true;
                         }
                     }
@@ -990,7 +1669,7 @@ namespace ArrowSwarm.Core
                     }
                 }
 
-                // Pass 3: Form 2-point arrows for any adjacent pair of unowned cells
+                // Pass 2.5: Insert adjacent unowned cell pairs as a 2-point U-detour into an existing arrow segment
                 for (int x = 0; x < width; x++)
                 {
                     for (int y = 0; y < height; y++)
@@ -1001,35 +1680,61 @@ namespace ArrowSwarm.Core
                         foreach (var d in dirs)
                         {
                             Vector2Int ptB = ptA + d;
-                            if (ptB.IsInBounds(width, height) && cellOwner[ptB.x, ptB.y] == -1)
+                            if (!ptB.IsInBounds(width, height) || cellOwner[ptB.x, ptB.y] != -1) continue;
+
+                            bool absorbedPair = false;
+
+                            // Check only arrows owning adjacent cells to ptA
+                            foreach (var dOwner in dirs)
                             {
-                                ArrowDirection dirA = VectorToDirection(ptA - ptB);
-                                if (!CreatesHeadToHeadConflict(ptA, dirA, placements))
+                                Vector2Int nOwner = ptA + dOwner;
+                                if (!nOwner.IsInBounds(width, height) || cellOwner[nOwner.x, nOwner.y] == -1) continue;
+                                int p = cellOwner[nOwner.x, nOwner.y];
+
+                                var path = placements[p].PathPoints;
+                                if (path == null || path.Count < 2) continue;
+
+                                for (int i = 0; i < path.Count - 1; i++)
                                 {
-                                    int newIdx = placements.Count;
-                                    placements.Add(new SolvabilityChecker.ArrowPlacement(new List<Vector2Int> { ptA, ptB }, dirA));
-                                    cellOwner[ptA.x, ptA.y] = newIdx;
-                                    cellOwner[ptB.x, ptB.y] = newIdx;
-                                    grewAny = true;
-                                    break;
+                                    if (IsManhattanOne(ptA, path[i]) && IsManhattanOne(ptB, path[i + 1]))
+                                    {
+                                        if (!IsInFireRay(ptA, path[0], placements[p].HeadDirection, width, height) &&
+                                            !IsInFireRay(ptB, path[0], placements[p].HeadDirection, width, height))
+                                        {
+                                            path.Insert(i + 1, ptB);
+                                            path.Insert(i + 1, ptA);
+                                            cellOwner[ptA.x, ptA.y] = p;
+                                            cellOwner[ptB.x, ptB.y] = p;
+                                            absorbedPair = true;
+                                            grewAny = true;
+                                            break;
+                                        }
+                                    }
+                                    else if (IsManhattanOne(ptB, path[i]) && IsManhattanOne(ptA, path[i + 1]))
+                                    {
+                                        if (!IsInFireRay(ptA, path[0], placements[p].HeadDirection, width, height) &&
+                                            !IsInFireRay(ptB, path[0], placements[p].HeadDirection, width, height))
+                                        {
+                                            path.Insert(i + 1, ptA);
+                                            path.Insert(i + 1, ptB);
+                                            cellOwner[ptA.x, ptA.y] = p;
+                                            cellOwner[ptB.x, ptB.y] = p;
+                                            absorbedPair = true;
+                                            grewAny = true;
+                                            break;
+                                        }
+                                    }
                                 }
 
-                                ArrowDirection dirB = VectorToDirection(ptB - ptA);
-                                if (!CreatesHeadToHeadConflict(ptB, dirB, placements))
-                                {
-                                    int newIdx = placements.Count;
-                                    placements.Add(new SolvabilityChecker.ArrowPlacement(new List<Vector2Int> { ptB, ptA }, dirB));
-                                    cellOwner[ptA.x, ptA.y] = newIdx;
-                                    cellOwner[ptB.x, ptB.y] = newIdx;
-                                    grewAny = true;
-                                    break;
-                                }
+                                if (absorbedPair) break;
                             }
+
+                            if (absorbedPair) break;
                         }
                     }
                 }
 
-                // Pass 4: Head extension into adjacent unowned cell
+                // Pass 3: Head extension into adjacent unowned cell
                 for (int p = 0; p < placements.Count; p++)
                 {
                     var pPlacement = placements[p];
@@ -1057,6 +1762,43 @@ namespace ArrowSwarm.Core
                                     grewAny = true;
                                     break;
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Pass 4: Form 2-point arrows for any adjacent pair of unowned cells (last resort fallback only when all absorption exhausted)
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (cellOwner[x, y] != -1) continue;
+                    Vector2Int ptA = new Vector2Int(x, y);
+
+                    foreach (var d in dirs)
+                    {
+                        Vector2Int ptB = ptA + d;
+                        if (ptB.IsInBounds(width, height) && cellOwner[ptB.x, ptB.y] == -1)
+                        {
+                            ArrowDirection dirA = VectorToDirection(ptA - ptB);
+                            if (!CreatesHeadToHeadConflict(ptA, dirA, placements))
+                            {
+                                int newIdx = placements.Count;
+                                placements.Add(new SolvabilityChecker.ArrowPlacement(new List<Vector2Int> { ptA, ptB }, dirA));
+                                cellOwner[ptA.x, ptA.y] = newIdx;
+                                cellOwner[ptB.x, ptB.y] = newIdx;
+                                break;
+                            }
+
+                            ArrowDirection dirB = VectorToDirection(ptB - ptA);
+                            if (!CreatesHeadToHeadConflict(ptB, dirB, placements))
+                            {
+                                int newIdx = placements.Count;
+                                placements.Add(new SolvabilityChecker.ArrowPlacement(new List<Vector2Int> { ptB, ptA }, dirB));
+                                cellOwner[ptA.x, ptA.y] = newIdx;
+                                cellOwner[ptB.x, ptB.y] = newIdx;
+                                break;
                             }
                         }
                     }
@@ -1524,6 +2266,22 @@ namespace ArrowSwarm.Core
             List<SolvabilityChecker.ArrowPlacement> placements,
             int gridWidth, int gridHeight)
         {
+            // Build 2D owner grid for fast O(1) ray obstacle checks
+            int[,] owner = new int[gridWidth, gridHeight];
+            for (int x = 0; x < gridWidth; x++)
+                for (int y = 0; y < gridHeight; y++)
+                    owner[x, y] = -1;
+
+            for (int pIdx = 0; pIdx < placements.Count; pIdx++)
+            {
+                var pts = placements[pIdx].PathPoints;
+                if (pts == null) continue;
+                for (int ptIdx = 0; ptIdx < pts.Count; ptIdx++)
+                {
+                    owner[pts[ptIdx].x, pts[ptIdx].y] = pIdx;
+                }
+            }
+
             for (int i = 0; i < placements.Count; i++)
             {
                 var placement = placements[i];
@@ -1557,21 +2315,53 @@ namespace ArrowSwarm.Core
                     continue;
                 }
 
-                // If both are clean, choose the one with fewer steps to grid edge
-                int stepsA = GetStepsToEdge(endA, dirA, gridWidth, gridHeight);
-                int stepsB = GetStepsToEdge(endB, dirB, gridWidth, gridHeight);
+                // Check actual arrow obstacles along each orientation's line of fire
+                int obstaclesA = GetRayObstacles(endA, dirA, gridWidth, gridHeight, owner, i);
+                int obstaclesB = GetRayObstacles(endB, dirB, gridWidth, gridHeight, owner, i);
 
-                if (stepsB < stepsA && !selfBlockB)
+                if (obstaclesB < obstaclesA && !selfBlockB)
                 {
                     placements[i] = placeB;
                 }
-                else
+                else if (obstaclesA < obstaclesB && !selfBlockA)
                 {
                     placements[i] = placeA;
+                }
+                else
+                {
+                    // If obstacles are equal, choose the one with fewer geometric steps to grid edge
+                    int stepsA = GetStepsToEdge(endA, dirA, gridWidth, gridHeight);
+                    int stepsB = GetStepsToEdge(endB, dirB, gridWidth, gridHeight);
+
+                    if (stepsB < stepsA && !selfBlockB)
+                    {
+                        placements[i] = placeB;
+                    }
+                    else
+                    {
+                        placements[i] = placeA;
+                    }
                 }
             }
 
             RemoveHeadToHeadConflicts(placements, gridWidth, gridHeight);
+        }
+
+        private static int GetRayObstacles(
+            Vector2Int pos, Vector2Int dir, int width, int height, int[,] owner, int selfIndex)
+        {
+            int obstacles = 0;
+            Vector2Int curr = pos + dir;
+            while (curr.IsInBounds(width, height))
+            {
+                int o = owner[curr.x, curr.y];
+                if (o != -1 && o != selfIndex)
+                {
+                    obstacles++;
+                }
+                curr += dir;
+            }
+            return obstacles;
         }
 
         private static int GetStepsToEdge(Vector2Int pos, Vector2Int dir, int width, int height)
@@ -1755,6 +2545,8 @@ namespace ArrowSwarm.Core
                 )
             };
 
+            AssignHarmoniousArrowColors(placements, map.GridWidth, map.GridHeight, config?.ArrowColors?.Length ?? 5);
+
             LogDebug($"Handcrafted Introductory Level (Level {level}) generated successfully.");
 
             return new LevelData
@@ -1766,6 +2558,240 @@ namespace ArrowSwarm.Core
                 IsValid = true,
                 GenerationAttempts = 1
             };
+        }
+
+        /// <summary>
+        /// Assigns harmonious palette colors (0..paletteCount-1) to all arrow placements so that:
+        /// 1. At most 2 adjacent/touching arrows share the same color (max monochromatic component size <= 2).
+        /// 2. No 3 adjacent arrows in a row, column, or cluster share the same color.
+        /// 3. Colors are distributed evenly across the entire palette.
+        /// </summary>
+        public static void AssignHarmoniousArrowColors(
+            List<SolvabilityChecker.ArrowPlacement> placements,
+            int gridWidth, int gridHeight, int paletteCount = 5)
+        {
+            if (placements == null || placements.Count == 0 || paletteCount <= 1) return;
+
+            // 1. Build 2D grid of cell ownership
+            int[,] owner = new int[gridWidth, gridHeight];
+            for (int x = 0; x < gridWidth; x++)
+                for (int y = 0; y < gridHeight; y++)
+                    owner[x, y] = -1;
+
+            for (int i = 0; i < placements.Count; i++)
+            {
+                var pts = placements[i].PathPoints;
+                if (pts == null) continue;
+                for (int j = 0; j < pts.Count; j++)
+                {
+                    owner[pts[j].x, pts[j].y] = i;
+                }
+            }
+
+            // 2. Build adjacency graph
+            var neighbors = new List<int>[placements.Count];
+            for (int i = 0; i < placements.Count; i++)
+            {
+                neighbors[i] = new List<int>();
+            }
+
+            Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+            var neighborSet = new HashSet<int>();
+
+            for (int i = 0; i < placements.Count; i++)
+            {
+                neighborSet.Clear();
+                var pts = placements[i].PathPoints;
+                if (pts == null) continue;
+
+                for (int pIdx = 0; pIdx < pts.Count; pIdx++)
+                {
+                    Vector2Int pt = pts[pIdx];
+                    for (int d = 0; d < dirs.Length; d++)
+                    {
+                        Vector2Int n = pt + dirs[d];
+                        if (n.x >= 0 && n.x < gridWidth && n.y >= 0 && n.y < gridHeight)
+                        {
+                            int o = owner[n.x, n.y];
+                            if (o != -1 && o != i)
+                            {
+                                neighborSet.Add(o);
+                            }
+                        }
+                    }
+                }
+                neighbors[i].AddRange(neighborSet);
+            }
+
+            // 3. Greedy balanced coloring with component size <= 2
+            int[] colorAssign = new int[placements.Count];
+            for (int i = 0; i < colorAssign.Length; i++) colorAssign[i] = -1;
+            int[] colorCounts = new int[paletteCount];
+
+            // Local helper: check if assigning color c to node creates component >= 3
+            bool IsValidAssignment(int node, int c)
+            {
+                int sameColorNeighbors = 0;
+                var nodeNeighbors = neighbors[node];
+                for (int n = 0; n < nodeNeighbors.Count; n++)
+                {
+                    int nb = nodeNeighbors[n];
+                    if (colorAssign[nb] == c)
+                    {
+                        sameColorNeighbors++;
+                        var nbNeighbors = neighbors[nb];
+                        for (int n2 = 0; n2 < nbNeighbors.Count; n2++)
+                        {
+                            int nb2 = nbNeighbors[n2];
+                            if (nb2 != node && colorAssign[nb2] == c)
+                            {
+                                return false; // nb already has another c-neighbor -> chain of 3!
+                            }
+                        }
+                    }
+                }
+                return sameColorNeighbors <= 1;
+            }
+
+            for (int i = 0; i < placements.Count; i++)
+            {
+                var validColors = new List<int>();
+                for (int c = 0; c < paletteCount; c++)
+                {
+                    if (IsValidAssignment(i, c))
+                    {
+                        validColors.Add(c);
+                    }
+                }
+
+                if (validColors.Count > 0)
+                {
+                    int minCount = int.MaxValue;
+                    for (int v = 0; v < validColors.Count; v++)
+                    {
+                        if (colorCounts[validColors[v]] < minCount)
+                            minCount = colorCounts[validColors[v]];
+                    }
+
+                    var leastUsed = new List<int>();
+                    for (int v = 0; v < validColors.Count; v++)
+                    {
+                        if (colorCounts[validColors[v]] == minCount)
+                            leastUsed.Add(validColors[v]);
+                    }
+
+                    int chosen = leastUsed[Random.Range(0, leastUsed.Count)];
+                    colorAssign[i] = chosen;
+                    colorCounts[chosen]++;
+                }
+                else
+                {
+                    // Fallback: pick color that minimizes violations
+                    int bestC = 0;
+                    int minV = int.MaxValue;
+                    for (int c = 0; c < paletteCount; c++)
+                    {
+                        int v = 0;
+                        var nodeNeighbors = neighbors[i];
+                        for (int n = 0; n < nodeNeighbors.Count; n++)
+                        {
+                            if (colorAssign[nodeNeighbors[n]] == c) v++;
+                        }
+                        if (v < minV)
+                        {
+                            minV = v;
+                            bestC = c;
+                        }
+                    }
+                    colorAssign[i] = bestC;
+                    colorCounts[bestC]++;
+                }
+            }
+
+            // 4. Conflict Resolution Pass (breaks any remaining chains of >= 3 same-color adjacent arrows)
+            for (int iter = 0; iter < 50; iter++)
+            {
+                bool anyFixed = false;
+                for (int i = 0; i < placements.Count; i++)
+                {
+                    int c = colorAssign[i];
+                    int sameNeighbors = 0;
+                    bool connectedToAnotherChain = false;
+                    var nodeNeighbors = neighbors[i];
+
+                    for (int n = 0; n < nodeNeighbors.Count; n++)
+                    {
+                        int nb = nodeNeighbors[n];
+                        if (colorAssign[nb] == c)
+                        {
+                            sameNeighbors++;
+                            var nbNeighbors = neighbors[nb];
+                            for (int n2 = 0; n2 < nbNeighbors.Count; n2++)
+                            {
+                                int nb2 = nbNeighbors[n2];
+                                if (nb2 != i && colorAssign[nb2] == c)
+                                {
+                                    connectedToAnotherChain = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (sameNeighbors >= 2 || connectedToAnotherChain)
+                    {
+                        // Recolour 'i' to a color that has NO same-color neighbor
+                        var cleanColors = new List<int>();
+                        for (int newC = 0; newC < paletteCount; newC++)
+                        {
+                            if (newC == c) continue;
+                            bool hasNeighbor = false;
+                            for (int n = 0; n < nodeNeighbors.Count; n++)
+                            {
+                                if (colorAssign[nodeNeighbors[n]] == newC)
+                                {
+                                    hasNeighbor = true;
+                                    break;
+                                }
+                            }
+                            if (!hasNeighbor) cleanColors.Add(newC);
+                        }
+
+                        if (cleanColors.Count > 0)
+                        {
+                            colorCounts[c]--;
+                            int chosen = cleanColors[Random.Range(0, cleanColors.Count)];
+                            colorAssign[i] = chosen;
+                            colorCounts[chosen]++;
+                            anyFixed = true;
+                        }
+                        else
+                        {
+                            for (int newC = 0; newC < paletteCount; newC++)
+                            {
+                                if (newC == c) continue;
+                                if (IsValidAssignment(i, newC))
+                                {
+                                    colorCounts[c]--;
+                                    colorAssign[i] = newC;
+                                    colorCounts[newC]++;
+                                    anyFixed = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (!anyFixed) break;
+            }
+
+            // 5. Apply assigned colors to placements struct
+            for (int i = 0; i < placements.Count; i++)
+            {
+                var p = placements[i];
+                p.ColorIndex = colorAssign[i];
+                placements[i] = p;
+            }
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]

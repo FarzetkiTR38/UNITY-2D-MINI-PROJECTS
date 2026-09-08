@@ -99,7 +99,7 @@ namespace ArrowSwarm.Arrow
         /// Sets up arrow visuals: draws path with LineRenderer and positions arrowhead.
         /// Supports progressive spawn animation where the head pops in first, followed by body growth.
         /// </summary>
-        public void SetupVisuals(Arrow arrow, float spawnDelay = 0f, bool animateSpawn = true)
+        public void SetupVisuals(Arrow arrow, float spawnDelay = 0f, bool animateSpawn = true, Color? customColor = null)
         {
             _arrow = arrow;
             _isRainbow = arrow.IsRainbow;
@@ -172,21 +172,15 @@ namespace ArrowSwarm.Arrow
             _baseHeadScale = Vector3.one * dynamicHeadSize;
             _headTransform.localScale = _baseHeadScale;
 
-            // Random color from palette (independent of weight) or rainbow
+            // Set color from palette (harmonious custom color or fallback) or rainbow
             if (_isRainbow)
             {
                 SetRainbowMode(true);
             }
             else
             {
-                Color arrowColor = GameManager.Instance?.Config?.GetRandomArrowColor() ?? Color.white;
-                _originalColor = arrowColor;
-                _lineRenderer.startColor = arrowColor;
-                _lineRenderer.endColor = arrowColor;
-                if (_headRenderer != null)
-                {
-                    _headRenderer.color = arrowColor;
-                }
+                Color arrowColor = customColor ?? GameManager.Instance?.Config?.GetRandomArrowColor() ?? Color.white;
+                SetColor(arrowColor);
             }
 
             _isPulsing = false; // Disable continuous idle pulsing for normal arrows
@@ -218,6 +212,23 @@ namespace ArrowSwarm.Arrow
                     Vector2 worldPos = pathPoints[i].PointToWorld(spacing, origin);
                     _lineRenderer.SetPosition(i, new Vector3(worldPos.x, worldPos.y, 0f));
                 }
+            }
+        }
+
+        /// <summary>
+        /// Updates the arrow visual color across its LineRenderer body and SpriteRenderer head.
+        /// </summary>
+        public void SetColor(Color arrowColor)
+        {
+            _originalColor = arrowColor;
+            if (_lineRenderer != null)
+            {
+                _lineRenderer.startColor = arrowColor;
+                _lineRenderer.endColor = arrowColor;
+            }
+            if (_headRenderer != null)
+            {
+                _headRenderer.color = arrowColor;
             }
         }
 

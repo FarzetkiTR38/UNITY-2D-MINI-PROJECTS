@@ -181,18 +181,12 @@ namespace ArrowSwarm.UI
             }
         }
 
-        private void OnEnable()
-        {
-            _button?.onClick.AddListener(OnClicked);
-        }
-
-        private void OnDisable()
-        {
-            _button?.onClick.RemoveListener(OnClicked);
-        }
+        private void OnEnable() => _button?.onClick.AddListener(OnClicked);
+        private void OnDisable() => _button?.onClick.RemoveListener(OnClicked);
 
         private void OnClicked()
         {
+            ArrowSwarm.Audio.AudioManager.Instance?.PlayButtonClick();
             _onClickCallback?.Invoke(_level);
         }
     }
