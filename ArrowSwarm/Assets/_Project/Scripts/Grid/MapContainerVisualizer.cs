@@ -17,13 +17,16 @@ namespace ArrowSwarm.Grid
     {
         [Header("Layer 1: Camera Background")]
         [SerializeField] private Color _cameraBackgroundColor = new Color(0.96f, 0.94f, 0.90f, 1f); // #F5EFE6
+        [SerializeField] private Color _darkCameraBackgroundColor = new Color(0.10f, 0.10f, 0.18f, 1f); // #1A1A2E
 
         [Header("Layer 2: Outer Track Container Card")]
         [SerializeField] private Color _outerContainerColor = new Color(0.92f, 0.89f, 0.85f, 1f); // #EBE4D8
+        [SerializeField] private Color _darkOuterContainerColor = new Color(0.065f, 0.080f, 0.135f, 1f); // #111422
         [SerializeField] private int _layer2SortingOrder = -10;
 
         [Header("Layer 3: Inner Grid Card Surface")]
         [SerializeField] private Color _innerGridColor = new Color(0.99f, 0.98f, 0.97f, 1f); // #FDFBF7
+        [SerializeField] private Color _darkInnerGridColor = new Color(0.125f, 0.155f, 0.245f, 1f); // #20273E
         [SerializeField] private int _layer3SortingOrder = -9;
 
         [Header("Channel Margins")]
@@ -39,12 +42,14 @@ namespace ArrowSwarm.Grid
         {
             GridManager.OnGridInitialized += HandleGridInitialized;
             Path.PathManager.OnPathInitialized += HandlePathInitialized;
+            ThemeManager.OnThemeChanged += HandleThemeChanged;
         }
 
         private void OnDisable()
         {
             GridManager.OnGridInitialized -= HandleGridInitialized;
             Path.PathManager.OnPathInitialized -= HandlePathInitialized;
+            ThemeManager.OnThemeChanged -= HandleThemeChanged;
         }
 
         private void HandleGridInitialized(int width, int height)
@@ -57,6 +62,38 @@ namespace ArrowSwarm.Grid
             if (GridManager.HasInstance)
             {
                 BuildThreeLayerTheme(GridManager.Instance.Width, GridManager.Instance.Height);
+            }
+        }
+
+        private void Start()
+        {
+            ApplyThemeColors(ThemeManager.IsDark);
+        }
+
+        private void HandleThemeChanged(Data.ThemeMode mode)
+        {
+            ApplyThemeColors(mode == Data.ThemeMode.Dark);
+        }
+
+        /// <summary>
+        /// Updates camera background and card layer colors based on current theme.
+        /// </summary>
+        public void ApplyThemeColors(bool isDark)
+        {
+            UnityEngine.Camera mainCam = UnityEngine.Camera.main;
+            if (mainCam != null)
+            {
+                mainCam.backgroundColor = isDark ? _darkCameraBackgroundColor : _cameraBackgroundColor;
+            }
+
+            if (_outerContainerRenderer != null)
+            {
+                _outerContainerRenderer.color = isDark ? _darkOuterContainerColor : _outerContainerColor;
+            }
+
+            if (_innerGridRenderer != null)
+            {
+                _innerGridRenderer.color = isDark ? _darkInnerGridColor : _innerGridColor;
             }
         }
 
@@ -80,30 +117,35 @@ namespace ArrowSwarm.Grid
 
             float scaleFactor = DifficultyCalculator.GetMapScaleFactor(width, height);
             
-            // Fixed tight card margin: white card hugs the grid arrows directly
+            // Fixed tight card margin: card hugs the grid arrows directly
             float cardMargin = 0.50f * spacing;
 
             // Scaled track channel half-width: thick enough to fit scaled enemies
             float halfTrackWidth = 0.60f * scaleFactor * spacing;
 
+            bool isDark = ThemeManager.IsDark;
+            Color camColor = isDark ? _darkCameraBackgroundColor : _cameraBackgroundColor;
+            Color outerColor = isDark ? _darkOuterContainerColor : _outerContainerColor;
+            Color innerColor = isDark ? _darkInnerGridColor : _innerGridColor;
+
             // Layer 1: Apply Camera Background Color
             UnityEngine.Camera mainCam = UnityEngine.Camera.main;
             if (mainCam != null)
             {
-                mainCam.backgroundColor = _cameraBackgroundColor;
+                mainCam.backgroundColor = camColor;
             }
 
-            // Layer 2: Outer Card — wraps outside the grey track channel
+            // Layer 2: Outer Card — wraps outside the track channel
             float outerW = totalGridWidth + 2f * (cardMargin + 2f * halfTrackWidth);
             float outerH = totalGridHeight + 2f * (cardMargin + 2f * halfTrackWidth);
             EnsureCardLayer(ref _outerContainerRenderer, "Layer2_OuterCard", center,
-                new Vector2(outerW, outerH), _outerContainerColor, _layer2SortingOrder, 40f);
+                new Vector2(outerW, outerH), outerColor, _layer2SortingOrder, 40f);
 
             // Layer 3: Inner Card — wraps tightly right around the grid arrows
             float innerW = totalGridWidth + 2f * cardMargin;
             float innerH = totalGridHeight + 2f * cardMargin;
             EnsureCardLayer(ref _innerGridRenderer, "Layer3_InnerGridCard", center,
-                new Vector2(innerW, innerH), _innerGridColor, _layer3SortingOrder, 28f);
+                new Vector2(innerW, innerH), innerColor, _layer3SortingOrder, 28f);
         }
 
         /// <summary>

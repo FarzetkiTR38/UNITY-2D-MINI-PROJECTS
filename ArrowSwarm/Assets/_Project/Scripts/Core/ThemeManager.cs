@@ -17,6 +17,12 @@ namespace ArrowSwarm.Core
         public static readonly Color LightBgImageColor = Color.white;
         public static readonly Color DarkBgImageColor = new Color(0.18f, 0.20f, 0.28f, 1f);
 
+        /// <summary>Fired whenever the active visual theme changes.</summary>
+        public static event System.Action<ThemeMode> OnThemeChanged;
+
+        /// <summary>Returns true if the active theme mode is Dark.</summary>
+        public static bool IsDark => (DataManager.Instance?.PlayerData?.theme ?? ThemeMode.Light) == ThemeMode.Dark;
+
         private void OnEnable()
         {
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += HandleSceneLoaded;
@@ -68,6 +74,16 @@ namespace ArrowSwarm.Core
             {
                 img.color = isDark ? DarkBgImageColor : LightBgImageColor;
             }
+
+            var transitionObj = GameObject.Find("TransitionOverlay");
+            if (transitionObj != null && transitionObj.TryGetComponent<Image>(out var transImg))
+            {
+                Color c = isDark ? DarkCamColor : Color.white;
+                c.a = transImg.color.a;
+                transImg.color = c;
+            }
+
+            OnThemeChanged?.Invoke(theme);
         }
     }
 }

@@ -3245,6 +3245,7 @@ GameObject:
   - component: {fileID: 349293932}
   - component: {fileID: 349293931}
   - component: {fileID: 349293933}
+  - component: {fileID: 349293934}
   m_Layer: 0
   m_Name: LabelText
   m_TagString: Untagged
@@ -3386,6 +3387,23 @@ MonoBehaviour:
   _localizationKey: settings_vfx
   _prefix: 
   _suffix: 
+--- !u!114 &349293934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349293929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1001 &349939285
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3487,7 +3505,19 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1493694036222250153, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 349939295}
+    - targetCorrespondingSourceObject: {fileID: 2559292145403724507, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 349939294}
+    - targetCorrespondingSourceObject: {fileID: 8756881081651392580, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 349939292}
+    - targetCorrespondingSourceObject: {fileID: 7537400115725991841, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 349939293}
   m_SourcePrefab: {fileID: 100100000, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
 --- !u!224 &349939286 stripped
 RectTransform:
@@ -3499,12 +3529,100 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7423314677465076152, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
   m_PrefabInstance: {fileID: 349939285}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 349939291}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6bd2930acb960784dbcf0f333ad78b26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.LeaderboardEntryUI
+--- !u!1 &349939288 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8756881081651392580, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 349939285}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &349939289 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7537400115725991841, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 349939285}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &349939290 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2559292145403724507, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 349939285}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &349939291 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1493694036222250153, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 349939285}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &349939292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349939288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &349939293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349939289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &349939294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349939290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &349939295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349939291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &357493489
 GameObject:
   m_ObjectHideFlags: 0
@@ -4700,7 +4818,19 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1493694036222250153, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 496959798}
+    - targetCorrespondingSourceObject: {fileID: 2559292145403724507, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 496959797}
+    - targetCorrespondingSourceObject: {fileID: 8756881081651392580, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 496959795}
+    - targetCorrespondingSourceObject: {fileID: 7537400115725991841, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 496959796}
   m_SourcePrefab: {fileID: 100100000, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
 --- !u!224 &496959789 stripped
 RectTransform:
@@ -4712,12 +4842,100 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7423314677465076152, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
   m_PrefabInstance: {fileID: 496959788}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 496959794}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6bd2930acb960784dbcf0f333ad78b26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.LeaderboardEntryUI
+--- !u!1 &496959791 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8756881081651392580, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 496959788}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &496959792 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7537400115725991841, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 496959788}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &496959793 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2559292145403724507, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 496959788}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &496959794 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1493694036222250153, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 496959788}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &496959795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 496959791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &496959796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 496959792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &496959797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 496959793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &496959798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 496959794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &503055575
 GameObject:
   m_ObjectHideFlags: 0
@@ -5306,6 +5524,7 @@ GameObject:
   - component: {fileID: 556410242}
   - component: {fileID: 556410245}
   - component: {fileID: 556410244}
+  - component: {fileID: 556410246}
   m_Layer: 0
   m_Name: Card
   m_TagString: Untagged
@@ -5375,6 +5594,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 556410241}
   m_CullTransparentMesh: 1
+--- !u!114 &556410246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 556410241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 0
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &579252968
 GameObject:
   m_ObjectHideFlags: 0
@@ -6156,7 +6392,19 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1493694036222250153, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 672145999}
+    - targetCorrespondingSourceObject: {fileID: 2559292145403724507, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 672145998}
+    - targetCorrespondingSourceObject: {fileID: 8756881081651392580, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 672145996}
+    - targetCorrespondingSourceObject: {fileID: 7537400115725991841, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 672145997}
   m_SourcePrefab: {fileID: 100100000, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
 --- !u!224 &672145990 stripped
 RectTransform:
@@ -6168,12 +6416,100 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7423314677465076152, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
   m_PrefabInstance: {fileID: 672145989}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 672145995}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6bd2930acb960784dbcf0f333ad78b26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.LeaderboardEntryUI
+--- !u!1 &672145992 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8756881081651392580, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 672145989}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &672145993 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7537400115725991841, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 672145989}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &672145994 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2559292145403724507, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 672145989}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &672145995 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1493694036222250153, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 672145989}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &672145996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 672145992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &672145997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 672145993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &672145998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 672145994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &672145999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 672145995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &695456746
 GameObject:
   m_ObjectHideFlags: 0
@@ -6185,6 +6521,7 @@ GameObject:
   - component: {fileID: 695456747}
   - component: {fileID: 695456749}
   - component: {fileID: 695456748}
+  - component: {fileID: 695456750}
   m_Layer: 0
   m_Name: BG
   m_TagString: Untagged
@@ -6249,6 +6586,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 695456746}
   m_CullTransparentMesh: 1
+--- !u!114 &695456750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695456746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &698397297
 GameObject:
   m_ObjectHideFlags: 0
@@ -6260,6 +6614,7 @@ GameObject:
   - component: {fileID: 698397298}
   - component: {fileID: 698397299}
   - component: {fileID: 698397300}
+  - component: {fileID: 698397301}
   m_Layer: 0
   m_Name: BoardFrame
   m_TagString: Untagged
@@ -6327,6 +6682,23 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &698397301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698397297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 0
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &700991977
 GameObject:
   m_ObjectHideFlags: 0
@@ -7280,6 +7652,7 @@ GameObject:
   - component: {fileID: 836585216}
   - component: {fileID: 836585218}
   - component: {fileID: 836585217}
+  - component: {fileID: 836585219}
   m_Layer: 0
   m_Name: WindowCard
   m_TagString: Untagged
@@ -7350,6 +7723,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 836585215}
   m_CullTransparentMesh: 1
+--- !u!114 &836585219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 836585215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 0
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &847218235
 GameObject:
   m_ObjectHideFlags: 0
@@ -7362,6 +7752,7 @@ GameObject:
   - component: {fileID: 847218238}
   - component: {fileID: 847218237}
   - component: {fileID: 847218239}
+  - component: {fileID: 847218240}
   m_Layer: 0
   m_Name: LabelText
   m_TagString: Untagged
@@ -7503,6 +7894,23 @@ MonoBehaviour:
   _localizationKey: settings_sfx
   _prefix: 
   _suffix: 
+--- !u!114 &847218240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847218235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &876370958
 GameObject:
   m_ObjectHideFlags: 0
@@ -7514,6 +7922,7 @@ GameObject:
   - component: {fileID: 876370959}
   - component: {fileID: 876370961}
   - component: {fileID: 876370960}
+  - component: {fileID: 876370962}
   m_Layer: 0
   m_Name: SettingRow_SFX
   m_TagString: Untagged
@@ -7581,6 +7990,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 876370958}
   m_CullTransparentMesh: 1
+--- !u!114 &876370962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 876370958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &889500705
 GameObject:
   m_ObjectHideFlags: 0
@@ -8172,6 +8598,7 @@ GameObject:
   - component: {fileID: 940762136}
   - component: {fileID: 940762138}
   - component: {fileID: 940762137}
+  - component: {fileID: 940762139}
   m_Layer: 0
   m_Name: SettingRow_VFX
   m_TagString: Untagged
@@ -8239,6 +8666,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 940762135}
   m_CullTransparentMesh: 1
+--- !u!114 &940762139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 940762135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &953602665
 GameObject:
   m_ObjectHideFlags: 0
@@ -8251,6 +8695,7 @@ GameObject:
   - component: {fileID: 953602668}
   - component: {fileID: 953602667}
   - component: {fileID: 953602669}
+  - component: {fileID: 953602670}
   m_Layer: 0
   m_Name: CountryLabel
   m_TagString: Untagged
@@ -8392,6 +8837,23 @@ MonoBehaviour:
   _localizationKey: settings_country
   _prefix: 
   _suffix: 
+--- !u!114 &953602670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 953602665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &970349398
 GameObject:
   m_ObjectHideFlags: 0
@@ -9660,6 +10122,7 @@ GameObject:
   - component: {fileID: 1068420027}
   - component: {fileID: 1068420029}
   - component: {fileID: 1068420028}
+  - component: {fileID: 1068420030}
   m_Layer: 0
   m_Name: SettingRow_Language
   m_TagString: Untagged
@@ -9727,6 +10190,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1068420026}
   m_CullTransparentMesh: 1
+--- !u!114 &1068420030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1068420026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &1073189270
 GameObject:
   m_ObjectHideFlags: 0
@@ -11065,6 +11545,7 @@ GameObject:
   - component: {fileID: 1205350081}
   - component: {fileID: 1205350080}
   - component: {fileID: 1205350082}
+  - component: {fileID: 1205350083}
   m_Layer: 0
   m_Name: LabelText
   m_TagString: Untagged
@@ -11206,6 +11687,23 @@ MonoBehaviour:
   _localizationKey: settings_language
   _prefix: 
   _suffix: 
+--- !u!114 &1205350083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1205350078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &1217274455
 GameObject:
   m_ObjectHideFlags: 0
@@ -12232,6 +12730,7 @@ GameObject:
   - component: {fileID: 1251947897}
   - component: {fileID: 1251947896}
   - component: {fileID: 1251947898}
+  - component: {fileID: 1251947899}
   m_Layer: 0
   m_Name: NameLabel
   m_TagString: Untagged
@@ -12373,6 +12872,23 @@ MonoBehaviour:
   _localizationKey: profile_name_label
   _prefix: 
   _suffix: 
+--- !u!114 &1251947899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1251947894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &1266598422
 GameObject:
   m_ObjectHideFlags: 0
@@ -12953,6 +13469,7 @@ GameObject:
   - component: {fileID: 1336537121}
   - component: {fileID: 1336537123}
   - component: {fileID: 1336537122}
+  - component: {fileID: 1336537124}
   m_Layer: 0
   m_Name: SettingRow_Theme
   m_TagString: Untagged
@@ -13020,6 +13537,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1336537120}
   m_CullTransparentMesh: 1
+--- !u!114 &1336537124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1336537120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1001 &1348682995
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13952,6 +14486,7 @@ GameObject:
   - component: {fileID: 1362620878}
   - component: {fileID: 1362620879}
   - component: {fileID: 1362620880}
+  - component: {fileID: 1362620881}
   m_Layer: 0
   m_Name: PageText
   m_TagString: Untagged
@@ -14078,6 +14613,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1362620881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362620877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &1364575947
 GameObject:
   m_ObjectHideFlags: 0
@@ -14583,7 +15135,19 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1493694036222250153, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1428884357}
+    - targetCorrespondingSourceObject: {fileID: 2559292145403724507, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1428884356}
+    - targetCorrespondingSourceObject: {fileID: 8756881081651392580, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1428884354}
+    - targetCorrespondingSourceObject: {fileID: 7537400115725991841, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1428884355}
   m_SourcePrefab: {fileID: 100100000, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
 --- !u!224 &1428884348 stripped
 RectTransform:
@@ -14595,12 +15159,100 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7423314677465076152, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
   m_PrefabInstance: {fileID: 1428884347}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1428884353}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6bd2930acb960784dbcf0f333ad78b26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.LeaderboardEntryUI
+--- !u!1 &1428884350 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8756881081651392580, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1428884347}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1428884351 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7537400115725991841, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1428884347}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1428884352 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2559292145403724507, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1428884347}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1428884353 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1493694036222250153, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1428884347}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1428884354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1428884350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &1428884355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1428884351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &1428884356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1428884352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &1428884357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1428884353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1001 &1442768229
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14732,7 +15384,19 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1493694036222250153, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1442768239}
+    - targetCorrespondingSourceObject: {fileID: 2559292145403724507, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1442768238}
+    - targetCorrespondingSourceObject: {fileID: 8756881081651392580, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1442768236}
+    - targetCorrespondingSourceObject: {fileID: 7537400115725991841, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1442768237}
   m_SourcePrefab: {fileID: 100100000, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
 --- !u!224 &1442768230 stripped
 RectTransform:
@@ -14744,12 +15408,100 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7423314677465076152, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
   m_PrefabInstance: {fileID: 1442768229}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1442768235}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6bd2930acb960784dbcf0f333ad78b26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.LeaderboardEntryUI
+--- !u!1 &1442768232 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8756881081651392580, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1442768229}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1442768233 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7537400115725991841, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1442768229}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1442768234 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2559292145403724507, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1442768229}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1442768235 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1493694036222250153, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1442768229}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1442768236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1442768232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &1442768237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1442768233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &1442768238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1442768234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &1442768239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1442768235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &1450976650
 GameObject:
   m_ObjectHideFlags: 0
@@ -14961,7 +15713,19 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1493694036222250153, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1476615292}
+    - targetCorrespondingSourceObject: {fileID: 2559292145403724507, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1476615291}
+    - targetCorrespondingSourceObject: {fileID: 8756881081651392580, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1476615289}
+    - targetCorrespondingSourceObject: {fileID: 7537400115725991841, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1476615290}
   m_SourcePrefab: {fileID: 100100000, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
 --- !u!224 &1476615283 stripped
 RectTransform:
@@ -14973,12 +15737,100 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7423314677465076152, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
   m_PrefabInstance: {fileID: 1476615282}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1476615288}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6bd2930acb960784dbcf0f333ad78b26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.LeaderboardEntryUI
+--- !u!1 &1476615285 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8756881081651392580, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1476615282}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1476615286 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7537400115725991841, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1476615282}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1476615287 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2559292145403724507, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1476615282}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1476615288 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1493694036222250153, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1476615282}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1476615289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1476615285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &1476615290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1476615286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &1476615291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1476615287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &1476615292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1476615288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &1478379247
 GameObject:
   m_ObjectHideFlags: 0
@@ -15989,6 +16841,7 @@ GameObject:
   - component: {fileID: 1575798702}
   - component: {fileID: 1575798701}
   - component: {fileID: 1575798699}
+  - component: {fileID: 1575798703}
   m_Layer: 0
   m_Name: NameInput
   m_TagString: Untagged
@@ -16156,6 +17009,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1575798697}
   m_CullTransparentMesh: 1
+--- !u!114 &1575798703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1575798697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &1575884874
 GameObject:
   m_ObjectHideFlags: 0
@@ -16839,6 +17709,7 @@ GameObject:
   - component: {fileID: 1637697574}
   - component: {fileID: 1637697573}
   - component: {fileID: 1637697575}
+  - component: {fileID: 1637697576}
   m_Layer: 0
   m_Name: LabelText
   m_TagString: Untagged
@@ -16980,6 +17851,23 @@ MonoBehaviour:
   _localizationKey: settings_theme
   _prefix: 
   _suffix: 
+--- !u!114 &1637697576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1637697571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &1667841598
 GameObject:
   m_ObjectHideFlags: 0
@@ -17073,6 +17961,7 @@ GameObject:
   - component: {fileID: 1691034476}
   - component: {fileID: 1691034475}
   - component: {fileID: 1691034477}
+  - component: {fileID: 1691034478}
   m_Layer: 0
   m_Name: LabelText
   m_TagString: Untagged
@@ -17214,6 +18103,23 @@ MonoBehaviour:
   _localizationKey: settings_vibration
   _prefix: 
   _suffix: 
+--- !u!114 &1691034478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1691034473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &1691250869
 GameObject:
   m_ObjectHideFlags: 0
@@ -17378,6 +18284,7 @@ GameObject:
   - component: {fileID: 1720628596}
   - component: {fileID: 1720628598}
   - component: {fileID: 1720628597}
+  - component: {fileID: 1720628599}
   m_Layer: 0
   m_Name: BG
   m_TagString: Untagged
@@ -17442,6 +18349,67 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1720628595}
   m_CullTransparentMesh: 1
+--- !u!114 &1720628599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1720628595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!1 &1723430320
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1723430322}
+  - component: {fileID: 1723430321}
+  m_Layer: 0
+  m_Name: ThemeManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1723430321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1723430320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df6c586d8b18453419b1e458d608fcb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Core.ThemeManager
+--- !u!4 &1723430322
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1723430320}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1733892436
 GameObject:
   m_ObjectHideFlags: 0
@@ -18040,6 +19008,7 @@ GameObject:
   - component: {fileID: 1836073179}
   - component: {fileID: 1836073181}
   - component: {fileID: 1836073180}
+  - component: {fileID: 1836073182}
   m_Layer: 0
   m_Name: SettingRow_Vibration
   m_TagString: Untagged
@@ -18107,6 +19076,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1836073178}
   m_CullTransparentMesh: 1
+--- !u!114 &1836073182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1836073178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1001 &1864265912
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18601,7 +19587,19 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1493694036222250153, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1898471239}
+    - targetCorrespondingSourceObject: {fileID: 2559292145403724507, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1898471238}
+    - targetCorrespondingSourceObject: {fileID: 8756881081651392580, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1898471236}
+    - targetCorrespondingSourceObject: {fileID: 7537400115725991841, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1898471237}
   m_SourcePrefab: {fileID: 100100000, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
 --- !u!224 &1898471230 stripped
 RectTransform:
@@ -18613,12 +19611,100 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7423314677465076152, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
   m_PrefabInstance: {fileID: 1898471229}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1898471235}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6bd2930acb960784dbcf0f333ad78b26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.LeaderboardEntryUI
+--- !u!1 &1898471232 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8756881081651392580, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1898471229}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1898471233 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7537400115725991841, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1898471229}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1898471234 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2559292145403724507, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1898471229}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1898471235 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1493694036222250153, guid: 26e6bccc1074ae64ab7930c9d86752ec, type: 3}
+  m_PrefabInstance: {fileID: 1898471229}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1898471236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898471232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &1898471237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898471233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &1898471238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898471234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 3
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+--- !u!114 &1898471239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898471235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &1955501597
 GameObject:
   m_ObjectHideFlags: 0
@@ -18832,6 +19918,7 @@ GameObject:
   - component: {fileID: 1995443955}
   - component: {fileID: 1995443954}
   - component: {fileID: 1995443952}
+  - component: {fileID: 1995443956}
   m_Layer: 0
   m_Name: CountrySelector
   m_TagString: Untagged
@@ -18944,6 +20031,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1995443950}
   m_CullTransparentMesh: 1
+--- !u!114 &1995443956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1995443950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 1
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &2007898221
 GameObject:
   m_ObjectHideFlags: 0
@@ -18955,6 +20059,7 @@ GameObject:
   - component: {fileID: 2007898222}
   - component: {fileID: 2007898224}
   - component: {fileID: 2007898223}
+  - component: {fileID: 2007898225}
   m_Layer: 0
   m_Name: BG
   m_TagString: Untagged
@@ -19019,6 +20124,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2007898221}
   m_CullTransparentMesh: 1
+--- !u!114 &2007898225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2007898221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 4
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &2026097012
 GameObject:
   m_ObjectHideFlags: 0
@@ -20560,6 +21682,7 @@ GameObject:
   - component: {fileID: 2102546752}
   - component: {fileID: 2102546753}
   - component: {fileID: 2102546754}
+  - component: {fileID: 2102546755}
   m_Layer: 0
   m_Name: BoardFrame
   m_TagString: Untagged
@@ -20630,6 +21753,23 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2102546755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2102546751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 0
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
 --- !u!1 &2112543265
 GameObject:
   m_ObjectHideFlags: 0
@@ -21018,3 +22158,4 @@ SceneRoots:
   - {fileID: 664817937}
   - {fileID: 1024626136}
   - {fileID: 1478379252}
+  - {fileID: 1723430322}
