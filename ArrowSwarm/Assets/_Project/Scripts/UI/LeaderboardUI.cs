@@ -33,6 +33,7 @@ namespace ArrowSwarm.UI
         [SerializeField] private Image _footerTrophyImage;
 
         [Header("Animation")]
+        [SerializeField] private RectTransform _dialogBox;
         [SerializeField] private float _fadeSpeed = 5f;
 
         private void OnEnable()
@@ -75,6 +76,12 @@ namespace ArrowSwarm.UI
         {
             if (_canvasGroup == null)
                 _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+
+            if (_dialogBox == null)
+            {
+                var b = transform.Find("BoardFrame") ?? transform.Find("DialogBox");
+                if (b != null) _dialogBox = b.GetComponent<RectTransform>();
+            }
 
             if (_backButton == null)
             {
@@ -148,7 +155,7 @@ namespace ArrowSwarm.UI
         }
 
         /// <summary>
-        /// Shows the leaderboard panel with smooth fade in and refreshes data.
+        /// Shows the leaderboard panel with elastic pop-in and refreshes data.
         /// </summary>
         public void Show()
         {
@@ -157,11 +164,10 @@ namespace ArrowSwarm.UI
 
             if (_canvasGroup != null)
             {
-                _canvasGroup.alpha = 0f;
                 _canvasGroup.interactable = true;
                 _canvasGroup.blocksRaycasts = true;
                 StopAllCoroutines();
-                StartCoroutine(FadeTo(1f));
+                StartCoroutine(UIPopupAnimator.AnimateOpen(_dialogBox, _canvasGroup));
             }
 
             RefreshLeaderboardData();
@@ -172,7 +178,7 @@ namespace ArrowSwarm.UI
         }
 
         /// <summary>
-        /// Hides the leaderboard panel with smooth fade out.
+        /// Hides the leaderboard panel with elastic pop-out.
         /// </summary>
         public void Hide()
         {
@@ -182,7 +188,7 @@ namespace ArrowSwarm.UI
             {
                 _canvasGroup.interactable = false;
                 StopAllCoroutines();
-                StartCoroutine(FadeTo(0f, true));
+                StartCoroutine(UIPopupAnimator.AnimateClose(_dialogBox, _canvasGroup, onComplete: () => gameObject.SetActive(false)));
             }
             else
             {
@@ -316,21 +322,6 @@ namespace ArrowSwarm.UI
             }
         }
 
-        private System.Collections.IEnumerator FadeTo(float target, bool disableOnComplete = false)
-        {
-            while (Mathf.Abs(_canvasGroup.alpha - target) > 0.01f)
-            {
-                _canvasGroup.alpha = Mathf.MoveTowards(_canvasGroup.alpha, target, Time.unscaledDeltaTime * _fadeSpeed);
-                yield return null;
-            }
-            _canvasGroup.alpha = target;
-
-            if (disableOnComplete)
-            {
-                if (_canvasGroup != null) _canvasGroup.blocksRaycasts = false;
-                gameObject.SetActive(false);
-            }
-        }
 
         private static string GetCountryTag(string code)
         {

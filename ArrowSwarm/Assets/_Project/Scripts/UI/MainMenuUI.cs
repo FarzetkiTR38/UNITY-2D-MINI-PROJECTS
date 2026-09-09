@@ -344,24 +344,34 @@ namespace ArrowSwarm.UI
                 else if (panel.TryGetComponent<LevelSelectUI>(out var levelSelect))
                     levelSelect.Show();
                 else
-                    panel.SetActive(true);
-
-                if (panel.TryGetComponent<CanvasGroup>(out var cg))
                 {
-                    cg.alpha = 1f;
-                    cg.interactable = true;
-                    cg.blocksRaycasts = true;
+                    panel.SetActive(true);
+                    if (panel.TryGetComponent<CanvasGroup>(out var cg))
+                    {
+                        cg.alpha = 1f;
+                        cg.interactable = true;
+                        cg.blocksRaycasts = true;
+                    }
                 }
             }
             else
             {
-                if (panel.TryGetComponent<CanvasGroup>(out var cg))
+                if (panel.TryGetComponent<SettingsUI>(out var settings))
+                    settings.Hide();
+                else if (panel.TryGetComponent<LeaderboardUI>(out var leaderboard))
+                    leaderboard.Hide();
+                else if (panel.TryGetComponent<LevelSelectUI>(out var levelSelect))
+                    levelSelect.Close();
+                else
                 {
-                    cg.alpha = 0f;
-                    cg.interactable = false;
-                    cg.blocksRaycasts = false;
+                    if (panel.TryGetComponent<CanvasGroup>(out var cg))
+                    {
+                        cg.alpha = 0f;
+                        cg.interactable = false;
+                        cg.blocksRaycasts = false;
+                    }
+                    panel.SetActive(false);
                 }
-                panel.SetActive(false);
             }
         }
 

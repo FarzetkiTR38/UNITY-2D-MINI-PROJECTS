@@ -269,18 +269,13 @@ namespace ArrowSwarm.UI
 
         private void OnSoundToggleChanged(bool isOn)
         {
+            AudioManager.Instance?.PlayToggle();
             DataManager.Instance?.SetSFXEnabled(isOn);
-            if (AudioManager.Instance != null && DataManager.Instance?.PlayerData != null)
-            {
-                DataManager.Instance.SetVolumes(
-                    DataManager.Instance.PlayerData.musicVolume,
-                    isOn ? 1f : 0f
-                );
-            }
         }
 
         private void OnVibrationToggleChanged(bool isOn)
         {
+            AudioManager.Instance?.PlayToggle();
             DataManager.Instance?.SetVibrationEnabled(isOn);
         }
 

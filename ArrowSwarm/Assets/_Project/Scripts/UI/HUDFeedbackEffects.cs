@@ -127,24 +127,31 @@ namespace ArrowSwarm.UI
             RectTransform rt = heartImage.rectTransform;
             Vector3 origPos = _heartOriginalPositions != null && index < _heartOriginalPositions.Length ? _heartOriginalPositions[index] : rt.anchoredPosition;
             Color origColor = _heartOriginalColors != null && index < _heartOriginalColors.Length ? _heartOriginalColors[index] : heartImage.color;
+            Color flashGold = new Color(1f, 0.95f, 0.5f, 1f);
+            Color amberEnd = new Color(1f, 0.62f, 0.12f, 0f);
 
-            float elapsed = 0f, duration = 0.32f;
+            float elapsed = 0f, duration = 0.35f;
             while (elapsed < duration)
             {
                 elapsed += Time.unscaledDeltaTime;
                 float t = Mathf.Clamp01(elapsed / duration);
 
-                rt.anchoredPosition = (Vector2)origPos + Random.insideUnitCircle * ((1f - t) * 7f);
-                float scale = t < 0.35f ? Mathf.Lerp(1f, 1.35f, t / 0.35f) : Mathf.Lerp(1.35f, 0f, (t - 0.35f) / 0.65f);
+                rt.anchoredPosition = (Vector2)origPos + Random.insideUnitCircle * ((1f - t) * 3.5f);
+                rt.localEulerAngles = new Vector3(0f, 0f, Mathf.Lerp(0f, 75f, t));
+
+                float scale = t < 0.32f ? Mathf.Lerp(1f, 1.35f, t / 0.32f) : Mathf.Lerp(1.35f, 0f, (t - 0.32f) / 0.68f);
                 rt.localScale = Vector3.one * scale;
 
-                heartImage.color = t < 0.3f ? Color.white : Color.Lerp(Color.red, new Color(origColor.r, origColor.g, origColor.b, 0f), t);
+                heartImage.color = t < 0.25f 
+                    ? Color.Lerp(origColor, flashGold, t / 0.25f) 
+                    : Color.Lerp(flashGold, amberEnd, (t - 0.25f) / 0.75f);
                 yield return null;
             }
 
             heartImage.gameObject.SetActive(false);
             rt.anchoredPosition = origPos;
             rt.localScale = Vector3.one;
+            rt.localEulerAngles = Vector3.zero;
             heartImage.color = origColor;
         }
 
@@ -153,7 +160,7 @@ namespace ArrowSwarm.UI
             Transform tr = heartImage.transform;
             while (true)
             {
-                float pulse = 1f + 0.22f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 6.5f));
+                float pulse = 1f + 0.12f * Mathf.Sin(Time.unscaledTime * 4.2f);
                 tr.localScale = Vector3.one * pulse;
                 yield return null;
             }

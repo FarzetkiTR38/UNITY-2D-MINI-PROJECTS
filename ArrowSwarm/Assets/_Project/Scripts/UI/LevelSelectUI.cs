@@ -26,7 +26,7 @@ namespace ArrowSwarm.UI
 
         [Header("Animation")]
         [SerializeField] private CanvasGroup _canvasGroup;
-        [SerializeField] private float _fadeSpeed = 5f;
+        [SerializeField] private RectTransform _dialogBox;
 
         private int _currentPage = 1;
         private readonly List<LevelButtonUI> _buttonPool = new List<LevelButtonUI>();
@@ -38,20 +38,8 @@ namespace ArrowSwarm.UI
 
         private void OnEnable()
         {
-            if (_canvasGroup != null)
-            {
-                _canvasGroup.alpha = 0f;
-                _canvasGroup.interactable = true;
-                _canvasGroup.blocksRaycasts = true;
-                StopAllCoroutines();
-                StartCoroutine(FadeTo(1f));
-            }
-
-            int highestLevel = DataManager.Instance?.PlayerData?.highestLevel ?? 1;
-            int maxPage = Mathf.Max(1, (highestLevel - 1) / LEVELS_PER_PAGE + 1);
-            _currentPage = maxPage;
-
-            UpdatePage();
+            AutoWire();
+            UpdatePageToHighest();
         }
 
         private void Start()
@@ -64,11 +52,24 @@ namespace ArrowSwarm.UI
         public void AutoWire()
         {
             if (_canvasGroup == null) _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
-            if (_closeButton == null) _closeButton = (transform.Find("Header/CloseButton") ?? transform.Find("CloseButton"))?.GetComponent<Button>();
-            if (_prevPageButton == null) _prevPageButton = (transform.Find("Nav/PrevButton") ?? transform.Find("PrevButton"))?.GetComponent<Button>();
-            if (_nextPageButton == null) _nextPageButton = (transform.Find("Nav/NextButton") ?? transform.Find("NextButton"))?.GetComponent<Button>();
-            if (_pageText == null) _pageText = (transform.Find("Nav/PageText") ?? transform.Find("PageText"))?.GetComponent<TextMeshProUGUI>();
-            if (_levelGridContainer == null) _levelGridContainer = transform.Find("GridContainer") ?? transform.Find("Content/GridContainer");
+            if (_dialogBox == null)
+            {
+                var card = transform.Find("WindowCard") ?? transform.Find("DialogBox") ?? transform.Find("Card");
+                if (card != null) _dialogBox = card.GetComponent<RectTransform>();
+            }
+            if (_closeButton == null) _closeButton = (transform.Find("WindowCard/CloseButton") ?? transform.Find("Header/CloseButton") ?? transform.Find("CloseButton"))?.GetComponent<Button>();
+            if (_prevPageButton == null) _prevPageButton = (transform.Find("WindowCard/Nav/PrevButton") ?? transform.Find("Nav/PrevButton") ?? transform.Find("PrevButton"))?.GetComponent<Button>();
+            if (_nextPageButton == null) _nextPageButton = (transform.Find("WindowCard/Nav/NextButton") ?? transform.Find("Nav/NextButton") ?? transform.Find("NextButton"))?.GetComponent<Button>();
+            if (_pageText == null) _pageText = (transform.Find("WindowCard/Nav/PageText") ?? transform.Find("Nav/PageText") ?? transform.Find("PageText"))?.GetComponent<TextMeshProUGUI>();
+            if (_levelGridContainer == null) _levelGridContainer = transform.Find("WindowCard/GridContainer") ?? transform.Find("GridContainer") ?? transform.Find("Content/GridContainer");
+        }
+
+        private void UpdatePageToHighest()
+        {
+            int highestLevel = DataManager.Instance?.PlayerData?.highestLevel ?? 1;
+            int maxPage = Mathf.Max(1, (highestLevel - 1) / LEVELS_PER_PAGE + 1);
+            _currentPage = maxPage;
+            UpdatePage();
         }
 
         public void PrevPage()
@@ -144,11 +145,23 @@ namespace ArrowSwarm.UI
             GameManager.Instance?.StartGame();
         }
 
+        /// <summary>Shows the level select panel with elastic pop-in.</summary>
         public void Show()
         {
             gameObject.SetActive(true);
+            AutoWire();
+            UpdatePageToHighest();
+
+            if (_canvasGroup != null)
+            {
+                _canvasGroup.interactable = true;
+                _canvasGroup.blocksRaycasts = true;
+                StopAllCoroutines();
+                StartCoroutine(UIPopupAnimator.AnimateOpen(_dialogBox, _canvasGroup));
+            }
         }
 
+        /// <summary>Closes the level select panel with elastic pop-out.</summary>
         public void Close()
         {
             if (!gameObject.activeInHierarchy) return;
@@ -157,26 +170,10 @@ namespace ArrowSwarm.UI
             {
                 _canvasGroup.interactable = false;
                 StopAllCoroutines();
-                StartCoroutine(FadeTo(0f, true));
+                StartCoroutine(UIPopupAnimator.AnimateClose(_dialogBox, _canvasGroup, onComplete: () => gameObject.SetActive(false)));
             }
             else
             {
-                gameObject.SetActive(false);
-            }
-        }
-
-        private System.Collections.IEnumerator FadeTo(float target, bool disableOnComplete = false)
-        {
-            while (Mathf.Abs(_canvasGroup.alpha - target) > 0.01f)
-            {
-                _canvasGroup.alpha = Mathf.MoveTowards(_canvasGroup.alpha, target, Time.deltaTime * _fadeSpeed);
-                yield return null;
-            }
-            _canvasGroup.alpha = target;
-
-            if (disableOnComplete)
-            {
-                if (_canvasGroup != null) _canvasGroup.blocksRaycasts = false;
                 gameObject.SetActive(false);
             }
         }

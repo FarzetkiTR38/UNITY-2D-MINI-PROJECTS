@@ -223,12 +223,12 @@ namespace ArrowSwarm.UI
 
             if (gameObject.activeInHierarchy)
             {
-                _animateRoutine = StartCoroutine(AnimateOpen());
+                _animateRoutine = StartCoroutine(UIPopupAnimator.AnimateOpen(_modalRect, _canvasGroup));
             }
             else
             {
                 if (_canvasGroup != null) _canvasGroup.alpha = 1f;
-                if (_modalRect != null) _modalRect.localScale = _targetScale;
+                if (_modalRect != null) _modalRect.localScale = Vector3.one;
             }
         }
 
@@ -240,14 +240,17 @@ namespace ArrowSwarm.UI
             if (_canvasGroup != null)
             {
                 _canvasGroup.interactable = false;
-                // Keep blocksRaycasts = true during fade-out to shield background buttons!
             }
 
             if (_animateRoutine != null) StopCoroutine(_animateRoutine);
 
             if (gameObject.activeInHierarchy)
             {
-                _animateRoutine = StartCoroutine(AnimateClose(onComplete));
+                _animateRoutine = StartCoroutine(UIPopupAnimator.AnimateClose(_modalRect, _canvasGroup, onComplete: () =>
+                {
+                    gameObject.SetActive(false);
+                    onComplete?.Invoke();
+                }));
             }
             else
             {
@@ -414,65 +417,7 @@ namespace ArrowSwarm.UI
             Hide();
         }
 
-        private IEnumerator AnimateOpen()
-        {
-            if (_canvasGroup == null || _modalRect == null) yield break;
 
-            Vector3 baseScale = _targetScale;
-            _modalRect.localScale = baseScale * 0.85f;
-            _canvasGroup.alpha = 0f;
-
-            float elapsed = 0f;
-            float duration = 0.25f;
-
-            while (elapsed < duration)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                float t = Mathf.Clamp01(elapsed / duration);
-                float smoothT = Mathf.SmoothStep(0f, 1f, t);
-
-                _canvasGroup.alpha = smoothT;
-                float scale = (t < 0.7f)
-                    ? Mathf.Lerp(0.85f, 1.04f, t / 0.7f)
-                    : Mathf.Lerp(1.04f, 1.00f, (t - 0.7f) / 0.3f);
-                _modalRect.localScale = baseScale * scale;
-
-                yield return null;
-            }
-
-            _canvasGroup.alpha = 1f;
-            _modalRect.localScale = baseScale;
-        }
-
-        private IEnumerator AnimateClose(Action onComplete = null)
-        {
-            if (_canvasGroup == null || _modalRect == null)
-            {
-                if (_canvasGroup != null) _canvasGroup.blocksRaycasts = false;
-                gameObject.SetActive(false);
-                onComplete?.Invoke();
-                yield break;
-            }
-
-            Vector3 baseScale = _targetScale;
-            float elapsed = 0f;
-            float duration = 0.18f;
-
-            while (elapsed < duration)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                float t = Mathf.Clamp01(elapsed / duration);
-                _canvasGroup.alpha = 1f - t;
-                _modalRect.localScale = Vector3.Lerp(baseScale, baseScale * 0.9f, t);
-                yield return null;
-            }
-
-            _canvasGroup.alpha = 0f;
-            _canvasGroup.blocksRaycasts = false; // Only drop raycast shield after modal is completely invisible!
-            _modalRect.localScale = baseScale;
-            gameObject.SetActive(false);
-            onComplete?.Invoke();
-        }
 
         private IEnumerator PunchTransformRoutine(Transform target)
         {

@@ -2,6 +2,7 @@ namespace ArrowSwarm.UI
 {
     using System.Collections.Generic;
     using ArrowSwarm.Audio;
+    using ArrowSwarm.Core;
     using ArrowSwarm.Data;
     using TMPro;
     using UnityEngine;
@@ -269,44 +270,35 @@ namespace ArrowSwarm.UI
 
         private void OnSFXChanged(bool isEnabled)
         {
+            AudioManager.Instance?.PlayToggle();
             DataManager.Instance?.SetSFXEnabled(isEnabled);
-            if (AudioManager.Instance != null)
-            {
-                DataManager.Instance?.SetVolumes(
-                    DataManager.Instance.PlayerData.musicVolume,
-                    isEnabled ? 1f : 0f
-                );
-                AudioManager.Instance.PlayToggle();
-            }
         }
 
         private void OnVFXChanged(bool isEnabled)
         {
-            DataManager.Instance?.SetVFXEnabled(isEnabled);
             AudioManager.Instance?.PlayToggle();
+            DataManager.Instance?.SetVFXEnabled(isEnabled);
         }
 
         private void OnVibrationChanged(bool isEnabled)
         {
-            DataManager.Instance?.SetVibrationEnabled(isEnabled);
             AudioManager.Instance?.PlayToggle();
+            DataManager.Instance?.SetVibrationEnabled(isEnabled);
         }
 
         private void PrevLanguage()
         {
-            if (Localization.LocalizationManager.HasInstance)
-            {
-                Localization.LocalizationManager.Instance.PrevLanguage();
-            }
+            AudioManager.Instance?.PlayToggle();
+            var mgr = Localization.LocalizationManager.Instance;
+            if (mgr != null) mgr.PrevLanguage();
             UpdateLanguageDisplay();
         }
 
         private void NextLanguage()
         {
-            if (Localization.LocalizationManager.HasInstance)
-            {
-                Localization.LocalizationManager.Instance.NextLanguage();
-            }
+            AudioManager.Instance?.PlayToggle();
+            var mgr = Localization.LocalizationManager.Instance;
+            if (mgr != null) mgr.NextLanguage();
             UpdateLanguageDisplay();
         }
 
@@ -314,9 +306,9 @@ namespace ArrowSwarm.UI
         {
             if (_languageText == null) return;
 
-            if (Localization.LocalizationManager.HasInstance)
+            var mgr = Localization.LocalizationManager.Instance;
+            if (mgr != null)
             {
-                var mgr = Localization.LocalizationManager.Instance;
                 int idx = mgr.GetCurrentLanguageIndex();
                 var defs = mgr.AvailableLanguages;
                 if (defs != null && idx >= 0 && idx < defs.Length)
@@ -334,6 +326,7 @@ namespace ArrowSwarm.UI
         /// </summary>
         public void ToggleTheme()
         {
+            AudioManager.Instance?.PlayToggle();
             var currentTheme = DataManager.Instance?.PlayerData?.theme ?? ThemeMode.Light;
             var nextTheme = currentTheme == ThemeMode.Light ? ThemeMode.Dark : ThemeMode.Light;
             SetTheme(nextTheme);
@@ -345,11 +338,21 @@ namespace ArrowSwarm.UI
         public void SetTheme(ThemeMode theme)
         {
             DataManager.Instance?.SetTheme(theme);
+            ThemeManager.Instance?.ApplyTheme(theme);
             UpdateThemeDisplay(theme);
         }
 
-        private void OnSelectLightTheme() => SetTheme(ThemeMode.Light);
-        private void OnSelectDarkTheme() => SetTheme(ThemeMode.Dark);
+        private void OnSelectLightTheme()
+        {
+            AudioManager.Instance?.PlayToggle();
+            SetTheme(ThemeMode.Light);
+        }
+
+        private void OnSelectDarkTheme()
+        {
+            AudioManager.Instance?.PlayToggle();
+            SetTheme(ThemeMode.Dark);
+        }
 
         private void UpdateThemeDisplay(ThemeMode theme)
         {
