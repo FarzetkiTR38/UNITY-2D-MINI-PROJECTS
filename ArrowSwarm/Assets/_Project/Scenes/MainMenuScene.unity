@@ -2603,6 +2603,7 @@ GameObject:
   - component: {fileID: 268769310}
   - component: {fileID: 268769309}
   - component: {fileID: 268769308}
+  - component: {fileID: 268769312}
   m_Layer: 0
   m_Name: LeaderboardPanel
   m_TagString: Untagged
@@ -2622,7 +2623,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18de7ac20fe538842af7fd90700964f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.LeaderboardUI
-  _canvasGroup: {fileID: 0}
+  _canvasGroup: {fileID: 268769312}
   _backButton: {fileID: 1573929879}
   _closeButton: {fileID: 1955501601}
   _titleText: {fileID: 1198325257}
@@ -2646,6 +2647,7 @@ MonoBehaviour:
   _saveNameButton: {fileID: 0}
   _boardImage: {fileID: 2102546754}
   _footerTrophyImage: {fileID: 908901479}
+  _dialogBox: {fileID: 2102546752}
   _fadeSpeed: 5
 --- !u!114 &268769309
 MonoBehaviour:
@@ -2705,6 +2707,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &268769312
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 268769307}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &284055705
 GameObject:
   m_ObjectHideFlags: 0
@@ -7526,7 +7540,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 430, y: -116.106995}
+  m_AnchoredPosition: {x: 430, y: -116.10698}
   m_SizeDelta: {x: 860, y: 213.9465}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &876370960
@@ -10437,7 +10451,7 @@ MonoBehaviour:
   _levelGridContainer: {fileID: 599146346}
   _levelButtonPrefab: {fileID: 2615884563964251054, guid: 10f5c587efe58f94cb6decebd498bece, type: 3}
   _canvasGroup: {fileID: 1190027312}
-  _fadeSpeed: 5
+  _dialogBox: {fileID: 836585216}
 --- !u!225 &1190027312
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -12580,6 +12594,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.SettingsUI
   _canvasGroup: {fileID: 1320563387}
+  _dialogBox: {fileID: 698397298}
   _closeButton: {fileID: 249224751}
   _titleText: {fileID: 1733892439}
   _sfxToggle: {fileID: 493026273}

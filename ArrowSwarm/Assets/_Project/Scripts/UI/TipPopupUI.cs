@@ -12,10 +12,10 @@ namespace ArrowSwarm.UI
     public class TipPopupUI : MonoBehaviour
     {
         [SerializeField] private CanvasGroup _canvasGroup;
+        [SerializeField] private RectTransform _dialogBox;
         [SerializeField] private TextMeshProUGUI _messageText;
         [SerializeField] private Button _watchAdButton;
         [SerializeField] private Button _closeButton;
-        [SerializeField] private float _fadeSpeed = 5f;
 
         private bool _isShowing;
 
@@ -39,7 +39,19 @@ namespace ArrowSwarm.UI
             }
         }
 
-        /// <summary>Shows the tip popup.</summary>
+        private void AutoWire()
+        {
+            if (_canvasGroup == null)
+                _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+
+            if (_dialogBox == null)
+            {
+                var b = transform.Find("DialogBox") ?? transform.Find("BoardFrame") ?? transform.Find("Card");
+                if (b != null) _dialogBox = b.GetComponent<RectTransform>();
+            }
+        }
+
+        /// <summary>Shows the tip popup with elastic pop-in.</summary>
         public void Show()
         {
             _isShowing = true;
@@ -49,10 +61,7 @@ namespace ArrowSwarm.UI
                 gameObject.SetActive(true);
             }
 
-            if (_canvasGroup == null)
-            {
-                _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
-            }
+            AutoWire();
 
             if (_messageText != null)
             {
@@ -67,10 +76,13 @@ namespace ArrowSwarm.UI
                 }
             }
 
-            _canvasGroup.interactable = true;
-            _canvasGroup.blocksRaycasts = true;
-            StopAllCoroutines();
-            StartCoroutine(FadeTo(1f));
+            if (_canvasGroup != null)
+            {
+                _canvasGroup.interactable = true;
+                _canvasGroup.blocksRaycasts = true;
+                StopAllCoroutines();
+                StartCoroutine(UIPopupAnimator.AnimateOpen(_dialogBox, _canvasGroup));
+            }
         }
 
         /// <summary>Hides the tip popup.</summary>
@@ -87,6 +99,8 @@ namespace ArrowSwarm.UI
                 _canvasGroup.interactable = false;
             }
 
+            StopAllCoroutines();
+
             if (instant)
             {
                 if (_canvasGroup != null)
@@ -94,29 +108,12 @@ namespace ArrowSwarm.UI
                     _canvasGroup.alpha = 0f;
                     _canvasGroup.blocksRaycasts = false;
                 }
+                if (_dialogBox != null) _dialogBox.localScale = Vector3.one;
                 gameObject.SetActive(false);
             }
             else
             {
-                StopAllCoroutines();
-                StartCoroutine(FadeTo(0f));
-            }
-        }
-
-        private System.Collections.IEnumerator FadeTo(float target)
-        {
-            while (_canvasGroup != null && Mathf.Abs(_canvasGroup.alpha - target) > 0.01f)
-            {
-                _canvasGroup.alpha = Mathf.MoveTowards(
-                    _canvasGroup.alpha, target, Time.unscaledDeltaTime * _fadeSpeed);
-                yield return null;
-            }
-            if (_canvasGroup != null) _canvasGroup.alpha = target;
-
-            if (target <= 0.01f)
-            {
-                if (_canvasGroup != null) _canvasGroup.blocksRaycasts = false;
-                gameObject.SetActive(false);
+                StartCoroutine(UIPopupAnimator.AnimateClose(_dialogBox, _canvasGroup, onComplete: () => gameObject.SetActive(false)));
             }
         }
 

@@ -16,6 +16,7 @@ namespace ArrowSwarm.Effects
         [Header("Particle Prefabs")]
         [SerializeField] private ParticleSystem _arrowTrailPrefab;
         [SerializeField] private ParticleSystem _mobDeathPrefab;
+        [SerializeField] private ParticleSystem _confettiPrefab;
         [Header("Fireworks Prefabs")]
         [SerializeField] private ParticleSystem _fireworkRainbowPrefab;
         [SerializeField] private ParticleSystem _firework1Prefab;
@@ -50,8 +51,22 @@ namespace ArrowSwarm.Effects
                 main.startColor = color.Value;
             }
 
-            ps.Play();
-            StartCoroutine(ReturnToPoolAfterDuration(ps, prefab, ps.main.duration + ps.main.startLifetime.constantMax));
+            ps.Play(true);
+            float lifetime = ps.main.startLifetime.mode == ParticleSystemCurveMode.TwoConstants
+                ? ps.main.startLifetime.constantMax
+                : ps.main.startLifetime.constant;
+            StartCoroutine(ReturnToPoolAfterDuration(ps, prefab, Mathf.Max(0.8f, ps.main.duration + lifetime)));
+        }
+
+        /// <summary>
+        /// Spawns the pooled mob death particle effect at the given position.
+        /// </summary>
+        public void SpawnMobDeathEffect(Vector3 position, Color? color = null)
+        {
+            if (_mobDeathPrefab != null)
+            {
+                SpawnEffect(_mobDeathPrefab, position, color);
+            }
         }
 
         /// <summary>
@@ -111,9 +126,25 @@ namespace ArrowSwarm.Effects
             SpawnEffect(_firework1Prefab, center + new Vector3(0f, 1.5f, 0f));
         }
 
+        /// <summary>
+        /// Spawns the celebration confetti shower.
+        /// </summary>
+        public void SpawnConfetti(Vector3? position = null)
+        {
+            if (_confettiPrefab == null) return;
+            if (Data.DataManager.Instance != null && Data.DataManager.Instance.PlayerData != null && !Data.DataManager.Instance.PlayerData.vfxEnabled) return;
+
+            Vector3 pos = position ?? (UnityEngine.Camera.main != null
+                ? UnityEngine.Camera.main.transform.position + new Vector3(0f, 5f, 0f)
+                : new Vector3(0f, 5f, 0f));
+            pos.z = 0f;
+
+            SpawnEffect(_confettiPrefab, pos);
+        }
+
         private void HandleLevelWon()
         {
-            // Fireworks disabled per user preference
+            SpawnConfetti();
         }
 
         private ParticleSystem GetFromPool(ParticleSystem prefab)

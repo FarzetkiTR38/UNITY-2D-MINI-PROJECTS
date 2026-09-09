@@ -47,10 +47,22 @@ namespace ArrowSwarm.UI
         [Header("Canvas Group")]
         [SerializeField] private CanvasGroup _canvasGroup;
 
+        private HUDFeedbackEffects _feedbackEffects;
+
         private void Awake()
         {
             EnsurePanels();
             AutoWireSkillButtons();
+            EnsureFeedbackEffects();
+        }
+
+        private void EnsureFeedbackEffects()
+        {
+            if (_feedbackEffects == null)
+            {
+                _feedbackEffects = GetComponent<HUDFeedbackEffects>() ?? gameObject.AddComponent<HUDFeedbackEffects>();
+                _feedbackEffects.Initialize(_heartIcons, _arrowCountText);
+            }
         }
 
         private void EnsurePanels()
@@ -142,6 +154,7 @@ namespace ArrowSwarm.UI
         {
             EnsurePanels();
             AutoWireSkillButtons();
+            EnsureFeedbackEffects();
 
             if (_canvasGroup == null)
             {
@@ -150,6 +163,11 @@ namespace ArrowSwarm.UI
 
             _pauseButton?.onClick.AddListener(OnPauseClicked);
             _tipButton?.onClick.AddListener(OnTipClicked);
+
+            EnsureButtonFeedback(_pauseButton);
+            EnsureButtonFeedback(_tipButton);
+            EnsureButtonFeedback(_skill1TipButton);
+            EnsureButtonFeedback(_skill2FreezeButton);
 
             if (_skill1TipButton != null)
             {
@@ -302,8 +320,14 @@ namespace ArrowSwarm.UI
 
         private void UpdateLives(int lives)
         {
-            if (_heartIcons == null) return;
+            EnsureFeedbackEffects();
+            if (_feedbackEffects != null)
+            {
+                _feedbackEffects.UpdateLives(lives);
+                return;
+            }
 
+            if (_heartIcons == null) return;
             for (int i = 0; i < _heartIcons.Length; i++)
             {
                 if (_heartIcons[i] != null)
@@ -318,6 +342,8 @@ namespace ArrowSwarm.UI
             if (_arrowCountText != null)
             {
                 _arrowCountText.text = $"Arrows: {fired}/{total}";
+                EnsureFeedbackEffects();
+                _feedbackEffects?.PunchArrowCount();
             }
         }
 
@@ -397,6 +423,15 @@ namespace ArrowSwarm.UI
                         UpdateSkillBadges();
                     }
                 });
+            }
+        }
+
+        private static void EnsureButtonFeedback(Button btn)
+        {
+            if (btn == null) return;
+            if (btn.GetComponent<UIButtonFeedback>() == null)
+            {
+                btn.gameObject.AddComponent<UIButtonFeedback>();
             }
         }
 

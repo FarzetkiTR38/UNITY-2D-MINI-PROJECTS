@@ -53,15 +53,7 @@ namespace ArrowSwarm.Utils
 
             if (_instance != null && _instance != this)
             {
-                // If this GameObject hosts multiple managers (like CoreManagers), only destroy this duplicate component!
-                if (GetComponents<Component>().Length > 3)
-                {
-                    Destroy(this);
-                }
-                else
-                {
-                    Destroy(gameObject);
-                }
+                Destroy(gameObject);
                 return;
             }
 

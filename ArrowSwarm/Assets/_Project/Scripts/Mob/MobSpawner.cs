@@ -32,6 +32,9 @@ namespace ArrowSwarm.Mob
         private float _gapCloseMultiplier = 1.5f;
         private bool _isFrozen;
 
+        /// <summary>Fired whenever a mob is spawned at the start portal.</summary>
+        public static event System.Action OnMobSpawned;
+
         /// <summary>List of currently active mobs.</summary>
         public IReadOnlyList<Mob> ActiveMobs => _activeMobs;
 
@@ -232,6 +235,7 @@ namespace ArrowSwarm.Mob
             if (_isFrozen) mob.SetFrozen(true);
             _activeMobs.Add(mob);
             _spawnedCount++;
+            OnMobSpawned?.Invoke();
         }
 
         private void HandleFreezeStarted(float duration)

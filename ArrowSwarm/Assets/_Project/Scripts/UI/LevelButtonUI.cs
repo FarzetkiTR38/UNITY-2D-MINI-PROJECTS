@@ -53,6 +53,7 @@ namespace ArrowSwarm.UI
         public void AutoWire()
         {
             if (_button == null) _button = GetComponent<Button>();
+            if (GetComponent<UIButtonFeedback>() == null) gameObject.AddComponent<UIButtonFeedback>();
             if (_backgroundImage == null) _backgroundImage = GetComponent<Image>();
             if (_levelText == null) _levelText = GetComponentInChildren<TextMeshProUGUI>(true);
 

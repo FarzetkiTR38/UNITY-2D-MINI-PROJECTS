@@ -30,11 +30,7 @@ namespace ArrowSwarm.Audio
             LoadVolumeSettings();
         }
 
-        private void Start()
-        {
-            LoadVolumeSettings();
-            SyncBGMForCurrentScene();
-        }
+        private void Start() => SyncBGMForCurrentScene();
 
         private void OnEnable()
         {
@@ -67,28 +63,26 @@ namespace ArrowSwarm.Audio
         }
 
         /// <summary>Plays a sound effect on an available channel with pitch modulation.</summary>
-        public void PlaySFX(AudioClip clip, float pitch = 1f, float volumeScale = 1f)
+        public void PlaySFX(AudioClip clip, float pitch = 1f, float volumeScale = 1f, bool ignoreMute = false)
         {
             if (clip == null || _sfxSources == null || _sfxSources.Length == 0) return;
-            if (DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled) return;
+            if (!ignoreMute && DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled) return;
 
             var src = _sfxSources[_currentSfxIndex];
             _currentSfxIndex = (_currentSfxIndex + 1) % _sfxSources.Length;
             src.pitch = pitch;
-            src.PlayOneShot(clip, _sfxVolume * volumeScale);
+            src.PlayOneShot(clip, (ignoreMute && _sfxVolume <= 0.001f) ? volumeScale : (_sfxVolume * volumeScale));
         }
 
         /// <summary>Plays background music with looping enabled.</summary>
         public void PlayBGM(AudioClip clip)
         {
             if (clip == null || _bgmSource == null) return;
-            if (_bgmSource.clip == clip && _bgmSource.isPlaying)
-            {
-                _bgmSource.volume = _musicVolume;
-                return;
-            }
+            bool muted = DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled;
+            float targetVol = muted ? 0f : _musicVolume;
+            if (_bgmSource.clip == clip && _bgmSource.isPlaying) { _bgmSource.volume = targetVol; return; }
             _bgmSource.clip = clip;
-            _bgmSource.volume = _musicVolume;
+            _bgmSource.volume = targetVol;
             _bgmSource.Play();
         }
 
@@ -97,15 +91,16 @@ namespace ArrowSwarm.Audio
 
         public void SetVolumes(float music, float sfx)
         {
-            _musicVolume = Mathf.Clamp01(music);
-            _sfxVolume = Mathf.Clamp01(sfx);
-            if (_bgmSource != null) _bgmSource.volume = _musicVolume;
+            if (music > 0.05f) _musicVolume = Mathf.Clamp01(music);
+            if (sfx > 0.05f) _sfxVolume = Mathf.Clamp01(sfx);
+            bool muted = DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled;
+            if (_bgmSource != null) _bgmSource.volume = muted ? 0f : _musicVolume;
         }
 
         public void PlayButtonClick() => PlaySFX(_sfxLibrary?.ButtonClick, Random.Range(0.96f, 1.04f));
         public void PlayPopupOpen() => PlaySFX(_sfxLibrary?.PopupOpen);
         public void PlayPopupClose() => PlaySFX(_sfxLibrary?.PopupClose);
-        public void PlayToggle() => PlaySFX(_sfxLibrary?.ToggleSwitch);
+        public void PlayToggle() => PlaySFX(_sfxLibrary?.ToggleSwitch, 1f, 1f, true);
         public void PlayStarEarn(int idx) => PlaySFX(_sfxLibrary?.StarEarn, 1.0f + (idx * 0.15f));
         public void PlayArrowFire(bool rainbow) => PlaySFX(rainbow ? _sfxLibrary?.RainbowArrow : _sfxLibrary?.ArrowFire, Random.Range(0.95f, 1.05f));
         public void PlayArrowWrong() => PlaySFX(_sfxLibrary?.ArrowWrong);
@@ -120,12 +115,10 @@ namespace ArrowSwarm.Audio
 
         private void HandleStateChanged(GameState state)
         {
-            switch (state)
-            {
-                case GameState.Menu: PlayBGM(_sfxLibrary?.MenuBGM); break;
-                case GameState.Playing: PlayBGM(_sfxLibrary?.GameBGM); break;
-                case GameState.Paused: if (_bgmSource != null) _bgmSource.volume = _musicVolume * 0.3f; break;
-            }
+            bool muted = DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled;
+            if (state == GameState.Menu) PlayBGM(_sfxLibrary?.MenuBGM);
+            else if (state == GameState.Playing) PlayBGM(_sfxLibrary?.GameBGM);
+            else if (state == GameState.Paused && _bgmSource != null) _bgmSource.volume = muted ? 0f : (_musicVolume * 0.3f);
         }
 
         private void HandleSceneLoaded(UnityEngine.SceneManagement.Scene s, UnityEngine.SceneManagement.LoadSceneMode m) => SyncBGMForCurrentScene();
@@ -152,7 +145,12 @@ namespace ArrowSwarm.Audio
         private void HandleMobKilled(Mob mob) => PlayMobDie();
         private void HandleMobDamaged(Mob mob, int dmg) => PlayArrowHit();
         private void HandleFreezeStarted(float dur) => PlaySkillFreeze();
-        private void HandleDataChanged(PlayerData data) => SetVolumes(data.musicVolume, data.sfxVolume);
+        private void HandleDataChanged(PlayerData data)
+        {
+            if (data == null) return;
+            SetVolumes(data.musicVolume, data.sfxVolume);
+            if (data.sfxEnabled && _bgmSource != null && !_bgmSource.isPlaying) SyncBGMForCurrentScene();
+        }
 
         private void EnsureAudioListener()
         {
