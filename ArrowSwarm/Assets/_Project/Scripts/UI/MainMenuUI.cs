@@ -217,24 +217,35 @@ namespace ArrowSwarm.UI
             {
                 _playButton.onClick.RemoveAllListeners();
                 _playButton.onClick.AddListener(() => { AudioManager.Instance?.PlayButtonClick(); OnPlayClicked(); });
+                EnsureButtonFeedback(_playButton, enableBreath: true);
             }
             if (_leaderboardButton != null)
             {
                 _leaderboardButton.onClick.RemoveAllListeners();
                 _leaderboardButton.onClick.AddListener(() => { AudioManager.Instance?.PlayButtonClick(); OpenLeaderboard(); });
+                EnsureButtonFeedback(_leaderboardButton);
             }
             if (_levelsButton != null)
             {
                 _levelsButton.onClick.RemoveAllListeners();
                 _levelsButton.onClick.AddListener(() => { AudioManager.Instance?.PlayButtonClick(); OpenLevels(); });
+                EnsureButtonFeedback(_levelsButton);
             }
             if (_settingsButton != null)
             {
                 _settingsButton.onClick.RemoveAllListeners();
                 _settingsButton.onClick.AddListener(() => { AudioManager.Instance?.PlayButtonClick(); OpenSettings(); });
+                EnsureButtonFeedback(_settingsButton);
             }
 
             WireExitButtons();
+        }
+
+        private static void EnsureButtonFeedback(Button btn, bool enableBreath = false)
+        {
+            if (btn == null) return;
+            var feedback = btn.GetComponent<UIButtonFeedback>() ?? btn.gameObject.AddComponent<UIButtonFeedback>();
+            if (enableBreath) feedback.EnableIdleBreath = true;
         }
 
         private void WireExitButtons()
@@ -246,6 +257,7 @@ namespace ArrowSwarm.UI
                     if (btn == null) continue;
                     btn.onClick.RemoveListener(BackToMain);
                     btn.onClick.AddListener(BackToMain);
+                    EnsureButtonFeedback(btn);
                 }
             }
 
@@ -255,6 +267,7 @@ namespace ArrowSwarm.UI
                 if (panel == null) continue;
                 foreach (var btn in panel.GetComponentsInChildren<Button>(true))
                 {
+                    EnsureButtonFeedback(btn);
                     string btnName = btn.gameObject.name.ToLower();
                     if (btnName.Contains("back") || btnName.Contains("exit") || btnName.Contains("close") || btnName.Contains("return"))
                     {

@@ -50,6 +50,12 @@ namespace ArrowSwarm.Mob
             _currentHP = Mathf.Max(0, _currentHP - damage);
             OnDamageTaken?.Invoke(damage, _currentHP);
 
+            if (ArrowSwarm.Effects.FloatingTextManager.HasInstance)
+            {
+                Vector3 spawnPos = transform.position + new Vector3(0f, 0.45f, 0f);
+                ArrowSwarm.Effects.FloatingTextManager.Instance.ShowDamage(spawnPos, damage, _currentHP <= 0);
+            }
+
             LogDebug($"Took {damage} damage. HP: {_currentHP}/{_maxHP}");
 
             if (_currentHP <= 0)

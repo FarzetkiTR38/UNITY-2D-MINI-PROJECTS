@@ -1,21 +1,15 @@
 namespace ArrowSwarm.Path
 {
     using ArrowSwarm.Core;
+    using ArrowSwarm.Effects;
     using UnityEngine;
 
     /// <summary>
-    /// Draws the mob path visually using LineRenderer.
-    /// Instantiates portal sprites at SpawnPoint and FinishPoint.
-    /// Portals render above arrows (SortingOrder 15) so arrows visually
-    /// enter the portal, while mobs render above portals (SortingOrder 20).
+    /// Instantiates and manages visual portal sprites at SpawnPoint and FinishPoint.
+    /// Portals render above arrows (SortingOrder 15) with dynamic rotation & pulse effects.
     /// </summary>
     public class PathVisualizer : MonoBehaviour
     {
-        [Header("Path Line")]
-        [SerializeField] private float _lineWidth = 0.25f;
-        [SerializeField] private Material _pathMaterial;
-        [SerializeField] private int _sortingOrder = -6;
-
         [Header("Portal Sprites")]
         [Tooltip("Sprite for the spawn portal (where mobs appear).")]
         [SerializeField] private Sprite _spawnPortalSprite;
@@ -24,9 +18,8 @@ namespace ArrowSwarm.Path
         [SerializeField] private float _portalScale = 1.5f;
         [SerializeField] private int _portalSortingOrder = 15;
 
-        private LineRenderer _lineRenderer;
         private Transform _portalsContainer;
-        private static Material _sharedPathMaterial;
+        private static Sprite _cachedCircleSprite;
 
         private void OnEnable()
         {
@@ -46,91 +39,55 @@ namespace ArrowSwarm.Path
 
         /// <summary>
         /// Instantiates portal sprites at the spawn and finish positions.
-        /// (Path line is hidden as the 3-layer card background already defines the channel).
         /// </summary>
         public void DrawPath()
         {
             PathManager pm = PathManager.Instance;
-            if (pm == null) return;
-            if (pm.Waypoints == null) return;
-            if (pm.Waypoints.Count < 2) return;
+            if (pm == null || pm.Waypoints == null || pm.Waypoints.Count < 2) return;
 
-            // Hide or clear any legacy LineRenderer component
-            if (_lineRenderer == null)
-            {
-                _lineRenderer = GetComponent<LineRenderer>();
-            }
-            if (_lineRenderer != null)
-            {
-                _lineRenderer.positionCount = 0;
-                _lineRenderer.enabled = false;
-            }
-
-            // Clear any previous portal objects first
             ClearPortals();
 
-            // Create portal sprites at spawn and finish points
-            CreatePortal(pm.SpawnPoint, _spawnPortalSprite, "SpawnPortal",
-                new Color(0.30f, 0.69f, 0.31f, 1f));
+            bool isLoop = Vector2.Distance(pm.SpawnPoint, pm.FinishPoint) <= 0.1f;
 
-            // Only create separate finish portal if it doesn't overlap spawn point
-            if (Vector2.Distance(pm.SpawnPoint, pm.FinishPoint) > 0.1f)
+            if (isLoop)
             {
+                // Unified portal serving as both spawn and finish in loop tracks
+                CreatePortal(pm.SpawnPoint, _spawnPortalSprite, "Portal",
+                    new Color(0.30f, 0.69f, 0.31f, 1f), isSpawn: true, isFinish: true);
+            }
+            else
+            {
+                CreatePortal(pm.SpawnPoint, _spawnPortalSprite, "SpawnPortal",
+                    new Color(0.30f, 0.69f, 0.31f, 1f), isSpawn: true, isFinish: false);
                 CreatePortal(pm.FinishPoint, _finishPortalSprite, "FinishPortal",
-                    new Color(0.96f, 0.26f, 0.21f, 1f));
+                    new Color(0.96f, 0.26f, 0.21f, 1f), isSpawn: false, isFinish: true);
             }
         }
 
         /// <summary>
-        /// Clears all visual path elements (line and portals).
+        /// Clears all visual path elements and portals.
         /// </summary>
         public void ClearPath()
         {
-            if (_lineRenderer != null)
-            {
-                _lineRenderer.positionCount = 0;
-            }
             ClearPortals();
         }
 
         /// <summary>
-        /// Removes all portal GameObjects.
+        /// Removes all portal GameObjects cleanly.
         /// </summary>
         public void ClearPortals()
         {
-            if (_portalsContainer == null)
-            {
-                _portalsContainer = transform.Find("PathPortalsContainer");
-            }
+            EnsurePortalsContainer();
 
             if (_portalsContainer != null)
             {
                 for (int i = _portalsContainer.childCount - 1; i >= 0; i--)
                 {
-                    GameObject child = _portalsContainer.GetChild(i).gameObject;
-                    if (Application.isPlaying)
-                    {
-                        Destroy(child);
-                    }
-                    else
-                    {
-                        DestroyImmediate(child);
-                    }
+                    Transform child = _portalsContainer.GetChild(i);
+                    child.SetParent(null);
+                    if (Application.isPlaying) Destroy(child.gameObject);
+                    else DestroyImmediate(child.gameObject);
                 }
-            }
-
-            // Also check for legacy loose portal children on root transform
-            Transform oldSpawn = transform.Find("SpawnPortal");
-            if (oldSpawn != null)
-            {
-                if (Application.isPlaying) Destroy(oldSpawn.gameObject);
-                else DestroyImmediate(oldSpawn.gameObject);
-            }
-            Transform oldFinish = transform.Find("FinishPortal");
-            if (oldFinish != null)
-            {
-                if (Application.isPlaying) Destroy(oldFinish.gameObject);
-                else DestroyImmediate(oldFinish.gameObject);
             }
         }
 
@@ -150,10 +107,7 @@ namespace ArrowSwarm.Path
             }
         }
 
-        /// <summary>
-        /// Creates a portal sprite inside the dedicated portals container.
-        /// </summary>
-        private void CreatePortal(Vector2 position, Sprite portalSprite, string name, Color fallbackColor)
+        private void CreatePortal(Vector2 position, Sprite portalSprite, string name, Color fallbackColor, bool isSpawn, bool isFinish)
         {
             EnsurePortalsContainer();
 
@@ -183,13 +137,11 @@ namespace ArrowSwarm.Path
                 sr.sprite = CreateCircleSprite();
                 sr.color = fallbackColor;
             }
-        }
 
-        /// <summary>
-        /// Creates a simple circle sprite for fallback portal markers.
-        /// Cached after first creation.
-        /// </summary>
-        private static Sprite _cachedCircleSprite;
+            // Attach dynamic portal micro-animations (idle swirl, breathing pulse, spawn/finish burst)
+            var effect = portal.AddComponent<PortalVisualEffect>();
+            effect.Initialize(isSpawn, isFinish);
+        }
 
         private static Sprite CreateCircleSprite()
         {
@@ -205,21 +157,14 @@ namespace ArrowSwarm.Path
                 for (int y = 0; y < size; y++)
                 {
                     float dist = Vector2.Distance(new Vector2(x, y), new Vector2(center, center));
-                    float alpha = dist <= radius ? 1f : 0f;
-                    texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
+                    texture.SetPixel(x, y, new Color(1f, 1f, 1f, dist <= radius ? 1f : 0f));
                 }
             }
 
             texture.Apply();
             texture.filterMode = FilterMode.Bilinear;
 
-            _cachedCircleSprite = Sprite.Create(
-                texture,
-                new Rect(0, 0, size, size),
-                new Vector2(0.5f, 0.5f),
-                size
-            );
-
+            _cachedCircleSprite = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
             return _cachedCircleSprite;
         }
     }

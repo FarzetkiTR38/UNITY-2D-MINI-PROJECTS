@@ -217,12 +217,12 @@ namespace ArrowSwarm.UI
                 _canvasGroup.interactable = true;
                 _canvasGroup.blocksRaycasts = true;
                 if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
-                _fadeCoroutine = StartCoroutine(FadeTo(1f));
+                _fadeCoroutine = StartCoroutine(UIPopupAnimator.AnimateOpen(_dialogBox, _canvasGroup));
             }
         }
 
         /// <summary>
-        /// Hides the pause menu overlay.
+        /// Hides the pause menu overlay with elastic pop-out.
         /// </summary>
         /// <param name="instant">If true, snaps alpha immediately to 0.</param>
         public void Hide(bool instant = false)
@@ -242,11 +242,12 @@ namespace ArrowSwarm.UI
                     _canvasGroup.alpha = 0f;
                     _canvasGroup.blocksRaycasts = false;
                 }
+                if (_dialogBox != null) _dialogBox.localScale = Vector3.one;
                 gameObject.SetActive(false);
             }
             else
             {
-                _fadeCoroutine = StartCoroutine(FadeTo(0f));
+                _fadeCoroutine = StartCoroutine(UIPopupAnimator.AnimateClose(_dialogBox, _canvasGroup, onComplete: () => gameObject.SetActive(false)));
             }
         }
 

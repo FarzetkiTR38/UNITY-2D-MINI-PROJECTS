@@ -195,6 +195,11 @@ namespace ArrowSwarm.Arrow
             // Update visuals
             _visuals?.PlayFireEffect();
 
+            if (ArrowSwarm.Effects.ArrowEffects.HasInstance)
+            {
+                ArrowSwarm.Effects.ArrowEffects.Instance.PlayLaunchBurst(transform.position);
+            }
+
             OnArrowFiredEvent?.Invoke(this);
             GameManager.Instance.HandleArrowFired();
 

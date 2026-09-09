@@ -15,6 +15,7 @@ namespace ArrowSwarm.UI
     {
         [Header("UI References")]
         [SerializeField] private CanvasGroup _canvasGroup;
+        [SerializeField] private RectTransform _dialogBox;
         [SerializeField] private Button _closeButton;
         [SerializeField] private TextMeshProUGUI _titleText;
 
@@ -106,6 +107,12 @@ namespace ArrowSwarm.UI
         {
             if (_canvasGroup == null)
                 _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+
+            if (_dialogBox == null)
+            {
+                var b = transform.Find("BoardFrame") ?? transform.Find("DialogBox");
+                if (b != null) _dialogBox = b.GetComponent<RectTransform>();
+            }
 
             if (_closeButton == null)
             {
@@ -215,7 +222,7 @@ namespace ArrowSwarm.UI
             }
         }
 
-        /// <summary>Shows the settings panel with smooth fade in.</summary>
+        /// <summary>Shows the settings panel with elastic pop-in.</summary>
         public void Show()
         {
             gameObject.SetActive(true);
@@ -224,15 +231,14 @@ namespace ArrowSwarm.UI
 
             if (_canvasGroup != null)
             {
-                _canvasGroup.alpha = 0f;
                 _canvasGroup.interactable = true;
                 _canvasGroup.blocksRaycasts = true;
                 StopAllCoroutines();
-                StartCoroutine(FadeTo(1f));
+                StartCoroutine(UIPopupAnimator.AnimateOpen(_dialogBox, _canvasGroup));
             }
         }
 
-        /// <summary>Hides the settings panel with smooth fade out.</summary>
+        /// <summary>Hides the settings panel with elastic pop-out.</summary>
         public void Hide()
         {
             if (!gameObject.activeInHierarchy) return;
@@ -241,7 +247,7 @@ namespace ArrowSwarm.UI
             {
                 _canvasGroup.interactable = false;
                 StopAllCoroutines();
-                StartCoroutine(FadeTo(0f, true));
+                StartCoroutine(UIPopupAnimator.AnimateClose(_dialogBox, _canvasGroup, onComplete: () => gameObject.SetActive(false)));
             }
             else
             {

@@ -285,6 +285,11 @@ namespace ArrowSwarm.Arrow
                     // Trigger impact effects
                     _arrow.Visuals?.PlayBlockedEffect();
 
+                    if (_trajectory.Count > 0 && ArrowSwarm.Effects.ArrowEffects.HasInstance)
+                    {
+                        ArrowSwarm.Effects.ArrowEffects.Instance.PlayClashSparks(_trajectory[_trajectory.Count - 1]);
+                    }
+
                     if (_obstacleArrow != null && _obstacleArrow.Visuals != null)
                     {
                         Vector2 impactDir = (_trajectory[_trajectory.Count - 1] - _trajectory[_trajectory.Count - 2]).normalized;

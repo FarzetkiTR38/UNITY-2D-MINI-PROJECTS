@@ -95,7 +95,10 @@ namespace ArrowSwarm.Mob
         /// </summary>
         public void PlayDeathEffect()
         {
-            // Particle effects hook
+            if (ArrowSwarm.Effects.ParticleManager.HasInstance)
+            {
+                ArrowSwarm.Effects.ParticleManager.Instance.SpawnMobDeathEffect(transform.position);
+            }
         }
 
         /// <summary>
@@ -108,6 +111,7 @@ namespace ArrowSwarm.Mob
             if (_spriteRenderer != null)
             {
                 _spriteRenderer.transform.localPosition = _originalLocalPosition;
+                _spriteRenderer.transform.localScale = Vector3.one;
                 _spriteRenderer.color = Color.white;
             }
             if (_health != null)
@@ -123,15 +127,8 @@ namespace ArrowSwarm.Mob
         {
             if (_spriteRenderer == null || direction == Vector2.zero) return;
 
-            // Flip sprite based on horizontal direction
-            if (direction.x < -0.1f)
-            {
-                _spriteRenderer.flipX = true;
-            }
-            else if (direction.x > 0.1f)
-            {
-                _spriteRenderer.flipX = false;
-            }
+            if (direction.x < -0.1f) _spriteRenderer.flipX = true;
+            else if (direction.x > 0.1f) _spriteRenderer.flipX = false;
         }
 
         private void HandleDamageTaken(int damage, int remainingHP)
@@ -148,14 +145,17 @@ namespace ArrowSwarm.Mob
             _isShaking = true;
             float elapsed = 0f;
             WaitForEndOfFrame waitFrame = new WaitForEndOfFrame();
-            
             _spriteRenderer.color = Color.red;
 
             while (elapsed < _flashDuration)
             {
+                float p = elapsed / _flashDuration;
                 if (_spriteRenderer != null)
                 {
-                    _spriteRenderer.color = Color.Lerp(Color.red, Color.white, elapsed / _flashDuration);
+                    _spriteRenderer.color = Color.Lerp(Color.red, Color.white, p);
+                    float squashX = 1f + Mathf.Sin(p * Mathf.PI) * 0.22f;
+                    float squashY = 1f - Mathf.Sin(p * Mathf.PI) * 0.18f;
+                    _spriteRenderer.transform.localScale = new Vector3(squashX, squashY, 1f);
                 }
                 
                 elapsed += Time.deltaTime;
@@ -165,6 +165,7 @@ namespace ArrowSwarm.Mob
             if (_spriteRenderer != null)
             {
                 _spriteRenderer.color = Color.white;
+                _spriteRenderer.transform.localScale = Vector3.one;
             }
             _isShaking = false;
         }

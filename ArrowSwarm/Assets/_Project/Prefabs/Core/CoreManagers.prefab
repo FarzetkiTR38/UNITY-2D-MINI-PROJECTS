@@ -31,6 +31,8 @@ GameObject:
   - component: {fileID: 5067867423604473748}
   - component: {fileID: 4508617039702199181}
   - component: {fileID: 4849383493451137758}
+  - component: {fileID: 8891129683768234088}
+  - component: {fileID: 6436622014099591335}
   m_Layer: 0
   m_Name: CoreManagers
   m_TagString: Untagged
@@ -223,9 +225,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d64e657289baa04f93f7a34c1befc8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Path.PathVisualizer
-  _lineWidth: 0.25
-  _pathMaterial: {fileID: 0}
-  _sortingOrder: -6
   _spawnPortalSprite: {fileID: 2625913683774283652, guid: f2ee383b2981ecd4a9714e593ebd8904, type: 3}
   _finishPortalSprite: {fileID: 2625913683774283652, guid: f2ee383b2981ecd4a9714e593ebd8904, type: 3}
   _portalScale: 1.5
@@ -273,7 +272,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Effects.ParticleManager
   _arrowTrailPrefab: {fileID: 0}
-  _mobDeathPrefab: {fileID: 0}
+  _mobDeathPrefab: {fileID: 2341728563156866827, guid: 1d9361f77e059b946a54072640c3ecb3, type: 3}
+  _confettiPrefab: {fileID: 810798835592487215, guid: 4a1b4c72c8c45e748b7274ba8422be06, type: 3}
   _fireworkRainbowPrefab: {fileID: 7750853977139984562, guid: 6a7b26737f4a19a40b5f385c66dc96a9, type: 3}
   _firework1Prefab: {fileID: 3425026211840218638, guid: 40a08865e12e93d4a8954444c54c525a, type: 3}
   _fireworkBasicPrefab: {fileID: 7291838540196593265, guid: eebd4198cae929f4883e70594350f6af, type: 3}
@@ -433,6 +433,35 @@ MonoBehaviour:
   _sfxLibrary: {fileID: 11400000, guid: 6bce24da0f9e41e4abe7e51b7b21b327, type: 2}
   _bgmSource: {fileID: 0}
   _sfxSources: []
+--- !u!114 &8891129683768234088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036625359666785736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc8705279f1dc3a4094168c07b83e409, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Effects.FloatingTextManager
+  _damageColor: {r: 1, g: 0.72, b: 0.3, a: 1}
+  _killColor: {r: 0.91, g: 0.27, b: 0.38, a: 1}
+  _initialPoolSize: 12
+--- !u!114 &6436622014099591335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036625359666785736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5a2dc8dbfaacef4f926f46f1c1b8ffc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Effects.ArrowEffects
+  _clashSparkColor: {r: 1, g: 0.92, b: 0.45, a: 1}
+  _launchDustColor: {r: 0.9, g: 0.9, b: 1, a: 0.5}
 --- !u!1 &1532447086922548065
 GameObject:
   m_ObjectHideFlags: 0
