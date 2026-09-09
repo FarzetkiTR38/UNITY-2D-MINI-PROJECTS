@@ -61,16 +61,16 @@ namespace ArrowSwarm.Effects
         /// </summary>
         public void ShowDamage(Vector3 worldPos, int damage, bool isKill = false)
         {
+            // If lethal blow, user requested no "KILL!" text (pure visual destroy effect instead)
+            if (isKill) return;
+
             if (DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.vfxEnabled)
             {
                 return;
             }
 
             FloatingTextItem item = _pool.Count > 0 ? _pool.Dequeue() : CreatePoolItem();
-            string text = isKill ? "KILL!" : $"-{damage}";
-            Color color = isKill ? _killColor : _damageColor;
-
-            item.Spawn(text, worldPos, color, ReturnToPool);
+            item.Spawn($"-{damage}", worldPos, _damageColor, ReturnToPool);
         }
 
         private void ReturnToPool(FloatingTextItem item)

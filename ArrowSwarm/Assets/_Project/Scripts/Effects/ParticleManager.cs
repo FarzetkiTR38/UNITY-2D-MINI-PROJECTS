@@ -51,8 +51,11 @@ namespace ArrowSwarm.Effects
                 main.startColor = color.Value;
             }
 
-            ps.Play();
-            StartCoroutine(ReturnToPoolAfterDuration(ps, prefab, ps.main.duration + ps.main.startLifetime.constantMax));
+            ps.Play(true);
+            float lifetime = ps.main.startLifetime.mode == ParticleSystemCurveMode.TwoConstants
+                ? ps.main.startLifetime.constantMax
+                : ps.main.startLifetime.constant;
+            StartCoroutine(ReturnToPoolAfterDuration(ps, prefab, Mathf.Max(0.8f, ps.main.duration + lifetime)));
         }
 
         /// <summary>
