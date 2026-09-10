@@ -70,8 +70,10 @@ namespace ArrowSwarm.Audio
 
             var src = _sfxSources[_currentSfxIndex];
             _currentSfxIndex = (_currentSfxIndex + 1) % _sfxSources.Length;
+            if (src == null) return;
             src.pitch = pitch;
-            src.PlayOneShot(clip, (ignoreMute && _sfxVolume <= 0.001f) ? volumeScale : (_sfxVolume * volumeScale));
+            float vol = (_sfxVolume > 0.01f ? _sfxVolume : 1f) * volumeScale;
+            src.PlayOneShot(clip, vol);
         }
 
         /// <summary>Plays background music with looping enabled.</summary>
@@ -91,8 +93,8 @@ namespace ArrowSwarm.Audio
 
         public void SetVolumes(float music, float sfx)
         {
-            if (music > 0.05f) _musicVolume = Mathf.Clamp01(music);
-            if (sfx > 0.05f) _sfxVolume = Mathf.Clamp01(sfx);
+            _musicVolume = music > 0.01f ? Mathf.Clamp01(music) : 0.7f;
+            _sfxVolume = sfx > 0.01f ? Mathf.Clamp01(sfx) : 1f;
             bool muted = DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled;
             if (_bgmSource != null) _bgmSource.volume = muted ? 0f : _musicVolume;
         }
@@ -156,24 +158,20 @@ namespace ArrowSwarm.Audio
         {
             if (FindFirstObjectByType<AudioListener>(FindObjectsInactive.Exclude) != null) return;
             var cam = Camera.main ?? FindFirstObjectByType<Camera>();
-            if (cam != null) cam.gameObject.AddComponent<AudioListener>();
-            else gameObject.AddComponent<AudioListener>();
+            (cam != null ? cam.gameObject : gameObject).AddComponent<AudioListener>();
         }
 
         private void EnsureAudioSources()
         {
             EnsureAudioListener();
-            if (_bgmSource == null)
-            {
-                _bgmSource = gameObject.AddComponent<AudioSource>();
-                _bgmSource.loop = true;
-            }
+            if (_bgmSource == null) { _bgmSource = gameObject.AddComponent<AudioSource>(); _bgmSource.loop = true; _bgmSource.spatialBlend = 0f; }
             if (_sfxSources != null && _sfxSources.Length != 0) return;
             _sfxSources = new AudioSource[SfxChannelCount];
             for (int i = 0; i < SfxChannelCount; i++)
             {
                 _sfxSources[i] = gameObject.AddComponent<AudioSource>();
                 _sfxSources[i].playOnAwake = false;
+                _sfxSources[i].spatialBlend = 0f;
             }
         }
 
@@ -190,8 +188,9 @@ namespace ArrowSwarm.Audio
         {
             PlayerData data = DataManager.Instance?.PlayerData;
             if (data == null) return;
-            _musicVolume = data.musicVolume;
-            _sfxVolume = data.sfxVolume;
+            _musicVolume = data.musicVolume > 0.01f ? data.musicVolume : 0.7f;
+            _sfxVolume = data.sfxVolume > 0.01f ? data.sfxVolume : 1f;
+            if (data.sfxVolume <= 0.01f && data.sfxEnabled) data.sfxVolume = 1f;
         }
     }
 }

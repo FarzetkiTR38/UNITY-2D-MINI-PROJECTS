@@ -363,6 +363,7 @@ namespace ArrowSwarm.Data
         {
             if (_playerData == null) return;
             _playerData.sfxEnabled = enabled;
+            if (enabled && _playerData.sfxVolume <= 0.05f) _playerData.sfxVolume = 1.0f;
             NotifyAndSave();
         }
 
