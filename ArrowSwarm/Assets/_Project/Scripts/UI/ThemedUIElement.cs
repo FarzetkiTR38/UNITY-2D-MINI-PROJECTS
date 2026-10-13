@@ -2,141 +2,81 @@ namespace ArrowSwarm.UI
 {
     using ArrowSwarm.Core;
     using ArrowSwarm.Data;
-    using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
 
-    /// <summary>
-    /// UI theme role preset for automatic color and style mapping.
-    /// </summary>
-    public enum ThemeRole
-    {
-        BoardFrame,
-        CardRow,
-        SubCard,
-        ContrastText,
-        Background,
-        Custom
-    }
+    /// <summary>Semantic roles retained for existing scene and prefab bindings.</summary>
+    public enum ThemeRole { BoardFrame, CardRow, SubCard, ContrastText, Background, Custom }
 
-    /// <summary>
-    /// Binds an Image or TextMeshProUGUI to the ThemeManager.
-    /// Supports automatic color tinting by role and optional sprite swapping.
-    /// </summary>
+    /// <summary>Applies Inspector-authored theme variants without changing layout or interaction state.</summary>
     [DisallowMultipleComponent]
+    [RequireComponent(typeof(Graphic))]
     public class ThemedUIElement : MonoBehaviour
     {
-        [Header("Role & Palette")]
-        [SerializeField] private ThemeRole _role = ThemeRole.BoardFrame;
+        [Header("Inspector Palette")]
+        [SerializeField] private ThemeRole _role = ThemeRole.Custom;
         [SerializeField] private Color _customLightColor = Color.white;
         [SerializeField] private Color _customDarkColor = Color.white;
+        [Tooltip("Leave dynamic state colors to the owner (locked levels, toggles, effects).")]
+        [SerializeField] private bool _materialOnly;
+        [Tooltip("Keep fades, hidden graphics and earned-star opacity intact when switching themes.")]
+        [SerializeField] private bool _preserveAlpha = true;
 
-        [Header("Optional Dedicated Sprites")]
+        [Header("Optional Sprite Variants")]
         [SerializeField] private Sprite _lightSprite;
         [SerializeField] private Sprite _darkSprite;
 
+        [Header("Shared Dark Material")]
+        [Tooltip("Uses the existing sprite texture. The original light material is restored exactly.")]
+        [SerializeField] private Material _darkMaterial;
+
+        private Graphic _graphic;
         private Image _image;
-        private TextMeshProUGUI _text;
-        private bool _isInitialized;
-        private Color _originalLightColor;
-        private Sprite _originalLightSprite;
+        private Material _originalMaterial;
+        private Sprite _originalSprite;
+        private bool _initialized;
 
-        // Preset Colors
-        public static readonly Color BoardFrameLight = new Color(0.92f, 0.96f, 1.0f, 1.0f);   // #EBF5FF
-        public static readonly Color BoardFrameDark = new Color(0.06f, 0.08f, 0.14f, 0.98f);  // #101524 deep navy
-        public static readonly Color CardRowLight = new Color(0.61f, 0.81f, 1.0f, 1.0f);      // #9BCFFF
-        public static readonly Color CardRowDark = new Color(0.08f, 0.11f, 0.19f, 0.95f);    // #141C30
-        public static readonly Color SubCardLight = Color.white;
-        public static readonly Color SubCardDark = new Color(0.10f, 0.13f, 0.22f, 0.95f);     // #1A2138
-        public static readonly Color ContrastTextLight = new Color(0.10f, 0.29f, 0.75f, 1.0f);// #1A49C0
-        public static readonly Color ContrastTextDark = new Color(0.94f, 0.96f, 1.0f, 1.0f);  // #F0F5FF crisp white
-        public static readonly Color BackgroundLight = Color.white;
-        public static readonly Color BackgroundDark = new Color(0.16f, 0.18f, 0.28f, 1.0f);   // #292E47
-
+        /// <summary>Semantic role shown in the Inspector.</summary>
         public ThemeRole Role { get => _role; set => _role = value; }
 
-        private void Awake()
-        {
-            EnsureInitialized();
-        }
+        private void Awake() => EnsureInitialized();
 
         private void OnEnable()
         {
             EnsureInitialized();
-            ThemeManager.OnThemeChanged += HandleThemeChanged;
+            ThemeManager.OnThemeChanged += ApplyTheme;
             ApplyCurrentTheme();
         }
 
-        private void OnDisable()
-        {
-            ThemeManager.OnThemeChanged -= HandleThemeChanged;
-        }
+        private void OnDisable() => ThemeManager.OnThemeChanged -= ApplyTheme;
 
         private void EnsureInitialized()
         {
-            if (_isInitialized) return;
-            _image = GetComponent<Image>();
-            _text = GetComponent<TextMeshProUGUI>();
-
-            if (_image != null)
-            {
-                _originalLightColor = _image.color;
-                if (_lightSprite == null) _lightSprite = _image.sprite;
-                _originalLightSprite = _image.sprite;
-            }
-            else if (_text != null)
-            {
-                _originalLightColor = _text.color;
-            }
-            _isInitialized = true;
+            if (_initialized) return;
+            _graphic = GetComponent<Graphic>();
+            _image = _graphic as Image;
+            if (_graphic != null) _originalMaterial = _graphic.material;
+            if (_image != null) _originalSprite = _image.sprite;
+            _initialized = true;
         }
 
-        /// <summary>
-        /// Applies theme based on the current theme mode in DataManager or ThemeManager.
-        /// </summary>
-        public void ApplyCurrentTheme()
-        {
-            ThemeMode mode = DataManager.Instance?.PlayerData?.theme ?? ThemeMode.Light;
-            ApplyTheme(mode);
-        }
+        /// <summary>Refreshes newly enabled or pooled graphics from the saved theme.</summary>
+        public void ApplyCurrentTheme() => ApplyTheme(ThemeManager.CurrentTheme);
 
-        /// <summary>
-        /// Applies the specified theme mode (Light or Dark) to this graphic.
-        /// </summary>
+        /// <summary>Switches authored variants, preserving dynamic opacity and sprite state.</summary>
         public void ApplyTheme(ThemeMode mode)
         {
             EnsureInitialized();
-            bool isDark = mode == ThemeMode.Dark;
-
-            if (_image != null)
-            {
-                if (_darkSprite != null && _lightSprite != null)
-                {
-                    _image.sprite = isDark ? _darkSprite : _lightSprite;
-                }
-
-                _image.color = GetTargetColor(isDark);
-            }
-            else if (_text != null)
-            {
-                _text.color = GetTargetColor(isDark);
-            }
+            if (_graphic == null) return;
+            bool dark = mode == ThemeMode.Dark;
+            if (_darkMaterial != null)
+                _graphic.material = dark ? _darkMaterial : _originalMaterial;
+            if (_image != null && _darkSprite != null)
+                _image.sprite = dark ? _darkSprite : (_lightSprite != null ? _lightSprite : _originalSprite);
+            if (_materialOnly) return;
+            Color color = dark ? _customDarkColor : _customLightColor;
+            if (_preserveAlpha) color.a = _graphic.color.a;
+            _graphic.color = color;
         }
-
-        private Color GetTargetColor(bool isDark)
-        {
-            switch (_role)
-            {
-                case ThemeRole.BoardFrame: return isDark ? BoardFrameDark : (_isInitialized && _originalLightColor != Color.clear ? _originalLightColor : BoardFrameLight);
-                case ThemeRole.CardRow: return isDark ? CardRowDark : (_isInitialized && _originalLightColor != Color.clear ? _originalLightColor : CardRowLight);
-                case ThemeRole.SubCard: return isDark ? SubCardDark : (_isInitialized && _originalLightColor != Color.clear ? _originalLightColor : SubCardLight);
-                case ThemeRole.ContrastText: return isDark ? ContrastTextDark : (_isInitialized && _originalLightColor != Color.clear ? _originalLightColor : ContrastTextLight);
-                case ThemeRole.Background: return isDark ? BackgroundDark : BackgroundLight;
-                case ThemeRole.Custom: return isDark ? _customDarkColor : _customLightColor;
-                default: return isDark ? Color.gray : Color.white;
-            }
-        }
-
-        private void HandleThemeChanged(ThemeMode mode) => ApplyTheme(mode);
     }
 }

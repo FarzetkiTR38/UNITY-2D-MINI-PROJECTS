@@ -119,6 +119,18 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &63926318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8383197041333970468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!114 &76260408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,11 +143,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 0
-  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _role: 5
+  _customLightColor: {r: 0.96, g: 0.98, b: 1, a: 1}
   _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: de33a99d723a6004291ab6877db94aa6, type: 2}
 --- !u!1 &101677716 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2994926579946770226, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
@@ -160,9 +175,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
   _role: 5
   _customLightColor: {r: 1, g: 1, b: 1, a: 1}
-  _customDarkColor: {r: 0.35, g: 0.5, b: 0.72, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: 22f34ec272ccca44086908651b302247, type: 2}
 --- !u!114 &101677719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,9 +195,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
   _role: 5
   _customLightColor: {r: 1, g: 1, b: 1, a: 1}
-  _customDarkColor: {r: 0.22, g: 0.3, b: 0.46, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: 8ba6e4df035ccdc4b856c7e861782cb2, type: 2}
 --- !u!1 &377826458
 GameObject:
   m_ObjectHideFlags: 0
@@ -339,6 +360,18 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &1049795500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8383197041333970469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1001 &1379738014
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -416,6 +449,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df6c586d8b18453419b1e458d608fcb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Core.ThemeManager
+  _lightCameraColor: {r: 0.96, g: 0.94, b: 0.9, a: 1}
+  _darkCameraColor: {r: 0.055, g: 0.078, b: 0.13, a: 1}
 --- !u!1 &1649946240
 GameObject:
   m_ObjectHideFlags: 0
@@ -527,11 +562,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 3
-  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
-  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _role: 5
+  _customLightColor: {r: 0.16078432, g: 0.03529412, b: 0.87058824, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!114 &1911131841
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -544,11 +582,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 3
-  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
-  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _role: 5
+  _customLightColor: {r: 0.16078432, g: 0.03529412, b: 0.8705883, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!114 &1911131842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -561,11 +602,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 3
-  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
-  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _role: 5
+  _customLightColor: {r: 0, g: 0, b: 1, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!114 &1911131843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -578,11 +622,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 3
-  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
-  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _role: 5
+  _customLightColor: {r: 0, g: 0, b: 1, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!1 &1971708293 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5958427368859493543, guid: ef17199c7104270438000f86741b0a82, type: 3}
@@ -615,11 +662,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 3
-  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
-  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _role: 5
+  _customLightColor: {r: 0.06, g: 0.16, b: 0.42, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!114 &1971708298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -632,11 +682,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 3
-  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
-  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _role: 5
+  _customLightColor: {r: 0.06, g: 0.16, b: 0.42, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!114 &1971708299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -649,11 +702,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 3
-  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
-  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _role: 5
+  _customLightColor: {r: 0.071733706, g: 0.21877053, b: 0.49056602, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!114 &1971708300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -666,11 +722,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 3
-  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
-  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _role: 5
+  _customLightColor: {r: 0.071733706, g: 0.21877053, b: 0.49056602, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!114 &2103485219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -683,11 +742,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 0
-  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _role: 5
+  _customLightColor: {r: 0.96, g: 0.98, b: 1, a: 1}
   _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: de33a99d723a6004291ab6877db94aa6, type: 2}
 --- !u!1001 &2512326258302392869
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -696,9 +758,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 985833041056904499, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 985833041056904499, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
+      propertyPath: _materialOnly
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1566082551587452761, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3536668520221864654, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 3536668520221864654, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
+      propertyPath: _materialOnly
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4283063581439561784, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 4283063581439561784, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
+      propertyPath: _materialOnly
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5675372563859571592, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
       propertyPath: m_Pivot.x
@@ -807,6 +893,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6006842068535273099, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2512326258302392875}
+    - targetCorrespondingSourceObject: {fileID: 6006842068535273099, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2512326258302392880}
     - targetCorrespondingSourceObject: {fileID: 2994926579946770226, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
       insertIndex: -1
       addedObject: {fileID: 101677718}
@@ -816,9 +905,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4375158232460142835, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2512326258302392879}
+    - targetCorrespondingSourceObject: {fileID: 4375158232460142835, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2512326258302392882}
     - targetCorrespondingSourceObject: {fileID: 2633230390596190510, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2512326258302392878}
+    - targetCorrespondingSourceObject: {fileID: 2633230390596190510, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2512326258302392881}
     - targetCorrespondingSourceObject: {fileID: 1547127905113523413, guid: 39b91a82510fbc8449e234ce507c80df, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1911131843}
@@ -863,11 +958,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 1
+  _role: 5
   _customLightColor: {r: 1, g: 1, b: 1, a: 1}
   _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: 3655c6ce2ecd97b4290110adea47d0cb, type: 2}
 --- !u!114 &2512326258302392876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -880,11 +978,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 1
+  _role: 5
   _customLightColor: {r: 1, g: 1, b: 1, a: 1}
   _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: 465a0550515247a47bf1c9a55a5950a2, type: 2}
 --- !u!114 &2512326258302392877
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -897,11 +998,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 1
+  _role: 5
   _customLightColor: {r: 1, g: 1, b: 1, a: 1}
   _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: 465a0550515247a47bf1c9a55a5950a2, type: 2}
 --- !u!114 &2512326258302392878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -914,11 +1018,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 1
+  _role: 5
   _customLightColor: {r: 1, g: 1, b: 1, a: 1}
   _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: de33a99d723a6004291ab6877db94aa6, type: 2}
 --- !u!114 &2512326258302392879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -931,11 +1038,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 0
+  _role: 5
   _customLightColor: {r: 1, g: 1, b: 1, a: 1}
   _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: de33a99d723a6004291ab6877db94aa6, type: 2}
+--- !u!114 &2512326258302392880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2512326258302392870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
+--- !u!114 &2512326258302392881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2512326258302392873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
+--- !u!114 &2512326258302392882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2512326258302392874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1001 &8383197041333970467
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -944,6 +1090,38 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5813454745331042, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 5813454745331042, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _materialOnly
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1203380302295862644, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 1203380302295862644, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _materialOnly
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1288708581921417898, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 1288708581921417898, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _materialOnly
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1831767094855119524, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 1831767094855119524, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _materialOnly
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2876851152726682964, guid: ef17199c7104270438000f86741b0a82, type: 3}
       propertyPath: _curveScale
       value: 16
@@ -952,6 +1130,30 @@ PrefabInstance:
       propertyPath: _curveScale
       value: 11
       objectReference: {fileID: 0}
+    - target: {fileID: 3161438131702489241, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 3161438131702489241, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _materialOnly
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3349197524421246310, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 3349197524421246310, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _materialOnly
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3573520012206052728, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 3573520012206052728, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _materialOnly
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3823284269927406198, guid: ef17199c7104270438000f86741b0a82, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -2.61
@@ -959,6 +1161,14 @@ PrefabInstance:
     - target: {fileID: 3823284269927406198, guid: ef17199c7104270438000f86741b0a82, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 4.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 4012436789572094224, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 4012436789572094224, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _materialOnly
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4037754766132184577, guid: ef17199c7104270438000f86741b0a82, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -971,6 +1181,22 @@ PrefabInstance:
     - target: {fileID: 5312983850895065132, guid: ef17199c7104270438000f86741b0a82, type: 3}
       propertyPath: m_Name
       value: Canvas_Overlay
+      objectReference: {fileID: 0}
+    - target: {fileID: 5587882589438239160, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 5587882589438239160, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _materialOnly
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6186989562650025592, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 6186989562650025592, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _materialOnly
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6842650370836032758, guid: ef17199c7104270438000f86741b0a82, type: 3}
       propertyPath: m_Color.a
@@ -991,6 +1217,38 @@ PrefabInstance:
     - target: {fileID: 7305939130359756972, guid: ef17199c7104270438000f86741b0a82, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7541943870067612324, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 7541943870067612324, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _materialOnly
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7615658462328290389, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 7615658462328290389, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _materialOnly
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7792940470271852434, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 7792940470271852434, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _materialOnly
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7907052615011228892, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 7907052615011228892, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _materialOnly
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8262306751770109977, guid: ef17199c7104270438000f86741b0a82, type: 3}
       propertyPath: m_IsActive
@@ -1100,6 +1358,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 4.32
       objectReference: {fileID: 0}
+    - target: {fileID: 9217684818279903702, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _darkMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+    - target: {fileID: 9217684818279903702, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      propertyPath: _materialOnly
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1107,6 +1373,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5658709114057788546, guid: ef17199c7104270438000f86741b0a82, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8383197041333970477}
+    - targetCorrespondingSourceObject: {fileID: 5658709114057788546, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8383197041333970480}
     - targetCorrespondingSourceObject: {fileID: 1398066792325683419, guid: ef17199c7104270438000f86741b0a82, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8383197041333970476}
@@ -1122,18 +1391,30 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8107676829980213713, guid: ef17199c7104270438000f86741b0a82, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8383197041333970479}
+    - targetCorrespondingSourceObject: {fileID: 8107676829980213713, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8383197041333970482}
     - targetCorrespondingSourceObject: {fileID: 8748948273204984484, guid: ef17199c7104270438000f86741b0a82, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8383197041333970478}
+    - targetCorrespondingSourceObject: {fileID: 8748948273204984484, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8383197041333970481}
     - targetCorrespondingSourceObject: {fileID: 2383184346050040855, guid: ef17199c7104270438000f86741b0a82, type: 3}
       insertIndex: -1
       addedObject: {fileID: 76260408}
+    - targetCorrespondingSourceObject: {fileID: 2383184346050040855, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1049795500}
     - targetCorrespondingSourceObject: {fileID: 6174652736898498521, guid: ef17199c7104270438000f86741b0a82, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1971708298}
     - targetCorrespondingSourceObject: {fileID: 2308031166159715041, guid: ef17199c7104270438000f86741b0a82, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2103485219}
+    - targetCorrespondingSourceObject: {fileID: 2308031166159715041, guid: ef17199c7104270438000f86741b0a82, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 63926318}
     - targetCorrespondingSourceObject: {fileID: 5958427368859493543, guid: ef17199c7104270438000f86741b0a82, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1971708297}
@@ -1185,11 +1466,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 1
-  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _role: 5
+  _customLightColor: {r: 0.92, g: 0.95, b: 0.98, a: 1}
   _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: a30ef6455e0e2bd4f8bc5211af594dde, type: 2}
 --- !u!114 &8383197041333970476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1202,11 +1486,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 1
-  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _role: 5
+  _customLightColor: {r: 0.92, g: 0.95, b: 0.98, a: 1}
   _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: a30ef6455e0e2bd4f8bc5211af594dde, type: 2}
 --- !u!114 &8383197041333970477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1219,11 +1506,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 0
-  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _role: 5
+  _customLightColor: {r: 0.96, g: 0.98, b: 1, a: 1}
   _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: de33a99d723a6004291ab6877db94aa6, type: 2}
 --- !u!114 &8383197041333970478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1236,11 +1526,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 0
-  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _role: 5
+  _customLightColor: {r: 0.96, g: 0.98, b: 1, a: 1}
   _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: de33a99d723a6004291ab6877db94aa6, type: 2}
 --- !u!114 &8383197041333970479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1253,11 +1546,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
-  _role: 0
-  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _role: 5
+  _customLightColor: {r: 0.96, g: 0.98, b: 1, a: 1}
   _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
   _lightSprite: {fileID: 0}
   _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: de33a99d723a6004291ab6877db94aa6, type: 2}
+--- !u!114 &8383197041333970480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8383197041333970472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
+--- !u!114 &8383197041333970481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8383197041333970473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
+--- !u!114 &8383197041333970482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8383197041333970474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

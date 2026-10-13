@@ -50,6 +50,7 @@ namespace ArrowSwarm.UI
 
         private Coroutine _animateRoutine;
         private int _currentCountryIndex = 0;
+        private bool _showRequested;
 
         private static readonly string[] NAME_PREFIXES =
         {
@@ -101,7 +102,7 @@ namespace ArrowSwarm.UI
                 _canvasGroup.blocksRaycasts = false;
                 _canvasGroup.interactable = false;
             }
-            gameObject.SetActive(false);
+            if (!_showRequested) gameObject.SetActive(false);
         }
 
         private void OnDestroy()
@@ -192,6 +193,9 @@ namespace ArrowSwarm.UI
         /// </summary>
         public void Show()
         {
+            // An inactive scene modal runs Awake during this first activation.
+            // Do not let its initial hide cancel the requested opening.
+            _showRequested = true;
             gameObject.SetActive(true);
             AutoWireComponents();
             BindButtons();
@@ -223,12 +227,12 @@ namespace ArrowSwarm.UI
 
             if (gameObject.activeInHierarchy)
             {
-                _animateRoutine = StartCoroutine(UIPopupAnimator.AnimateOpen(_modalRect, _canvasGroup));
+                _animateRoutine = StartCoroutine(UIPopupAnimator.AnimateOpen(_modalRect, _canvasGroup, targetScale: _targetScale));
             }
             else
             {
                 if (_canvasGroup != null) _canvasGroup.alpha = 1f;
-                if (_modalRect != null) _modalRect.localScale = Vector3.one;
+                if (_modalRect != null) _modalRect.localScale = _targetScale;
             }
         }
 
