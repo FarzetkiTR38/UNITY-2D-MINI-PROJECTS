@@ -62,7 +62,10 @@ namespace ArrowSwarm.UI.Editor
             material.SetFloat("_SurfaceStrength",surface);
             material.SetFloat("_Background",background);
             material.SetFloat("_Artwork",artwork);
-            material.SetFloat("_EdgeFill", name == "DarkSurface" ? 0.82f : name == "DarkSelector" ? 0.9f : artwork > 0 && artwork < 3 ? 0f : 0.5f);
+            bool panelBevel = name == "DarkSurface" || name == "DarkRow" || name == "DarkField" || name == "DarkBar" || name == "DarkPause";
+            material.SetFloat("_EdgeFill", panelBevel ? 1f : name == "DarkSelector" ? 0.9f : artwork > 0 && artwork < 3 ? 0f : 0.5f);
+            material.SetFloat("_BevelStrength", panelBevel ? 1f : 0f);
+            material.SetVector("_BevelShade", new Vector4(0.72f,1.10f,0,0));
             material.SetFloat("_OpaqueInterior", surface > 0 && artwork != 4 && background == 0 ? 1 : 0);
             material.SetFloat("_SolidFill", surface > 0 && artwork < 2 && background == 0 && name != "DarkThumb" ? 1 : 0);
             material.SetFloat("_LiftInk",0);

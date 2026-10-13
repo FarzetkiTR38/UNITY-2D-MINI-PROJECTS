@@ -27,13 +27,18 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _PlateMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _AccentStrength: 0.94
     - _Artwork: 0
     - _Background: 0
+    - _BevelStrength: 1
     - _ColorMask: 15
-    - _EdgeFill: 0.5
+    - _EdgeFill: 1
     - _LiftInk: 0
     - _Metallic: 0
     - _OpaqueInterior: 1
@@ -45,8 +50,10 @@ Material:
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
     - _SurfaceStrength: 1
+    - _UsePlateMask: 0
     - _UseUIAlphaClip: 0
     m_Colors:
+    - _BevelShade: {r: 0.72, g: 1.1, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ContentBounds: {r: 0.187, g: 0.08, b: 0.984, a: 0.714}
     - _Corner: {r: 0.035, g: 0.18, b: 0, a: 0}

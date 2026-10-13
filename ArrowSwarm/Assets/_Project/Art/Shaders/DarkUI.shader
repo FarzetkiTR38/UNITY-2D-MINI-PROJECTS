@@ -13,6 +13,8 @@ Shader "ArrowSwarm/UI/DarkVariant"
         _Corner ("Interior Corner Radius XY", Vector) = (0.05,0.04,0,0)
         _Artwork ("Artwork: 0 Panel, 1 Medal, 2 Lock, 3 Selector, 4 Ornament, 5 Pause", Float) = 0
         _EdgeFill ("Darken Neutral Bevels", Range(0,1)) = 0.55
+        _BevelStrength ("Palette Colored Bevel Shading", Range(0,1)) = 0
+        _BevelShade ("Bevel Shadow / Highlight Brightness", Vector) = (0.72,1.10,0,0)
         _OpaqueInterior ("Solid Dark Interior", Range(0,1)) = 0
         _ContentBounds ("Medal Content Bounds XYZW", Vector) = (0.187,0.08,0.984,0.714)
         _SolidFill ("Clean Interior Gradient", Range(0,1)) = 0
@@ -55,8 +57,8 @@ Shader "ArrowSwarm/UI/DarkVariant"
             float4 _MainTex_ST, _ClipRect;
             float _UIMaskSoftnessX, _UIMaskSoftnessY;
             half _AccentStrength, _SurfaceStrength, _Background, _LiftInk;
-            half4 _SurfaceInset, _Corner, _ContentBounds;
-            half _Artwork, _EdgeFill, _OpaqueInterior, _SolidFill;
+            half4 _SurfaceInset, _Corner, _ContentBounds, _BevelShade;
+            half _Artwork, _EdgeFill, _OpaqueInterior, _SolidFill, _BevelStrength;
             v2f vert(appdata v)
             {
                 v2f o;
@@ -127,6 +129,10 @@ Shader "ArrowSwarm/UI/DarkVariant"
                 half coverage = lerp(_EdgeFill,1,region)*(1-protectedArtwork);
                 half3 dark = lerp(c.rgb * _AccentStrength, surface, pale * _SurfaceStrength * coverage);
                 half neutralFill=1-smoothstep(0.60,0.86,saturation);
+                // Rebuild pale bevels in the panel palette; never mix their original white into navy.
+                half bevelMask=(1-region)*(1-protectedArtwork)*neutralFill*_BevelStrength;
+                half3 bevel=surface*lerp(_BevelShade.x,_BevelShade.y,luminance);
+                dark=lerp(dark,bevel,bevelMask);
                 if (_SolidFill > 0.5) dark=lerp(dark,surface,region*(1-protectedArtwork)*neutralFill);
                 half ink = (1-smoothstep(0.08,0.24,luminance)) * smoothstep(0.25,0.60,saturation);
                 if (_LiftInk > 0.5)
