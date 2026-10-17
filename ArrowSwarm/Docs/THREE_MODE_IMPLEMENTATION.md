@@ -132,4 +132,6 @@ Approved scope: user instructions dated 17 October 2026. This is the single impl
 
 ## Continuation protocol
 
+The gameplay UI and menu localization described in the earlier P07/P11 history were revised on October 17–18. See `Docs/UI_REVISION.md` for the current GameScene-derived canvases, localized TMP selector, feedback, verification results and regeneration commands. The former generic puzzle HUD and cream backdrop are superseded.
+
 Read this document and Git log first. Inspect working tree before changes. Continue the first incomplete phase, preserve existing work, record evidence and commit finished phases individually. Never reset user data, overwrite dirty scenes or claim visual equivalence without viewing Unity renders. User authorized implementation and per-phase local commits; no further questions/approval required. Do not push or publish externally unless separately requested.
