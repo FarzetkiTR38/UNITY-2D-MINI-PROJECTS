@@ -1,51 +1,70 @@
 namespace ArrowSwarm.UI
 {
-    using ArrowSwarm.Puzzle;
+    using ArrowSwarm.Data;
+    using ArrowSwarm.Localization;
     using ArrowSwarm.Modes;
+    using ArrowSwarm.Puzzle;
     using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
 
-    /// <summary>Inspector-authored puzzle HUD and result overlay; freeze is deliberately absent.</summary>
+    /// <summary>Routes the original GameScene HUD to the isolated puzzle session.</summary>
     public sealed class PuzzleHUD : MonoBehaviour
     {
-        [SerializeField] private TMP_Text _title, _lives, _remaining, _message, _turns, _result, _resultStars;
-        [SerializeField] private CanvasGroup _overlay;
-        [SerializeField] private GameObject _rotationBar;
-        [SerializeField] private Button _pause, _retry, _menu, _hint, _resume, _next, _continue;
-        [SerializeField] private TMP_Text _nextLabel;
-        private void OnEnable() { PuzzleSession.OnChanged += Refresh; }
-        private void OnDisable() { PuzzleSession.OnChanged -= Refresh; }
+        [SerializeField] private TextMeshProUGUI _levelText, _arrowCountText, _hintCount, _turns, _instruction;
+        [SerializeField] private Image[] _heartIcons;
+        [SerializeField] private Button _pause, _hint;
+        [SerializeField] private GameObject _hintAdBadge, _rotationBar;
+        [SerializeField] private HUDFeedbackEffects _feedback;
+        private int _attempt = -1, _lives = -1, _remaining = -1;
+
+        private void Awake() { _feedback.Initialize(_heartIcons, _arrowCountText); }
+        private void OnEnable()
+        {
+            PuzzleSession.OnChanged += Refresh;
+            DataManager.OnPlayerDataChanged += DataChanged;
+            LocalizationManager.OnLanguageChanged += Refresh;
+        }
+        private void OnDisable()
+        {
+            PuzzleSession.OnChanged -= Refresh;
+            DataManager.OnPlayerDataChanged -= DataChanged;
+            LocalizationManager.OnLanguageChanged -= Refresh;
+        }
         private void Start()
         {
-            _pause.onClick.AddListener(()=>PuzzleSession.Active?.Pause(true));
-            _retry.onClick.AddListener(()=>PuzzleSession.Active?.Retry());
-            _menu.onClick.AddListener(()=>PuzzleSession.Active?.Menu());
-            _hint.onClick.AddListener(()=>PuzzleSession.Active?.Hint());
-            _resume.onClick.AddListener(()=>PuzzleSession.Active?.Pause(false));
-            _next.onClick.AddListener(()=>PuzzleSession.Active?.Next());
-            _continue.onClick.AddListener(()=>PuzzleSession.Active?.Continue());
+            _pause.onClick.AddListener(Pause);
+            _hint.onClick.AddListener(Hint);
             Refresh();
         }
+        private void Pause() => PuzzleSession.Active?.Pause(true);
+        private void Hint() => PuzzleSession.Active?.Hint();
+        private void DataChanged(PlayerData data) => Refresh();
+        private static string Text(string key, string fallback) => LocalizationManager.Instance.GetText(key, fallback);
         private void Refresh()
         {
-            var s=PuzzleSession.Active;
-            if (s==null || s.Level==null) return;
-            _title.text=$"{GameModeSelection.DisplayName(s.Mode)}  /  {s.LevelNumber}\n{s.Level.Title}";
-            _lives.text=new string('♥',Mathf.Max(0,s.Lives)) + new string('♡',Mathf.Max(0,3-s.Lives));
-            _remaining.text=$"{s.Remaining} ARROWS";
-            _message.text=s.Message;
-            _turns.text=$"{s.Turns} ROTATIONS   ·   SWIPE LEFT / RIGHT";
-            _rotationBar.SetActive(s.Mode==GameModeId.ColorShift);
-            bool show=s.Paused || s.Won || s.Lost;
-            _overlay.alpha=show?1:0; _overlay.interactable=_overlay.blocksRaycasts=show;
-            _result.text=s.Paused?"PAUSED":s.Won?"LEVEL CLEARED!":"TRY AGAIN";
-            _resultStars.text=s.Won?new string('★',Mathf.Clamp(s.Lives,0,3)):s.Lost?"Every puzzle has a way out.":"Take your time.";
-            _resume.gameObject.SetActive(s.Paused);
-            _next.gameObject.SetActive(s.Won);
-            _nextLabel.text=s.LastLevel?"LEVELS":"NEXT LEVEL";
-            _continue.gameObject.SetActive(s.Lost && !s.Preview);
-            _hint.interactable=s.Ready;
+            var s = PuzzleSession.Active;
+            if (s == null || s.Level == null) return;
+            bool reset = _attempt != s.AttemptVersion || s.Lives > _lives;
+            if (reset) _feedback.ResetFeedback(s.Lives);
+            if (reset || s.Lives != _lives) _feedback.UpdateLives(s.Lives);
+            if (!reset && s.Remaining < _remaining) _feedback.PunchArrowCount();
+            _attempt = s.AttemptVersion; _lives = s.Lives; _remaining = s.Remaining;
+            _levelText.text = Text("menu_level_short", "Lv.") + s.LevelNumber;
+            _arrowCountText.text = Text("hud_arrows", "Arrows") + ": " + (s.Level.Arrows.Count - s.Remaining) + "/" + s.Level.Arrows.Count;
+            int count = DataManager.Instance.PlayerData.tipCount;
+            _hintCount.text = count.ToString();
+            _hintCount.transform.parent.gameObject.SetActive(count > 0);
+            _hintAdBadge.SetActive(count <= 0 && !s.Preview);
+            _hint.interactable = s.Ready;
+            _pause.interactable = !s.Won && !s.Lost && !s.HintPromptOpen;
+            _rotationBar.SetActive(s.Mode == GameModeId.ColorShift);
+            _turns.text = string.Format(Text("puzzle_rotations", "Rotations: {0}"), s.Turns);
+            _instruction.text = Text("puzzle_swipe", "Swipe left / right to rotate");
+        }
+        private void OnDestroy()
+        {
+            _pause?.onClick.RemoveListener(Pause); _hint?.onClick.RemoveListener(Hint);
         }
     }
 }

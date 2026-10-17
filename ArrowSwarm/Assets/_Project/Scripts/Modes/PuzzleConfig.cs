@@ -1,6 +1,7 @@
 namespace ArrowSwarm.Modes
 {
     using UnityEngine;
+    using ArrowSwarm.Data;
 
     /// <summary>Inspector-owned puzzle tuning, shared by runtime and authoring preview.</summary>
     [CreateAssetMenu(menuName = "Arrow Swarm/Puzzle Config")]
@@ -17,6 +18,9 @@ namespace ArrowSwarm.Modes
         [SerializeField, Min(.01f)] private float _wallOffset = .9f;
         [SerializeField, Min(.01f)] private float _wallWidth = .3f;
         [SerializeField, Min(1)] private int _poolSize = 96;
+        [Header("Dark Theme Palette Presentation")]
+        [Tooltip("Minimum displayed linear luminance on dark boards. Logical level colors remain unchanged.")]
+        [SerializeField, Range(0f, 1f)] private float _minimumDarkLuminance = .55f;
         public int Lives => _lives;
         public float StrokeWidth => _strokeWidth;
         public float HeadSize => _headSize;
@@ -28,5 +32,19 @@ namespace ArrowSwarm.Modes
         public float WallOffset => _wallOffset;
         public float WallWidth => _wallWidth;
         public int PoolSize => _poolSize;
+
+        /// <summary>Returns the same readable display color for arrows and their matching frame walls.</summary>
+        public Color ThemeColor(Color source, ThemeMode theme)
+        {
+            if (theme != ThemeMode.Dark) return source;
+            Color linear = source.linear;
+            float luminance = .2126f * linear.r + .7152f * linear.g + .0722f * linear.b;
+            float minimum = Mathf.Clamp01(_minimumDarkLuminance);
+            if (luminance >= minimum) return source;
+            float lift = (minimum - luminance) / Mathf.Max(.0001f, 1f - luminance);
+            Color displayed = Color.Lerp(linear, Color.white, lift).gamma;
+            displayed.a = source.a;
+            return displayed;
+        }
     }
 }

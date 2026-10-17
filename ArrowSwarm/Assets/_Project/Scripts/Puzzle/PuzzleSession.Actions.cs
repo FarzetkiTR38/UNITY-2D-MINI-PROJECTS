@@ -31,6 +31,7 @@ namespace ArrowSwarm.Puzzle
             _busy = true;
             for (int i = 0; i < _views.Length; i++) if (!_removed[i]) _views[i].Highlight(false);
             StartCoroutine(Shot(index));
+            Notify();
         }
 
         private IEnumerator Shot(int index)
@@ -76,7 +77,7 @@ namespace ArrowSwarm.Puzzle
             {
                 // Allow every remaining legal shot before presenting the exhausted-frame failure.
                 for (int i = 0; i < _removed.Length; i++) if (PuzzleRules.CanRemove(Level, _removed, i, Orientation)) return;
-                Message = "No rotations left and no matching exit remains."; End(false);
+                SetMessage("puzzle_stuck"); End(false);
             }
         }
         private void End(bool won)
@@ -86,7 +87,7 @@ namespace ArrowSwarm.Puzzle
             {
                 AudioManager.Instance?.PlayLevelWin();
                 if (!_awarded && !Preview) { _awarded = true; DataManager.Instance.CompletePuzzleLevel(_mode, LevelNumber, Lives, _catalog.Count); }
-                Message = LastLevel ? "Campaign complete! More levels coming soon." : "Shape cleared!";
+                SetMessage(LastLevel ? "puzzle_campaign_complete" : "puzzle_cleared");
             }
             else AudioManager.Instance?.PlayLevelLose();
             Notify();
@@ -97,12 +98,12 @@ namespace ArrowSwarm.Puzzle
         {
             if (!Ready) return;
             var solution = PuzzleSolver.Solve(Level, _removed, Orientation, Turns);
-            if (!solution.Solvable || solution.Steps.Count == 0) { Message = "Restart to restore the rotation budget."; Notify(); return; }
+            if (!solution.Solvable || solution.Steps.Count == 0) { SetMessage("puzzle_restart_hint"); Notify(); return; }
             if (!Preview && DataManager.Instance.PlayerData.tipCount <= 0)
-            { RewardHint(); return; }
+            { HintPromptOpen = true; Notify(); return; }
             if (!Preview) DataManager.Instance.ModifyTipCount(-1);
             int action = solution.Steps[0];
-            Message = action < 0 ? "Swipe the bar once to match the next exit." : "Try the highlighted arrow.";
+            SetMessage(action < 0 ? "puzzle_hint_rotate" : "puzzle_hint_arrow");
             if (action >= 0) _views[action].Highlight(true);
             AudioManager.Instance?.PlaySkillTips(); Notify();
         }
@@ -112,15 +113,25 @@ namespace ArrowSwarm.Puzzle
             AdManager.Instance.ShowRewardedAd(success =>
             {
                 if (this == null || version != _version) return;
-                if (success) { DataManager.Instance.ModifyTipCount(1); Message = "Hint added. Tap Hint to use it."; Notify(); }
+                if (success) { DataManager.Instance.ModifyTipCount(1); SetMessage("puzzle_hint_added"); Notify(); }
             });
+        }
+
+        /// <summary>Closes the authored hint popup without spending a hint.</summary>
+        public void CloseHintPrompt() { HintPromptOpen = false; Notify(); }
+
+        /// <summary>Requests the existing rewarded ad only after pressing the popup's watch button.</summary>
+        public void WatchHintAd()
+        {
+            if (!HintPromptOpen) return;
+            HintPromptOpen = false; Notify(); RewardHint();
         }
 
         /// <summary>One rewarded continuation restores lives and one turn only when stuck.</summary>
         public void Continue()
         {
-            if (!Lost || _continued || Preview) return;
-            int version = _version; _continued = true;
+            if (!CanContinue) return;
+            int version = _version; _continued = true; Notify();
             AdManager.Instance.ShowRewardedAd(success =>
             {
                 if (this == null || version != _version) return;
@@ -128,7 +139,7 @@ namespace ArrowSwarm.Puzzle
                 Lives = _config.Lives; Lost = false;
                 if (_mode == GameModeId.ColorShift && Turns == 0)
                     Turns = Mathf.Max(1,PuzzleSolver.Solve(Level,_removed,Orientation,int.MaxValue).RequiredTurns);
-                Message = "One more chance!"; Notify();
+                SetMessage("puzzle_continue"); Notify();
             });
         }
     }
