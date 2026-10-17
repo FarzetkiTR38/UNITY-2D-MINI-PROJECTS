@@ -105,6 +105,7 @@ namespace ArrowSwarm.Core
             var mapCtrl = UnityEngine.Object.FindFirstObjectByType<MapSceneController>();
             if (mapCtrl != null)
             {
+                if (mapCtrl.PreviewMode != ArrowSwarm.Modes.GameModeId.Defense) { mapCtrl.StartPuzzlePreview(); return; }
                 LoadLevel(mapCtrl.DefaultLevel);
                 return;
             }

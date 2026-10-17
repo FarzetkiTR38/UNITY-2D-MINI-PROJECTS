@@ -1285,6 +1285,7 @@ GameObject:
   - component: {fileID: 6601658024444132711}
   - component: {fileID: 4425135524465277851}
   - component: {fileID: 8957811256624864981}
+  - component: {fileID: 5439086249417934037}
   m_Layer: 0
   m_Name: LabelText
   m_TagString: Untagged
@@ -1426,6 +1427,26 @@ MonoBehaviour:
   _localizationKey: settings_vibration
   _prefix: 
   _suffix: 
+--- !u!114 &5439086249417934037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1234715820579130893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.071733706, g: 0.21877053, b: 0.49056602, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!1 &1235580709001494347
 GameObject:
   m_ObjectHideFlags: 0
@@ -1665,6 +1686,8 @@ GameObject:
   - component: {fileID: 3575669720228329301}
   - component: {fileID: 5792820848811925577}
   - component: {fileID: 511237150509987347}
+  - component: {fileID: 5754378754731298280}
+  - component: {fileID: 7699420352322041478}
   m_Layer: 0
   m_Name: SettingRow_Sound
   m_TagString: Untagged
@@ -1732,6 +1755,38 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5754378754731298280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1398066792325683419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
+--- !u!114 &7699420352322041478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1398066792325683419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.92, g: 0.95, b: 0.98, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: a30ef6455e0e2bd4f8bc5211af594dde, type: 2}
 --- !u!1 &1469071661368783147
 GameObject:
   m_ObjectHideFlags: 0
@@ -1743,6 +1798,8 @@ GameObject:
   - component: {fileID: 4906544909678162768}
   - component: {fileID: 7077347852202859739}
   - component: {fileID: 3668166828342707188}
+  - component: {fileID: 8670471095371254798}
+  - component: {fileID: 4570891294660565962}
   m_Layer: 0
   m_Name: BottomBadge
   m_TagString: Untagged
@@ -1807,6 +1864,38 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8670471095371254798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1469071661368783147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.9, g: 0.95, b: 1, a: 0.95}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 0.95}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: ba0ce9a79bb3a784ca90d5cc37783c69, type: 2}
+--- !u!114 &4570891294660565962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1469071661368783147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &1505288746492614024
 GameObject:
   m_ObjectHideFlags: 0
@@ -2258,6 +2347,8 @@ GameObject:
   - component: {fileID: 8407401219058582930}
   - component: {fileID: 4212560695723956632}
   - component: {fileID: 3162083667170900588}
+  - component: {fileID: 3161438131702489241}
+  - component: {fileID: 4890775248838281115}
   m_Layer: 0
   m_Name: MainMenuBtn
   m_TagString: Untagged
@@ -2368,6 +2459,38 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3161438131702489241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1964371651251024552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 1
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+--- !u!114 &4890775248838281115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1964371651251024552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &2127103363197726928
 GameObject:
   m_ObjectHideFlags: 0
@@ -2381,6 +2504,8 @@ GameObject:
   - component: {fileID: 2295468277054995276}
   - component: {fileID: 2228976852253380574}
   - component: {fileID: 8439102774245941942}
+  - component: {fileID: 7541943870067612324}
+  - component: {fileID: 8511705068727704207}
   m_Layer: 0
   m_Name: SoundToggle
   m_TagString: Untagged
@@ -2517,6 +2642,38 @@ MonoBehaviour:
   _onText: ON
   _offText: OFF
   _animSpeed: 1000
+--- !u!114 &7541943870067612324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2127103363197726928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 1
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+--- !u!114 &8511705068727704207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2127103363197726928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &2192876690941572609
 GameObject:
   m_ObjectHideFlags: 0
@@ -3049,6 +3206,8 @@ GameObject:
   - component: {fileID: 575358430783091690}
   - component: {fileID: 8959458884991450482}
   - component: {fileID: 2058471492458421745}
+  - component: {fileID: 1884073305714975284}
+  - component: {fileID: 9101256762191571434}
   m_Layer: 0
   m_Name: SettingRow_Vibration
   m_TagString: Untagged
@@ -3116,6 +3275,38 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1884073305714975284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2315750543659828860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
+--- !u!114 &9101256762191571434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2315750543659828860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.92, g: 0.95, b: 0.98, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: a30ef6455e0e2bd4f8bc5211af594dde, type: 2}
 --- !u!1 &2383184346050040855
 GameObject:
   m_ObjectHideFlags: 0
@@ -3435,6 +3626,8 @@ GameObject:
   - component: {fileID: 3057995814915564079}
   - component: {fileID: 4499284952464264635}
   - component: {fileID: 6721695408339746496}
+  - component: {fileID: 4124886536673897357}
+  - component: {fileID: 6988221078657353379}
   m_Layer: 0
   m_Name: BottomBadge
   m_TagString: Untagged
@@ -3499,6 +3692,38 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4124886536673897357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2575961947873883595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: de9be604db241e749928b30fa6236266, type: 2}
+--- !u!114 &6988221078657353379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2575961947873883595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &2801494712727132546
 GameObject:
   m_ObjectHideFlags: 0
@@ -3776,6 +4001,8 @@ GameObject:
   - component: {fileID: 5044352765501285903}
   - component: {fileID: 4968048949309948751}
   - component: {fileID: 6715356143976660898}
+  - component: {fileID: 7615658462328290389}
+  - component: {fileID: 424387830498079502}
   m_Layer: 0
   m_Name: LevelsBtn
   m_TagString: Untagged
@@ -3886,6 +4113,38 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7615658462328290389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3101474975198375516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 1
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+--- !u!114 &424387830498079502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3101474975198375516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &3330397446373526700
 GameObject:
   m_ObjectHideFlags: 0
@@ -4211,6 +4470,8 @@ GameObject:
   - component: {fileID: 3403517426564446059}
   - component: {fileID: 6720528613057960275}
   - component: {fileID: 6785463346934622391}
+  - component: {fileID: 3573520012206052728}
+  - component: {fileID: 5307357636465198758}
   m_Layer: 0
   m_Name: WatchAdBtn
   m_TagString: Untagged
@@ -4321,6 +4582,38 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3573520012206052728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3524444409358519206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 1
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+--- !u!114 &5307357636465198758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3524444409358519206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &3601176207991014126
 GameObject:
   m_ObjectHideFlags: 0
@@ -4333,6 +4626,7 @@ GameObject:
   - component: {fileID: 2475668680804291291}
   - component: {fileID: 3186297568480016277}
   - component: {fileID: -2565287505190380797}
+  - component: {fileID: 7882881666520193839}
   m_Layer: 0
   m_Name: TitleText
   m_TagString: Untagged
@@ -4474,6 +4768,26 @@ MonoBehaviour:
   _localizationKey: pause_title
   _prefix: 
   _suffix: 
+--- !u!114 &7882881666520193839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3601176207991014126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.08, g: 0.42, b: 0.82, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!1 &4056023304750823994
 GameObject:
   m_ObjectHideFlags: 0
@@ -4636,6 +4950,8 @@ GameObject:
   - component: {fileID: 2356629683799113674}
   - component: {fileID: 2054023591143236288}
   - component: {fileID: 5592169890541573237}
+  - component: {fileID: 4012436789572094224}
+  - component: {fileID: 4522931420784973481}
   m_Layer: 0
   m_Name: WatchAdBtn
   m_TagString: Untagged
@@ -4746,6 +5062,38 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4012436789572094224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4185113371016576230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 1
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+--- !u!114 &4522931420784973481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4185113371016576230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &4186375556003890121
 GameObject:
   m_ObjectHideFlags: 0
@@ -4758,6 +5106,8 @@ GameObject:
   - component: {fileID: 645694352256786059}
   - component: {fileID: 325742016781157897}
   - component: {fileID: 5280203401165265697}
+  - component: {fileID: 1203380302295862644}
+  - component: {fileID: 3524351529095263736}
   m_Layer: 0
   m_Name: RetryBtn
   m_TagString: Untagged
@@ -4868,6 +5218,38 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1203380302295862644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4186375556003890121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 1
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+--- !u!114 &3524351529095263736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4186375556003890121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &4368676078362487947
 GameObject:
   m_ObjectHideFlags: 0
@@ -4917,6 +5299,7 @@ GameObject:
   - component: {fileID: 2469741271072030531}
   - component: {fileID: 8106580162805767502}
   - component: {fileID: 3122813479963341231}
+  - component: {fileID: 4365536280881245117}
   m_Layer: 0
   m_Name: TitleText
   m_TagString: Untagged
@@ -5060,6 +5443,26 @@ MonoBehaviour:
   _localizationKey: win_title
   _prefix: 
   _suffix: 
+--- !u!114 &4365536280881245117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4370692557803598998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.08, g: 0.42, b: 0.82, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!1 &4453809564250606841
 GameObject:
   m_ObjectHideFlags: 0
@@ -5622,6 +6025,8 @@ GameObject:
   - component: {fileID: 1094817360617664573}
   - component: {fileID: 7153764428848581787}
   - component: {fileID: 540110505334458734}
+  - component: {fileID: 6186989562650025592}
+  - component: {fileID: 3709179349318851275}
   m_Layer: 0
   m_Name: ContinueBtn
   m_TagString: Untagged
@@ -5732,6 +6137,38 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6186989562650025592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4988857924761601882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 1
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+--- !u!114 &3709179349318851275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4988857924761601882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &4996098991063062751
 GameObject:
   m_ObjectHideFlags: 0
@@ -6513,6 +6950,8 @@ GameObject:
   - component: {fileID: 9102394896262866556}
   - component: {fileID: 6692373917553548297}
   - component: {fileID: 2665229241426946426}
+  - component: {fileID: 5813454745331042}
+  - component: {fileID: 4685031004612709757}
   m_Layer: 0
   m_Name: MainMenuBtn
   m_TagString: Untagged
@@ -6623,6 +7062,38 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5813454745331042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5471509631279224960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 1
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+--- !u!114 &4685031004612709757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5471509631279224960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &5563610305552237917
 GameObject:
   m_ObjectHideFlags: 0
@@ -6902,6 +7373,7 @@ GameObject:
   - component: {fileID: 1398974200863151105}
   - component: {fileID: 5351388566462168991}
   - component: {fileID: 199111858317435896}
+  - component: {fileID: 3840075346744879792}
   m_Layer: 0
   m_Name: LabelText
   m_TagString: Untagged
@@ -7043,6 +7515,26 @@ MonoBehaviour:
   _localizationKey: settings_sfx
   _prefix: 
   _suffix: 
+--- !u!114 &3840075346744879792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5806488773060081325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.071733706, g: 0.21877053, b: 0.49056602, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!1 &5958427368859493543
 GameObject:
   m_ObjectHideFlags: 0
@@ -7055,6 +7547,7 @@ GameObject:
   - component: {fileID: 8609592999507151267}
   - component: {fileID: 4773526339163606871}
   - component: {fileID: 2837197162581649360}
+  - component: {fileID: 8768926619557941603}
   m_Layer: 0
   m_Name: MessageText
   m_TagString: Untagged
@@ -7196,6 +7689,26 @@ MonoBehaviour:
   _localizationKey: freeze_popup_subtitle
   _prefix: 
   _suffix: 
+--- !u!114 &8768926619557941603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5958427368859493543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.06, g: 0.16, b: 0.42, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!1 &6111185715579043717
 GameObject:
   m_ObjectHideFlags: 0
@@ -7358,6 +7871,7 @@ GameObject:
   - component: {fileID: 5674472865030389176}
   - component: {fileID: 8082048913020774304}
   - component: {fileID: 5032809776389886893}
+  - component: {fileID: 4270571990359622886}
   m_Layer: 0
   m_Name: MessageText
   m_TagString: Untagged
@@ -7499,6 +8013,26 @@ MonoBehaviour:
   _localizationKey: tip_popup_subtitle
   _prefix: 
   _suffix: 
+--- !u!114 &4270571990359622886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6174652736898498521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.06, g: 0.16, b: 0.42, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!1 &6373968324618156354
 GameObject:
   m_ObjectHideFlags: 0
@@ -7510,6 +8044,8 @@ GameObject:
   - component: {fileID: 1112156001609089486}
   - component: {fileID: 5558086564512076871}
   - component: {fileID: 4241246164433349774}
+  - component: {fileID: 3567480243897409148}
+  - component: {fileID: 5661064238592122540}
   m_Layer: 0
   m_Name: BottomBadge
   m_TagString: Untagged
@@ -7574,6 +8110,38 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3567480243897409148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6373968324618156354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: de9be604db241e749928b30fa6236266, type: 2}
+--- !u!114 &5661064238592122540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6373968324618156354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &6381992637235702220
 GameObject:
   m_ObjectHideFlags: 0
@@ -7666,7 +8234,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.LevelCompleteUI
   _canvasGroup: {fileID: 3468175796255440163}
   _dialogBox: {fileID: 5898032866440027848}
-  _fadeSpeed: 3
   _titleText: {fileID: 8106580162805767502}
   _levelText: {fileID: 0}
   _stars:
@@ -7676,8 +8243,6 @@ MonoBehaviour:
   _nextLevelButton: {fileID: 942808646145836603}
   _mainMenuButton: {fileID: 8417040234411153041}
   _levelsButton: {fileID: 8197195046990053527}
-  _boardFrameImage: {fileID: 932983468508908045}
-  _bottomBadgeImage: {fileID: 24698213747882524}
 --- !u!225 &3468175796255440163
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -7839,6 +8404,8 @@ GameObject:
   - component: {fileID: 2171524428414621982}
   - component: {fileID: 512412593609669221}
   - component: {fileID: 8417040234411153041}
+  - component: {fileID: 3349197524421246310}
+  - component: {fileID: 5818473902227585977}
   m_Layer: 0
   m_Name: MainMenuBtn
   m_TagString: Untagged
@@ -7949,6 +8516,38 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3349197524421246310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6779454567682437019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 1
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+--- !u!114 &5818473902227585977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6779454567682437019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &6826495181681976178
 GameObject:
   m_ObjectHideFlags: 0
@@ -7961,6 +8560,8 @@ GameObject:
   - component: {fileID: 4535010459386378528}
   - component: {fileID: 3704926953184192663}
   - component: {fileID: 8197195046990053527}
+  - component: {fileID: 1288708581921417898}
+  - component: {fileID: 7487804806246011142}
   m_Layer: 0
   m_Name: LevelsBtn
   m_TagString: Untagged
@@ -8071,6 +8672,38 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1288708581921417898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6826495181681976178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 1
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+--- !u!114 &7487804806246011142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6826495181681976178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &6855554421955559463
 GameObject:
   m_ObjectHideFlags: 0
@@ -8159,6 +8792,8 @@ GameObject:
   - component: {fileID: 7347140324423680881}
   - component: {fileID: 756624612869831832}
   - component: {fileID: 5261340977651607716}
+  - component: {fileID: 7907052615011228892}
+  - component: {fileID: 3894007607890731518}
   m_Layer: 0
   m_Name: VibrationToggle
   m_TagString: Untagged
@@ -8295,6 +8930,38 @@ MonoBehaviour:
   _onText: ON
   _offText: OFF
   _animSpeed: 1000
+--- !u!114 &7907052615011228892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6915620301615338715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 1
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+--- !u!114 &3894007607890731518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6915620301615338715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &6922302886151000368
 GameObject:
   m_ObjectHideFlags: 0
@@ -8306,6 +8973,7 @@ GameObject:
   - component: {fileID: 4766015705445567903}
   - component: {fileID: 4205567546337891212}
   - component: {fileID: 6842650370836032758}
+  - component: {fileID: 5272582817156323892}
   m_Layer: 0
   m_Name: ShineFX
   m_TagString: Untagged
@@ -8370,6 +9038,26 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5272582817156323892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6922302886151000368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 0.96, b: 0.82, a: 0.35}
+  _customDarkColor: {r: 0.20784314, g: 0.29411766, b: 0.42352942, a: 0.35}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!1 &7021264538880288694
 GameObject:
   m_ObjectHideFlags: 0
@@ -8656,6 +9344,8 @@ GameObject:
   - component: {fileID: 7014055877227132019}
   - component: {fileID: 457650987736324074}
   - component: {fileID: 6725241521542988541}
+  - component: {fileID: 9217684818279903702}
+  - component: {fileID: 2343456190600518544}
   m_Layer: 0
   m_Name: CloseBtn
   m_TagString: Untagged
@@ -8765,6 +9455,38 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &9217684818279903702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7218925776948224217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 1
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+--- !u!114 &2343456190600518544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7218925776948224217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &7248492748913776265
 GameObject:
   m_ObjectHideFlags: 0
@@ -8907,10 +9629,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.FreezePopupUI
   _canvasGroup: {fileID: 341271357174298724}
+  _dialogBox: {fileID: 0}
   _messageText: {fileID: 4773526339163606871}
   _watchAdButton: {fileID: 6785463346934622391}
   _closeButton: {fileID: 6725241521542988541}
-  _fadeSpeed: 5
 --- !u!1 &7443076248748638669
 GameObject:
   m_ObjectHideFlags: 0
@@ -8923,6 +9645,7 @@ GameObject:
   - component: {fileID: 6128122800058307954}
   - component: {fileID: 2230028942571656793}
   - component: {fileID: -3812658662713319837}
+  - component: {fileID: 5178057625058290834}
   m_Layer: 0
   m_Name: TitleText
   m_TagString: Untagged
@@ -9066,6 +9789,26 @@ MonoBehaviour:
   _localizationKey: lose_title
   _prefix: 
   _suffix: 
+--- !u!114 &5178057625058290834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7443076248748638669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.08, g: 0.42, b: 0.82, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!1 &7561667424834984707
 GameObject:
   m_ObjectHideFlags: 0
@@ -9306,6 +10049,8 @@ GameObject:
   - component: {fileID: 523135065565993739}
   - component: {fileID: 582912346042455261}
   - component: {fileID: 3042737292471004157}
+  - component: {fileID: 7792940470271852434}
+  - component: {fileID: 630083492334303273}
   m_Layer: 0
   m_Name: RetryBtn
   m_TagString: Untagged
@@ -9416,6 +10161,38 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7792940470271852434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7924964945402560183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 1
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+--- !u!114 &630083492334303273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7924964945402560183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &8074829918487418020
 GameObject:
   m_ObjectHideFlags: 0
@@ -9428,6 +10205,8 @@ GameObject:
   - component: {fileID: 2605950584475423914}
   - component: {fileID: 6850344615038151049}
   - component: {fileID: 942808646145836603}
+  - component: {fileID: 1831767094855119524}
+  - component: {fileID: 754948514644814055}
   m_Layer: 0
   m_Name: NextLevelBtn
   m_TagString: Untagged
@@ -9538,6 +10317,38 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1831767094855119524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8074829918487418020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 1
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+--- !u!114 &754948514644814055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8074829918487418020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &8107676829980213713
 GameObject:
   m_ObjectHideFlags: 0
@@ -9708,10 +10519,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.TipPopupUI
   _canvasGroup: {fileID: 2077349433004293530}
+  _dialogBox: {fileID: 0}
   _messageText: {fileID: 8082048913020774304}
   _watchAdButton: {fileID: 5592169890541573237}
   _closeButton: {fileID: 1386221464325587344}
-  _fadeSpeed: 5
 --- !u!225 &2077349433004293530
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -9850,6 +10661,8 @@ GameObject:
   - component: {fileID: 2545495702244686446}
   - component: {fileID: 422386411971371779}
   - component: {fileID: 1386221464325587344}
+  - component: {fileID: 5587882589438239160}
+  - component: {fileID: 3857390180215651006}
   m_Layer: 0
   m_Name: CloseBtn
   m_TagString: Untagged
@@ -9959,6 +10772,38 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5587882589438239160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8546965382453645932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 1
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: f58179fc8ca7c9447a47ea56ccaf8c7f, type: 2}
+--- !u!114 &3857390180215651006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8546965382453645932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &8600172132104979203
 GameObject:
   m_ObjectHideFlags: 0
@@ -10107,6 +10952,8 @@ GameObject:
   - component: {fileID: 3569510580812891838}
   - component: {fileID: 1968534288384404071}
   - component: {fileID: 1274794918121681799}
+  - component: {fileID: 3839706593559049433}
+  - component: {fileID: 3129786620533974061}
   m_Layer: 0
   m_Name: BottomBadge
   m_TagString: Untagged
@@ -10171,6 +11018,38 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3839706593559049433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8673255774870992867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.9, g: 0.95, b: 1, a: 0.95}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 0.95}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: de9be604db241e749928b30fa6236266, type: 2}
+--- !u!114 &3129786620533974061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8673255774870992867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &8748948273204984484
 GameObject:
   m_ObjectHideFlags: 0
@@ -10591,6 +11470,8 @@ GameObject:
   - component: {fileID: 9170575753891198454}
   - component: {fileID: 632720927745869691}
   - component: {fileID: 24698213747882524}
+  - component: {fileID: 7423741731963795854}
+  - component: {fileID: 4444457954545319113}
   m_Layer: 0
   m_Name: BottomBadge
   m_TagString: Untagged
@@ -10655,6 +11536,38 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7423741731963795854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9002703021674570365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.9, g: 0.95, b: 1, a: 0.95}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 0.95}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: de9be604db241e749928b30fa6236266, type: 2}
+--- !u!114 &4444457954545319113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9002703021674570365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &9063174523000298419
 GameObject:
   m_ObjectHideFlags: 0

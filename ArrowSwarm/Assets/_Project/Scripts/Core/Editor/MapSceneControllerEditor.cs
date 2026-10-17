@@ -35,6 +35,8 @@ namespace ArrowSwarm.Core.Editor
             var controller = (MapSceneController)target;
             if (controller == null) return;
 
+            if (ArrowSwarm.Modes.Editor.MapPuzzlePreviewInspector.Draw(controller, serializedObject)) return;
+
             EditorGUILayout.Space(4);
             string mapName = controller.MapName;
             MapData activeMap = controller.GetActiveMap();

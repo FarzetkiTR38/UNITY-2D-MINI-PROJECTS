@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6298521831887428723}
   - component: {fileID: 2148900941875789674}
   - component: {fileID: 7150203479020874494}
+  - component: {fileID: 3738833067216464367}
   m_Layer: 0
   m_Name: CrownIcon
   m_TagString: Untagged
@@ -75,6 +76,26 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3738833067216464367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 64834794224495928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 0.85, b: 0.2, a: 1}
+  _customDarkColor: {r: 0.20784314, g: 0.29411766, b: 0.42352942, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!1 &1376806661299130105
 GameObject:
   m_ObjectHideFlags: 0
@@ -86,6 +107,7 @@ GameObject:
   - component: {fileID: 4822662587945209980}
   - component: {fileID: 3633271225811021788}
   - component: {fileID: 4399606407082517722}
+  - component: {fileID: 6286671430143214018}
   m_Layer: 0
   m_Name: Divider
   m_TagString: Untagged
@@ -150,6 +172,26 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6286671430143214018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1376806661299130105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.8, g: 0.85, b: 0.92, a: 1}
+  _customDarkColor: {r: 0.20784314, g: 0.29411766, b: 0.42352942, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!1 &1493694036222250153
 GameObject:
   m_ObjectHideFlags: 0
@@ -162,6 +204,8 @@ GameObject:
   - component: {fileID: 2289756730294947336}
   - component: {fileID: 5742053287430441766}
   - component: {fileID: 7423314677465076152}
+  - component: {fileID: 5728862625093444325}
+  - component: {fileID: 8602687210506613084}
   m_Layer: 0
   m_Name: LeaderboardEntry_Normal
   m_TagString: Untagged
@@ -250,6 +294,38 @@ MonoBehaviour:
   _starIcon: {fileID: 8498563801133764819}
   _starsText: {fileID: 663936343877909747}
   _playerNameText: {fileID: 3727409332048187466}
+--- !u!114 &5728862625093444325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1493694036222250153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _customDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 2100000, guid: a30ef6455e0e2bd4f8bc5211af594dde, type: 2}
+--- !u!114 &8602687210506613084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1493694036222250153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d0c8a918659944f9192b9dd79f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIThemeCoordinates
 --- !u!1 &2559292145403724507
 GameObject:
   m_ObjectHideFlags: 0
@@ -261,6 +337,7 @@ GameObject:
   - component: {fileID: 1294779151969736218}
   - component: {fileID: 6326830762360308086}
   - component: {fileID: 2202247449638268334}
+  - component: {fileID: 4563493304891653360}
   m_Layer: 0
   m_Name: LevelText
   m_TagString: Untagged
@@ -387,6 +464,26 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4563493304891653360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2559292145403724507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.17661981, g: 0.34165648, b: 0.764151, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!1 &5251696776166721917
 GameObject:
   m_ObjectHideFlags: 0
@@ -693,6 +790,7 @@ GameObject:
   - component: {fileID: 3382907094706004728}
   - component: {fileID: 7059339608899060138}
   - component: {fileID: 6020977034363517021}
+  - component: {fileID: 2036351061684169412}
   m_Layer: 0
   m_Name: Divider (1)
   m_TagString: Untagged
@@ -757,6 +855,26 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2036351061684169412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6367565543530124039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.8, g: 0.85, b: 0.92, a: 1}
+  _customDarkColor: {r: 0.20784314, g: 0.29411766, b: 0.42352942, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!1 &7537400115725991841
 GameObject:
   m_ObjectHideFlags: 0
@@ -768,6 +886,7 @@ GameObject:
   - component: {fileID: 1865257062625666637}
   - component: {fileID: 4755732892986054327}
   - component: {fileID: 663936343877909747}
+  - component: {fileID: 1016554839362102960}
   m_Layer: 0
   m_Name: StarsText
   m_TagString: Untagged
@@ -894,6 +1013,26 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1016554839362102960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7537400115725991841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.1764706, g: 0.34117648, b: 0.7647059, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}
 --- !u!1 &8678034099391635735
 GameObject:
   m_ObjectHideFlags: 0
@@ -980,6 +1119,7 @@ GameObject:
   - component: {fileID: 9005112131368996932}
   - component: {fileID: 8395385419936858379}
   - component: {fileID: 3727409332048187466}
+  - component: {fileID: 5170708842837033959}
   m_Layer: 0
   m_Name: PlayerNameText
   m_TagString: Untagged
@@ -1106,3 +1246,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5170708842837033959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8756881081651392580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec3b16e81224fc47970a316b5a0d085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.ThemedUIElement
+  _role: 5
+  _customLightColor: {r: 0.17661981, g: 0.34165648, b: 0.764151, a: 1}
+  _customDarkColor: {r: 0.9019608, g: 0.9411765, b: 1, a: 1}
+  _materialOnly: 0
+  _preserveAlpha: 1
+  _lightSprite: {fileID: 0}
+  _darkSprite: {fileID: 0}
+  _darkMaterial: {fileID: 0}

@@ -395,6 +395,11 @@ namespace ArrowSwarm.UI
 
         private void OnPlayClicked()
         {
+            if (ArrowSwarm.Modes.GameModeSelection.Selected != ArrowSwarm.Modes.GameModeId.Defense)
+            {
+                ArrowSwarm.Modes.GameModeSelection.PlaySelected();
+                return;
+            }
             Debug.Log("[ArrowSwarm] MainMenuUI: Play button clicked! Transitioning to GameScene...");
             InputManager.Instance?.BlockInput(0.5f);
             if (GameManager.Instance != null)

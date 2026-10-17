@@ -10,7 +10,7 @@ namespace ArrowSwarm.Camera
     /// Controls the orthographic camera: auto-fit to map,
     /// pinch-to-zoom, pan with touch/mouse, and zoom limits.
     /// </summary>
-    public class CameraController : MonoBehaviour
+    public partial class CameraController : MonoBehaviour
     {
         private static CameraController _instance;
 
