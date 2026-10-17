@@ -7,7 +7,7 @@ namespace ArrowSwarm.Data
     /// Saved locally via JSON and optionally synced to cloud.
     /// </summary>
     [Serializable]
-    public class PlayerData
+    public partial class PlayerData
     {
         /// <summary>Current level the player is on.</summary>
         public int currentLevel = 1;
@@ -68,13 +68,12 @@ namespace ArrowSwarm.Data
         /// </summary>
         public int GetTotalStars()
         {
-            if (levelStars == null) return 0;
             int total = 0;
-            for (int i = 0; i < levelStars.Count; i++)
+            for (int i = 0; levelStars != null && i < levelStars.Count; i++)
             {
                 total += levelStars[i].stars;
             }
-            return total;
+            return total + (shapesProgress?.TotalStars ?? 0) + (colorShiftProgress?.TotalStars ?? 0);
         }
 
         /// <summary>

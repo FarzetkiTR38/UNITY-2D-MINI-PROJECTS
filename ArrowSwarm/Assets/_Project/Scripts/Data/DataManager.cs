@@ -8,7 +8,7 @@ namespace ArrowSwarm.Data
     /// Manages saving and loading player data to/from local storage.
     /// Uses PlayerPrefs with JSON serialization.
     /// </summary>
-    public class DataManager : Singleton<DataManager>
+    public partial class DataManager : Singleton<DataManager>
     {
         private const string SAVE_KEY = "ArrowSwarm_PlayerData";
         private const string BACKUP_KEY = "ArrowSwarm_PlayerData_Backup";
