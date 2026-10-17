@@ -24,6 +24,7 @@ namespace ArrowSwarm.Puzzle
                 foreach (var item in touch.touches) if (item.press.isPressed) count++;
                 if (count > 1) { _valid = false; return; }
                 var primary = touch.primaryTouch;
+                if(primary.phase.ReadValue()==UnityEngine.InputSystem.TouchPhase.Canceled){_valid=false;return;}
                 if (primary.press.wasPressedThisFrame) Down(primary.position.ReadValue());
                 if (primary.press.wasReleasedThisFrame) Up(primary.position.ReadValue());
                 if (count > 0 || primary.press.wasReleasedThisFrame) return;

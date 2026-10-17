@@ -273,6 +273,7 @@ namespace ArrowSwarm.Core
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
+            if (_previewMode != ArrowSwarm.Modes.GameModeId.Defense) return;
             MapData map = GetActiveMap();
             if (map == null) return;
 
