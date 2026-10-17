@@ -14,7 +14,7 @@ namespace ArrowSwarm.UI
     /// - Arrow counter scale punch on fire
     /// Zero GC allocations in Update.
     /// </summary>
-    public class HUDFeedbackEffects : MonoBehaviour
+    public partial class HUDFeedbackEffects : MonoBehaviour
     {
         [Header("Heart References")]
         [SerializeField] private Image[] _heartIcons;
@@ -26,6 +26,11 @@ namespace ArrowSwarm.UI
         private Coroutine _arrowPunchCoroutine;
         private Vector3[] _heartOriginalPositions;
         private Color[] _heartOriginalColors;
+        private Vector3[] _heartOriginalScales;
+        private Quaternion[] _heartOriginalRotations;
+        private Image[] _cachedHeartIcons;
+        private TextMeshProUGUI _cachedArrowCountText;
+        private Vector3 _arrowOriginalScale = Vector3.one;
 
         private void Awake()
         {
@@ -45,6 +50,7 @@ namespace ArrowSwarm.UI
                                ?? transform.Find("BottomPanel/ArrowText")?.GetComponent<TextMeshProUGUI>();
             }
             CacheOriginalHeartTransforms();
+            CacheOriginalArrowTransform();
         }
 
         /// <summary>
@@ -55,22 +61,7 @@ namespace ArrowSwarm.UI
             if (heartIcons != null && heartIcons.Length > 0) _heartIcons = heartIcons;
             if (arrowCountText != null) _arrowCountText = arrowCountText;
             CacheOriginalHeartTransforms();
-        }
-
-        private void CacheOriginalHeartTransforms()
-        {
-            if (_heartIcons == null || _heartIcons.Length == 0) return;
-            _heartOriginalPositions = new Vector3[_heartIcons.Length];
-            _heartOriginalColors = new Color[_heartIcons.Length];
-
-            for (int i = 0; i < _heartIcons.Length; i++)
-            {
-                if (_heartIcons[i] != null)
-                {
-                    _heartOriginalPositions[i] = _heartIcons[i].rectTransform.anchoredPosition;
-                    _heartOriginalColors[i] = _heartIcons[i].color;
-                }
-            }
+            CacheOriginalArrowTransform();
         }
 
         /// <summary>
@@ -97,7 +88,8 @@ namespace ArrowSwarm.UI
                     if (_heartIcons[i] != null)
                     {
                         _heartIcons[i].gameObject.SetActive(i < lives);
-                        _heartIcons[i].transform.localScale = Vector3.one;
+                        _heartIcons[i].transform.localScale = _heartOriginalScales[i];
+                        _heartIcons[i].transform.localRotation = _heartOriginalRotations[i];
                         if (_heartOriginalPositions != null && i < _heartOriginalPositions.Length)
                         {
                             _heartIcons[i].rectTransform.anchoredPosition = _heartOriginalPositions[i];
@@ -118,7 +110,7 @@ namespace ArrowSwarm.UI
             {
                 StopCoroutine(_heartbeatCoroutine);
                 _heartbeatCoroutine = null;
-                if (_heartIcons.Length > 0 && _heartIcons[0] != null) _heartIcons[0].transform.localScale = Vector3.one;
+                if (_heartIcons.Length > 0 && _heartIcons[0] != null) _heartIcons[0].transform.localScale = _heartOriginalScales[0];
             }
         }
 
@@ -127,6 +119,8 @@ namespace ArrowSwarm.UI
             RectTransform rt = heartImage.rectTransform;
             Vector3 origPos = _heartOriginalPositions != null && index < _heartOriginalPositions.Length ? _heartOriginalPositions[index] : rt.anchoredPosition;
             Color origColor = _heartOriginalColors != null && index < _heartOriginalColors.Length ? _heartOriginalColors[index] : heartImage.color;
+            Vector3 origScale = _heartOriginalScales != null && index < _heartOriginalScales.Length ? _heartOriginalScales[index] : rt.localScale;
+            Quaternion origRotation = _heartOriginalRotations != null && index < _heartOriginalRotations.Length ? _heartOriginalRotations[index] : rt.localRotation;
             Color flashGold = new Color(1f, 0.95f, 0.5f, 1f);
             Color amberEnd = new Color(1f, 0.62f, 0.12f, 0f);
 
@@ -137,10 +131,10 @@ namespace ArrowSwarm.UI
                 float t = Mathf.Clamp01(elapsed / duration);
 
                 rt.anchoredPosition = (Vector2)origPos + Random.insideUnitCircle * ((1f - t) * 3.5f);
-                rt.localEulerAngles = new Vector3(0f, 0f, Mathf.Lerp(0f, 75f, t));
+                rt.localRotation = origRotation * Quaternion.Euler(0f, 0f, Mathf.Lerp(0f, 75f, t));
 
                 float scale = t < 0.32f ? Mathf.Lerp(1f, 1.35f, t / 0.32f) : Mathf.Lerp(1.35f, 0f, (t - 0.32f) / 0.68f);
-                rt.localScale = Vector3.one * scale;
+                rt.localScale = origScale * scale;
 
                 heartImage.color = t < 0.25f 
                     ? Color.Lerp(origColor, flashGold, t / 0.25f) 
@@ -150,8 +144,8 @@ namespace ArrowSwarm.UI
 
             heartImage.gameObject.SetActive(false);
             rt.anchoredPosition = origPos;
-            rt.localScale = Vector3.one;
-            rt.localEulerAngles = Vector3.zero;
+            rt.localScale = origScale;
+            rt.localRotation = origRotation;
             heartImage.color = origColor;
         }
 
@@ -161,7 +155,7 @@ namespace ArrowSwarm.UI
             while (true)
             {
                 float pulse = 1f + 0.12f * Mathf.Sin(Time.unscaledTime * 4.2f);
-                tr.localScale = Vector3.one * pulse;
+                tr.localScale = _heartOriginalScales[0] * pulse;
                 yield return null;
             }
         }
@@ -172,6 +166,7 @@ namespace ArrowSwarm.UI
         public void PunchArrowCount()
         {
             if (_arrowCountText == null) return;
+            CacheOriginalArrowTransform();
             if (_arrowPunchCoroutine != null) StopCoroutine(_arrowPunchCoroutine);
             _arrowPunchCoroutine = StartCoroutine(ArrowPunchRoutine());
         }
@@ -184,10 +179,10 @@ namespace ArrowSwarm.UI
             {
                 elapsed += Time.unscaledDeltaTime;
                 float t = Mathf.Clamp01(elapsed / duration);
-                tr.localScale = Vector3.one * (1f + 0.22f * Mathf.Sin(t * Mathf.PI));
+                tr.localScale = _arrowOriginalScale * (1f + 0.22f * Mathf.Sin(t * Mathf.PI));
                 yield return null;
             }
-            tr.localScale = Vector3.one;
+            tr.localScale = _arrowOriginalScale;
             _arrowPunchCoroutine = null;
         }
     }

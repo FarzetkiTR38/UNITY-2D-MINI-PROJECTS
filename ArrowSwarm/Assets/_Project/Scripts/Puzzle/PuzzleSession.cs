@@ -34,9 +34,13 @@ namespace ArrowSwarm.Puzzle
         public bool Lost { get; private set; }
         public bool Paused { get; private set; }
         public bool Preview { get; private set; }
-        public bool Ready => Level != null && !_busy && !Won && !Lost && !Paused;
+        public bool Ready => Level != null && !_busy && !Won && !Lost && !Paused && !HintPromptOpen;
         public bool LastLevel => LevelNumber >= _catalog.Count;
-        public string Message { get; private set; }
+        private string _messageKey, _messageFallback;
+        public string Message => ArrowSwarm.Localization.LocalizationManager.Instance.GetText(_messageKey, _messageFallback);
+        public int AttemptVersion => _version;
+        public bool HintPromptOpen { get; private set; }
+        public bool CanContinue => Lost && !_continued && !Preview;
         public PuzzleConfig Config => _config;
         public GameModeId Mode => _mode;
 
@@ -57,16 +61,17 @@ namespace ArrowSwarm.Puzzle
             if (_views != null) foreach (var view in _views) if (view != null && view.gameObject.activeSelf) _pool.Release(view);
             LevelNumber = number; Level = _catalog.Get(number);
             var solution = PuzzleSolver.Solve(Level);
-            if (!solution.Solvable) { Level = null; Message = solution.Error; Debug.LogError("[ArrowSwarm] Invalid puzzle: " + Message); Notify(); return; }
+            if (!solution.Solvable) { Level = null; SetMessage("", solution.Error); Debug.LogError("[ArrowSwarm] Invalid puzzle: " + Message); Notify(); return; }
             Lives = _config.Lives; Turns = Level.TurnBudget; Orientation = Level.InitialOrientation;
             Remaining = Level.Arrows.Count; Won = Lost = Paused = _busy = _awarded = _continued = false;
+            HintPromptOpen = false;
             _removed = new bool[Remaining]; _views = new PuzzleArrowView[Remaining];
             var origin = new Vector3(-(Level.Width - 1) * .5f, -(Level.Height - 1) * .5f, 0);
             for (int i = 0; i < _views.Length; i++) { _views[i] = _pool.Get(); _views[i].Bind(Level.Arrows[i], i, origin, _config); }
             _frame.Setup(Level, _config);
             _cameraController.FitToPuzzle(Level.Width,Level.Height);
             GameManager.Instance.SetState(GameState.Playing);
-            Message = number == 1 ? (_mode == GameModeId.Shapes ? "Clear the shape. Blocked arrows cost a heart. Pinch to zoom." : "Match the exit wall color. Swipe the bar to rotate only the frame.") : "";
+            SetMessage(number == 1 ? (_mode == GameModeId.Shapes ? "puzzle_shapes_help" : "puzzle_color_help") : "", "");
             Notify();
         }
 
@@ -84,6 +89,7 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Returns to menu, cancelling all outstanding callbacks and preview state.</summary>
         public void Menu()
         {
+            StopAllCoroutines(); _busy = true;
             _version++; Time.timeScale = 1f; PuzzleLaunch.Preview = false;
             GameManager.Instance.GoToMainMenu();
         }
@@ -106,6 +112,7 @@ namespace ArrowSwarm.Puzzle
         }
 
         private static void Notify() => OnChanged?.Invoke();
+        private void SetMessage(string key, string fallback = "") { _messageKey = key; _messageFallback = fallback; }
         private void OnDestroy()
         {
             _version++; Time.timeScale = 1f;

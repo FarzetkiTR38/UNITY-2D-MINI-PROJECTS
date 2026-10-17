@@ -1,6 +1,8 @@
 namespace ArrowSwarm.Puzzle
 {
     using ArrowSwarm.Modes;
+    using ArrowSwarm.Core;
+    using ArrowSwarm.Data;
     using UnityEngine;
 
     /// <summary>Pooled bent stroke with a sliding path window, independent of combat Arrow.</summary>
@@ -8,13 +10,36 @@ namespace ArrowSwarm.Puzzle
     {
         [SerializeField] private LineRenderer _body;
         [SerializeField] private LineRenderer _head;
+        [Tooltip("Optional authored upward triangle. The legacy line head remains a fallback.")]
+        [SerializeField] private SpriteRenderer _filledHead;
         private PuzzleArrowData _data;
         private PuzzleConfig _config;
         private Vector3 _origin;
         private Vector3[] _path;
         private float _length;
+        private bool _usingFilledHead;
+        private Transform _filledHeadTransform;
+        private Vector3 _filledHeadBaseScale, _filledHeadTipOffset;
+        private float _filledHeadDepth, _headScale = 1f, _travel;
         public int Index { get; private set; }
         public float Length => _length;
+
+        private void OnEnable()
+        {
+            ThemeManager.OnThemeChanged += ApplyTheme;
+            ApplyTheme(ThemeManager.CurrentTheme);
+        }
+
+        private void OnDisable() => ThemeManager.OnThemeChanged -= ApplyTheme;
+
+        private void ApplyTheme(ThemeMode theme)
+        {
+            if (_data == null || _config == null) return;
+            Color color = _config.ThemeColor(_data.Color, theme);
+            _body.startColor = _body.endColor = color;
+            if (_head != null) _head.startColor = _head.endColor = color;
+            if (_filledHead != null) _filledHead.color = color;
+        }
 
         /// <summary>Assigns path data and color when acquired from the pool.</summary>
         public void Bind(PuzzleArrowData data, int index, Vector3 origin, PuzzleConfig config)
@@ -23,25 +48,61 @@ namespace ArrowSwarm.Puzzle
             _length = data.Points.Count - 1;
             _path = new Vector3[data.Points.Count];
             for (int i = 0; i < _path.Length; i++) _path[i] = origin + (Vector3)(Vector2)data.Points[_path.Length - 1 - i];
-            _body.startColor = _body.endColor = _head.startColor = _head.endColor = data.Color;
-            _body.widthMultiplier = _head.widthMultiplier = config.StrokeWidth;
+            _body.widthMultiplier = config.StrokeWidth;
+            _headScale = 1f;
             transform.localScale = Vector3.one;
+            BindHead(config.ThemeColor(data.Color, ThemeManager.CurrentTheme));
+            ApplyTheme(ThemeManager.CurrentTheme);
             RenderTravel(0);
+        }
+
+        private void BindHead(Color color)
+        {
+            _usingFilledHead = _filledHead != null && _filledHead.sprite != null;
+            if (_head != null)
+            {
+                _head.enabled = !_usingFilledHead;
+                _head.startColor = _head.endColor = color;
+                _head.widthMultiplier = _config.StrokeWidth;
+            }
+            if (_filledHead == null) return;
+            _filledHead.enabled = _usingFilledHead;
+            _filledHead.color = color;
+            if (!_usingFilledHead) return;
+            _filledHeadTransform = _filledHead.transform;
+            Bounds bounds = _filledHead.sprite.bounds;
+            float scale = _config.HeadSize / Mathf.Max(.001f, bounds.size.y);
+            _filledHeadBaseScale = new Vector3(scale, scale, 1f);
+            _filledHeadTipOffset = new Vector3(bounds.center.x * scale, bounds.max.y * scale, 0f);
+            _filledHeadDepth = _filledHeadTransform.localPosition.z;
+            _filledHeadTransform.localScale = _filledHeadBaseScale;
         }
 
         /// <summary>Moves a fixed-length snake window along its own path then its forward ray.</summary>
         public void RenderTravel(float distance)
         {
+            _travel = distance;
             float begin = Mathf.Max(0, distance), end = _length + distance;
+            // End the stroke inside a filled triangle, preventing the rounded cap from protruding past its tip.
+            float bodyEnd = _usingFilledHead ? Mathf.Max(begin, end - _config.HeadSize * _headScale * .5f) : end;
             int count = 2;
-            for (int i = 1; i < _path.Length; i++) if (i > begin && i < end) count++;
+            for (int i = 1; i < _path.Length; i++) if (i > begin && i < bodyEnd) count++;
             _body.positionCount = count;
             int n = 0; _body.SetPosition(n++, PointAt(begin));
-            for (int i = 1; i < _path.Length; i++) if (i > begin && i < end) _body.SetPosition(n++, _path[i]);
+            for (int i = 1; i < _path.Length; i++) if (i > begin && i < bodyEnd) _body.SetPosition(n++, _path[i]);
             Vector3 tip = PointAt(end);
-            _body.SetPosition(n, tip);
+            _body.SetPosition(n, PointAt(bodyEnd));
             Vector3 direction = end > _length ? (Vector3)(Vector2)_data.Direction : (tip - PointAt(Mathf.Max(begin, end - .01f))).normalized;
             if (direction.sqrMagnitude < .1f) direction = (Vector3)(Vector2)_data.Direction;
+            if (_usingFilledHead)
+            {
+                Quaternion rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f);
+                Vector3 position = tip - rotation * (_filledHeadTipOffset * _headScale);
+                position.z += _filledHeadDepth;
+                _filledHeadTransform.SetPositionAndRotation(position, rotation);
+                return;
+            }
+            if (_head == null) return;
             Vector3 perpendicular = new Vector3(-direction.y, direction.x);
             _head.positionCount = 3;
             _head.SetPosition(0, tip - direction * _config.HeadSize + perpendicular * _config.HeadSize * .65f);
@@ -71,6 +132,16 @@ namespace ArrowSwarm.Puzzle
 
         /// <summary>Highlights a safe hint without changing its configured color.</summary>
         public void Highlight(bool value)
-        { _body.widthMultiplier = _head.widthMultiplier = _config.StrokeWidth * (value ? 1.8f : 1f); }
+        {
+            _headScale = value ? 1.8f : 1f;
+            _body.widthMultiplier = _config.StrokeWidth * _headScale;
+            if (_head != null) _head.widthMultiplier = _config.StrokeWidth * _headScale;
+            if (_usingFilledHead)
+            {
+                _filledHeadTransform.localScale = new Vector3(
+                    _filledHeadBaseScale.x * _headScale, _filledHeadBaseScale.y * _headScale, _filledHeadBaseScale.z);
+                RenderTravel(_travel);
+            }
+        }
     }
 }
