@@ -69,7 +69,8 @@ namespace ArrowSwarm.Modes.Editor
         public static Sprite Full(string source)
         {
             var importer=(TextureImporter)AssetImporter.GetAtPath(Art+source);importer.textureType=TextureImporterType.Sprite;importer.maxTextureSize=4096;importer.textureCompression=TextureImporterCompression.Uncompressed;importer.SaveAndReimport();
-            return AssetDatabase.LoadAssetAtPath<Sprite>(Art+source);
+            var texture=AssetDatabase.LoadAssetAtPath<Texture2D>(Art+source);
+            return Slice(source,"Full_"+System.IO.Path.GetFileNameWithoutExtension(source),0,0,texture.width,texture.height);
         }
     }
 }

@@ -106,8 +106,29 @@ Approved scope: user instructions dated 17 October 2026. This is the single impl
 
 ## Status and evidence
 
-- P00: starting from clean working tree; Unity 6000.3.18f1 connected through MCP, edit mode, active MapTestScene. Detailed baseline follows below.
-- P01–P11: pending.
+- P00 complete: clean baseline HEAD `786aeea`; Unity 6000.3.18f1, MapTestScene, edit mode, scene not dirty, zero console errors. Plan committed as `4c0090f`.
+- P01 complete (`10ee57b`): additive old-save-compatible records; in-memory old JSON / independent unlock / best-only stars / aggregate 7 / JSON round-trip checks passed without writing PlayerPrefs.
+- P02 complete (`47dc59f`): pure solver/data and repeatable verification command. Checks passed for zero-turn matches/mismatches, obstacle release, facing deadlocks and invalid overlaps.
+- P03 artwork imported (`b5135d5`); main menu authored together with P04 (`1da0cf0`). Original settings/profile/leaderboard/level panels retained. Actual Unity main-menu screenshot inspected. Live chips showed Lv.102 and 26 stars from existing save. Modal refinement replaces rectangular source cuts with an alpha-transparent panel and live selection labels.
+- P05 core runtime (`17a0e47`), P06 swipe control (`06a3657`), P07 scenes/HUD/services (`e5aa2ab`) implemented. Initial runtime checks exposed and fixed an empty prefab reference; subsequent scene startup had zero errors. Camera zoom reuses existing implementation through an additive bounds initializer. New scenes use an authored cream backdrop to avoid dark-theme contrast failures.
+- P08 editor (`d89a563`) implemented: image import, sampling, deterministic generation, validation, manual point/color editing, reverse/add/delete, Undo, save and Scene View preview.
+- P09 catalogs (`6745045`) implemented and all ten independently solved. Shapes arrow counts: 58, 60, 48, 58, 37. Color Shift arrow counts: 19, 20, 25, 28, 30; minimum turns 1, 2, 3, 4, 3 within configured budgets 2, 3, 4, 5, 6. Initial catalogs were generated before scene assembly to provide valid serialized scene references; their dedicated content commit remains separate.
+- P10 (`2618d62`) implemented: mode selection and scene/play previews in MapSceneController; default Defense path remains unchanged.
+- P11 verified: both five-level campaigns completed through actual pooled movement and frame coroutines, using a cloned accelerated test configuration. All ten won with three lives; PlayerData JSON remained byte-identical across every preview win. Final report is `Captures/ThreeModes/runtime-verification.txt`.
+- All ten level screenshots inspected at 1080×1920. Main menu and final modal inspected after fixing Unity's automatic transparent sprite cropping. Three new/edited scenes have zero missing scripts and all required puzzle references assigned.
+- Runtime negative checks passed: wrong wall advances/reverses and costs exactly one life while retaining all 19 arrows; third wrong attempt loses; Retry restores three lives and the whole board; a duplicate rotation during animation is ignored; reversing consumes a turn; legal shots at zero turns continue, then an immovable board loses with remaining lives intact.
+- Menu checks passed for all three mode cards and exactly one Selected label; Defense showed 20 paginated level buttons, each new campaign exactly five. These checks temporarily disabled auto-save and restored the original mode; they did not write test scores to cloud.
+- MapTestScene routing check passed for Shapes level 4 with Preview=true, 58 arrows and zero Defense mobs. MapTestScene's saved asset remains unchanged. New cameras render only PuzzleBoard layer 8, preventing persistent Defense board visuals from leaking into puzzles.
+- Defense re-entry passed in the original GameScene: generated data valid, 57 arrows, active enemy spawning and Playing state; no PuzzleSession remained and no console errors were logged. Defense generator, combat Arrow/Mob files, GameConfig, GameScene and MapTestScene compare identically to baseline `786aeea`.
+- Clean-image authoring check passed on an in-memory red silhouette with a white background: image sampling produced 29 arrows and an independently valid clearing solution, without saving a test asset or changing player data.
+- Final checks: Unity compilation and repeatable rule/save verification passed with zero errors; existing unrelated compiler warnings are unchanged. No Android device build, physical touch test, production ad delivery or live UGS ranking submission was performed. Existing UGS level-first/star-tie-break ranking formula is preserved; its star input now includes all three campaigns. No server migration or new leaderboard is required.
+
+## Editor usage
+
+- Open `MapTestScene`, select `MapSceneController`, choose Defense / Shapes / Color Shift under **Game Mode Preview**. Defense retains its existing map controls. Puzzle modes expose level 1–5, Scene View rendering and non-saving Play preview. Stop Play Mode to return to the map scene.
+- **Arrow Swarm → Puzzles → Shapes Image and Path Editor** opens image authoring. Import a clean PNG/JPG, choose grid/seed/background tolerance, generate, click an arrow to select it, edit its points/color or reverse head/tail, validate, save. New saved levels must be added to ShapesCatalog explicitly; invalid puzzles cannot be saved through this editor.
+- **Verify Rules and Save Compatibility** runs pure focused regression checks. **Validate All Levels** proves all authored assets. **Playtest All Levels (Play Mode)** drives real pooled movement in preview mode and writes its report/screenshots under `Captures/ThreeModes`; it must leave PlayerData unchanged.
+- Runtime styling is serialized in MainMenuScene, ShapesScene, ColorShiftScene and PuzzleArrow.prefab. PuzzleConfig controls speed, stroke/head sizes, pool size, gesture thresholds and three-life defaults. Each Color Shift level owns its palette and turn budget.
 
 ## Continuation protocol
 
