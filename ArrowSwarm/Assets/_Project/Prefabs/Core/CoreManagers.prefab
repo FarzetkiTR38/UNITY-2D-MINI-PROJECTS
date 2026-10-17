@@ -33,6 +33,7 @@ GameObject:
   - component: {fileID: 4849383493451137758}
   - component: {fileID: 8891129683768234088}
   - component: {fileID: 6436622014099591335}
+  - component: {fileID: 1905478818183369392}
   m_Layer: 0
   m_Name: CoreManagers
   m_TagString: Untagged
@@ -462,6 +463,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Effects.ArrowEffects
   _clashSparkColor: {r: 1, g: 0.92, b: 0.45, a: 1}
   _launchDustColor: {r: 0.9, g: 0.9, b: 1, a: 0.5}
+--- !u!114 &1905478818183369392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036625359666785736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb67bf3f2e76e7f49a8d411a4a3fc933, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Grid.MapContainerVisualizer
+  _cameraBackgroundColor: {r: 0.96, g: 0.94, b: 0.9, a: 1}
+  _darkCameraBackgroundColor: {r: 0.05490196, g: 0.078431375, b: 0.13725491, a: 1}
+  _outerContainerColor: {r: 0.92, g: 0.89, b: 0.85, a: 1}
+  _darkOuterContainerColor: {r: 0.07450981, g: 0.12156863, b: 0.20392157, a: 1}
+  _layer2SortingOrder: -10
+  _innerGridColor: {r: 0.99, g: 0.98, b: 0.97, a: 1}
+  _darkInnerGridColor: {r: 0.1254902, g: 0.19607843, b: 0.30980393, a: 1}
+  _layer3SortingOrder: -9
+  _innerMargin: 0.55
+  _outerMargin: 0.55
 --- !u!1 &1532447086922548065
 GameObject:
   m_ObjectHideFlags: 0
@@ -519,7 +542,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 1
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 9999

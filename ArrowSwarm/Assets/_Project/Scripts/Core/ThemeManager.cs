@@ -3,71 +3,58 @@ namespace ArrowSwarm.Core
     using ArrowSwarm.Data;
     using ArrowSwarm.Utils;
     using UnityEngine;
-    using UnityEngine.UI;
+    using UnityEngine.SceneManagement;
 
-    /// <summary>
-    /// Manages visual theme mode (Light / Dark) across all scenes,
-    /// updating camera background clear color and backdrop images.
-    /// </summary>
+    /// <summary>Broadcasts saved theme changes and applies the Inspector-authored camera palette.</summary>
     public class ThemeManager : Singleton<ThemeManager>
     {
-        public static readonly Color LightCamColor = new Color(0.96f, 0.94f, 0.90f, 1f);
-        public static readonly Color DarkCamColor = new Color(0.10f, 0.10f, 0.18f, 1f);
+        [Header("Camera Palette")]
+        [SerializeField] private Color _lightCameraColor = new Color(0.96f, 0.94f, 0.90f, 1f);
+        [SerializeField] private Color _darkCameraColor = new Color(0.055f, 0.078f, 0.13f, 1f);
+        private ThemeMode? _appliedTheme;
 
-        public static readonly Color LightBgImageColor = Color.white;
-        public static readonly Color DarkBgImageColor = new Color(0.18f, 0.20f, 0.28f, 1f);
+        /// <summary>Fired when the theme changes or a new scene needs its theme applied.</summary>
+        public static event System.Action<ThemeMode> OnThemeChanged;
+        /// <summary>Saved mode, also available before the manager's Start callback.</summary>
+        public static ThemeMode CurrentTheme => DataManager.Instance?.PlayerData?.theme ?? ThemeMode.Light;
+        /// <summary>Whether the saved visual theme is dark.</summary>
+        public static bool IsDark => CurrentTheme == ThemeMode.Dark;
 
         private void OnEnable()
         {
-            UnityEngine.SceneManagement.SceneManager.sceneLoaded += HandleSceneLoaded;
+            SceneManager.sceneLoaded += HandleSceneLoaded;
             DataManager.OnPlayerDataChanged += HandlePlayerDataChanged;
         }
 
         private void OnDisable()
         {
-            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= HandleSceneLoaded;
+            SceneManager.sceneLoaded -= HandleSceneLoaded;
             DataManager.OnPlayerDataChanged -= HandlePlayerDataChanged;
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        private static void AutoInitialize()
-        {
-            if (Instance != null) Instance.ApplyCurrentTheme();
-        }
+        private static void AutoInitialize() => Instance?.ApplyCurrentTheme();
 
         private void Start() => ApplyCurrentTheme();
-
-        private void HandleSceneLoaded(UnityEngine.SceneManagement.Scene s, UnityEngine.SceneManagement.LoadSceneMode m) => ApplyCurrentTheme();
+        private void HandleSceneLoaded(Scene scene, LoadSceneMode mode) => ApplyCurrentTheme();
 
         private void HandlePlayerDataChanged(PlayerData data)
         {
-            if (data != null) ApplyTheme(data.theme);
+            // Star/level/audio saves must not repaint every Canvas or reset visual state.
+            if (data != null && _appliedTheme != data.theme) ApplyTheme(data.theme);
         }
 
-        /// <summary>Applies the theme mode stored in DataManager.</summary>
-        public void ApplyCurrentTheme()
-        {
-            ThemeMode theme = DataManager.Instance?.PlayerData?.theme ?? ThemeMode.Light;
-            ApplyTheme(theme);
-        }
+        /// <summary>Applies the saved theme after scene loading.</summary>
+        public void ApplyCurrentTheme() => ApplyTheme(CurrentTheme);
 
-        /// <summary>
-        /// Applies the specified theme to cameras and background images in the active scene.
-        /// </summary>
+        /// <summary>Notifies scene and prefab bindings; no name searches or per-frame work.</summary>
         public void ApplyTheme(ThemeMode theme)
         {
-            bool isDark = theme == ThemeMode.Dark;
-            var cam = Camera.main ?? FindFirstObjectByType<Camera>();
-            if (cam != null)
-            {
-                cam.backgroundColor = isDark ? DarkCamColor : LightCamColor;
-            }
-
-            var bgObj = GameObject.Find("BG") ?? GameObject.Find("Background");
-            if (bgObj != null && bgObj.TryGetComponent<Image>(out var img))
-            {
-                img.color = isDark ? DarkBgImageColor : LightBgImageColor;
-            }
+            _appliedTheme = theme;
+            var camera = Camera.main ?? FindFirstObjectByType<Camera>();
+            if (camera != null)
+                camera.backgroundColor = theme == ThemeMode.Dark ? _darkCameraColor : _lightCameraColor;
+            OnThemeChanged?.Invoke(theme);
         }
     }
 }

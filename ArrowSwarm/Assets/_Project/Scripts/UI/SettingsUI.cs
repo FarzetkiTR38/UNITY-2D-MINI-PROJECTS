@@ -338,7 +338,6 @@ namespace ArrowSwarm.UI
         public void SetTheme(ThemeMode theme)
         {
             DataManager.Instance?.SetTheme(theme);
-            ThemeManager.Instance?.ApplyTheme(theme);
             UpdateThemeDisplay(theme);
         }
 

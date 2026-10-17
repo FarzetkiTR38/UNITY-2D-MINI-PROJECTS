@@ -8,7 +8,7 @@ namespace ArrowSwarm.Core
     /// from a single scene via Inspector buttons. Automatically synchronizes level numbers
     /// to load the correct map procedurally.
     /// </summary>
-    public class MapSceneController : MonoBehaviour
+    public partial class MapSceneController : MonoBehaviour
     {
         [Header("Map Assets")]
         [Tooltip("Array of 12 MapData ScriptableObjects.")]
@@ -273,6 +273,7 @@ namespace ArrowSwarm.Core
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
+            if (_previewMode != ArrowSwarm.Modes.GameModeId.Defense) return;
             MapData map = GetActiveMap();
             if (map == null) return;
 

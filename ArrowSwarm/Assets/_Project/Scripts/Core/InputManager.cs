@@ -68,6 +68,7 @@ namespace ArrowSwarm.Core
 
         private void Update()
         {
+            if (ArrowSwarm.Puzzle.PuzzleSession.Active != null) { ResetPointerState(); return; }
             if (GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.Playing ||
                 Time.unscaledTime < _inputBlockedUntilTime || MainCamera == null ||
                 (ArrowSwarm.Camera.CameraController.Instance != null && ArrowSwarm.Camera.CameraController.Instance.IsDragging))

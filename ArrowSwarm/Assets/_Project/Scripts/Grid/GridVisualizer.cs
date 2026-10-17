@@ -15,6 +15,8 @@ namespace ArrowSwarm.Grid
         [SerializeField] private float _dotScaleMultiplier = 0.14f;
         [SerializeField] private Color _dotColor = new Color(0.3f, 0.3f, 0.5f, 0.5f);
         [SerializeField] private Color _edgeDotColor = new Color(0.4f, 0.4f, 0.6f, 0.7f);
+        [SerializeField] private Color _darkDotColor = new Color(0.38f, 0.52f, 0.72f, 0.40f);
+        [SerializeField] private Color _darkEdgeDotColor = new Color(0.48f, 0.68f, 0.88f, 0.55f);
         [SerializeField] private int _sortingOrder = -1;
 
         private GridManager _gridManager;
@@ -23,17 +25,27 @@ namespace ArrowSwarm.Grid
         private void OnEnable()
         {
             GridManager.OnGridInitialized += HandleGridInitialized;
+            ThemeManager.OnThemeChanged += HandleThemeChanged;
         }
 
         private void OnDisable()
         {
             GridManager.OnGridInitialized -= HandleGridInitialized;
+            ThemeManager.OnThemeChanged -= HandleThemeChanged;
         }
 
         private void HandleGridInitialized(int width, int height)
         {
             _gridManager = GridManager.Instance;
             DrawPointGrid();
+        }
+
+        private void HandleThemeChanged(Data.ThemeMode mode)
+        {
+            if (_dotsContainer != null && _dotsContainer.childCount > 0)
+            {
+                DrawPointGrid();
+            }
         }
 
         /// <summary>
@@ -106,7 +118,8 @@ namespace ArrowSwarm.Grid
 
             var sr = dotObj.AddComponent<SpriteRenderer>();
             sr.sprite = CreateCircleSprite();
-            sr.color = isEdge ? _edgeDotColor : _dotColor;
+            bool isDark = ThemeManager.IsDark;
+            sr.color = isEdge ? (isDark ? _darkEdgeDotColor : _edgeDotColor) : (isDark ? _darkDotColor : _dotColor);
             sr.sortingOrder = _sortingOrder;
             dotObj.transform.localScale = Vector3.one * dotSize;
         }

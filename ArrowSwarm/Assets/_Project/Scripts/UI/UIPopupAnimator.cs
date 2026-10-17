@@ -20,9 +20,10 @@ namespace ArrowSwarm.UI
             RectTransform dialogBox,
             CanvasGroup canvasGroup,
             float duration = DefaultOpenDuration,
-            Action onComplete = null)
+            Action onComplete = null,
+            Vector3? targetScale = null)
         {
-            Vector3 baseScale = Vector3.one;
+            Vector3 baseScale = targetScale ?? Vector3.one;
             if (dialogBox != null)
             {
                 dialogBox.localScale = baseScale * 0.75f;
