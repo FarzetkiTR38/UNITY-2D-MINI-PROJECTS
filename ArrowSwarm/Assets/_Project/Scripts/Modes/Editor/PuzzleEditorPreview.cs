@@ -18,7 +18,7 @@ namespace ArrowSwarm.Modes.Editor
             SceneView.RepaintAll();
         }
         /// <summary>Removes the transient preview.</summary>
-        public static void Clear(){_level=null;SceneView.RepaintAll();}
+        public static void Clear(){if(_level==null)return;_level=null;SceneView.RepaintAll();}
         private static void Draw(SceneView view)
         {
             if(!_level || Application.isPlaying)return;

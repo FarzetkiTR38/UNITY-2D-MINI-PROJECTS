@@ -40,21 +40,17 @@ namespace ArrowSwarm.Modes.Editor
             var overlay=U.Stretch("GameModeOverlay",main);var group=overlay.gameObject.AddComponent<CanvasGroup>();
             U.Image(overlay,null,new Color(0,0,0,.56f),true);
             var design=U.Rect("ModalDesign",overlay,0,0,941,1672);design.gameObject.AddComponent<ReferenceCanvasFit>();
-            U.Image(U.Rect("ModalArtwork",design,22,270,900,1144),U.Slice("ModeModalReference.png","ModalPanel",22,270,900,1144),Color.white);
+            U.Image(U.Rect("ModalArtwork",design,0,0,941,1672),U.Full("ModeModalLive.png"),Color.white);
             var close=Hotspot("Close",design,790,315,90,90);
-            var selected=U.Slice("ModeModalReference.png","Selected",572,1236,290,110);
-            var select=U.Slice("ModeModalReference.png","Select",587,621,275,110);
-            var choices=new Button[3];var states=new Image[3];var selectedStates=new Image[3];
+            var choices=new Button[3];var labels=new TMP_Text[3];
             for(int i=0;i<3;i++)
             {
                 int y=621+i*308;
                 choices[i]=Hotspot(((GameModeId)i).ToString()+"Card",design,62,458+i*307,818,285);
-                // Cover each baked selection button with its dynamic state artwork.
-                states[i]=U.Image(U.Rect("SelectionState"+i,design,572,y,290,110),select,Color.white);
-                selectedStates[i]=U.Image(U.Rect("SelectedState"+i,design,572,y,290,110),selected,Color.white);
+                labels[i]=U.Text(U.Rect("ChoiceLabel"+i,design,590,y+6,270,90),"SELECT",33,Color.white);
             }
             U.Set(selector,"_group",group);U.Set(selector,"_open",mode);U.Set(selector,"_close",close);
-            U.Set(selector,"_choices",choices);U.Set(selector,"_states",states);U.Set(selector,"_selectedStates",selectedStates);
+            U.Set(selector,"_choices",choices);U.Set(selector,"_choiceLabels",labels);
             U.Set(selector,"_modeLabel",modeText);U.Set(selector,"_levelLabel",level);U.Set(selector,"_menuModeIcons",new Image[0]);
             group.alpha=0;group.interactable=group.blocksRaycasts=false;
             var levelUI=Object.FindFirstObjectByType<LevelSelectUI>(FindObjectsInactive.Include);

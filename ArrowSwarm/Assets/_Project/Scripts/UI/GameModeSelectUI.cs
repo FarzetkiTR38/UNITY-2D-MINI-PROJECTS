@@ -12,8 +12,7 @@ namespace ArrowSwarm.UI
         [SerializeField] private CanvasGroup _group;
         [SerializeField] private Button _open, _close;
         [SerializeField] private Button[] _choices;
-        [SerializeField] private Image[] _states;
-        [SerializeField] private Image[] _selectedStates;
+        [SerializeField] private TMP_Text[] _choiceLabels;
         [SerializeField] private TMP_Text _modeLabel;
         [SerializeField] private TMP_Text _levelLabel;
         [SerializeField] private Image[] _menuModeIcons;
@@ -26,6 +25,11 @@ namespace ArrowSwarm.UI
             Show(false); Refresh();
         }
         private void Changed(PlayerData data) => Refresh();
+        private void Update()
+        {
+            var keyboard=UnityEngine.InputSystem.Keyboard.current;
+            if(_group.interactable && keyboard!=null && keyboard.escapeKey.wasPressedThisFrame) Show(false);
+        }
         private void Select(int index)
         {
             DataManager.Instance.SelectMode((GameModeId)index);
@@ -40,7 +44,7 @@ namespace ArrowSwarm.UI
             var mode=GameModeSelection.Selected;
             _modeLabel.text=GameModeSelection.DisplayName(mode);
             _levelLabel.text=$"Lv.{DataManager.Instance.GetHighestLevel(mode)}";
-            for (int i=0;i<_states.Length;i++) { _states[i].enabled=i!=(int)mode; _selectedStates[i].enabled=i==(int)mode; }
+            for (int i=0;i<_choiceLabels.Length;i++) _choiceLabels[i].text=i==(int)mode?"SELECTED":"SELECT";
             for (int i=0;i<_menuModeIcons.Length;i++) _menuModeIcons[i].enabled=i==(int)mode;
         }
     }

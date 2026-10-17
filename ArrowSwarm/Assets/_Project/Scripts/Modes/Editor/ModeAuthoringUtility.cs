@@ -48,7 +48,8 @@ namespace ArrowSwarm.Modes.Editor
         /// <summary>Creates an authored button with a visible label or supplied sprite.</summary>
         public static Button Button(RectTransform r,string label,Sprite sprite=null)
         {
-            var image=Image(r,sprite,sprite?Color.white:new Color(.02f,.34f,.94f),true);
+            var image=Image(r,sprite?sprite:AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd"),sprite?Color.white:new Color(.02f,.34f,.94f),true);
+            if(!sprite)image.type=UnityEngine.UI.Image.Type.Sliced;
             var b=r.gameObject.AddComponent<Button>();b.targetGraphic=image;
             if(!string.IsNullOrEmpty(label))Text(Stretch("Label",r),label,32,Color.white);
             return b;

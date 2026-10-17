@@ -30,7 +30,7 @@ namespace ArrowSwarm.Modes.Editor
             var prefab=prefabAsset?prefabAsset.GetComponent<PuzzleArrowView>():null;
             if(!prefab)
             {
-                var go=new GameObject("PuzzleArrow");var view=go.AddComponent<PuzzleArrowView>();
+                var go=new GameObject("PuzzleArrow");go.layer=LayerMask.NameToLayer("PuzzleBoard");var view=go.AddComponent<PuzzleArrowView>();
                 U.Set(view,"_body",Line("Body",go.transform));U.Set(view,"_head",Line("Head",go.transform));
                 prefab=PrefabUtility.SaveAsPrefabAsset(go,PrefabPath).GetComponent<PuzzleArrowView>();Object.DestroyImmediate(go);
             }
@@ -51,11 +51,15 @@ namespace ArrowSwarm.Modes.Editor
             var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
             var camera=new GameObject("Main Camera",typeof(UnityEngine.Camera),typeof(AudioListener));camera.tag="MainCamera";camera.transform.position=new Vector3(0,0,-10);
             var cam=camera.GetComponent<UnityEngine.Camera>();cam.orthographic=true;cam.orthographicSize=20;cam.backgroundColor=new Color(.99f,.97f,.92f);cam.clearFlags=CameraClearFlags.SolidColor;
+            int puzzleLayer=LayerMask.NameToLayer("PuzzleBoard");
+            if(puzzleLayer<0)throw new System.InvalidOperationException("Create the PuzzleBoard layer before building scenes.");
+            cam.cullingMask=1<<puzzleLayer;
             string backdropPath=U.Data+"PuzzleBackdrop.mat";
             var backdropMat=AssetDatabase.LoadAssetAtPath<Material>(backdropPath);
             if(!backdropMat){backdropMat=new Material(Shader.Find("Sprites/Default"));backdropMat.color=new Color(.99f,.975f,.94f);AssetDatabase.CreateAsset(backdropMat,backdropPath);}
             var backdrop=GameObject.CreatePrimitive(PrimitiveType.Quad);backdrop.name="Cream Backdrop";backdrop.transform.position=new Vector3(0,0,5);backdrop.transform.localScale=new Vector3(500,500,1);
             backdrop.GetComponent<Renderer>().sharedMaterial=backdropMat;backdrop.GetComponent<Renderer>().sortingOrder=-100;Object.DestroyImmediate(backdrop.GetComponent<Collider>());
+            backdrop.layer=puzzleLayer;
             var zoom=camera.AddComponent<ArrowSwarm.Camera.CameraController>();
             var light=new GameObject("Global Light",typeof(Light2D));light.GetComponent<Light2D>().lightType=Light2D.LightType.Global;
             new GameObject("EventSystem",typeof(EventSystem),typeof(InputSystemUIInputModule));
@@ -63,6 +67,7 @@ namespace ArrowSwarm.Modes.Editor
             var arrows=new GameObject("Pooled Arrows").transform;
             var frame=new GameObject("Rotating Frame").AddComponent<PuzzleFrame>();
             var walls=new LineRenderer[4];for(int i=0;i<4;i++)walls[i]=Line("Wall "+i,frame.transform);
+            foreach(var wall in walls)wall.gameObject.layer=puzzleLayer;
             U.Set(frame,"_walls",walls);U.Set(session,"_catalog",AssetDatabase.LoadAssetAtPath<PuzzleCatalog>(U.Data+(mode==GameModeId.Shapes?"ShapesCatalog":"ColorShiftCatalog")+".asset"));
             U.Set(session,"_config",AssetDatabase.LoadAssetAtPath<PuzzleConfig>(U.Data+"PuzzleConfig.asset"));U.Set(session,"_mode",(int)mode);
             U.Set(session,"_arrowPrefab",prefab);U.Set(session,"_arrowRoot",arrows);U.Set(session,"_frame",frame);U.Set(session,"_cameraController",zoom);
@@ -73,7 +78,7 @@ namespace ArrowSwarm.Modes.Editor
 
         private static LineRenderer Line(string name,Transform parent)
         {
-            var go=new GameObject(name);go.transform.SetParent(parent,false);var line=go.AddComponent<LineRenderer>();
+            var go=new GameObject(name);go.transform.SetParent(parent,false);go.layer=parent.gameObject.layer;var line=go.AddComponent<LineRenderer>();
             line.sharedMaterial=StrokeMaterial;line.useWorldSpace=true;line.numCornerVertices=6;line.numCapVertices=6;line.sortingOrder=5;line.positionCount=0;return line;
         }
 
