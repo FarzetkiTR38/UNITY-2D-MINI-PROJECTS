@@ -1,0 +1,185 @@
+PASS: revised UI interaction and isolation checks in both puzzle modes
+PASS: Shapes: non-saving preview
+PASS: Shapes: puzzle HUD and popup adapters present
+PASS: Shapes: exactly one original zoom slider
+PASS: Shapes: no freeze controls
+PASS: Shapes: no legacy HUD or popup controllers
+PASS: Shapes: TopBar retains original authored sprite
+PASS: Shapes: TopBar matches saved Defense GameScene or its source prefab
+PASS: Shapes: BottomBar retains original authored sprite
+PASS: Shapes: BottomBar matches saved Defense GameScene or its source prefab
+PASS: Shapes Pause: visible enabled button
+PASS: Shapes Pause: visible Image target, ColorTint and existing feedback
+PASS: Shapes Pause: scale target contains actual visible artwork
+PASS: Shapes Pause: held pointer press visibly scales down
+PASS: Shapes Pause: held pointer press visibly darkens target graphic
+PASS: Shapes Pause: pointer release restores authored scale
+PASS: Shapes Hint: visible enabled button
+PASS: Shapes Hint: visible Image target, ColorTint and existing feedback
+PASS: Shapes Hint: scale target contains actual visible artwork
+PASS: Shapes Hint: held pointer press visibly scales down
+PASS: Shapes Hint: held pointer press visibly darkens target graphic
+PASS: Shapes Hint: pointer release restores authored scale
+PASS: Shapes: actual Pause button opens animated popup and freezes time
+PASS: Shapes: actual Resume button restores time and dismisses popup
+PASS: Shapes: live tr arrow counter
+PASS: Shapes: live tr level label
+PASS: Shapes: live tr dynamic win/lose popup labels
+PASS: Shapes: live en arrow counter
+PASS: Shapes: live en level label
+PASS: Shapes: live en dynamic win/lose popup labels
+PASS: Shapes: fixture contains an unblocked legal shot
+PASS: Shapes: shot is in flight before retry
+PASS: Shapes: pause works during shot
+PASS: Shapes: visible Retry cancels in-flight shot restores session counts
+PASS: Shapes: visible Retry cancels in-flight shot restores visible stars
+PASS: Shapes: visible Retry cancels in-flight shot restores authored star/counter transforms and colors
+PASS: Shapes: visible Retry cancels in-flight shot restores live arrow counter
+PASS: Shapes: fixture contains a blocked or mismatched shot
+PASS: Shapes: wrong hit loses exactly one life
+PASS: Shapes: wrong hit removes exactly one HUD star after break animation
+PASS: Shapes: immediate Retry cancels unfinished star break and restores all three stars restores session counts
+PASS: Shapes: immediate Retry cancels unfinished star break and restores all three stars restores visible stars
+PASS: Shapes: immediate Retry cancels unfinished star break and restores all three stars restores authored star/counter transforms and colors
+PASS: Shapes: immediate Retry cancels unfinished star break and restores all three stars restores live arrow counter
+PASS: Shapes: result fixture contains a repeatable wrong shot
+PASS: Shapes: wrong-shot fixture is ready
+PASS: Shapes: actual wrong shot leaves 2 lives
+PASS: Shapes: wrong-shot fixture is ready
+PASS: Shapes: actual wrong shot leaves 1 lives
+PASS: Shapes: wrong-shot fixture is ready
+PASS: Shapes: actual wrong shot leaves 0 lives
+PASS: Shapes: wrong shots produce loss without awarding a win
+PASS: Shapes: three actual wrong shots open animated Lose popup
+PASS: Shapes: rewarded continue stays hidden in preview
+PASS: Shapes: actual Lose Retry restores session counts
+PASS: Shapes: actual Lose Retry restores visible stars
+PASS: Shapes: actual Lose Retry restores authored star/counter transforms and colors
+PASS: Shapes: actual Lose Retry restores live arrow counter
+PASS: Shapes: Lose Retry dismisses result overlay
+PASS: Shapes: win action _next is bound to an authored visible control
+PASS: Shapes: win action _winLevels is bound to an authored visible control
+PASS: Shapes: win action _winMenu is bound to an authored visible control
+PASS: Shapes: empty-inventory Hint button opens modal and blocks gameplay
+PASS: Shapes: actual Hint Close restores gameplay
+PASS: Shapes: repeated Watch does not request a second reward callback
+PASS: Shapes: failed test ad grants no hint
+PASS: Shapes: second deliberate Watch requests one reward
+PASS: Shapes: successful deterministic ad grants exactly one hint
+PASS: Shapes: actual Hint button consumes earned hint and highlights solution
+PASS: Shapes: wrong-shot fixture is ready
+PASS: Shapes: actual wrong shot leaves 2 lives
+PASS: Shapes: wrong-shot fixture is ready
+PASS: Shapes: actual wrong shot leaves 1 lives
+PASS: Shapes: wrong-shot fixture is ready
+PASS: Shapes: actual wrong shot leaves 0 lives
+PASS: Shapes: wrong shots produce loss without awarding a win
+PASS: Shapes: loss exposes one rewarded continuation outside preview
+PASS: Shapes: repeated Continue cannot queue a second ad
+PASS: Shapes: failed continuation preserves loss and permits another request
+PASS: Shapes: successful deterministic rewarded continuation restores session counts
+PASS: Shapes: successful deterministic rewarded continuation restores visible stars
+PASS: Shapes: successful deterministic rewarded continuation restores authored star/counter transforms and colors
+PASS: Shapes: successful deterministic rewarded continuation restores live arrow counter
+PASS: Shapes: successful continuation restores three lives and dismisses Lose popup
+PASS: Shapes: consumed continuation cannot request another ad
+PASS: Shapes: test restores preview, original hint inventory and original ad service
+PASS: Shapes: no preview progress or hint consumption
+PASS: ColorShift: non-saving preview
+PASS: ColorShift: puzzle HUD and popup adapters present
+PASS: ColorShift: exactly one original zoom slider
+PASS: ColorShift: no freeze controls
+PASS: ColorShift: no legacy HUD or popup controllers
+PASS: ColorShift: TopBar retains original authored sprite
+PASS: ColorShift: TopBar matches saved Defense GameScene or its source prefab
+PASS: ColorShift: BottomBar retains original authored sprite
+PASS: ColorShift: BottomBar matches saved Defense GameScene or its source prefab
+PASS: ColorShift Pause: visible enabled button
+PASS: ColorShift Pause: visible Image target, ColorTint and existing feedback
+PASS: ColorShift Pause: scale target contains actual visible artwork
+PASS: ColorShift Pause: held pointer press visibly scales down
+PASS: ColorShift Pause: held pointer press visibly darkens target graphic
+PASS: ColorShift Pause: pointer release restores authored scale
+PASS: ColorShift Hint: visible enabled button
+PASS: ColorShift Hint: visible Image target, ColorTint and existing feedback
+PASS: ColorShift Hint: scale target contains actual visible artwork
+PASS: ColorShift Hint: held pointer press visibly scales down
+PASS: ColorShift Hint: held pointer press visibly darkens target graphic
+PASS: ColorShift Hint: pointer release restores authored scale
+PASS: ColorShift: actual Pause button opens animated popup and freezes time
+PASS: ColorShift: actual Resume button restores time and dismisses popup
+PASS: ColorShift: live tr arrow counter
+PASS: ColorShift: live tr level label
+PASS: ColorShift: live tr dynamic win/lose popup labels
+PASS: ColorShift: live tr rotation counter
+PASS: ColorShift: live en arrow counter
+PASS: ColorShift: live en level label
+PASS: ColorShift: live en dynamic win/lose popup labels
+PASS: ColorShift: live en rotation counter
+PASS: ColorShift: fixture contains an unblocked legal shot
+PASS: ColorShift: shot is in flight before retry
+PASS: ColorShift: pause works during shot
+PASS: ColorShift: visible Retry cancels in-flight shot restores session counts
+PASS: ColorShift: visible Retry cancels in-flight shot restores visible stars
+PASS: ColorShift: visible Retry cancels in-flight shot restores authored star/counter transforms and colors
+PASS: ColorShift: visible Retry cancels in-flight shot restores live arrow counter
+PASS: ColorShift: rotation is active before retry
+PASS: ColorShift: visible Retry cancels in-flight rotation restores session counts
+PASS: ColorShift: visible Retry cancels in-flight rotation restores visible stars
+PASS: ColorShift: visible Retry cancels in-flight rotation restores authored star/counter transforms and colors
+PASS: ColorShift: visible Retry cancels in-flight rotation restores live arrow counter
+PASS: ColorShift: retry restores orientation and rotation budget
+PASS: ColorShift: fixture contains a blocked or mismatched shot
+PASS: ColorShift: wrong hit loses exactly one life
+PASS: ColorShift: wrong hit removes exactly one HUD star after break animation
+PASS: ColorShift: immediate Retry cancels unfinished star break and restores all three stars restores session counts
+PASS: ColorShift: immediate Retry cancels unfinished star break and restores all three stars restores visible stars
+PASS: ColorShift: immediate Retry cancels unfinished star break and restores all three stars restores authored star/counter transforms and colors
+PASS: ColorShift: immediate Retry cancels unfinished star break and restores all three stars restores live arrow counter
+PASS: ColorShift: result fixture contains a repeatable wrong shot
+PASS: ColorShift: wrong-shot fixture is ready
+PASS: ColorShift: actual wrong shot leaves 2 lives
+PASS: ColorShift: wrong-shot fixture is ready
+PASS: ColorShift: actual wrong shot leaves 1 lives
+PASS: ColorShift: wrong-shot fixture is ready
+PASS: ColorShift: actual wrong shot leaves 0 lives
+PASS: ColorShift: wrong shots produce loss without awarding a win
+PASS: ColorShift: three actual wrong shots open animated Lose popup
+PASS: ColorShift: rewarded continue stays hidden in preview
+PASS: ColorShift: actual Lose Retry restores session counts
+PASS: ColorShift: actual Lose Retry restores visible stars
+PASS: ColorShift: actual Lose Retry restores authored star/counter transforms and colors
+PASS: ColorShift: actual Lose Retry restores live arrow counter
+PASS: ColorShift: Lose Retry dismisses result overlay
+PASS: ColorShift: win action _next is bound to an authored visible control
+PASS: ColorShift: win action _winLevels is bound to an authored visible control
+PASS: ColorShift: win action _winMenu is bound to an authored visible control
+PASS: ColorShift: empty-inventory Hint button opens modal and blocks gameplay
+PASS: ColorShift: actual Hint Close restores gameplay
+PASS: ColorShift: repeated Watch does not request a second reward callback
+PASS: ColorShift: failed test ad grants no hint
+PASS: ColorShift: second deliberate Watch requests one reward
+PASS: ColorShift: successful deterministic ad grants exactly one hint
+PASS: ColorShift: actual Hint button consumes earned hint and highlights solution
+PASS: ColorShift: wrong-shot fixture is ready
+PASS: ColorShift: actual wrong shot leaves 2 lives
+PASS: ColorShift: wrong-shot fixture is ready
+PASS: ColorShift: actual wrong shot leaves 1 lives
+PASS: ColorShift: wrong-shot fixture is ready
+PASS: ColorShift: actual wrong shot leaves 0 lives
+PASS: ColorShift: wrong shots produce loss without awarding a win
+PASS: ColorShift: loss exposes one rewarded continuation outside preview
+PASS: ColorShift: repeated Continue cannot queue a second ad
+PASS: ColorShift: failed continuation preserves loss and permits another request
+PASS: ColorShift: successful deterministic rewarded continuation restores session counts
+PASS: ColorShift: successful deterministic rewarded continuation restores visible stars
+PASS: ColorShift: successful deterministic rewarded continuation restores authored star/counter transforms and colors
+PASS: ColorShift: successful deterministic rewarded continuation restores live arrow counter
+PASS: ColorShift: successful continuation restores three lives and dismisses Lose popup
+PASS: ColorShift: consumed continuation cannot request another ad
+PASS: ColorShift: test restores preview, original hint inventory and original ad service
+PASS: ColorShift: no preview progress or hint consumption
+PASS: PlayerData unchanged throughout preview tests
+PASS: Saved campaign JSON unchanged
+PASS: Saved language preference unchanged
+RESTORED: PlayerData, auto-save policy, language, time scale and preview launch fields

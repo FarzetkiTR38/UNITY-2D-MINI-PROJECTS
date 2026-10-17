@@ -1,4 +1,4 @@
-# GameScene UI revision — 2026-10-17
+# GameScene UI revision — 2026-10-17 / 18
 
 Baseline: `b9b28bd`. User approved autonomous implementation and local phase commits.
 
@@ -32,4 +32,21 @@ Use the same rounded map card and light/dark theme, fit each puzzle between actu
 
 ## Results
 
-Final verification results are appended after the last authored scene revision.
+- R00 committed as `450bfbd`; R01 as `6a9ad2e`; R02 as `5f023d5`. R03 records the verification tools and evidence.
+- Unity compilation succeeded. Final fresh Defense session logged zero console errors. One earlier capture attempt produced a screenshot-write error and a Unity PlayerLoop capture-tool error; subsequent captures and the fresh regression succeeded. No application exception remained.
+- `UIRevisionPlaytestRunner.Begin()` passed 183 checks across both modes: original panel sprites, exactly one zoom slider, controller isolation, actual held-pointer scale/tint/release, Pause/Resume, retry during moving arrows/rotating frame, heart-break cancellation, localized counters/results, three-shot loss, hint modal and deterministic failed/successful rewards/continuation. Original ad service, inventory, preview state, data, saved JSON, saved language and auto-save policy were restored. Reward tests use an injected editor-only service; no real ad request is made by the suite.
+- All ten catalogs passed real pooled movement/frame playthroughs with three lives and no preview save writes. All ten authored levels also passed the pure solver, along with save compatibility and obstruction/rotation/deadlock checks. Report: `Captures/ThreeModes/runtime-verification.txt`.
+- Main menu/selector inspected in Unity. All active selector words and main-menu control labels are TMP; Turkish labels fit on one line with the same game font. Every one of the three choices produced exactly one selected label, with data restored afterward. All ten localization dictionaries have the same 98 keys and valid format placeholders. Japanese fallback rendering was also checked.
+- Shapes, Color Shift, pause, win/loss and empty-hint popups were visually inspected. Light/dark rendering uses the original UI theme; readable dark board colors preserve logical palette IDs and transform arrows/walls identically.
+- Actual 1080×1920, 1080×2400 and 1536×2048 views were checked. Measured complete board bounds stayed between top HUD and the Color Shift rotation track, within horizontal screen bounds. Captures show the final swipe track and gameplay framing.
+- MainMenuScene, ShapesScene and ColorShiftScene have zero missing scripts; required puzzle references are assigned. Static review found zero dangling local scene references, no duplicate project GUIDs and one zoom slider in each puzzle scene.
+- Returned through the actual puzzle Pause → Main Menu button and Main Menu Play route. Fresh Defense regression: original GameScene, Playing state, valid generated level, 56 arrows, two spawned/active enemies, no PuzzleSession. The screenshot was frozen briefly for capture; the runtime clock was restored before stopping Play Mode.
+- GameScene, MapTestScene, original Canvas_HUD/Canvas_Overlay prefabs, Defense Arrow/Mob scripts, LevelGenerator and GameConfig compare identically to baseline `b9b28bd`. The shared HUDFeedbackEffects change preserves authored baselines and adds safe reset cancellation; the revised UI suite covers it.
+- No Android device build, physical touch test, production ad delivery or live leaderboard submission was performed.
+
+## Reproducing the revision
+
+- **Arrow Swarm → Puzzles → Apply GameScene UI To Puzzle Scenes** captures the saved Defense canvas appearance and regenerates isolated puzzle UI. Save the open scene first; this deliberately replaces the generated puzzle canvases.
+- Open MainMenuScene, then **Upgrade Loaded Menu Localization And Feedback**; save the scene afterward.
+- Launch a non-saving puzzle preview from MapSceneController, then **Verify Revised UI (Play Mode Preview)**. The report is `Captures/UIRevision/ui-verification.txt`.
+- **Playtest All Levels (Play Mode)** runs the ten real solutions. Exit Play Mode after testing. The editor remains on MainMenuScene after this task.
