@@ -23,6 +23,13 @@ namespace ArrowSwarm.UI
         [SerializeField] private TextMeshProUGUI _pageText;
         [SerializeField] private Transform _levelGridContainer;
         [SerializeField] private LevelButtonUI _levelButtonPrefab;
+        [SerializeField] private ArrowSwarm.Modes.PuzzleCatalog _shapesCatalog;
+        [SerializeField] private ArrowSwarm.Modes.PuzzleCatalog _colorShiftCatalog;
+
+        private ArrowSwarm.Modes.GameModeId SelectedMode => ArrowSwarm.Modes.GameModeSelection.Selected;
+        private int SelectedHighest => DataManager.Instance?.GetHighestLevel(SelectedMode) ?? 1;
+        private int CampaignCount => SelectedMode == ArrowSwarm.Modes.GameModeId.Shapes ? (_shapesCatalog?.Count ?? 5)
+            : SelectedMode == ArrowSwarm.Modes.GameModeId.ColorShift ? (_colorShiftCatalog?.Count ?? 5) : int.MaxValue;
 
         [Header("Animation")]
         [SerializeField] private CanvasGroup _canvasGroup;
@@ -66,7 +73,7 @@ namespace ArrowSwarm.UI
 
         private void UpdatePageToHighest()
         {
-            int highestLevel = DataManager.Instance?.PlayerData?.highestLevel ?? 1;
+            int highestLevel = SelectedHighest;
             int maxPage = Mathf.Max(1, (highestLevel - 1) / LEVELS_PER_PAGE + 1);
             _currentPage = maxPage;
             UpdatePage();
@@ -83,7 +90,7 @@ namespace ArrowSwarm.UI
 
         public void NextPage()
         {
-            int highestLevel = DataManager.Instance?.PlayerData?.highestLevel ?? 1;
+            int highestLevel = SelectedHighest;
             int maxPage = Mathf.Max(1, (highestLevel - 1) / LEVELS_PER_PAGE + 1);
 
             if (_currentPage < maxPage)
@@ -97,7 +104,7 @@ namespace ArrowSwarm.UI
         {
             if (_levelGridContainer == null) return;
 
-            int highestLevel = DataManager.Instance?.PlayerData?.highestLevel ?? 1;
+            int highestLevel = SelectedHighest;
             int maxPage = Mathf.Max(1, (highestLevel - 1) / LEVELS_PER_PAGE + 1);
 
             _currentPage = Mathf.Clamp(_currentPage, 1, maxPage);
@@ -106,7 +113,7 @@ namespace ArrowSwarm.UI
             if (_nextPageButton != null) _nextPageButton.interactable = _currentPage < maxPage;
 
             int startLevel = (_currentPage - 1) * LEVELS_PER_PAGE + 1;
-            int endLevel = _currentPage * LEVELS_PER_PAGE;
+            int endLevel = Mathf.Min(_currentPage * LEVELS_PER_PAGE, CampaignCount);
 
             if (_pageText != null)
             {
@@ -132,17 +139,17 @@ namespace ArrowSwarm.UI
             {
                 int levelNum = startLevel + i;
                 bool isUnlocked = levelNum <= highestLevel;
-                int stars = DataManager.Instance?.GetLevelStars(levelNum) ?? 0;
+                int stars = DataManager.Instance?.GetLevelStars(SelectedMode, levelNum) ?? 0;
 
-                _buttonPool[i].gameObject.SetActive(true);
+                _buttonPool[i].gameObject.SetActive(levelNum <= CampaignCount);
                 _buttonPool[i].Setup(levelNum, isUnlocked, stars, OnLevelClicked);
             }
         }
 
         private void OnLevelClicked(int level)
         {
-            DataManager.Instance?.SetCurrentLevel(level);
-            GameManager.Instance?.StartGame();
+            DataManager.Instance?.SetCurrentLevel(SelectedMode, level);
+            ArrowSwarm.Modes.GameModeSelection.PlaySelected();
         }
 
         /// <summary>Shows the level select panel with elastic pop-in.</summary>
