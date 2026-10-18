@@ -23,13 +23,13 @@ namespace ArrowSwarm.Modes.Editor
             bool keep=R(x,y,0,-.35f,.45f,.5f);
             bool towers=R(a,y,.65f,-.15f,.2f,.7f);
             bool roof=T(a,y,.36f,.48f,.94f,.48f,.65f,.91f)||T(x,y,-.48f,.1f,.48f,.1f,0,.63f);
-            bool flag=C(x,y,0,.5f,0,.96f,.035f)||T(x,y,.01f,.95f,.37f,.84f,.01f,.71f);
+            bool flag=C(x,y,0,.5f,0,.96f,.065f)||T(x,y,.01f,.95f,.37f,.84f,.01f,.71f);
             if (!keep&&!towers&&!roof&&!flag) return Color.clear;
             if (flag) return H(0xE89C52);
             if (roof) return H(0xA377C5);
             if (E(x,y,0,-.6f,.19f,.31f)&&y<-.36f) return H(0x956EAB);
-            if (R(a,y,.65f,.17f,.065f,.13f)||R(x,y,0,-.07f,.07f,.14f)) return H(0x648DAF);
-            if (Mathf.Repeat(y+1f,.21f)<.027f) return H(0xAEA8CB);
+            if (R(a,y,.65f,.17f,.095f,.17f)||R(x,y,0,-.07f,.1f,.18f)) return H(0x648DAF);
+            if (y<-.5f) return H(0xB2A0C4);
             return H(0xD4C7E1);
         }
         private static Color Anchor(float x,float y)
@@ -50,15 +50,14 @@ namespace ArrowSwarm.Modes.Editor
         {
             bool lower=E(x,y,-.12f,-.49f,.54f,.43f);
             bool upper=E(x,y,-.12f,-.04f,.4f,.34f);
-            bool neck=R(x,y,-.01f,.45f,.105f,.5f);
+            bool neck=R(x,y,-.01f,.45f,.135f,.5f);
             bool head=R(x,y,-.01f,.83f,.19f,.15f);
-            bool pegs=R(x,y,-.01f,.84f,.29f,.045f);
+            bool pegs=R(x,y,-.01f,.84f,.29f,.085f);
             if (!lower&&!upper&&!neck&&!head&&!pegs) return Color.clear;
             if (pegs&&!head) return H(0x9C9FB8);
             if (neck||head) return H(0x966B58);
-            if (E(x,y,-.12f,-.22f,.17f,.18f)) return H(0x79536A);
-            if (R(x,y,-.12f,-.65f,.2f,.045f)) return H(0x815B57);
-            if (Mathf.Abs(x+.06f)<.015f||Mathf.Abs(x+.17f)<.015f) return Cream;
+            if (E(x,y,-.12f,-.22f,.21f,.22f)) return H(0x79536A);
+            if (R(x,y,-.12f,-.65f,.22f,.075f)) return H(0x815B57);
             return x<-.18f?H(0xDE9659):H(0xF0BC73);
         }
         private static Color Balloon(float x,float y)
@@ -67,7 +66,7 @@ namespace ArrowSwarm.Modes.Editor
             bool ropes=T(x,y,-.4f,-.24f,.4f,-.24f,0,-.8f)||R(x,y,0,-.57f,.24f,.17f);
             bool basket=R(x,y,0,-.76f,.29f,.16f);
             if (!canopy&&!ropes&&!basket) return Color.clear;
-            if (basket) return Mathf.Repeat((x+y)*7f,1f)<.15f?H(0xBC8C61):H(0xD4AE79);
+            if (basket) return y<-.79f?H(0x997347):H(0xBA8B56);
             if (ropes&&!canopy) return H(0xA18672);
             float band=x/(Mathf.Max(.14f,Mathf.Sqrt(Mathf.Max(0,1f-(y-.28f)*(y-.28f)/.4225f))));
             if (Mathf.Abs(band)<.21f) return H(0xEBC85F);

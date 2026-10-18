@@ -37,6 +37,7 @@ namespace ArrowSwarm.Modes.Editor
             var graph = DenseDependencyGraph.Analyze(level.Arrows, level.Width, level.Height);
             Require(graph.Solvable && graph.MaximumDepth > 1, level.Title + ": missing dependencies");
             Require(graph.DirectionCount >= 3 && graph.InwardHeads > 0, level.Title + ": insufficient head variety");
+            if (level.Mode == GameModeId.Shapes) Require(graph.DirectionCount == 4, level.Title + ": expected all four head directions");
             if (level.Mode == GameModeId.ColorShift)
             {
                 Require(solution.RequiredTurns > 0 && solution.RequiredTurns <= level.TurnBudget, "invalid rotation budget");

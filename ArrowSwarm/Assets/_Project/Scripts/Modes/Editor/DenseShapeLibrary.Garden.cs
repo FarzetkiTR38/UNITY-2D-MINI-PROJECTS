@@ -13,20 +13,20 @@ namespace ArrowSwarm.Modes.Editor
             bool stem=C(x,y,0,.5f,.1f,.96f,.07f);
             if (!fruit&&!leaf&&!stem) return Color.clear;
             if (leaf||stem) return H(0x68B47C);
-            bool seed=E(a,y,.43f,.2f,.045f,.07f)||E(a,y,.18f,.35f,.045f,.07f)
-                ||E(a,y,.25f,-.16f,.045f,.07f)||E(x,y,0,-.48f,.045f,.07f);
+            bool seed=E(a,y,.43f,.2f,.075f,.1f)||E(a,y,.18f,.35f,.075f,.1f)
+                ||E(a,y,.25f,-.16f,.075f,.1f)||E(x,y,0,-.48f,.075f,.1f);
             if (seed) return H(0xFFE08C);
             return x<-.2f?H(0xEF8791):H(0xD95672);
         }
         private static Color Pineapple(float x,float y)
         {
             bool fruit=E(x,y,0,-.28f,.58f,.65f);
-            bool leaves=C(x,y,0,.25f,.05f,.9f,.08f)||C(x,y,-.07f,.24f,-.6f,.75f,.08f)
-                ||C(x,y,.1f,.23f,.63f,.71f,.08f)||C(x,y,-.12f,.25f,-.27f,.91f,.08f)||R(x,y,0,.25f,.2f,.14f)
+            bool leaves=C(x,y,0,.25f,.05f,.9f,.105f)||C(x,y,-.07f,.24f,-.6f,.75f,.105f)
+                ||C(x,y,.1f,.23f,.63f,.71f,.105f)||C(x,y,-.12f,.25f,-.27f,.91f,.105f)||R(x,y,0,.25f,.2f,.14f)
                 ||E(x,y,-.23f,.53f,.09f,.15f);
             if (!fruit&&!leaves) return Color.clear;
             if (leaves) return x<0?H(0x5AA87A):H(0x81C280);
-            if (Mathf.Repeat((x+y)*3.8f,1f)<.11f||Mathf.Repeat((x-y)*3.8f,1f)<.11f) return H(0xC79045);
+            if (E(Mathf.Abs(x),y,.23f,-.08f,.105f,.13f)||E(Mathf.Abs(x),y,.23f,-.4f,.105f,.13f)||E(x,y,0,-.68f,.105f,.12f)) return H(0xAC823D);
             return x<0?H(0xEDCA67):H(0xDEA84C);
         }
         private static Color Mushroom(float x,float y)
@@ -37,7 +37,7 @@ namespace ArrowSwarm.Modes.Editor
             if (!cap&&!stem&&!grass) return Color.clear;
             if (grass) return H(0x6AAC7C);
             if (!cap) return Cream;
-            if (E(x,y,-.4f,.34f,.18f,.17f)||E(x,y,.23f,.58f,.16f,.13f)||E(x,y,.51f,.09f,.16f,.14f)) return H(0xFFE3B6);
+            if (E(x,y,-.4f,.34f,.18f,.17f)||E(x,y,.23f,.58f,.16f,.13f)||E(x,y,.51f,.09f,.16f,.14f)) return H(0xC8AA61);
             if (y<.02f) return H(0xAD5B71);
             return H(0xDE7681);
         }
@@ -49,7 +49,7 @@ namespace ArrowSwarm.Modes.Editor
             bool flower=r<.57f+.1f*Mathf.Cos(angle*12f);
             if (!flower&&!stem&&!leaves) return Color.clear;
             if (!flower) return leaves?H(0x73B775):H(0x559F72);
-            if (r<.3f) return Mathf.Repeat((x+y)*13f,1f)<.2f?H(0xD1A460):H(0x95754C);
+            if (r<.3f) return x<-.08f?H(0xBA9152):H(0x8F6A43);
             return r>.48f?H(0xE5A84C):H(0xF4CF60);
         }
         private static Color Tulip(float x,float y)

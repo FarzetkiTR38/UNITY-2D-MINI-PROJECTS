@@ -13,8 +13,8 @@ namespace ArrowSwarm.Modes.Editor
             if (!face&&!ear&&!horn&&!mane) return Color.clear;
             if (horn) return H(0xF7CE62);
             if (mane&&x<-.3f) return y>.2f?H(0xB085D3):(y>-.25f?H(0xED84B8):H(0x78C6D4));
-            if (E(x,y,.24f,.04f,.065f,.085f)||E(x,y,.62f,-.41f,.04f,.055f)) return Ink;
-            if (E(x,y,.33f,-.24f,.14f,.095f)) return H(0xEEA1BB);
+            if (E(x,y,.24f,.04f,.105f,.12f)||E(x,y,.62f,-.41f,.07f,.085f)) return Ink;
+            if (E(x,y,.34f,-.26f,.2f,.14f)) return H(0xEEA1BB);
             if (ear&&y>.48f) return H(0xD9A2D4);
             return H(0xDCC5E7);
         }
@@ -28,7 +28,7 @@ namespace ArrowSwarm.Modes.Editor
             bool tail=C(x,y,.12f,-.6f,.64f,-.76f,.12f);
             if (!body&&!wings&&!horns&&!feet&&!tail) return Color.clear;
             if (horns) return H(0xF2CB72);
-            if (Eyes(x,y,.16f,.47f,.055f)) return Ink;
+            if (Eyes(x,y,.18f,.47f,.095f)) return Ink;
             if (wings&&a>.31f) return H(0x73C4BB);
             if (E(x,y,0,-.24f,.2f,.41f)) return H(0xD4D887);
             if (feet) return H(0x438C78);
@@ -42,7 +42,7 @@ namespace ArrowSwarm.Modes.Editor
             bool ears=T(x,y,.1f,.48f,.1f,.91f,.35f,.59f)||T(x,y,.44f,.54f,.64f,.88f,.63f,.32f);
             bool foot=E(x,y,.38f,-.76f,.39f,.15f);
             if (!tail&&!body&&!head&&!ears&&!foot) return Color.clear;
-            if (E(x,y,.47f,.4f,.055f,.07f)||E(x,y,.67f,.24f,.055f,.05f)) return Ink;
+            if (E(x,y,.47f,.4f,.095f,.11f)||E(x,y,.67f,.24f,.08f,.075f)) return Ink;
             if (E(x,y,.39f,-.32f,.2f,.35f)) return Cream;
             if (tail&&x<-.13f) return E(x,y,-.47f,.09f,.21f,.47f)?H(0xDB9D68):H(0xB9754C);
             if (E(x,y,.55f,-.12f,.19f,.22f)) return H(0xAC7A42);
@@ -55,11 +55,11 @@ namespace ArrowSwarm.Modes.Editor
             bool feet=E(x,y,-.47f,-.68f,.22f,.14f)||E(x,y,.4f,-.68f,.22f,.14f);
             float angle=Mathf.Atan2(y+.12f,x+.2f);
             float radius=Mathf.Sqrt((x+.2f)*(x+.2f)+(y+.12f)*(y+.12f));
-            bool spikes=x<.28f&&y>-.45f&&radius<.75f+.13f*Mathf.Cos(angle*15f);
+            bool spikes=x<.28f&&y>-.45f&&radius<.72f+.17f*Mathf.Cos(angle*11f);
             if (!body&&!face&&!feet&&!spikes) return Color.clear;
-            if (E(x,y,.48f,-.12f,.055f,.065f)||E(x,y,.86f,-.3f,.07f,.06f)) return Ink;
+            if (E(x,y,.48f,-.12f,.1f,.115f)||E(x,y,.86f,-.3f,.095f,.085f)) return Ink;
             if (face||feet) return H(0xD9B78A);
-            return Mathf.Repeat((x+y)*6f,1f)<.18f?H(0xE1B480):H(0x9E755D);
+            return y>.27f||x<-.53f?H(0xAE805A):H(0x906B53);
         }
         private static Color Frog(float x,float y)
         {
@@ -68,8 +68,8 @@ namespace ArrowSwarm.Modes.Editor
             bool legs=E(a,y,.62f,-.38f,.32f,.35f)||E(a,y,.6f,-.73f,.34f,.15f)||E(a,y,.27f,-.67f,.16f,.15f);
             bool arms=C(a,y,.37f,-.03f,.7f,-.48f,.17f);
             if (!E(x,y,0,-.1f,.61f,.65f)&&!eyes&&!legs&&!arms) return Color.clear;
-            if (Eyes(x,y,.4f,.59f,.075f)) return Ink;
-            if (E(a,y,.4f,.56f,.18f,.2f)) return Cream;
+            if (Eyes(x,y,.4f,.59f,.11f)) return Ink;
+            if (E(a,y,.4f,.56f,.22f,.23f)) return Cream;
             if (E(x,y,0,-.3f,.37f,.35f)) return H(0xC4DA88);
             if (E(a,y,.39f,.03f,.12f,.08f)) return H(0xE4A678);
             return H(0x72B977);
@@ -81,7 +81,7 @@ namespace ArrowSwarm.Modes.Editor
             bool face=E(x,y,0,-.08f,.79f,.78f);
             if (!ears&&!face) return Color.clear;
             if (ears&&y>.48f) return H(0x465370);
-            if (Eyes(x,y,.3f,.14f,.055f)) return H(0x16283F);
+            if (Eyes(x,y,.3f,.14f,.09f)) return H(0x16283F);
             if (E(a,y,.31f,.11f,.21f,.27f)||E(x,y,0,-.3f,.12f,.09f)) return H(0x52627E);
             if (E(a,y,.46f,-.3f,.13f,.09f)) return H(0xDDA5B5);
             return White;
@@ -92,7 +92,7 @@ namespace ArrowSwarm.Modes.Editor
             bool ears=T(a,y,.26f,.42f,.67f,.94f,.82f,.13f);
             if (!E(x,y,0,-.12f,.8f,.72f)&&!ears) return Color.clear;
             if (T(a,y,.43f,.42f,.63f,.73f,.68f,.28f)) return H(0x9C86A9);
-            if (Eyes(x,y,.32f,.07f,.06f)||E(x,y,0,-.38f,.11f,.08f)) return H(0x24334E);
+            if (Eyes(x,y,.32f,.07f,.095f)||E(x,y,0,-.38f,.14f,.105f)) return H(0x24334E);
             if (E(a,y,.32f,.03f,.32f,.22f)) return H(0x536079);
             if (E(x,y,0,-.4f,.3f,.26f)||y>.43f&&a<.16f) return White;
             return H(0x9CA9BD);
