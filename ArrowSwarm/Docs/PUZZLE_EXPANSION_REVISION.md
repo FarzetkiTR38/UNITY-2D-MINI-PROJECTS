@@ -31,3 +31,5 @@ Rescue Rocket is a deliberate single-arrow recovery tool shared by both new mode
 To be updated per phase with Unity checks, captures, campaign metrics and commit references.
 
 P01 verified through Unity MCP: compiled with zero errors; Shapes and Color Shift both contain only Layer3_InnerGrid, no Layer2_OuterCard. Actual portrait captures: Captures/Revision2/p01-shapes-grid-only.png and p01-color-grid-only.png. The camera now fits the grid/border without Defense channel scaling. Defense source and scene unchanged.
+
+P02: Unity MCP built and independently verified all 100 assets. Every intended silhouette/grid cell is occupied exactly once, layouts are unique, each has four head directions and inward dependencies. Shapes grow from 24x28 to 56x60; Color Shift grows from 10x10 to 42x42 with 1–10 required turns. All 100 solver witnesses fit authored budgets. Existing level 1–5 and catalog GUIDs remain intact. MapSceneController now previews levels 1–50. Heart and level 50 were loaded/rendered in Unity (Captures/Revision2/p02-dense-heart.png, p02-shapes-50.png); full runtime playthrough follows in P06.

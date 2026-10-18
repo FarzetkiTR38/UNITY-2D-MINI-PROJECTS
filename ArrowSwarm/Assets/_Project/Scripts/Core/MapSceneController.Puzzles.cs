@@ -8,7 +8,7 @@ namespace ArrowSwarm.Core
     {
         [Header("Game Mode Preview")]
         [SerializeField] private GameModeId _previewMode = GameModeId.Defense;
-        [SerializeField, Range(1,5)] private int _puzzleLevel = 1;
+        [SerializeField, Range(1,50)] private int _puzzleLevel = 1;
         public GameModeId PreviewMode => _previewMode;
         public int PuzzlePreviewLevel => _puzzleLevel;
 

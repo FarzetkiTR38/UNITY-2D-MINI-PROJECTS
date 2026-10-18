@@ -58,13 +58,17 @@ namespace ArrowSwarm.Modes.Editor
             if(!_source){_status="Choose a source image first.";return;}
             var importer=AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(_source)) as TextureImporter;
             if(importer!=null && !importer.isReadable){importer.isReadable=true;importer.SaveAndReimport();}
-            System.Func<int,int,Color> sample=(x,y)=>_source.GetPixelBilinear((x+.5f)/_width,(y+.5f)/_height);
+            // One image sample per atomic tile keeps every selected cell coverable by an arrow.
+            _width += _width & 1; _height += _height & 1;
+            System.Func<int,int,Color> sample=(x,y)=>_source.GetPixelBilinear((x/2*2+1f)/_width,(y/2*2+1f)/_height);
             System.Func<int,int,bool> mask=(x,y)=>
             {
                 var c=sample(x,y);var d=new Vector3(c.r-_background.r,c.g-_background.g,c.b-_background.b);
                 return c.a>_alphaThreshold && d.magnitude>_backgroundTolerance;
             };
-            var arrows=ShapePathGenerator.Generate(_width,_height,mask,sample,_seed,_minLength,_maxLength);
+            List<PuzzleArrowData> arrows;
+            try { arrows=ShapePathGenerator.Generate(_width,_height,mask,sample,_seed,_minLength,_maxLength); }
+            catch (System.Exception error) { _status=error.Message; return; }
             if(_level && !AssetDatabase.Contains(_level))DestroyImmediate(_level);
             _level=CreateInstance<PuzzleLevel>();_level.Author(GameModeId.Shapes,_source.name,_width,_height,arrows,null,0,_source);
             _selected=-1;Validate();
