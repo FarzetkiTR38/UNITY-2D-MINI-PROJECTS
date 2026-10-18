@@ -19,3 +19,19 @@ Keep the recognizable Revision3 silhouettes, object proportions, semantic color 
 - Report measurements as difficulty proxies, not proof of a subjective difficulty level; include real captures for the user's review.
 
 Baseline: `1bdf74e`. Ten initially modified files were snapshotted outside the project. Shared and Shapes visual configs, original scenes, catalog identity and all Color Shift level assets are protected by hashes.
+
+## Phase 2 results
+
+Unity MCP compilation and the independent persisted catalog audit passed for all50 levels. Every occupied cell retains its Revision3 Color32, coordinates and dimensions; existing catalog references and level GUIDs remain intact. Generation now joins medium color-coherent packets into varied turning paths and chooses safe heads against actual opening and midgame choice pressure. Opening targets gradually decrease from27% to20%, with higher inward dependency targets later in the campaign.
+
+| Mean across50 | Revision3 | Revision4 |
+| --- | ---: | ---: |
+| Initial legal arrow ratio | 41.5% | 23.4% |
+| Greedy middle-game legal choice ratio | 42.3% | 19.6% |
+| Inward heads | 13.2% | 37.1% |
+| Cell-weighted bends | 3.17 | 6.51 |
+| Longest straight span | 36.08 | 13.68 |
+
+For context, Revision2 had14.69 cell-weighted bends and2.94 longest straight span: the new geometry sits between those tiny repeated curls and Revision3's long stripes. Choice ratios are structural proxies, dependent on removal order; they do not establish subjective human difficulty.
+
+Validation initially rejected one early candidate for excess opening choices before any level asset was written. Adjusting the general opening curve resolved it without a level-specific exception or weaker acceptance criteria. Rebuilding levels1,4,50 from the persisted colored masks reproduced their geometry exactly. Fresh Unity console errors:0. Runtime playthroughs and visual review follow in phase3.
