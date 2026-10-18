@@ -18,6 +18,11 @@ namespace ArrowSwarm.Modes
         [SerializeField, Min(.01f)] private float _wallOffset = .9f;
         [SerializeField, Min(.01f)] private float _wallWidth = .3f;
         [SerializeField, Min(1)] private int _poolSize = 96;
+        [Header("Rescue Rocket (Puzzle Modes Only)")]
+        [SerializeField, Min(0)] private int _rocketCharges = 1;
+        [SerializeField, Min(.1f)] private float _rocketDuration = .7f;
+        [SerializeField, Range(.1f, 1f)] private float _rocketLiftFraction = .4f;
+        [SerializeField, Range(.03f, .3f)] private float _rocketIconFraction = .12f;
         [Header("Dark Theme Palette Presentation")]
         [Tooltip("Minimum displayed linear luminance on dark boards. Logical level colors remain unchanged.")]
         [SerializeField, Range(0f, 1f)] private float _minimumDarkLuminance = .55f;
@@ -32,6 +37,10 @@ namespace ArrowSwarm.Modes
         public float WallOffset => _wallOffset;
         public float WallWidth => _wallWidth;
         public int PoolSize => _poolSize;
+        public int RocketCharges => _rocketCharges;
+        public float RocketDuration => _rocketDuration;
+        public float RocketLiftFraction => _rocketLiftFraction;
+        public float RocketIconFraction => _rocketIconFraction;
 
         /// <summary>Returns the same readable display color for arrows and their matching frame walls.</summary>
         public Color ThemeColor(Color source, ThemeMode theme)
