@@ -43,10 +43,11 @@ namespace ArrowSwarm.Puzzle
             bool blocked = !float.IsPositiveInfinity(obstacle) || !match;
             float wallDistance = arrow.Direction.x > 0 ? Level.Width - 1 - arrow.Head.x : arrow.Direction.x < 0 ? arrow.Head.x : arrow.Direction.y > 0 ? Level.Height - 1 - arrow.Head.y : arrow.Head.y;
             float distance = blocked ? Mathf.Max(.1f, Mathf.Min(obstacle - _config.StrokeWidth, wallDistance + _config.WallOffset - _config.StrokeWidth))
-                : wallDistance + view.Length + Mathf.Max(Level.Width, Level.Height);
+                : wallDistance + view.Length + _config.WallOffset + _config.HeadSize;
+            float speed = blocked ? _config.Speed : Mathf.Max(_config.Speed, distance / _config.MaximumFlightDuration);
             if (!blocked) { _removed[index] = true; Remaining--; AudioManager.Instance?.PlayArrowFire(false); }
             float travel = 0;
-            while (travel < distance) { travel = Mathf.Min(distance, travel + Time.deltaTime * _config.Speed); view.RenderTravel(travel); yield return null; }
+            while (travel < distance) { travel = Mathf.Min(distance, travel + Time.deltaTime * speed); view.RenderTravel(travel); yield return null; }
             if (blocked)
             {
                 Lives--; AudioManager.Instance?.PlayArrowWrong(); Notify();
@@ -75,12 +76,15 @@ namespace ArrowSwarm.Puzzle
         }
         private void CheckStuck()
         {
-            if (_mode == GameModeId.ColorShift && Turns == 0 && RocketCharges == 0 && !PuzzleSolver.Solve(Level, _removed, Orientation, 0).Solvable)
-            {
-                // Allow every remaining legal shot before presenting the exhausted-frame failure.
-                for (int i = 0; i < _removed.Length; i++) if (PuzzleRules.CanRemove(Level, _removed, i, Orientation)) return;
-                SetMessage("puzzle_stuck"); End(false);
-            }
+            RocketNeeded = false;
+            if (_mode != GameModeId.ColorShift || Turns > 0) return;
+            // All normally legal shots remain available, even after the last rotation.
+            for (int i = 0; i < _removed.Length; i++) if (PuzzleRules.CanRemove(Level, _removed, i, Orientation)) return;
+            int required = 0;
+            for (int i = 0; i < _removed.Length; i++)
+                if (!_removed[i] && !PuzzleRules.MatchesWall(Level, i, Orientation)) required++;
+            if (required == 0 || required > RocketCharges) { SetMessage("puzzle_stuck"); End(false); }
+            else { RocketNeeded = true; SetMessage("puzzle_rocket_needed"); }
         }
         private void End(bool won)
         {
@@ -100,6 +104,13 @@ namespace ArrowSwarm.Puzzle
         {
             if (!Ready) return;
             RocketArmed = false;
+            if (RocketNeeded)
+            {
+                RocketArmed = true;
+                for (int i = 0; i < _removed.Length; i++)
+                    if (!_removed[i] && !PuzzleRules.MatchesWall(Level, i, Orientation)) { _views[i].Highlight(true); break; }
+                SetMessage("puzzle_rocket_needed"); Notify(); return;
+            }
             var solution = PuzzleSolver.Solve(Level, _removed, Orientation, Turns);
             if (!solution.Solvable || solution.Steps.Count == 0) { SetMessage("puzzle_restart_hint"); Notify(); return; }
             if (!Preview && DataManager.Instance.PlayerData.tipCount <= 0)

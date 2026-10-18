@@ -67,7 +67,8 @@ namespace ArrowSwarm.UI
             if (_rocket != null) _rocket.interactable = s.Ready && s.RocketCharges > 0;
             if (_rocketCount != null) _rocketCount.text = s.RocketCharges.ToString();
             if (_rotationButton != null) _rotationButton.interactable = s.Ready && s.Turns > 0;
-            _instruction.text = Text("puzzle_swipe", "Swipe left / right to rotate");
+            _instruction.text = s.RocketNeeded ? Text("puzzle_rocket_needed", "Use the rocket to rescue an arrow") :
+                Text("puzzle_swipe", "Tap or swipe left / right to rotate");
         }
         private void OnDestroy()
         {

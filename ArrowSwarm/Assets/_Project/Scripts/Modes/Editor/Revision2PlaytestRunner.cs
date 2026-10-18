@@ -66,6 +66,7 @@ namespace ArrowSwarm.Modes.Editor
                 BindConfig(_session, _testConfig); _session.Retry();
                 yield return RocketChecks(_session);
                 if (mode == GameModeId.ColorShift) yield return FrameChecks(_session);
+                yield return RecoveryAndFlightChecks(_session);
                 yield return LastArrowRocket(_session);
                 Check(JsonUtility.ToJson(_data.PlayerData) == _savedData, mode + ": no campaign or inventory writes");
                 RestoreConfig();
