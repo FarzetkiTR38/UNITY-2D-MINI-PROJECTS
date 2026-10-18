@@ -30,3 +30,19 @@ P01: Unity MCP compiled the Shapes-only config authoring and verified the saved 
 P02: Unity MCP generated and validated all50 final Shapes candidates before updating their existing assets. Object-specific grids range36–66 cells per axis, are tightly cropped and preserve uniform sampling pitch. Color-coherent ribbons replace per-tile curls; important face/wing/shell regions are not averaged away. All50 have four directions, inward heads and acyclic solver witnesses. First actual1080x1920 gameplay captures of penguin, rabbit and fish show the stronger Shapes strokes and retained original HUD. Authoring metrics are in Captures/Revision3/authoring-metrics.csv. All existing level/catalog GUIDs and protected mode file hashes are unchanged.
 
 P03: Reviewed all50 actual gameplay captures and selected dark captures. A second visual pass replaced the whale's oversized vertical tail with a small fork and changed the dragon from a symmetric bat-like front view to a long-snouted side profile with distinct wing, horns, feet and curled tail. Only levels13 and28 changed in this pass. Unity MCP rebuilt/validated all50 and the final real rapid-tap playthrough passed50/50 again. All remaining images passed the silhouette/region/cropping review.
+
+## Final verification and review
+
+- **50/50 final Shapes cleared** through real rapid `Tap` input and pooled animations, with three lives, unchanged Rocket inventory, settled terminal states and no campaign/backup writes. All have four directions, exact coverage and inward dependencies.
+- **396 interaction checks** passed with the new catalog: real mouse clicks while arrows move, repeated blocked-arrow taps, overlapping damage, pause/retry cleanup, hints/Rocket, final-arrow completion and existing Color Shift rotation/recovery behavior.
+- **184 HUD/popup/localization checks** passed: original visible press feedback, zoom, lives, retry, win/lose/hint popups, TR/EN text and save isolation.
+- **41 distinct grid dimensions**; axes span36–66 cells. Arrow counts36–117, mean63.7, versus baseline mean67.5/max174. Stronger Shapes-only strokes render at6.5–11.9 pixels in the1080x1920 captures.
+- Live1080x1920,1080x2400 and1536x2048 checks keep the complete card between the original HUD bars. Resizing retains the same attempt version, remaining arrows and three lives.
+- **57 fresh capture files** decode at1080x1920:50 light and7 dark. Capture runs use unique directories so an older file cannot satisfy the screenshot checks or block overwrite. The final capture run finished with zero Unity console errors.
+- Existing level/catalog GUIDs, all protected Color Shift assets, shared PuzzleConfig and GameScene are unchanged. All ten initially dirty files match their pre-task bytes and remain outside these commits.
+
+Review entry: `Captures/Revision3/README.md` and the full-size HTML gallery `Captures/Revision3/index.html`. Five overview sheets cover all fifty maps; a sixth shows dark themes. Full captures, per-level CSV/JSON, interaction/UI reports, layout captures and verification notes are included in the same folder.
+
+Phase commits: P00 `1713e48`, P01 `653d613`, P02 `9956269`, P03 `b399dc4`. P04 contains the reusable capture/verification runner and final review artifacts. No push performed.
+
+Editor cleanup: a transient Windows mapped-file lock affected the external Android resolver's existing settings save after testing. Unity cached file handles were released and the identical existing preference was saved successfully; resolver settings have no Git diff and the final Unity console has zero errors. Automatic refresh is enabled, Play Mode stopped and MainMenuScene clean.
