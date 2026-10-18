@@ -101,6 +101,7 @@ namespace ArrowSwarm.Mob
             {
                 _pathFollower.OnPathEnd -= HandlePathEnd;
                 _pathFollower.OnDirectionChanged -= HandleDirectionChanged;
+                _pathFollower.IsPaused = false;
                 _pathFollower.ResetFollower();
             }
         }

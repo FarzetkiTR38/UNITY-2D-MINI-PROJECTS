@@ -15,4 +15,10 @@ Baseline: `1ae2880`. The ten existing modified files are backed up outside the p
 
 ## Asset authoring
 
-The approved second atlas is imported unchanged. Its measured frame rectangles avoid neighboring-frame tail fragments. Sixteen centered sprites use385.918 pixels per unit, matching the original enemy's maximum visible width (1051/1200 world units). The native clip contains sixteen sprite keys and loops in exactly one second at16 fps; it has no transform, color, HP or event curves. Unity MCP verified the resulting sprites and clip before binding the prefab.
+The approved second atlas is imported unchanged. Its measured frame rectangles avoid neighboring-frame tail fragments. Sixteen centered sprites use 385.918 pixels per unit, matching the original enemy's maximum visible width (1051/1200 world units). The native clip contains sixteen sprite keys and loops in exactly one second at 16 fps; it has no transform, color, HP or event curves. Unity MCP verified the resulting sprites and clip before binding the prefab.
+
+## Runtime binding
+
+The existing `Mob` prefab retains its root collider and HP sibling exactly. `MobAnimation` starts the child Animator at a deterministic phase per spawn ID; freeze stops its clock and pool release resets it. Existing static variants remain available for unconfigured prefabs. Hit feedback keeps its authored scale and returns to the icy tint when damaged during freeze; stale hit coroutines are cancelled on reuse.
+
+The directly related pool audit found that `PathFollower` retained its paused flag after a frozen enemy died. A single line in `MobMovement.ResetMovement` now clears that flag before resetting the follower. Path geometry, speed, health, difficulty, spawn timing and all scene/config/level assets are unchanged. This intentional lifecycle fix is the sole exception to the initially protected movement-source hash.
