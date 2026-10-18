@@ -41,6 +41,7 @@ namespace ArrowSwarm.Modes.Editor
             AssetDatabase.SaveAssets();
         }
 
+        /// <summary>Rebuilds puzzle-only scene canvases, artwork, skills and grid cards.</summary>
         [MenuItem("Arrow Swarm/Puzzles/Apply GameScene UI To Puzzle Scenes")]
         public static void Apply()
         {

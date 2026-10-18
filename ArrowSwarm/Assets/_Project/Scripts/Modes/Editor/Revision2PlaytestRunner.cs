@@ -28,6 +28,7 @@ namespace ArrowSwarm.Modes.Editor
         private static PuzzleConfig _originalConfig, _testConfig;
         public static string Status { get; private set; } = "Idle";
 
+        /// <summary>Runs isolated Rocket, frame, gesture, recovery and production timing checks.</summary>
         [MenuItem("Arrow Swarm/Puzzles/Verify Revision 2 Interactions (Play Mode Preview)")]
         public static void Begin()
         {

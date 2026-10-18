@@ -55,7 +55,9 @@ namespace ArrowSwarm.UI
         }
 
         private float CanvasScale => _canvas != null ? _canvas.scaleFactor : 1f;
+        /// <summary>Rotates counterclockwise for an optional authored left-side control.</summary>
         public void RotateLeft() { if (CanRotate(PuzzleSession.Active)) PuzzleSession.Active.Rotate(-1); }
+        /// <summary>Rotates clockwise for an optional authored right-side control.</summary>
         public void RotateRight() { if (CanRotate(PuzzleSession.Active)) PuzzleSession.Active.Rotate(1); }
         private void OnDisable() { _pointerId = int.MinValue; }
     }

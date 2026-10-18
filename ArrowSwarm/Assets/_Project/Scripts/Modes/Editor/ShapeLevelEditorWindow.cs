@@ -20,6 +20,7 @@ namespace ArrowSwarm.Modes.Editor
         private Vector2 _scroll;
         private string _status="Choose a clean image or an existing Shapes level.";
 
+        /// <summary>Opens the draft-based image and path editor for the selected level.</summary>
         [MenuItem("Arrow Swarm/Puzzles/Shapes Image and Path Editor")]
         public static void Open()
         {
