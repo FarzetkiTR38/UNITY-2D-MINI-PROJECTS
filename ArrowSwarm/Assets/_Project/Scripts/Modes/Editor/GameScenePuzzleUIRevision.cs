@@ -46,6 +46,7 @@ namespace ArrowSwarm.Modes.Editor
         {
             EnsureShells();
             PuzzleArrowArtwork.Upgrade();
+            PuzzleRocketAuthoring.Import();
             foreach (string name in new[] { "ShapesScene", "ColorShiftScene" })
             {
                 var scene = EditorSceneManager.OpenScene(SceneRoot + name + ".unity");
@@ -70,6 +71,7 @@ namespace ArrowSwarm.Modes.Editor
             bool colorShift = new SerializedObject(session).FindProperty("_mode").enumValueIndex == (int)GameModeId.ColorShift;
             PuzzleHUDAuthoring.Bind(hud, camera, colorShift);
             PuzzlePopupAuthoring.Bind(overlay);
+            PuzzleRocketAuthoring.Bind(session);
             BindSurface(camera);
         }
 

@@ -6,7 +6,7 @@ namespace ArrowSwarm.Puzzle
     using UnityEngine;
 
     /// <summary>Pooled bent stroke with a sliding path window, independent of combat Arrow.</summary>
-    public sealed class PuzzleArrowView : MonoBehaviour
+    public sealed partial class PuzzleArrowView : MonoBehaviour
     {
         [SerializeField] private LineRenderer _body;
         [SerializeField] private LineRenderer _head;

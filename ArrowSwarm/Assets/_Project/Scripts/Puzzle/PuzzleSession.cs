@@ -65,6 +65,7 @@ namespace ArrowSwarm.Puzzle
             Lives = _config.Lives; Turns = Level.TurnBudget; Orientation = Level.InitialOrientation;
             Remaining = Level.Arrows.Count; Won = Lost = Paused = _busy = _awarded = _continued = false;
             HintPromptOpen = false;
+            ResetRocket();
             _removed = new bool[Remaining]; _views = new PuzzleArrowView[Remaining];
             var origin = new Vector3(-(Level.Width - 1) * .5f, -(Level.Height - 1) * .5f, 0);
             for (int i = 0; i < _views.Length; i++) { _views[i] = _pool.Get(); _views[i].Bind(Level.Arrows[i], i, origin, _config); }
@@ -82,6 +83,7 @@ namespace ArrowSwarm.Puzzle
         public void Pause(bool value)
         {
             if (Won || Lost) return;
+            RocketArmed = false;
             Paused = value; Time.timeScale = value ? 0f : 1f;
             GameManager.Instance.SetState(value ? GameState.Paused : GameState.Playing); Notify();
         }
@@ -90,6 +92,7 @@ namespace ArrowSwarm.Puzzle
         public void Menu()
         {
             StopAllCoroutines(); _busy = true;
+            ResetRocket();
             _version++; Time.timeScale = 1f; PuzzleLaunch.Preview = false;
             GameManager.Instance.GoToMainMenu();
         }

@@ -21,13 +21,14 @@ namespace ArrowSwarm.Puzzle
                 float d = _views[i].DistanceTo(world);
                 if (d < distance) { distance = d; best = i; }
             }
-            if (best >= 0) Fire(best);
+            if (best >= 0) { if (RocketArmed) FireRocket(best); else Fire(best); }
         }
 
         /// <summary>Starts exactly one shot; blocked shots keep occupancy until the player retries.</summary>
         public void Fire(int index)
         {
             if (!Ready || index < 0 || index >= _removed.Length || _removed[index]) return;
+            RocketArmed = false;
             _busy = true;
             for (int i = 0; i < _views.Length; i++) if (!_removed[i]) _views[i].Highlight(false);
             StartCoroutine(Shot(index));
@@ -63,6 +64,7 @@ namespace ArrowSwarm.Puzzle
         public void Rotate(int direction)
         {
             if (!Ready || _mode != GameModeId.ColorShift || Turns <= 0) return;
+            RocketArmed = false;
             _busy = true; Turns--; Orientation ^= 1; Notify();
             StartCoroutine(Turn(direction));
         }
@@ -73,7 +75,7 @@ namespace ArrowSwarm.Puzzle
         }
         private void CheckStuck()
         {
-            if (_mode == GameModeId.ColorShift && Turns == 0 && !PuzzleSolver.Solve(Level, _removed, Orientation, 0).Solvable)
+            if (_mode == GameModeId.ColorShift && Turns == 0 && RocketCharges == 0 && !PuzzleSolver.Solve(Level, _removed, Orientation, 0).Solvable)
             {
                 // Allow every remaining legal shot before presenting the exhausted-frame failure.
                 for (int i = 0; i < _removed.Length; i++) if (PuzzleRules.CanRemove(Level, _removed, i, Orientation)) return;
@@ -97,6 +99,7 @@ namespace ArrowSwarm.Puzzle
         public void Hint()
         {
             if (!Ready) return;
+            RocketArmed = false;
             var solution = PuzzleSolver.Solve(Level, _removed, Orientation, Turns);
             if (!solution.Solvable || solution.Steps.Count == 0) { SetMessage("puzzle_restart_hint"); Notify(); return; }
             if (!Preview && DataManager.Instance.PlayerData.tipCount <= 0)
