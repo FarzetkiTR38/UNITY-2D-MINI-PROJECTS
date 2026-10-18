@@ -24,3 +24,5 @@ Rework all 50 Shapes puzzles so each object is recognizable at the normal mobile
 ## Verification record
 
 Baseline: `4e9d6a8`. Unity 6000.3.18f1, MainMenuScene clean, Play Mode stopped, console errors zero. Ten initially modified files were backed up outside the project, including fonts, MapTestScene, TimeManager and the solution file.
+
+P01: Unity MCP compiled the Shapes-only config authoring and verified the saved Shapes scene reference (stroke0.42, head0.72). Shared tuning remains stroke0.28/head0.58. Shapes camera coverage0.95 and inset0.015; existing HUD geometry is retained. Protected Color Shift assets and GameScene hashes remain unchanged. Runtime checks follow after catalog generation.
