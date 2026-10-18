@@ -1,0 +1,42 @@
+PASS: independent actual-asset R3 versus R4 choice-pressure comparison.
+50 levels x 12 policies x 2 revisions = 1,200 complete simulated removal sequences.
+All 50 preserve exact Color32 cells/dimensions, valid paths, all four head directions, and acyclic head-ray dependencies.
+
+Method: midgame = mean legal/remaining ratio before removal across 20%-80% progress.
+Immediate unlock = dependent arrows whose last blocker would be removed by the selected arrow.
+Fixed random seed = 81017 + sample*997 + level*31 for sample 0..7.
+Each revision uses its actual arrow count; no hints, rockets or presentation assumptions.
+
+CAMPAIGN RESULTS (lower means fewer immediately legal choices):
+index            R3=0.4225 R4=0.1957 relative drop=53.7%; improved levels=50/50
+reverse_index    R3=0.2687 R4=0.1063 relative drop=60.4%; improved levels=47/50
+lowest_unlock    R3=0.1773 R4=0.0808 relative drop=54.4%; improved levels=49/50
+highest_unlock   R3=0.5877 R4=0.3043 relative drop=48.2%; improved levels=49/50
+random_mean      R3=0.3047 R4=0.1380 relative drop=54.7%; improved levels=49/50
+random_0         R3=0.3033 R4=0.1369 relative drop=54.9%; improved levels=49/50
+random_1         R3=0.3067 R4=0.1392 relative drop=54.6%; improved levels=49/50
+random_2         R3=0.3077 R4=0.1401 relative drop=54.5%; improved levels=50/50
+random_3         R3=0.3032 R4=0.1357 relative drop=55.2%; improved levels=49/50
+random_4         R3=0.3038 R4=0.1374 relative drop=54.8%; improved levels=49/50
+random_5         R3=0.3063 R4=0.1378 relative drop=55.0%; improved levels=50/50
+random_6         R3=0.3043 R4=0.1391 relative drop=54.3%; improved levels=47/50
+random_7         R3=0.3021 R4=0.1373 relative drop=54.6%; improved levels=50/50
+
+PROGRESSION (R4 mean midgame choices; stages 1-10 / 11-30 / 31-50):
+index: 0.2235 / 0.2059 / 0.1716
+reverse_index: 0.1214 / 0.1063 / 0.0988
+lowest_unlock: 0.0863 / 0.0844 / 0.0745
+highest_unlock: 0.3363 / 0.3146 / 0.2779
+random_mean: 0.1541 / 0.1455 / 0.1223
+
+INDIVIDUAL POLICY REGRESSIONS (positive is a slightly more open midgame than R3):
+index: none
+reverse_index: level 4: 0.1166 -> 0.1745 (+0.0579); level 15: 0.1044 -> 0.1124 (+0.0080); level 24: 0.0709 -> 0.0816 (+0.0107)
+lowest_unlock: level 24: 0.0751 -> 0.0798 (+0.0047)
+highest_unlock: level 23: 0.2788 -> 0.3515 (+0.0727)
+random_mean: level 9: 0.1386 -> 0.1402 (+0.0016)
+
+Largest single head-direction share across all candidates: 47.3% (level 1). No one-direction majority.
+The campaign improves under all 12 tested policies: the result is not an artifact of lowest-index selection.
+The early-to-late R4 stage means decline under all four deterministic policies and the random-policy average.
+These are structural pressure measurements. Visual readability and the subjective medium challenge require the actual Unity captures and human play.
