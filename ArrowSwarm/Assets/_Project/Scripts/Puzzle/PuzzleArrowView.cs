@@ -52,6 +52,7 @@ namespace ArrowSwarm.Puzzle
             _headScale = 1f;
             transform.localScale = Vector3.one;
             BindHead(config.ThemeColor(data.Color, ThemeManager.CurrentTheme));
+            PrepareStroke();
             ApplyTheme(ThemeManager.CurrentTheme);
             RenderTravel(0);
         }
@@ -76,6 +77,7 @@ namespace ArrowSwarm.Puzzle
             _filledHeadTipOffset = new Vector3(bounds.center.x * scale, bounds.max.y * scale, 0f);
             _filledHeadDepth = _filledHeadTransform.localPosition.z;
             _filledHeadTransform.localScale = _filledHeadBaseScale;
+            MeasureHeadInset();
         }
 
         /// <summary>Moves a fixed-length snake window along its own path then its forward ray.</summary>
@@ -83,15 +85,9 @@ namespace ArrowSwarm.Puzzle
         {
             _travel = distance;
             float begin = Mathf.Max(0, distance), end = _length + distance;
-            // End the stroke inside a filled triangle, preventing the rounded cap from protruding past its tip.
-            float bodyEnd = _usingFilledHead ? Mathf.Max(begin, end - _config.HeadSize * _headScale * .5f) : end;
-            int count = 2;
-            for (int i = 1; i < _path.Length; i++) if (i > begin && i < bodyEnd) count++;
-            _body.positionCount = count;
-            int n = 0; _body.SetPosition(n++, PointAt(begin));
-            for (int i = 1; i < _path.Length; i++) if (i > begin && i < bodyEnd) _body.SetPosition(n++, _path[i]);
+            float bodyEnd = _usingFilledHead ? Mathf.Max(begin, end - _headInset * _headScale) : end;
+            RenderStroke(begin, bodyEnd);
             Vector3 tip = PointAt(end);
-            _body.SetPosition(n, PointAt(bodyEnd));
             Vector3 direction = end > _length ? (Vector3)(Vector2)_data.Direction : (tip - PointAt(Mathf.Max(begin, end - .01f))).normalized;
             if (direction.sqrMagnitude < .1f) direction = (Vector3)(Vector2)_data.Direction;
             if (_usingFilledHead)
@@ -140,8 +136,9 @@ namespace ArrowSwarm.Puzzle
             {
                 _filledHeadTransform.localScale = new Vector3(
                     _filledHeadBaseScale.x * _headScale, _filledHeadBaseScale.y * _headScale, _filledHeadBaseScale.z);
-                RenderTravel(_travel);
             }
+            PrepareStroke();
+            RenderTravel(_travel);
         }
     }
 }
