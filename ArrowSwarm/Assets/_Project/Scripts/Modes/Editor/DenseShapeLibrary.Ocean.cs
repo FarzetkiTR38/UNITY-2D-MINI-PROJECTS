@@ -32,15 +32,15 @@ namespace ArrowSwarm.Modes.Editor
         }
         private static Color Whale(float x,float y)
         {
-            bool body=E(x,y,-.22f,-.04f,.71f,.46f);
-            bool peduncle=C(x,y,.31f,-.04f,.64f,.16f,.18f);
-            bool upper=T(x,y,.49f,.12f,.69f,.85f,.91f,.49f);
-            bool lower=T(x,y,.56f,.13f,.98f,-.18f,.96f,.4f);
-            bool fin=C(x,y,-.02f,-.25f,.24f,-.64f,.15f);
-            if (!body&&!peduncle&&!upper&&!lower&&!fin) return Color.clear;
+            bool body=E(x,y,-.24f,-.04f,.7f,.44f);
+            bool peduncle=C(x,y,.29f,-.07f,.6f,.13f,.14f);
+            bool upper=T(x,y,.55f,.12f,.43f,.59f,.65f,.4f);
+            bool outer=T(x,y,.58f,.12f,.98f,.37f,.89f,.06f);
+            bool fin=C(x,y,-.03f,-.24f,.15f,-.6f,.13f);
+            if (!body&&!peduncle&&!upper&&!outer&&!fin) return Color.clear;
             if (E(x,y,-.57f,.13f,.11f,.125f)) return Ink;
             if (fin) return H(0x346D9C);
-            if (upper||lower) return H(0x3789B8);
+            if (upper||outer) return H(0x3789B8);
             if (E(x,y,-.28f,-.32f,.57f,.21f)) return H(0x8ECBD7);
             return H(0x4C9FCA);
         }
