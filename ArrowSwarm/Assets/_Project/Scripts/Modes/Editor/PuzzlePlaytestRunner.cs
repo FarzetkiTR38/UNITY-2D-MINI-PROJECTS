@@ -106,6 +106,7 @@ namespace ArrowSwarm.Modes.Editor
                 if (Time.frameCount <= _captureFrame) return;
                 VerifyFrameParity(session);
                 Status = Mode + " " + _level + "/" + _catalogCount + " action " + _step + "/" + _solution.Steps.Count;
+                if (_step >= _solution.Steps.Count && session.HasActiveShots) return;
                 Require(_step < _solution.Steps.Count, "witness exhausted before runtime win");
                 int action = _solution.Steps[_step++];
                 if (action < 0) session.Rotate(1); else session.Fire(action);

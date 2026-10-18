@@ -43,7 +43,8 @@ namespace ArrowSwarm.Modes.Editor
             int legal = FindFixture(session, true);
             Check(legal >= 0, session.Mode + ": fixture contains an unblocked legal shot");
             session.Fire(legal);
-            Check(!session.Ready, session.Mode + ": shot is in flight before retry");
+            Check(session.HasActiveShots && !session.Idle && session.Ready == (session.Mode == GameModeId.Shapes),
+                session.Mode + ": shot is in flight before retry with the correct mode-specific input state");
             pause.onClick.Invoke(); yield return .30f;
             Check(session.Paused && pauseGroup.interactable, session.Mode + ": pause works during shot");
             retry.onClick.Invoke(); yield return .45f;
@@ -62,7 +63,7 @@ namespace ArrowSwarm.Modes.Editor
             Check(wrong >= 0, session.Mode + ": fixture contains a blocked or mismatched shot");
             session.Fire(wrong); yield return (Func<bool>)(() => session.Lives < 3);
             Check(session.Lives == 2, session.Mode + ": wrong hit loses exactly one life");
-            yield return (Func<bool>)(() => session.Ready); yield return .40f;
+            yield return (Func<bool>)(() => session.Idle); yield return .40f;
             Check(session.Lives == 2 && Hearts(hud).Count(image => image.gameObject.activeSelf) == 2,
                 session.Mode + ": wrong hit removes exactly one HUD star after break animation");
             session.Retry(); yield return .05f;
@@ -88,7 +89,7 @@ namespace ArrowSwarm.Modes.Editor
 
         private static void CheckFresh(PuzzleSession session, PuzzleHUD hud, string action)
         {
-            Check(session.Ready && !session.Paused && Time.timeScale == 1f && session.Lives == 3 &&
+            Check(session.Idle && !session.Paused && Time.timeScale == 1f && session.Lives == 3 &&
                 session.Remaining == session.Level.Arrows.Count, session.Mode + ": " + action + " restores session counts");
             var hearts = Hearts(hud);
             Check(hearts.Length == 3 && hearts.All(image => image.gameObject.activeSelf && image.color.a > .99f && image.transform.localScale.sqrMagnitude > .01f),

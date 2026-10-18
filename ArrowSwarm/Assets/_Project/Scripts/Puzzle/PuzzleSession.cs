@@ -19,9 +19,9 @@ namespace ArrowSwarm.Puzzle
         [SerializeField] private ArrowSwarm.Camera.CameraController _cameraController;
         private ObjectPool<PuzzleArrowView> _pool;
         private PuzzleArrowView[] _views;
-        private bool[] _removed;
+        private bool[] _removed, _inFlight;
         private bool _busy, _awarded, _continued;
-        private int _version;
+        private int _version, _activeShots;
         public static PuzzleSession Active { get; private set; }
         public static event Action OnChanged;
         public PuzzleLevel Level { get; private set; }
@@ -34,7 +34,12 @@ namespace ArrowSwarm.Puzzle
         public bool Lost { get; private set; }
         public bool Paused { get; private set; }
         public bool Preview { get; private set; }
-        public bool Ready => Level != null && !_busy && !Won && !Lost && !Paused && !HintPromptOpen;
+        public bool Ready => Level != null && Lives > 0 && !_busy && !Won && !Lost && !Paused && !HintPromptOpen &&
+            (_mode == GameModeId.Shapes || !HasActiveShots);
+        /// <summary>Whether normal arrows are still escaping or returning from a collision.</summary>
+        public bool HasActiveShots => _activeShots > 0;
+        /// <summary>Whether an exclusive skill can safely inspect or change stationary arrow visuals.</summary>
+        public bool Idle => Ready && !HasActiveShots;
         public bool LastLevel => LevelNumber >= _catalog.Count;
         private string _messageKey, _messageFallback;
         public string Message => ArrowSwarm.Localization.LocalizationManager.Instance.GetText(_messageKey, _messageFallback);
@@ -57,7 +62,7 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Loads catalog data, restores three lives and resets all transient actions.</summary>
         public void LoadLevel(int number)
         {
-            StopAllCoroutines(); _version++; Time.timeScale = 1f;
+            StopAllCoroutines(); _activeShots = 0; _version++; Time.timeScale = 1f;
             if (_views != null) foreach (var view in _views) if (view != null && view.gameObject.activeSelf) _pool.Release(view);
             LevelNumber = number; Level = _catalog.Get(number);
             var solution = PuzzleSolver.Solve(Level);
@@ -66,7 +71,7 @@ namespace ArrowSwarm.Puzzle
             Remaining = Level.Arrows.Count; Won = Lost = Paused = _busy = _awarded = _continued = false;
             HintPromptOpen = false;
             ResetRocket();
-            _removed = new bool[Remaining]; _views = new PuzzleArrowView[Remaining];
+            _removed = new bool[Remaining]; _inFlight = new bool[Remaining]; _views = new PuzzleArrowView[Remaining];
             var origin = new Vector3(-(Level.Width - 1) * .5f, -(Level.Height - 1) * .5f, 0);
             for (int i = 0; i < _views.Length; i++) { _views[i] = _pool.Get(); _views[i].Bind(Level.Arrows[i], i, origin, _config); }
             _frame.Setup(Level, _config);
@@ -91,7 +96,8 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Returns to menu, cancelling all outstanding callbacks and preview state.</summary>
         public void Menu()
         {
-            StopAllCoroutines(); _busy = true;
+            StopAllCoroutines(); _activeShots = 0; _busy = true;
+            if (_inFlight != null) Array.Clear(_inFlight, 0, _inFlight.Length);
             ResetRocket();
             _version++; Time.timeScale = 1f; PuzzleLaunch.Preview = false;
             GameManager.Instance.GoToMainMenu();

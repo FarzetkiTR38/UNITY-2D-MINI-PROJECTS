@@ -104,8 +104,9 @@ namespace ArrowSwarm.Modes.Editor
         {
             for (int expected = 2; expected >= 0; expected--)
             {
-                Check(session.Ready, session.Mode + ": wrong-shot fixture is ready");
-                session.Fire(wrong); yield return (Func<bool>)(() => session.Ready || session.Lost);
+                Check(session.Idle, session.Mode + ": wrong-shot fixture is idle");
+                session.Fire(wrong);
+                yield return (Func<bool>)(() => !session.HasActiveShots && (session.Idle || session.Lost));
                 Check(session.Lives == expected, session.Mode + ": actual wrong shot leaves " + expected + " lives");
             }
             Check(session.Lost && !session.Won, session.Mode + ": wrong shots produce loss without awarding a win");

@@ -74,10 +74,10 @@ namespace ArrowSwarm.Modes.Editor
         private static IEnumerator ClearNormalExits(PuzzleSession session)
         {
             int count = session.Remaining, lives = session.Lives, index;
-            while (session.Ready && (index = FirstLegal(session)) >= 0)
+            while (session.Idle && (index = FirstLegal(session)) >= 0)
             {
                 session.Fire(index);
-                yield return (Func<bool>)(() => session.Ready || session.Won || session.Lost);
+                yield return (Func<bool>)(() => !session.HasActiveShots && (session.Idle || session.Won || session.Lost));
             }
             Check(session.Remaining < count && session.Lives == lives && session.Turns == 0,
                 "ColorShift: real legal shots clear the zero-turn closure without life loss");

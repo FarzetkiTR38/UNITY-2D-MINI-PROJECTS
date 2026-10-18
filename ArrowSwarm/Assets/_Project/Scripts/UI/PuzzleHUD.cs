@@ -60,11 +60,11 @@ namespace ArrowSwarm.UI
             _hintCount.text = count.ToString();
             _hintCount.transform.parent.gameObject.SetActive(count > 0);
             _hintAdBadge.SetActive(count <= 0 && !s.Preview);
-            _hint.interactable = s.Ready;
+            _hint.interactable = s.Idle;
             _pause.interactable = !s.Won && !s.Lost && !s.HintPromptOpen;
             _rotationBar.SetActive(s.Mode == GameModeId.ColorShift);
             _turns.text = s.Turns.ToString();
-            if (_rocket != null) _rocket.interactable = s.Ready && s.RocketCharges > 0;
+            if (_rocket != null) _rocket.interactable = s.Idle && s.RocketCharges > 0;
             if (_rocketCount != null) _rocketCount.text = s.RocketCharges.ToString();
             if (_rotationButton != null) _rotationButton.interactable = s.Ready && s.Turns > 0;
             _instruction.text = s.RocketNeeded ? Text("puzzle_rocket_needed", "Use the rocket to rescue an arrow") :
