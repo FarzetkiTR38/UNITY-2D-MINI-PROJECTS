@@ -20,17 +20,22 @@ namespace ArrowSwarm.Modes.Editor
         }
         private static Color Dragon(float x,float y)
         {
-            float a=Mathf.Abs(x);
-            bool body=E(x,y,0,-.22f,.35f,.58f)||E(x,y,0,.42f,.44f,.37f)||E(a,y,.26f,.24f,.14f,.25f);
-            bool wings=T(a,y,.19f,.15f,.91f,.63f,.84f,-.22f)||T(a,y,.19f,.15f,.84f,-.22f,.42f,-.4f);
-            bool horns=T(a,y,.17f,.61f,.45f,.98f,.43f,.46f);
-            bool feet=E(a,y,.3f,-.73f,.26f,.16f);
-            bool tail=C(x,y,.12f,-.6f,.64f,-.76f,.12f);
-            if (!body&&!wings&&!horns&&!feet&&!tail) return Color.clear;
+            bool body=E(x,y,-.12f,-.25f,.42f,.48f);
+            bool neck=C(x,y,.11f,-.04f,.28f,.36f,.19f);
+            bool head=E(x,y,.4f,.4f,.28f,.25f)||E(x,y,.65f,.29f,.3f,.18f);
+            bool wing=T(x,y,-.23f,.02f,-.52f,.85f,-.91f,.18f)
+                ||T(x,y,-.23f,.02f,-.91f,.18f,-.66f,-.14f);
+            bool horns=T(x,y,.24f,.55f,.14f,.91f,.42f,.61f)
+                ||T(x,y,.48f,.55f,.59f,.88f,.63f,.48f);
+            bool feet=E(x,y,-.3f,-.71f,.26f,.16f)||E(x,y,.25f,-.71f,.27f,.16f);
+            bool tail=C(x,y,-.37f,-.43f,-.69f,-.61f,.12f)
+                ||C(x,y,-.69f,-.61f,-.85f,-.47f,.115f)||T(x,y,-.8f,-.51f,-.96f,-.27f,-.72f,-.35f);
+            if (!body&&!neck&&!head&&!wing&&!horns&&!feet&&!tail) return Color.clear;
             if (horns) return H(0xF2CB72);
-            if (Eyes(x,y,.18f,.47f,.095f)) return Ink;
-            if (wings&&a>.31f) return H(0x73C4BB);
-            if (E(x,y,0,-.24f,.2f,.41f)) return H(0xD4D887);
+            if (E(x,y,.43f,.43f,.105f,.12f)||E(x,y,.84f,.3f,.065f,.065f)) return Ink;
+            if (wing&&x<-.3f) return C(x,y,-.28f,.04f,-.52f,.82f,.07f)?H(0x438C78):H(0x73C4BB);
+            if (tail) return H(0x438C78);
+            if (E(x,y,.04f,-.31f,.2f,.34f)||head&&y<.24f) return H(0xD4D887);
             if (feet) return H(0x438C78);
             return H(0x57AA8A);
         }
