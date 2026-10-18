@@ -90,6 +90,9 @@ namespace ArrowSwarm.Puzzle
 
         private void AddStrokePoint(Vector3 point, float distance)
         {
+            // Adjacent half-cell fillets share one tangent; keep a single vertex at that seam.
+            if (_strokeCount > 0 && Mathf.Abs(_strokeDistances[_strokeCount - 1] - distance) < GeometryEpsilon &&
+                (_strokePoints[_strokeCount - 1] - point).sqrMagnitude < GeometryEpsilon * GeometryEpsilon) return;
             _strokePoints[_strokeCount] = point;
             _strokeDistances[_strokeCount++] = distance;
         }
