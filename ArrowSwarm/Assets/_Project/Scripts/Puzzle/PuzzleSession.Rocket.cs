@@ -10,6 +10,7 @@ namespace ArrowSwarm.Puzzle
         [SerializeField] private PuzzleRocketEffect _rocketEffect;
         public int RocketCharges { get; private set; }
         public bool RocketArmed { get; private set; }
+        public bool RocketNeeded { get; private set; }
 
         /// <summary>Arms or cancels selection without consuming a charge.</summary>
         public void ToggleRocket()
@@ -22,7 +23,7 @@ namespace ArrowSwarm.Puzzle
 
         private void ResetRocket()
         {
-            RocketArmed = false; RocketCharges = _config.RocketCharges;
+            RocketArmed = RocketNeeded = false; RocketCharges = _config.RocketCharges;
             if (_rocketEffect != null) _rocketEffect.Hide();
         }
 
@@ -30,7 +31,7 @@ namespace ArrowSwarm.Puzzle
         public void FireRocket(int index)
         {
             if (!Ready || !RocketArmed || RocketCharges <= 0 || index < 0 || index >= _removed.Length || _removed[index]) return;
-            _busy = true; RocketArmed = false; RocketCharges--; _removed[index] = true; Remaining--;
+            _busy = true; RocketArmed = RocketNeeded = false; RocketCharges--; _removed[index] = true; Remaining--;
             for (int i = 0; i < _views.Length; i++) if (_views[i] != null) _views[i].Highlight(false);
             AudioManager.Instance?.PlayArrowFire(false);
             StartCoroutine(Extract(index)); Notify();

@@ -38,6 +38,7 @@ namespace ArrowSwarm.Modes.Editor
             AssetDatabase.SaveAssets();
             prefab=AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath).GetComponent<PuzzleArrowView>();
             PuzzleArrowArtwork.Upgrade();
+            PuzzleRocketAuthoring.Import();
             BuildScene(GameModeId.Shapes,"ShapesScene",prefab);
             BuildScene(GameModeId.ColorShift,"ColorShiftScene",prefab);
             var list=EditorBuildSettings.scenes.ToList();
