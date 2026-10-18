@@ -11,7 +11,7 @@ namespace ArrowSwarm.Modes.Editor
     /// <summary>Plays every catalog level through real pooled animations in non-saving preview mode.</summary>
     public static partial class PuzzlePlaytestRunner
     {
-        private const string CaptureFolder = "Captures/Revision2/Playthroughs";
+        private static string CaptureFolder = "Captures/Revision2/Playthroughs";
         private static int _modeIndex, _level, _step, _stage, _catalogCount, _captureFrame;
         private static double _deadline, _pauseUntil, _captureUntil;
         private static bool _initializing, _captured, _running;
@@ -23,9 +23,14 @@ namespace ArrowSwarm.Modes.Editor
         /// <summary>Starts only in Play Mode and temporarily disables automatic campaign saves.</summary>
         [MenuItem("Arrow Swarm/Puzzles/Playtest All Levels (Play Mode)")]
         public static void Begin()
+            => BeginAt("Captures/Revision2/Playthroughs");
+
+        /// <summary>Runs the same campaign checks while preserving earlier review captures.</summary>
+        public static void BeginAt(string captureFolder)
         {
             if (_running) throw new InvalidOperationException("A campaign playtest is already running.");
             if (!Application.isPlaying) throw new InvalidOperationException("Enter Play Mode first.");
+            CaptureFolder = captureFolder;
             Snapshot(); _running = true; Results.Clear(); _modeIndex = 0; _level = 1; _stage = 0;
             Directory.CreateDirectory(CaptureFolder);
             EditorApplication.update += Tick; EditorApplication.playModeStateChanged += PlayModeChanged;

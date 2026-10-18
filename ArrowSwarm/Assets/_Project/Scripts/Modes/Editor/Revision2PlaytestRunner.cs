@@ -13,7 +13,7 @@ namespace ArrowSwarm.Modes.Editor
     /// <summary>Exercises real preview scenes with isolated cloned tuning and no save or ad calls.</summary>
     public static partial class Revision2PlaytestRunner
     {
-        private const string Report = "Captures/Revision2/interaction-verification.txt";
+        private static string Report = "Captures/Revision2/interaction-verification.txt";
         private static readonly Stack<IEnumerator> Steps = new Stack<IEnumerator>();
         private static readonly List<string> Results = new List<string>();
         private static DataManager _data;
@@ -31,10 +31,15 @@ namespace ArrowSwarm.Modes.Editor
         /// <summary>Runs isolated Rocket, frame, gesture, recovery and production timing checks.</summary>
         [MenuItem("Arrow Swarm/Puzzles/Verify Revision 2 Interactions (Play Mode Preview)")]
         public static void Begin()
+            => BeginAt("Captures/Revision2/interaction-verification.txt");
+
+        /// <summary>Runs existing interaction checks to a separate review report.</summary>
+        public static void BeginAt(string reportPath)
         {
             if (_running) throw new InvalidOperationException("Revision 2 verification is already running.");
             if (!Application.isPlaying || PuzzleSession.Active == null || !PuzzleSession.Active.Preview)
                 throw new InvalidOperationException("Start Play Mode in a puzzle preview first.");
+            Report = reportPath;
             _data = DataManager.Instance; _savedData = JsonUtility.ToJson(_data.PlayerData);
             _savedPrefs = PlayerPrefs.GetString("ArrowSwarm_PlayerData", "");
             _savedBackup = PlayerPrefs.GetString("ArrowSwarm_PlayerData_Backup", "");
@@ -45,7 +50,7 @@ namespace ArrowSwarm.Modes.Editor
             _savedPreview = PuzzleLaunch.Preview; _savedPreviewMode = PuzzleLaunch.PreviewMode;
             _savedPreviewLevel = PuzzleLaunch.PreviewLevel; _savedTime = Time.timeScale;
             _running = true; _condition = null; _until = 0; _deadline = EditorApplication.timeSinceStartup + 300;
-            Directory.CreateDirectory("Captures/Revision2"); Results.Clear(); Steps.Clear(); Steps.Push(Run());
+            Directory.CreateDirectory(Path.GetDirectoryName(Report)); Results.Clear(); Steps.Clear(); Steps.Push(Run());
             Status = "Starting Revision 2 preview verification";
             EditorApplication.update += Tick; EditorApplication.playModeStateChanged += ChangedPlayMode;
         }
