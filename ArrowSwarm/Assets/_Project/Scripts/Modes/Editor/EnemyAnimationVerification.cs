@@ -13,7 +13,7 @@ namespace ArrowSwarm.Modes.Editor
     /// <summary>Checks animated pooled enemies in the real Defense scene without saving player progress.</summary>
     public static partial class EnemyAnimationVerification
     {
-        private const string Folder = "Captures/EnemyAnimationIntegration";
+        private const string Folder = "Captures/EnemyWingsOnlyIntegration";
         private static readonly Stack<IEnumerator> Steps = new Stack<IEnumerator>();
         private static readonly List<string> Results = new List<string>();
         private static bool _running, _restored, _exiting;
@@ -23,8 +23,8 @@ namespace ArrowSwarm.Modes.Editor
         /// <summary>Current verification stage or final PASS/FAIL result.</summary>
         public static string Status { get; private set; } = "Idle";
 
-        /// <summary>Loads Defense101, checks animation/lifecycle behavior and captures real gameplay frames.</summary>
-        [MenuItem("Arrow Swarm/Enemies/Verify Animated Enemies (Play Mode)")]
+        /// <summary>Loads Defense101, checks the fixed body and flapping wings, and captures real gameplay frames.</summary>
+        [MenuItem("Arrow Swarm/Enemies/Verify Wings Only (Play Mode)")]
         public static void Begin()
         {
             if (_running) throw new InvalidOperationException("Enemy verification is already running.");
@@ -38,7 +38,7 @@ namespace ArrowSwarm.Modes.Editor
         }
 
         /// <summary>Cancels testing and restores temporary settings and player data.</summary>
-        [MenuItem("Arrow Swarm/Enemies/Cancel Animated Enemy Verification")]
+        [MenuItem("Arrow Swarm/Enemies/Cancel Wings Only Verification")]
         public static void Cancel() { if (_running) Finish("ABORT: enemy verification cancelled"); }
 
         private static IEnumerator Run()
@@ -83,7 +83,7 @@ namespace ArrowSwarm.Modes.Editor
                     else if (iterator.Current is Func<bool> condition) _condition = condition;
                     return;
                 }
-                Finish("PASS: real enemy animation, movement, HP, freeze, pause, hit, death, pool reuse and finish");
+                Finish("PASS: fixed enemy body, animated wings, movement, HP, freeze, pause, hit, death, pool reuse and finish");
             }
             catch (Exception exception) { Finish("FAIL: " + exception.Message); Debug.LogException(exception); }
         }
