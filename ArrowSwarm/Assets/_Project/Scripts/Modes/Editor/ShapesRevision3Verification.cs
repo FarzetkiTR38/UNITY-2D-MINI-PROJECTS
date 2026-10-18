@@ -12,7 +12,7 @@ namespace ArrowSwarm.Modes.Editor
     /// <summary>Captures and plays all redesigned Shapes through real rapid taps without saving progress.</summary>
     public static partial class ShapesRevision3Verification
     {
-        private const string Folder = "Captures/Revision3/Playthroughs";
+        private static string Folder = "Captures/Revision3/Playthroughs";
         private static readonly List<string> Results = new List<string>();
         private static readonly HashSet<string> Signatures = new HashSet<string>();
         private static bool _running, _initializing;
@@ -26,9 +26,16 @@ namespace ArrowSwarm.Modes.Editor
 
         /// <summary>Starts a Preview-only fifty-level capture and rapid normal-arrow playthrough.</summary>
         [MenuItem("Arrow Swarm/Puzzles/Revision3 Capture And Verify Shapes (Play Mode)")]
-        public static void Begin()
+        public static void Begin() => BeginAt("Captures/Revision3/Playthroughs");
+
+        /// <summary>Verifies the balanced catalog without overwriting the previous visual review.</summary>
+        [MenuItem("Arrow Swarm/Puzzles/Revision4 Capture And Verify Shapes (Play Mode)")]
+        public static void BeginRevision4() => BeginAt("Captures/Revision4/Playthroughs");
+
+        private static void BeginAt(string folder)
         {
             if (_running || !Application.isPlaying) throw new InvalidOperationException("Enter Play Mode without another running verification.");
+            Folder = folder;
             Snapshot(); _running = true; _initializing = true; _level = 1; _stage = 0;
             Results.Clear(); Rows.Clear(); Signatures.Clear(); Directory.CreateDirectory(Folder);
             _captureRun = "run-" + Guid.NewGuid().ToString("N").Substring(0, 8);
