@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5875096509120924486}
   - component: {fileID: 7587721873930467951}
+  - component: {fileID: 8947603913832416678}
   m_Layer: 0
   m_Name: MobSprite
   m_TagString: Untagged
@@ -81,7 +82,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -670553137224611532, guid: 800d7daabb47eda4cb8065314feb914d, type: 3}
+  m_Sprite: {fileID: -1225016871, guid: e7a9d2cf5ba025348b5ba08d4eef4e9c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -91,6 +92,28 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!95 &8947603913832416678
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 250694653306356674}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 974a361c41c1aae47a568e13677f07c6, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2016169021012875407
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,6 +129,7 @@ GameObject:
   - component: {fileID: 5293843563989657095}
   - component: {fileID: 5018315361303020806}
   - component: {fileID: 6110770494812299939}
+  - component: {fileID: 7299245951377521550}
   m_Layer: 0
   m_Name: Mob
   m_TagString: Untagged
@@ -234,6 +258,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d91e02c96b32a05409c2e83927df339e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Path.PathFollower
+--- !u!114 &7299245951377521550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016169021012875407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ab7bf11fa644198835850f035f7bc7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Mob.MobAnimation
+  _animator: {fileID: 8947603913832416678}
+  _stateName: Base Layer.Flutter
 --- !u!1 &6414526862558113868
 GameObject:
   m_ObjectHideFlags: 0
