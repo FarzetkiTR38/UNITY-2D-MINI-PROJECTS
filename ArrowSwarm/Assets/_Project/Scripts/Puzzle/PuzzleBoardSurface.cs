@@ -25,6 +25,7 @@ namespace ArrowSwarm.Puzzle
         [SerializeField, Min(16)] private int _spriteResolution = 256;
 
         private PuzzleLevel _displayedLevel;
+        private int _screenWidth, _screenHeight;
 
         private void OnEnable()
         {
@@ -40,6 +41,16 @@ namespace ArrowSwarm.Puzzle
         }
 
         private void Start() => Refresh();
+
+        private void LateUpdate()
+        {
+            if (_screenWidth == Screen.width && _screenHeight == Screen.height) return;
+            var session = PuzzleSession.Active;
+            if (session == null || session.Level == null) return;
+            _screenWidth = Screen.width; _screenHeight = Screen.height;
+            var camera = ArrowSwarm.Camera.CameraController.Instance;
+            if (camera != null) camera.FitToPuzzle(session.Level.Width, session.Level.Height);
+        }
 
         /// <summary>Returns complete card dimensions without consulting Defense grid state.</summary>
         public Vector2 GetVisualSize(int width, int height)
