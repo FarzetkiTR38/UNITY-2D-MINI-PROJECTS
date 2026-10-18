@@ -27,24 +27,7 @@ namespace ArrowSwarm.Modes.Editor
         /// <summary>Creates a fully covered silhouette with no repeated per-tile Hamiltonian curls.</summary>
         public static PuzzleLevel Create(int index)
         {
-            var layout = GetLayout(index); var profile = ShapesRevision3Profile.For(index);
-            List<PuzzleArrowData> best = null; float bestScore = float.NegativeInfinity;
-            for (int attempt = 0; attempt < 4; attempt++)
-            {
-                var paths = ShapesRevision3Paths.Generate(layout.Tiles, profile, 31415 + index * 7919 + attempt * 104729);
-                var graph = DenseDependencyGraph.Analyze(paths, layout.Width, layout.Height);
-                if (!graph.Solvable || graph.DirectionCount != 4 || graph.InwardHeads == 0 || graph.MaximumDepth < 2) continue;
-                int bends = 0;
-                foreach (var arrow in paths) for (int p = 2; p < arrow.Points.Count; p++)
-                    if (arrow.Points[p] - arrow.Points[p - 1] != arrow.Points[p - 1] - arrow.Points[p - 2]) bends++;
-                float score = Mathf.Min(8, graph.MaximumDepth) * 4f + Mathf.Min(12, graph.InwardHeads) * 2f - paths.Count * 2f - bends * .1f;
-                if (score > bestScore) { bestScore = score; best = paths; }
-            }
-            if (best == null) throw new InvalidOperationException("Shapes " + (index + 1) + ": no four-direction acyclic ribbon partition.");
-            var level = ScriptableObject.CreateInstance<PuzzleLevel>();
-            level.Author(GameModeId.Shapes, DenseShapeLibrary.Name(index), layout.Width, layout.Height, best, null, 0);
-            DenseCampaignVerification.AssertLevel(level, index);
-            return level;
+            return ShapesBalancedGeneration.Create(index, GetLayout(index).Tiles);
         }
 
         private static Layout GetLayout(int index)
