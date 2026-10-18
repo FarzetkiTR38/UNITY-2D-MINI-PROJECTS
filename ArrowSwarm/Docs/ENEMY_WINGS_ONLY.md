@@ -10,6 +10,16 @@ The user requests a fixed body with only wing flapping. Keep the same character,
 
 The body, face, horns and tail receive no animation curves. Existing hit squash remains impact feedback only. Clip speed and wing amplitudes are authored assets, editable in Unity. Existing scenes and level data remain untouched.
 
+## Result and verification
+
+The production Mob prefab now uses one fixed `MobBody` sprite and two child sprites, `MobWingLeft` and `MobWingRight`. A native half-second loop changes only the wing rotations and scales. The old full-body animation assets remain available but are no longer assigned. The existing MobAnimation freeze/pool lifecycle is reused; MobVisuals shares its tint across the three authored renderers without per-frame enumeration or allocations.
+
+Unity MCP completed 146 assertions in real GameScene 101. Across 32 normal-speed gameplay captures, the body sprite and local position/rotation/scale were unchanged while each wing displayed 31 distinct poses. Freeze, pause, damage, real arrow collisions, HP updates, death, reuse of the same physical pooled mob and finish handling passed. The final console had zero errors. Player preferences/data were restored and Play Mode ended in MainMenuScene.
+
+All 266 protected scene/config/artwork/gameplay-source hashes matched the baseline, and the ten pre-existing modified files retained their initial contents. Unity changed three of those files during verification; the initial bytes were restored before committing. No existing scene or level data was edited.
+
+The [review overview](../Captures/EnemyWingsOnlyIntegration/README.md) contains actual gameplay GIFs, screenshots and test reports. GIF duration is rounded to its 10 ms precision (5280 ms versus 5277 ms measured capture time); it is a sampled recording, not a render-rate benchmark.
+
 ## Art source
 
 Built-in image generation edited the previous character reference into a transparent sheet containing the body, left wing and right wing. The project copy is `Assets/_Project/Art/Sprites/Mobs/MobWingsOnly.png`. The three parts are sliced by Unity without modifying the generated pixels.
