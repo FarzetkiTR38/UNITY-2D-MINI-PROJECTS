@@ -7,26 +7,12 @@ namespace ArrowSwarm.Modes.Editor
     /// <summary>Deterministic dense puzzle factories; asset persistence is handled separately.</summary>
     public static class DenseCampaignGeneration
     {
-        /// <summary>Samples the chosen recognizable silhouette once for each complete 2x2 tile.</summary>
+        /// <summary>Samples the cropped Shapes-only layout once for each complete 2x2 tile.</summary>
         public static Color SampleShape(int index, int x, int y, int width, int height)
-        {
-            float u = ((x / 2 + .5f) / (width / 2) * 2f - 1f) * 1.06f;
-            float v = ((y / 2 + .5f) / (height / 2) * 2f - 1f) * 1.06f;
-            return DenseShapeLibrary.Sample(index, u, v);
-        }
+            => ShapesRevision3Generation.Sample(index, x, y, width, height);
 
         /// <summary>Creates one fully covered Shapes level, including varied inward-facing heads.</summary>
-        public static PuzzleLevel CreateShape(int index)
-        {
-            int width = 24 + index / 3 * 2, height = 28 + index / 3 * 2;
-            Func<int, int, Color> sample = (x, y) => SampleShape(index, x, y, width, height);
-            var arrows = BestPaths(width, height, (x, y) => sample(x, y).a > .5f, sample,
-                31415 + index * 7919, 8, 16 + index / 3 * 4, 2 + index / 8);
-            var level = ScriptableObject.CreateInstance<PuzzleLevel>();
-            level.Author(GameModeId.Shapes, DenseShapeLibrary.Name(index), width, height, arrows, null, 0);
-            DenseCampaignVerification.AssertLevel(level, index);
-            return level;
-        }
+        public static PuzzleLevel CreateShape(int index) => ShapesRevision3Generation.Create(index);
 
         /// <summary>Creates a unique full board whose color phases follow an exact dependency order.</summary>
         public static PuzzleLevel CreateColorShift(int index)

@@ -27,14 +27,7 @@ namespace ArrowSwarm.Modes.Editor
         public static Color Sample(int index, float x, float y)
         {
             if (Mathf.Abs(x) > 1f || Mathf.Abs(y) > 1f) return Color.clear;
-            if (index >= 0 && index < 5)
-            {
-                Color original=ShapeSilhouettes.Sample(index, x, y);
-                if (index==1 && original.a>.5f && E(Mathf.Abs(x),y,.23f,.55f,.1f,.115f)) return Ink;
-                if (index==1 && original.r>.7f && original.g>.8f && original.b>.9f) return White;
-                if (index==3 && original.a<.5f && E(Mathf.Abs(x),y,.16f,-.13f,.18f,.26f)) return H(0xBD73BF);
-                return original;
-            }
+            if (index >= 0 && index < 5) return ShapeSilhouettes.Sample(index, x, y);
             switch (index)
             {
                 case 5: return Cat(x,y);

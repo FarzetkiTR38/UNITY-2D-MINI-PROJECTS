@@ -29,7 +29,7 @@ namespace ArrowSwarm.Modes.Editor
             float px=x-ax-t*dx,py=y-ay-t*dy;
             return px*px+py*py<=radius*radius;
         }
-        private static bool Eyes(float x,float y,float spacing,float cy,float radius=.065f)
+        private static bool Eyes(float x,float y,float spacing,float cy,float radius=.095f)
             => E(Mathf.Abs(x),y,spacing,cy,radius,radius*1.2f);
         private static bool Star(float x,float y,float cx,float cy,float radius,float inner=.48f)
         {

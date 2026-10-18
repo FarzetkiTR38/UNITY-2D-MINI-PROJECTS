@@ -27,7 +27,7 @@ namespace ArrowSwarm.Modes.Editor
             if (left) return H(0xEBA0B1);
             if (right) return H(0x9BCBA7);
             if (bridge&&!cone) return Cream;
-            if (Mathf.Repeat((x+y)*5f,1f)<.13f||Mathf.Repeat((x-y)*5f,1f)<.13f) return H(0xBA8B59);
+            if (y<-.6f) return H(0xA7794D);
             return H(0xD5AE78);
         }
         private static Color Teapot(float x,float y)
@@ -40,23 +40,23 @@ namespace ArrowSwarm.Modes.Editor
             if (!body&&!spout&&!handle&&!lid&&!baseBand) return Color.clear;
             if (lid||baseBand) return H(0x7995C1);
             if (handle&&x<-.62f) return H(0xB5ACD2);
-            if (E(x,y,-.12f,-.13f,.1f,.1f)) return H(0xE9C86F);
+            if (E(x,y,-.12f,-.13f,.155f,.155f)) return H(0xE9C86F);
             if (E(x,y,-.12f,-.13f,.27f,.26f)) return H(0xDA9BB8);
-            if (Mathf.Abs(y+.39f)<.045f) return H(0x9AB7D2);
+            if (Mathf.Abs(y+.39f)<.085f) return H(0x9AB7D2);
             return White;
         }
         private static Color Windmill(float x,float y)
         {
             bool house=T(x,y,-.47f,-.88f,.47f,-.88f,.22f,.52f)||T(x,y,-.47f,-.88f,.22f,.52f,-.22f,.52f);
             bool roof=T(x,y,-.38f,.4f,.38f,.4f,0,.83f);
-            bool blades=C(x,y,-.7f,-.22f,.7f,.8f,.12f)||C(x,y,-.7f,.8f,.7f,-.22f,.12f);
+            bool blades=C(x,y,-.7f,-.22f,.7f,.8f,.14f)||C(x,y,-.7f,.8f,.7f,-.22f,.14f);
             bool hub=E(x,y,0,.29f,.2f,.2f);
             if (!house&&!roof&&!blades&&!hub) return Color.clear;
             if (hub) return H(0xD6AE64);
-            if (blades) return Mathf.Repeat((x+y)*5f,1f)<.15f?H(0xB7A591):H(0xE1CEAA);
+            if (blades) return x*y<0?H(0xAD9169):H(0xC8AF7F);
             if (roof) return H(0xBF788B);
-            if (R(x,y,0,-.67f,.12f,.22f)||R(x,y,0,-.16f,.09f,.12f)) return H(0x768CAF);
-            return H(0xDEC2A6);
+            if (R(x,y,0,-.67f,.14f,.24f)||R(x,y,0,-.16f,.12f,.15f)) return H(0x768CAF);
+            return H(0xC5A382);
         }
     }
 }
