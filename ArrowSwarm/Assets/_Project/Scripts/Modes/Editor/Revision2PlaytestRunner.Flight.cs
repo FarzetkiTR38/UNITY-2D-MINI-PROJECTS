@@ -23,7 +23,7 @@ namespace ArrowSwarm.Modes.Editor
                 session.Rotate(1);
                 yield return (Func<bool>)(() => session.Ready || session.Won || session.Lost);
             }
-            Check(session.Ready && FirstLegal(session) >= 0, session.Mode + ": level 50 has a normal legal shot");
+            Check(session.Idle && FirstLegal(session) >= 0, session.Mode + ": level 50 has a normal legal shot");
             int selected = -1; float longest = -1f;
             for (int i = 0; i < session.Level.Arrows.Count; i++)
             {
@@ -39,9 +39,10 @@ namespace ArrowSwarm.Modes.Editor
             int lives = session.Lives, remaining = session.Remaining, charges = session.RocketCharges, turns = session.Turns;
             var view = Views(session)[selected]; double started = EditorApplication.timeSinceStartup;
             session.Fire(selected);
-            Check(!session.Ready && session.Remaining == remaining - 1,
-                session.Mode + ": production normal shot locks input and removes exactly its occupancy");
-            yield return (Func<bool>)(() => session.Ready || session.Won || session.Lost);
+            Check(session.HasActiveShots && !session.Idle && session.Ready == (session.Mode == GameModeId.Shapes) &&
+                session.Remaining == remaining - 1,
+                session.Mode + ": production shot is active, removes its occupancy and preserves the mode-specific input contract");
+            yield return (Func<bool>)(() => !session.HasActiveShots && (session.Idle || session.Won || session.Lost));
             double elapsed = EditorApplication.timeSinceStartup - started;
             Results.Add("TIMING: " + session.Mode + " level 50 arrow " + selected + ", distance " + longest.ToString("F2") +
                 ", production speed " + session.Config.Speed.ToString("F1") + ", elapsed " + elapsed.ToString("F3") +

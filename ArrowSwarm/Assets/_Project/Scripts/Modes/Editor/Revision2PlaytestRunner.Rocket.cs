@@ -55,9 +55,10 @@ namespace ArrowSwarm.Modes.Editor
             foreach (int action in witness.Steps)
             {
                 if (session.Remaining <= 1) break;
-                Check(session.Preview && session.Ready, session.Mode + ": real witness action starts ready in preview");
+                Check(session.Preview && session.Idle, session.Mode + ": real witness action starts idle in preview");
                 if (action < 0) session.Rotate(1); else session.Fire(action);
-                yield return (Func<bool>)(() => session.Ready || session.Won || session.Lost);
+                if (action < 0) yield return (Func<bool>)(() => session.Ready || session.Won || session.Lost);
+                else yield return (Func<bool>)(() => !session.HasActiveShots && (session.Idle || session.Won || session.Lost));
                 Check(!session.Won && !session.Lost, session.Mode + ": witness preserves last arrow for Rocket");
             }
             Check(session.Remaining == 1 && session.RocketCharges == 1, session.Mode + ": real gameplay leaves one arrow and one Rocket");

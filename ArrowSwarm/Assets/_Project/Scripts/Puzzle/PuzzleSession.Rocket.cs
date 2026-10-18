@@ -15,7 +15,7 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Arms or cancels selection without consuming a charge.</summary>
         public void ToggleRocket()
         {
-            if (!Ready || RocketCharges <= 0) return;
+            if (!Idle || RocketCharges <= 0) return;
             RocketArmed = !RocketArmed;
             for (int i = 0; i < _views.Length; i++) if (!_removed[i]) _views[i].Highlight(false);
             Notify();
@@ -30,7 +30,7 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Extracts exactly one valid selected arrow without checking blockers or wall colors.</summary>
         public void FireRocket(int index)
         {
-            if (!Ready || !RocketArmed || RocketCharges <= 0 || index < 0 || index >= _removed.Length || _removed[index]) return;
+            if (!Idle || !RocketArmed || RocketCharges <= 0 || index < 0 || index >= _removed.Length || _removed[index]) return;
             _busy = true; RocketArmed = RocketNeeded = false; RocketCharges--; _removed[index] = true; Remaining--;
             for (int i = 0; i < _views.Length; i++) if (_views[i] != null) _views[i].Highlight(false);
             AudioManager.Instance?.PlayArrowFire(false);

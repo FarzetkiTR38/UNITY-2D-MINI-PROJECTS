@@ -76,7 +76,7 @@ namespace ArrowSwarm.Modes.Editor
 
         private static void Fresh(PuzzleSession session, string label)
         {
-            Check(session.Preview && session.Ready && !session.RocketArmed && session.Lives == session.Config.Lives &&
+            Check(session.Preview && session.Idle && !session.RocketArmed && session.Lives == session.Config.Lives &&
                 session.Remaining == session.Level.Arrows.Count && session.RocketCharges == session.Config.RocketCharges &&
                 session.Turns == session.Level.TurnBudget && session.Orientation == session.Level.InitialOrientation,
                 session.Mode + ": " + label + " restores complete attempt state");
