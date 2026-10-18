@@ -72,7 +72,8 @@ namespace ArrowSwarm.Modes.Editor
             var walls=new LineRenderer[4];for(int i=0;i<4;i++)walls[i]=Line("Wall "+i,frame.transform);
             foreach(var wall in walls)wall.gameObject.layer=puzzleLayer;
             U.Set(frame,"_walls",walls);U.Set(session,"_catalog",AssetDatabase.LoadAssetAtPath<PuzzleCatalog>(U.Data+(mode==GameModeId.Shapes?"ShapesCatalog":"ColorShiftCatalog")+".asset"));
-            U.Set(session,"_config",AssetDatabase.LoadAssetAtPath<PuzzleConfig>(U.Data+"PuzzleConfig.asset"));U.Set(session,"_mode",(int)mode);
+            U.Set(session,"_config",mode==GameModeId.Shapes?ShapesPresentationAuthoring.Config:
+                AssetDatabase.LoadAssetAtPath<PuzzleConfig>(U.Data+"PuzzleConfig.asset"));U.Set(session,"_mode",(int)mode);
             U.Set(session,"_arrowPrefab",prefab);U.Set(session,"_arrowRoot",arrows);U.Set(session,"_frame",frame);U.Set(session,"_cameraController",zoom);
             var input=session.gameObject.AddComponent<PuzzleInput>();U.Set(input,"_session",session);U.Set(input,"_camera",cam);
             BuildHUD(session,zoom);
