@@ -59,7 +59,7 @@ namespace ArrowSwarm.Modes.Editor
         {
             var rect = U.Rect(name, parent, 0, 0, size, size);
             rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(.5f, .5f); rect.anchoredPosition = Vector2.zero;
-            var image = U.Image(rect, AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd"), light);
+            var image = U.Image(rect, PuzzleControlArtwork.Circle(), light);
             image.preserveAspect = true; AuthorTheme(image, light, dark);
         }
 

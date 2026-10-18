@@ -6,12 +6,27 @@ namespace ArrowSwarm.Puzzle
     using ArrowSwarm.Data;
     using UnityEngine;
 
-    /// <summary>Four scene-authored wall strokes; only this transform rotates.</summary>
-    public sealed class PuzzleFrame : MonoBehaviour
+    /// <summary>Rounded fixed border whose paint flows by a quarter turn, independently of arrows.</summary>
+    public sealed partial class PuzzleFrame : MonoBehaviour
     {
         [SerializeField] private LineRenderer[] _walls;
+        [Header("Rounded Border")]
+        [SerializeField, Min(.01f)] private float _cornerRadius = .8f;
+        [SerializeField, Range(2, 24)] private int _cornerSamples = 8;
+        [SerializeField, Range(1f, 12f)] private float _samplesPerUnit = 4f;
+        [Header("Paint Flow")]
+        [Tooltip("Soft transition width in board units; steady wall centers keep their exact logical color.")]
+        [SerializeField, Min(.01f)] private float _paintFeather = .35f;
+        [SerializeField] private AnimationCurve _flowEasing = AnimationCurve.EaseInOut(0, 0, 1, 1);
         private PuzzleLevel _level;
         private PuzzleConfig _config;
+        private ThemeMode _theme;
+        private int _generation, _orientation;
+        private float _paintOffset, _cornerBlendLength;
+        private readonly float[] _wallLengths = new float[4];
+        public bool IsAnimating { get; private set; }
+        public int VisualOrientation => _orientation;
+        public float PaintPhase => _paintOffset;
 
         private void OnEnable()
         {
@@ -19,44 +34,64 @@ namespace ArrowSwarm.Puzzle
             ApplyTheme(ThemeManager.CurrentTheme);
         }
 
-        private void OnDisable() => ThemeManager.OnThemeChanged -= ApplyTheme;
+        private void OnDisable()
+        {
+            ThemeManager.OnThemeChanged -= ApplyTheme;
+            CancelFlow();
+        }
 
         private void ApplyTheme(ThemeMode theme)
         {
-            if (_level == null || _config == null) return;
-            for (int i = 0; i < _walls.Length; i++)
-            {
-                Color color = _config.ThemeColor(_level.WallColors[(i + _level.InitialOrientation) & 1], theme);
-                _walls[i].startColor = _walls[i].endColor = color;
-            }
+            _theme = theme;
+            PaintWalls();
         }
 
         /// <summary>Sets level-dependent wall geometry and palette, leaving arrow transforms alone.</summary>
         public void Setup(PuzzleLevel level, PuzzleConfig config)
         {
-            _level = level; _config = config;
-            gameObject.SetActive(level.Mode == GameModeId.ColorShift);
+            _generation++; IsAnimating = false;
+            _level = level; _config = config; _orientation = level.InitialOrientation & 1;
+            _paintOffset = _orientation;
             transform.rotation = Quaternion.identity;
+            bool visible = level.Mode == GameModeId.ColorShift;
+            if (!visible) { gameObject.SetActive(false); return; }
             float x = (level.Width - 1) * .5f + config.WallOffset;
             float y = (level.Height - 1) * .5f + config.WallOffset;
-            Vector3[] corners = { new Vector3(-x,y),new Vector3(x,y),new Vector3(x,-y),new Vector3(-x,-y) };
-            for (int i = 0; i < _walls.Length; i++)
-            {
-                _walls[i].positionCount = 2; _walls[i].useWorldSpace = false;
-                _walls[i].SetPosition(0,corners[i]); _walls[i].SetPosition(1,corners[(i+1)%4]);
-                _walls[i].widthMultiplier = config.WallWidth;
-            }
+            BuildRoundedWalls(x, y);
             ApplyTheme(ThemeManager.CurrentTheme);
+            gameObject.SetActive(true);
         }
 
-        /// <summary>Animates exactly a quarter turn, preserving wall colors and stationary arrows.</summary>
+        /// <summary>Flows paint clockwise/right or counterclockwise/left. Session gates shots until complete.</summary>
         public IEnumerator Rotate(int direction, float duration)
         {
-            Quaternion from = transform.rotation;
-            Quaternion to = from * Quaternion.Euler(0,0,direction > 0 ? -90 : 90);
-            float elapsed = 0;
-            while (elapsed < duration) { elapsed += Time.deltaTime; transform.rotation = Quaternion.Slerp(from,to,Mathf.SmoothStep(0,1,elapsed/duration)); yield return null; }
-            transform.rotation = to;
+            if (_level == null || _level.Mode != GameModeId.ColorShift) yield break;
+            int generation = ++_generation;
+            float from = _paintOffset, to = from + (direction > 0 ? 1f : -1f);
+            float elapsed = 0f; duration = Mathf.Max(.01f, duration); IsAnimating = true;
+            try
+            {
+                while (elapsed < duration)
+                {
+                    if (generation != _generation) yield break;
+                    elapsed += Time.deltaTime;
+                    float progress = Mathf.Clamp01(elapsed / duration);
+                    float eased = _flowEasing != null ? Mathf.Clamp01(_flowEasing.Evaluate(progress)) : Mathf.SmoothStep(0f, 1f, progress);
+                    _paintOffset = Mathf.Lerp(from, to, eased);
+                    PaintWalls();
+                    yield return null;
+                }
+                if (generation != _generation) yield break;
+                _paintOffset = Mathf.Repeat(to, 2f); _orientation ^= 1;
+                PaintWalls();
+            }
+            finally { if (generation == _generation) IsAnimating = false; }
+        }
+
+        private void CancelFlow()
+        {
+            _generation++; IsAnimating = false; _paintOffset = _orientation;
+            PaintWalls();
         }
     }
 }
