@@ -8,6 +8,16 @@ namespace ArrowSwarm.Mob
     {
         private static readonly WaitForEndOfFrame FlashFrame = new WaitForEndOfFrame();
 
+        private void ApplyTint(Color tint)
+        {
+            if (_spriteRenderer != null) _spriteRenderer.color = tint;
+            if (_additionalRenderers == null) return;
+            for (int index = 0; index < _additionalRenderers.Length; index++)
+            {
+                if (_additionalRenderers[index] != null) _additionalRenderers[index].color = tint;
+            }
+        }
+
         private void HandleDamageTaken(int damage, int remainingHP)
         {
             UpdateHPDisplay(remainingHP);
@@ -28,13 +38,13 @@ namespace ArrowSwarm.Mob
         {
             _isShaking = true;
             float elapsed = 0f;
-            _spriteRenderer.color = Color.red;
+            ApplyTint(Color.red);
             while (elapsed < _flashDuration)
             {
                 float progress = elapsed / _flashDuration;
                 if (_spriteRenderer != null)
                 {
-                    _spriteRenderer.color = Color.Lerp(Color.red, RestingTint, progress);
+                    ApplyTint(Color.Lerp(Color.red, RestingTint, progress));
                     float squash = Mathf.Sin(progress * Mathf.PI);
                     _spriteRenderer.transform.localScale = Vector3.Scale(_originalLocalScale,
                         new Vector3(1f + squash * 0.22f, 1f - squash * 0.18f, 1f));
@@ -44,9 +54,9 @@ namespace ArrowSwarm.Mob
             }
             if (_spriteRenderer != null)
             {
-                _spriteRenderer.color = RestingTint;
                 _spriteRenderer.transform.localScale = _originalLocalScale;
             }
+            ApplyTint(RestingTint);
             _isShaking = false;
             _flashCoroutine = null;
         }

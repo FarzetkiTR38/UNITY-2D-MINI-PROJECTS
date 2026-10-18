@@ -7,6 +7,7 @@ namespace ArrowSwarm.Mob
     public partial class MobVisuals : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer _spriteRenderer;
+        [SerializeField] private SpriteRenderer[] _additionalRenderers;
         [SerializeField] private TextMeshPro _hpText;
         [SerializeField] private Sprite[] _mobVariants;
         [SerializeField] private float _flashDuration = 0.4f;
@@ -48,11 +49,11 @@ namespace ArrowSwarm.Mob
                     _spriteRenderer.sprite = _mobVariants[Random.Range(0, _mobVariants.Length)];
                 }
                 _spriteRenderer.sortingOrder = 20;
-                _spriteRenderer.color = RestingTint;
                 _spriteRenderer.transform.localPosition = _originalLocalPosition;
                 _spriteRenderer.transform.localScale = _originalLocalScale;
                 _spriteRenderer.flipX = _originalFlipX;
             }
+            ApplyTint(RestingTint);
             _animation?.Initialize(_mob != null ? _mob.MobId : GetInstanceID());
 
             if (_hpText != null)
@@ -79,7 +80,7 @@ namespace ArrowSwarm.Mob
         {
             _isFrozen = frozen;
             _animation?.SetFrozen(frozen);
-            if (_spriteRenderer != null && !_isShaking) _spriteRenderer.color = RestingTint;
+            if (!_isShaking) ApplyTint(RestingTint);
         }
 
         /// <summary>Plays the death visual effect.</summary>
@@ -102,8 +103,8 @@ namespace ArrowSwarm.Mob
                 _spriteRenderer.transform.localPosition = _originalLocalPosition;
                 _spriteRenderer.transform.localScale = _originalLocalScale;
                 _spriteRenderer.flipX = _originalFlipX;
-                _spriteRenderer.color = RestingTint;
             }
+            ApplyTint(RestingTint);
             if (_health != null) _health.OnDamageTaken -= HandleDamageTaken;
         }
 
