@@ -22,3 +22,11 @@ The approved second atlas is imported unchanged. Its measured frame rectangles a
 The existing `Mob` prefab retains its root collider and HP sibling exactly. `MobAnimation` starts the child Animator at a deterministic phase per spawn ID; freeze stops its clock and pool release resets it. Existing static variants remain available for unconfigured prefabs. Hit feedback keeps its authored scale and returns to the icy tint when damaged during freeze; stale hit coroutines are cancelled on reuse.
 
 The directly related pool audit found that `PathFollower` retained its paused flag after a frozen enemy died. A single line in `MobMovement.ResetMovement` now clears that flag before resetting the follower. Path geometry, speed, health, difficulty, spawn timing and all scene/config/level assets are unchanged. This intentional lifecycle fix is the sole exception to the initially protected movement-source hash.
+
+## Verification and review
+
+Unity MCP verified the integration in the real GameScene at normal game speed. The focused runtime verification passed 100 assertions, observing all sixteen sprite frames, movement, HP layout, freeze and pause behavior, damage feedback, real arrow collisions, death, reuse of the same pooled enemy and finish life loss. The existing Defense verification passed another 50 assertions covering its UI, arrows, bounce damage, hint, freeze, pause and retry. The final Unity console contained no errors.
+
+All 131 remaining protected scene, level/config, artwork and gameplay-source hashes match the baseline. The ten pre-existing modified files remain byte-identical to their initial state. Verification restores player data and settings, and the Editor returns to MainMenuScene outside Play Mode. The old Defense evidence remains unchanged.
+
+Actual gameplay, a close-up animation, native screenshots and all verification reports are collected in [the integration overview](../Captures/EnemyAnimationIntegration/README.md). The 32 captured frames span 5.270 seconds at timeScale 1; GIF timing uses that measured duration. Capture sampling does not represent the game's render rate or the native 16 fps animation rate.

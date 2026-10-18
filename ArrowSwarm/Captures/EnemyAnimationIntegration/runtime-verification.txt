@@ -1,0 +1,102 @@
+PASS: real enemy animation, movement, HP, freeze, pause, hit, death, pool reuse and finish
+PASS: Real Mob prefab starts its assigned native Animator through the existing pooled spawner
+PASS: Only the sprite child animates; HP text and path/collider root stay outside the Animator hierarchy
+PASS: Animated presentation retains the existing root trigger collider
+PASS: Existing TMP HP label remains correct and renders above the enemy
+PASS: Capture frame 0 contains a living pooled enemy
+PASS: Capture frame 1 contains a living pooled enemy
+PASS: Capture frame 2 contains a living pooled enemy
+PASS: Capture frame 3 contains a living pooled enemy
+PASS: Capture frame 4 contains a living pooled enemy
+PASS: Capture frame 5 contains a living pooled enemy
+PASS: Capture frame 6 contains a living pooled enemy
+PASS: Capture frame 7 contains a living pooled enemy
+PASS: Capture frame 8 contains a living pooled enemy
+PASS: Capture frame 9 contains a living pooled enemy
+PASS: Capture frame 10 contains a living pooled enemy
+PASS: Capture frame 11 contains a living pooled enemy
+PASS: Capture frame 12 contains a living pooled enemy
+PASS: Capture frame 13 contains a living pooled enemy
+PASS: Capture frame 14 contains a living pooled enemy
+PASS: Capture frame 15 contains a living pooled enemy
+PASS: Capture frame 16 contains a living pooled enemy
+PASS: Capture frame 17 contains a living pooled enemy
+PASS: Capture frame 18 contains a living pooled enemy
+PASS: Capture frame 19 contains a living pooled enemy
+PASS: Capture frame 20 contains a living pooled enemy
+PASS: Capture frame 21 contains a living pooled enemy
+PASS: Capture frame 22 contains a living pooled enemy
+PASS: Capture frame 23 contains a living pooled enemy
+PASS: Capture frame 24 contains a living pooled enemy
+PASS: Capture frame 25 contains a living pooled enemy
+PASS: Capture frame 26 contains a living pooled enemy
+PASS: Capture frame 27 contains a living pooled enemy
+PASS: Capture frame 28 contains a living pooled enemy
+PASS: Capture frame 29 contains a living pooled enemy
+PASS: Capture frame 30 contains a living pooled enemy
+PASS: Capture frame 31 contains a living pooled enemy
+PASS: Real gameplay displays 16 distinct animation frames
+PASS: Enemy follows the unchanged perimeter path while its wings animate
+PASS: Animation leaves HP position/scale and mob gameplay scale untouched
+PASS: Collision radius and production game speed remain unchanged
+PASS: Freeze holds movement, spawning, sprite frame and native animation phase
+PASS: Frozen animated enemy retains the existing icy tint
+PASS: Normal Pause also holds Freeze duration and animation
+PASS: Continue resumes the countdown while active Freeze still holds the animation
+PASS: Defense101 provides a living nonlethal-hit fixture
+PASS: Damage still updates exact health and TMP label
+PASS: Hit flash finishes at frozen tint and authored scale without restarting wing motion
+PASS: Freeze expiry restores normal animation, movement and tint
+PASS: Normal Pause holds the playing loop through scaled time
+PASS: Continue resumes the native sprite loop from its paused phase
+PASS: Generated Defense board provides a legal real arrow for collision verification
+PASS: Real Arrow.OnPlayerClick still starts the existing flight
+PASS: Existing arrow trigger physics damages the animated enemy and updates its HP label
+PASS: Death returns the animated enemy to the real pool exactly once
+PASS: Pool release cancels active hit flash, frozen tint and sprite animation state
+PASS: Pool cycle 0 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 1 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 2 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 3 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 4 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 5 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 6 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 7 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 8 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 9 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 10 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 11 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 12 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 13 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 14 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 15 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 16 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 17 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 18 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 19 initializes fresh HP, movement, tint and animation
+PASS: Same physical enemy instance is reused with its authored collision radius and scale
+PASS: Pool cycle 20 initializes fresh HP, movement, tint and animation
+PASS: Pool cycle 21 initializes fresh HP, movement, tint and animation
+PASS: Full production pool rotation reuses the previously frozen/damaged instance
+PASS: Reaching the existing path finish costs exactly one life and resets the pooled animation
+PASS: Lifecycle checks leave the original game state playable
+PASS: Original GameConfig remained unchanged
+PASS: Player inventory, progress, stars, theme and settings remained unchanged
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
+RESTORED: PlayerData, auto-save, debug override/cheats/speed, preview, time scale, theme and background setting
+PASS: Complete original PlayerData restored
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
+PASS: Normal game managers returned safely to menu
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
