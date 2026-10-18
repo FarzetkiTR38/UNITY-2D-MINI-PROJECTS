@@ -12,3 +12,7 @@ Use the approved second concept, **Yaramaz Vızıldayan**, in Defense's existing
 The Animator changes only `SpriteRenderer.m_Sprite`. Transforms, UI, tint, collision geometry and movement remain owned by their existing systems. All visual assets and loop speed are authored in the Inspector. No dynamic sprite creation or per-frame managed allocation is needed.
 
 Baseline: `1ae2880`. The ten existing modified files are backed up outside the project. Existing scenes, level/config data and original enemy artwork are protected by hashes. All commits use explicitly selected task files.
+
+## Asset authoring
+
+The approved second atlas is imported unchanged. Its measured frame rectangles avoid neighboring-frame tail fragments. Sixteen centered sprites use385.918 pixels per unit, matching the original enemy's maximum visible width (1051/1200 world units). The native clip contains sixteen sprite keys and loops in exactly one second at16 fps; it has no transform, color, HP or event curves. Unity MCP verified the resulting sprites and clip before binding the prefab.
