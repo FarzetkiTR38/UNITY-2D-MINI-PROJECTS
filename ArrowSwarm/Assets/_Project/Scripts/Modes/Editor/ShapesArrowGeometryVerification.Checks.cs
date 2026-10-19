@@ -16,6 +16,22 @@ namespace ArrowSwarm.Modes.Editor
         private static int _checks;
         private static List<string> _failures;
 
+        /// <summary>Checks production geometry into an isolated evidence folder, preserving legacy captures.</summary>
+        public static string VerifyAt(string outputFolder)
+        {
+            string previous = Folder;
+            try { Folder = outputFolder; return Verify(); }
+            finally { Folder = previous; }
+        }
+
+        /// <summary>Checks an explicitly cloned head-anchor setting without changing production assets.</summary>
+        public static string VerifyAt(string outputFolder, bool centered)
+        {
+            bool? previous = _centerAnchorOverride;
+            try { _centerAnchorOverride = centered; return VerifyAt(outputFolder); }
+            finally { _centerAnchorOverride = previous; }
+        }
+
         /// <summary>Runs isolated native LineRenderer mesh assertions without changing assets or player data.</summary>
         public static string Verify()
         {
@@ -102,6 +118,8 @@ namespace ArrowSwarm.Modes.Editor
             float scale = hint ? 1.8f : 1f, half = body.widthMultiplier * .5f;
             Vector3 tip = Center(data) + (Vector3)(Vector2)data.Head + (Vector3)(Vector2)data.Direction * travel;
             Vector3 forward = (Vector3)(Vector2)data.Direction, side = new Vector3(-forward.y, forward.x);
+            if (config.CenterHeadOnGridPoint)
+                tip += forward * head.sprite.bounds.max.y * (config.HeadSize / head.sprite.bounds.size.y) * scale;
             bool smooth = true, duplicates = false;
             for (int i = 1; i < body.positionCount; i++)
             {
