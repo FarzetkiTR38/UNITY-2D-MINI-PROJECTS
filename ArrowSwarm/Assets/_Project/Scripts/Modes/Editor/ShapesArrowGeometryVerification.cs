@@ -13,7 +13,8 @@ namespace ArrowSwarm.Modes.Editor
     /// <summary>Renders the production puzzle prefab in an isolated editor preview scene.</summary>
     public static partial class ShapesArrowGeometryVerification
     {
-        private const string Folder = "Captures/ShapesArrowGeometry";
+        private static string Folder = "Captures/ShapesArrowGeometry";
+        private static bool? _centerAnchorOverride;
         private const int Tile = 256;
         private static readonly float[] Widths = { .28f, .42f, .56f };
         private static readonly float[] Heads = { .58f, .72f, .9f };
@@ -85,6 +86,14 @@ namespace ArrowSwarm.Modes.Editor
             }
         }
 
+        /// <summary>Captures an isolated fixture into a caller-owned evidence folder.</summary>
+        public static string CaptureAt(string label, string outputFolder)
+        {
+            string previous = Folder;
+            try { Folder = outputFolder; return Capture(label); }
+            finally { Folder = previous; }
+        }
+
         private static PuzzleConfig CloneConfig(int row)
         {
             var asset = AssetDatabase.LoadAssetAtPath<PuzzleConfig>("Assets/_Project/ScriptableObjects/Puzzles/ShapesPuzzleConfig.asset");
@@ -92,6 +101,11 @@ namespace ArrowSwarm.Modes.Editor
             var serialized = new SerializedObject(config);
             serialized.FindProperty("_strokeWidth").floatValue = Widths[row];
             serialized.FindProperty("_headSize").floatValue = Heads[row]; serialized.ApplyModifiedPropertiesWithoutUndo();
+            if (_centerAnchorOverride.HasValue)
+            {
+                serialized.FindProperty("_centerHeadOnGridPoint").boolValue = _centerAnchorOverride.Value;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+            }
             return config;
         }
 
