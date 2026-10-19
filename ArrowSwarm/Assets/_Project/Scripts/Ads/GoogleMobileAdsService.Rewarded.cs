@@ -13,9 +13,8 @@ namespace ArrowSwarm.Ads
             if (!_isInitialized || _isLoadingRewarded || _rewardPlayback != null || IsAdReady()) return;
             _isLoadingRewarded = true;
             CleanUpRewardedAd();
-            RewardedAd.Load(ActiveRewardedId, new AdRequest(), (ad, error) =>
+            RewardedAd.Load(ActiveRewardedId, new AdRequest(), (ad, error) => AdUnityThread.Run(this, () =>
             {
-                if (this == null) { ad?.Destroy(); return; }
                 _isLoadingRewarded = false;
                 if (error != null || ad == null)
                 {
@@ -24,18 +23,18 @@ namespace ArrowSwarm.Ads
                 }
                 _rewardedAd = ad;
                 RegisterRewardedEvents(ad);
-            });
+            }, () => ad?.Destroy()));
         }
 
         private void RegisterRewardedEvents(RewardedAd ad)
         {
-            ad.OnAdFullScreenContentClosed += () => FinishRewardedPlayback(ad);
-            ad.OnAdFullScreenContentFailed += error =>
+            ad.OnAdFullScreenContentClosed += () => AdUnityThread.Run(this, () => FinishRewardedPlayback(ad));
+            ad.OnAdFullScreenContentFailed += error => AdUnityThread.Run(this, () =>
             {
-                if (this == null || !ReferenceEquals(ad, _rewardedAd)) return;
+                if (!ReferenceEquals(ad, _rewardedAd)) return;
                 Debug.LogWarning("[ArrowSwarm] Rewarded ad failed to show: " + error.GetMessage());
                 FinishRewardedPlayback(ad);
-            };
+            });
         }
 
         private void FinishRewardedPlayback(RewardedAd ad)
@@ -43,10 +42,11 @@ namespace ArrowSwarm.Ads
             if (this == null || !ReferenceEquals(ad, _rewardedAd)) return;
             var playback = _rewardPlayback;
             _rewardPlayback = null;
-            CleanUpRewardedAd();
-            LoadRewardedAd();
-            // Reward is recorded by the SDK first; gameplay resumes only after fullscreen closes.
-            playback?.Complete();
+            AdCallbackLifecycle.Complete(() =>
+            {
+                CleanUpRewardedAd();
+                LoadRewardedAd();
+            }, () => playback?.Complete());
         }
 
         /// <inheritdoc/>
@@ -63,11 +63,11 @@ namespace ArrowSwarm.Ads
             _rewardPlayback = playback;
             try
             {
-                ad.Show(reward =>
+                ad.Show(reward => AdUnityThread.Run(this, () =>
                 {
-                    if (this != null && ReferenceEquals(ad, _rewardedAd) && ReferenceEquals(playback, _rewardPlayback))
+                    if (ReferenceEquals(ad, _rewardedAd) && ReferenceEquals(playback, _rewardPlayback))
                         playback.MarkEarned();
-                });
+                }));
             }
             catch
             {

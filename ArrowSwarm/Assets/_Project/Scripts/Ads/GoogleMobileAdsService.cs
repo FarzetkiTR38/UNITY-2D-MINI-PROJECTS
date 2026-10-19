@@ -42,19 +42,19 @@ namespace ArrowSwarm.Ads
 
         private void Start()
         {
+            AdUnityThread.Initialize();
             InitializeSdk();
         }
 
         private void InitializeSdk()
         {
-            MobileAds.Initialize(initStatus =>
+            MobileAds.Initialize(initStatus => AdUnityThread.Run(this, () =>
             {
-                if (this == null) return;
                 _isInitialized = true;
                 Debug.Log("[ArrowSwarm] Google Mobile Ads initialized successfully.");
                 LoadRewardedAd();
                 LoadInterstitialAd();
-            });
+            }));
         }
 
         #region Interstitial Ads
@@ -70,9 +70,8 @@ namespace ArrowSwarm.Ads
             CleanUpInterstitialAd();
 
             AdRequest request = new AdRequest();
-            InterstitialAd.Load(ActiveInterstitialId, request, (InterstitialAd ad, LoadAdError error) =>
+            InterstitialAd.Load(ActiveInterstitialId, request, (InterstitialAd ad, LoadAdError error) => AdUnityThread.Run(this, () =>
             {
-                if (this == null) { ad?.Destroy(); return; }
                 _isLoadingInterstitial = false;
                 if (error != null || ad == null)
                 {
@@ -83,22 +82,22 @@ namespace ArrowSwarm.Ads
                 _interstitialAd = ad;
                 RegisterInterstitialEvents(ad);
                 Debug.Log("[ArrowSwarm] Interstitial ad loaded and ready.");
-            });
+            }, () => ad?.Destroy()));
         }
 
         private void RegisterInterstitialEvents(InterstitialAd ad)
         {
             ad.OnAdFullScreenContentClosed += () =>
             {
-                FinishInterstitial(ad);
+                AdUnityThread.Run(this, () => FinishInterstitial(ad));
             };
 
-            ad.OnAdFullScreenContentFailed += (AdError error) =>
+            ad.OnAdFullScreenContentFailed += (AdError error) => AdUnityThread.Run(this, () =>
             {
-                if (this == null || !ReferenceEquals(ad, _interstitialAd)) return;
+                if (!ReferenceEquals(ad, _interstitialAd)) return;
                 Debug.LogWarning($"[ArrowSwarm] Interstitial ad failed to show: {error.GetMessage()}");
                 FinishInterstitial(ad);
-            };
+            });
         }
 
         /// <inheritdoc/>
@@ -126,9 +125,11 @@ namespace ArrowSwarm.Ads
             var callback = _currentInterstitialCallback;
             _currentInterstitialCallback = null;
             _isShowingInterstitial = false;
-            CleanUpInterstitialAd();
-            LoadInterstitialAd();
-            callback?.Invoke();
+            AdCallbackLifecycle.Complete(() =>
+            {
+                CleanUpInterstitialAd();
+                LoadInterstitialAd();
+            }, callback);
         }
 
         private void CleanUpInterstitialAd()
@@ -146,10 +147,15 @@ namespace ArrowSwarm.Ads
             var interstitial = _currentInterstitialCallback;
             _rewardPlayback = null;
             _currentInterstitialCallback = null;
-            CleanUpRewardedAd();
-            CleanUpInterstitialAd();
-            reward?.Complete();
-            interstitial?.Invoke();
+            AdCallbackLifecycle.Complete(() =>
+            {
+                try { CleanUpRewardedAd(); }
+                finally { CleanUpInterstitialAd(); }
+            }, () =>
+            {
+                try { reward?.Complete(); }
+                finally { interstitial?.Invoke(); }
+            });
         }
     }
 }
