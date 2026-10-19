@@ -43,7 +43,7 @@ namespace ArrowSwarm.Puzzle
             bool match = PuzzleRules.MatchesWall(Level, index, Orientation);
             bool blocked = !float.IsPositiveInfinity(obstacle) || !match;
             float wallDistance = arrow.Direction.x > 0 ? Level.Width - 1 - arrow.Head.x : arrow.Direction.x < 0 ? arrow.Head.x : arrow.Direction.y > 0 ? Level.Height - 1 - arrow.Head.y : arrow.Head.y;
-            float distance = blocked ? Mathf.Max(.1f, Mathf.Min(obstacle - _config.StrokeWidth, wallDistance + _config.WallOffset - _config.StrokeWidth))
+            float distance = blocked ? Mathf.Max(.1f, Mathf.Min(obstacle - _config.StrokeWidth, wallDistance + _config.WallOffset - _config.StrokeWidth) - view.HeadForwardOffset)
                 : wallDistance + view.Length + _config.WallOffset + _config.HeadSize;
             float speed = blocked ? _config.Speed : Mathf.Max(_config.Speed, distance / _config.MaximumFlightDuration);
             if (!blocked) { _removed[index] = true; Remaining--; AudioManager.Instance?.PlayArrowFire(false); }

@@ -65,7 +65,9 @@ namespace ArrowSwarm.Puzzle
             _strokeCount = 0;
             AddStrokePoint(_path[0], 0f);
             float strokeRadius = _config.StrokeWidth * _headScale * .5f;
-            float inset = _usingFilledHead ? _headInset * _headScale : 0f;
+            float inset = _usingFilledHead ? (_headInset - _headForwardOffset) * _headScale : 0f;
+            float neckReserve = _usingFilledHead && _config.CenterHeadOnGridPoint
+                ? Mathf.Max(inset, _headRearExtent * _headScale) : inset;
             for (int i = 1; i < _path.Length - 1; i++)
             {
                 Vector3 incoming = (_path[i] - _path[i - 1]).normalized;
@@ -74,7 +76,7 @@ namespace ArrowSwarm.Puzzle
                 float radius = Mathf.Min(strokeRadius, .5f);
                 // Keep a tangent-aligned head join without restoring a sharp corner when a large head covers it.
                 float minimumRadius = GeometryEpsilon * (_curveSteps + 1) * 2f;
-                radius = Mathf.Min(radius, Mathf.Max(minimumRadius, (_length - inset - i) * .5f));
+                radius = Mathf.Min(radius, Mathf.Max(minimumRadius, (_length - neckReserve - i) * .5f));
                 Vector3 center = _path[i] - incoming * radius + outgoing * radius;
                 for (int step = 0; step <= _curveSteps; step++)
                 {
