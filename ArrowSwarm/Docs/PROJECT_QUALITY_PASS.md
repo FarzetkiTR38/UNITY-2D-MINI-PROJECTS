@@ -10,7 +10,7 @@ Baseline: `16941ad`. The user authorizes proactive inspection and improvements, 
 - [x] 3. Complete rewarded-ad requests once, including skips/failures; reject overlapping requests without overwriting callbacks. Test delayed/faulty service callbacks and production close/reward ordering without showing real ads.
 - [x] 4. Prevent delayed Defense reward callbacks from using a skill in a later attempt or touching a destroyed popup/HUD. Preserve legitimately earned inventory. Exercise retry/menu/new-level transitions with delayed fake rewards.
 - [x] 5. Restore all gap-close participants when another enemy death interrupts the retreat. Verify real pooled mobs, overlapping deaths, freeze, cancellation and reuse.
-- [ ] 6. Remove per-frame temporary position arrays from Defense arrow movement/spawn, preserving exact rendered points. Measure warmed allocation and validate actual flight/bounce.
+- [x] 6. Remove per-frame temporary position arrays from Defense arrow movement/spawn, preserving exact rendered points. Measure warmed allocation and validate actual flight/bounce.
 - [x] 7. Avoid rebuilding every stationary Shapes arrow when clearing an already absent hint. Verify unchanged geometry and real rapid input; measure the no-op path.
 - [x] 8. Make the menu level header consistently follow the selected mode and localization. Verify actual shared TMP label after mode changes, player-data notifications and language changes.
 - [ ] 9. Run integration checks appropriate to the changed paths through Unity MCP. Restore player data/settings and original editor scene, verify protected assets, publish reports and record commits/completion below.
@@ -51,3 +51,5 @@ Phase 2 commit: ef08fc4. Phase 4 complete: Unity MCP real Defense HUD passed 12 
 Phase 4 commit: 225dc1c. Phase 7 measurement correction passed via Unity MCP: native GC.Alloc recorder detects a deliberate managed allocation, empty bracket=0 events, 10,000 repeated clear=0 events and repeated hint=0 events. Geometry/pool/config checks also passed again. The corrected report replaces the unsupported byte claim. Shared native allocation helper is now used for phase 6.
 
 Measurement correction commit: 3854e5f. Phase 8 complete: Unity MCP actual shared TMP menu header passed 92 assertions across Defense/Shapes/ColorShift, separate progress, both UI refresh writers, data notifications and all ten localized prefixes. Existing scene styling untouched. Evidence: Captures/QualityPass/menu-header-verification.txt.
+
+Phase 8 commit: b8f4fae. Phase 6 complete: Unity MCP real Defense renderer preserved every point across growing/shrinking body buffers and all head poses. Native GC.Alloc: empty bracket=0, old ToArray=2,048 events, current slither=0 and shared spawn uploader=0 across 2,048 calls. Gap-close isolation and original renderer restoration passed too. Evidence: Captures/QualityPass/arrow-allocation-verification.txt.
