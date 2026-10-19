@@ -1,0 +1,41 @@
+PASS: real Defense retreat replacement, expiry, stop, freeze and pooled spawn identity
+PASS: Authored Defense101 path supplies enough real distance for a five-enemy retreat fixture
+PASS: First real death returns D to the production pool exactly once
+PASS: D death reverses exactly the original A/B/C front group
+PASS: Original smooth backward retreat still moves along the path
+PASS: Second real death returns B to the pool without duplicate release
+PASS: Replacing the retreat immediately restores C even though it is outside the new front group
+PASS: All surviving A/C/E enemies move forward after the retreat expires
+PASS: Completed retreat clears its tracked participants
+PASS: Authored Defense101 path supplies enough real distance for a five-enemy retreat fixture
+PASS: Freeze holds reversing participants without changing their retreat velocity
+PASS: Normal pause holds the active freeze countdown
+PASS: StopSpawning cancels the coroutine and restores all actual participants
+PASS: Cancelling retreat preserves the separate freeze flag
+PASS: Ending freeze after retreat cancellation resumes forward movement
+PASS: Authored Defense101 path supplies enough real distance for a five-enemy retreat fixture
+PASS: A retreat participant can die and return to the normal pool
+PASS: Production FIFO pool reuses the same component with a fresh spawn identity
+PASS: Old retreat completion cannot change the reused enemy's new lifetime velocity
+PASS: Surviving original participants still recover their forward speed after pooled reuse
+PASS: Level cleanup leaves no active enemies or stale retreat participants
+PASS: Original GameConfig remained unchanged
+PASS: Player inventory, progress and settings remained unchanged
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
+RESTORED: PlayerData, auto-save, debug, preview, time scale, theme and background setting
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
+PASS: Original PlayerData fully restored
+PASS: Normal game managers safely returned to menu
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
