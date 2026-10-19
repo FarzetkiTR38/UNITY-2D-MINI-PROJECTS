@@ -1,0 +1,46 @@
+PASS: background callback dispatch, mixed-origin ordering, lifetime and cleanup completion
+PASS: SDK executor initialized on Unity before any native initialization
+PASS: An already-main-thread callback executes inline when no native events are pending
+PASS: Nested main-thread callbacks retain their original inline order
+PASS: Callbacks were posted by a genuine separate managed thread
+PASS: Every background callback, including discarded-owner cleanup, executed on Unity's main thread
+PASS: All 24 queued background callbacks executed exactly once
+PASS: Background FIFO index 0 preserved
+PASS: Background FIFO index 1 preserved
+PASS: Background FIFO index 2 preserved
+PASS: Background FIFO index 3 preserved
+PASS: Background FIFO index 4 preserved
+PASS: Background FIFO index 5 preserved
+PASS: Background FIFO index 6 preserved
+PASS: Background FIFO index 7 preserved
+PASS: Background FIFO index 8 preserved
+PASS: Background FIFO index 9 preserved
+PASS: Background FIFO index 10 preserved
+PASS: Background FIFO index 11 preserved
+PASS: Background FIFO index 12 preserved
+PASS: Background FIFO index 13 preserved
+PASS: Background FIFO index 14 preserved
+PASS: Background FIFO index 15 preserved
+PASS: Background FIFO index 16 preserved
+PASS: Background FIFO index 17 preserved
+PASS: Background FIFO index 18 preserved
+PASS: Background FIFO index 19 preserved
+PASS: Background FIFO index 20 preserved
+PASS: Background FIFO index 21 preserved
+PASS: Background FIFO index 22 preserved
+PASS: Background FIFO index 23 preserved
+PASS: A static delegate is delivered despite the SDK executor's null-Target filter
+PASS: Owner destroyed after posting is skipped and its orphan cleanup runs once on Unity
+PASS: Main-thread close queues behind an earlier background reward instead of overtaking it
+PASS: Mixed-origin reward, close and cleanup preserve their delivered FIFO order
+PASS: Earned reward holds the fullscreen gate until close and is delivered exactly once
+PASS: Mixed-origin gameplay completion runs only on Unity's main thread
+PASS: An already-main-thread callback executes inline when no native events are pending
+PASS: Nested main-thread callbacks retain their original inline order
+PASS: Already-main SDK reward records inline without an extra frame or premature reward delivery
+PASS: Already-main reward and background close complete once in order on Unity
+PASS: Native reward cleanup exception cannot strand its earned result or fullscreen gate
+PASS: Cleanup exception followed by another close still completes once
+PASS: Interstitial preload exception still releases navigation and the fullscreen gate
+PASS: Only the deterministic provider was used; no SDK initialization or ad load invoked by fixture
+PASS: Original provider restored with no fullscreen request pending
