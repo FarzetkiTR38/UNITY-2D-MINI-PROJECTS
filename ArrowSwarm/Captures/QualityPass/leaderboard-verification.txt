@@ -1,0 +1,29 @@
+PASS: production leaderboard identity, copy and ordering checks
+PASS: null cached rows are skipped without hiding real players
+PASS: duplicate display names never create extra local accounts
+PASS: same-name rivals retain their account identity
+PASS: rival scores are never replaced by local progress
+PASS: authenticated cloud player ID is preserved
+PASS: local nickname and country replace stale cloud metadata
+PASS: all three campaigns supply the local score snapshot
+PASS: cloud row timestamp remains available to the display
+PASS: both rival and local display rows are detached copies
+PASS: building the display never changes cached metadata or scores
+PASS: mutating returned rows cannot poison later refreshes
+PASS: a local profile and score change immediately replaces stale cached player metadata
+PASS: repeated refreshes and profile changes leave the original cached rows byte identical
+PASS: cloud personal bests ahead of offline progress retain the original maximum-score policy
+PASS: missing local cloud entry inserts one local row despite duplicate rival names
+PASS: offline inserted local row retains the saved player ID
+PASS: top-count limit remains enforced
+PASS: ordering remains highest level first, then aggregate stars
+PASS: offline rank identifies the actual local row after sorting
+PASS: an authoritative cloud rank retains priority
+PASS: equal-score cache ordering remains stable
+PASS: a missing cache still displays the local player
+PASS: an all-null cache safely displays the local player
+PASS: an empty cache safely displays the local player
+PASS: nonpositive display limits return no rows
+PASS: original data object, auto-save and all five data-service preferences restored
+PASS: original leaderboard cache object and rank restored
+PASS: lazy production singleton existence remains unchanged

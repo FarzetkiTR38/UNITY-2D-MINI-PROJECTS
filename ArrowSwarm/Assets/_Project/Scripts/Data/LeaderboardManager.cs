@@ -2,7 +2,6 @@ namespace ArrowSwarm.Data
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using ArrowSwarm.Utils;
     using UnityEngine;
@@ -11,7 +10,7 @@ namespace ArrowSwarm.Data
     /// Manages the game leaderboard using Unity Gaming Services (UGS) with offline caching.
     /// Saves player progress locally when offline and synchronizes with cloud when online.
     /// </summary>
-    public class LeaderboardManager : Singleton<LeaderboardManager>
+    public partial class LeaderboardManager : Singleton<LeaderboardManager>
     {
         private readonly UnityCloudService _cloudService = new UnityCloudService();
         private List<LeaderboardEntry> _cachedEntries = new List<LeaderboardEntry>();
@@ -186,54 +185,7 @@ namespace ArrowSwarm.Data
         /// </summary>
         public List<LeaderboardEntry> GetTopPlayers(int count = 10)
         {
-            var currentData = DataManager.Instance?.PlayerData;
-            int playerLevel = currentData?.highestLevel ?? 1;
-            int playerStars = currentData?.GetTotalStars() ?? 0;
-            string playerName = currentData?.playerName ?? "Player";
-            string country = currentData?.playerCountry ?? "TR";
-
-            var playerEntry = new LeaderboardEntry
-            {
-                PlayerName = playerName,
-                HighestLevel = playerLevel,
-                TotalStars = playerStars,
-                IsPlayer = true,
-                CountryCode = country
-            };
-
-            var list = new List<LeaderboardEntry>();
-
-            if (_cachedEntries != null && _cachedEntries.Count > 0)
-            {
-                bool playerFoundInList = false;
-                for (int i = 0; i < _cachedEntries.Count; i++)
-                {
-                    var entry = _cachedEntries[i];
-                    if (entry.IsPlayer || entry.PlayerName == playerName)
-                    {
-                        entry.IsPlayer = true;
-                        entry.HighestLevel = Mathf.Max(entry.HighestLevel, playerLevel);
-                        entry.TotalStars = Mathf.Max(entry.TotalStars, playerStars);
-                        entry.CountryCode = country;
-                        playerFoundInList = true;
-                    }
-                    list.Add(entry);
-                }
-
-                if (!playerFoundInList)
-                {
-                    list.Add(playerEntry);
-                }
-            }
-            else
-            {
-                list.Add(playerEntry);
-            }
-
-            return list.OrderByDescending(e => e.HighestLevel)
-                       .ThenByDescending(e => e.TotalStars)
-                       .Take(count)
-                       .ToList();
+            return BuildDisplayEntries(DataManager.Instance?.PlayerData, count);
         }
 
         /// <summary>
