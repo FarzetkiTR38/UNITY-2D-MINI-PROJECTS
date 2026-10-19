@@ -133,13 +133,13 @@ namespace ArrowSwarm.UI
 
         private void OnWatchAd()
         {
+            var context = new DefenseRewardContext(this);
+            var data = DataManager.Instance;
             ArrowSwarm.Ads.AdManager.Instance?.ShowRewardedAd(success =>
             {
-                if (success)
-                {
-                    DataManager.Instance?.ModifyFreezeCount(1);
-                    Hide();
-                }
+                if (!success) return;
+                if (data != null) data.ModifyFreezeCount(1);
+                if (context.IsCurrent) Hide();
             });
         }
 

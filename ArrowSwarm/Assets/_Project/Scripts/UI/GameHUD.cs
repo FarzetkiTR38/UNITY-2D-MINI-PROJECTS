@@ -12,7 +12,7 @@ namespace ArrowSwarm.UI
     /// Manages the in-game HUD: level display, lives (hearts),
     /// arrow counter, active skills (Tips &amp; Freeze), and pause menu.
     /// </summary>
-    public class GameHUD : MonoBehaviour
+    public partial class GameHUD : MonoBehaviour
     {
         [Header("Top Bar")]
         [SerializeField] private RectTransform _topPanelRect;
@@ -388,19 +388,7 @@ namespace ArrowSwarm.UI
                 TipManager.Instance?.UseTip();
                 UpdateSkillBadges();
             }
-            else
-            {
-                // Request rewarded ad via AdManager
-                ArrowSwarm.Ads.AdManager.Instance?.ShowRewardedAd(rewardGranted =>
-                {
-                    if (rewardGranted)
-                    {
-                        DataManager.Instance?.ModifyTipCount(1);
-                        TipManager.Instance?.UseTip();
-                        UpdateSkillBadges();
-                    }
-                });
-            }
+            else RequestSkillReward(false);
         }
 
         private void OnFreezeClicked()
@@ -411,19 +399,7 @@ namespace ArrowSwarm.UI
                 FreezeManager.Instance?.UseFreeze();
                 UpdateSkillBadges();
             }
-            else
-            {
-                // Request rewarded ad via AdManager
-                ArrowSwarm.Ads.AdManager.Instance?.ShowRewardedAd(rewardGranted =>
-                {
-                    if (rewardGranted)
-                    {
-                        DataManager.Instance?.ModifyFreezeCount(1);
-                        FreezeManager.Instance?.UseFreeze();
-                        UpdateSkillBadges();
-                    }
-                });
-            }
+            else RequestSkillReward(true);
         }
 
         private static void EnsureButtonFeedback(Button btn)
