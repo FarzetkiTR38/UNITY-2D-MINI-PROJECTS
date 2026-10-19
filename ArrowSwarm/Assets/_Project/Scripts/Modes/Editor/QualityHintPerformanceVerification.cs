@@ -32,6 +32,9 @@ namespace ArrowSwarm.Modes.Editor
             var results = new List<string>();
             try
             {
+                Check(QualityAllocationEvents.Measure(() => { }) == 0, "Empty native profiler bracket records no allocation", results);
+                Check(QualityAllocationEvents.Measure(() => GC.KeepAlive(new byte[128])) >= 1,
+                    "Positive control proves the native profiler detects managed allocations", results);
                 var points = new List<Vector2Int> { new Vector2Int(4, 4), new Vector2Int(4, 3),
                     new Vector2Int(4, 2), new Vector2Int(3, 2), new Vector2Int(2, 2),
                     new Vector2Int(2, 3), new Vector2Int(1, 3), new Vector2Int(0, 3) };
@@ -76,12 +79,13 @@ namespace ArrowSwarm.Modes.Editor
         {
             for (int i = 0; i < 100; i++) view.Highlight(enabled);
             var clock = new Stopwatch();
-            long allocated = GC.GetAllocatedBytesForCurrentThread(); clock.Start();
-            for (int i = 0; i < iterations; i++) view.Highlight(enabled);
-            clock.Stop(); long bytes = GC.GetAllocatedBytesForCurrentThread() - allocated;
-            Check(bytes == 0, iterations + " repeated " + (enabled ? "hint" : "clear") + " calls allocate zero managed bytes", results);
+            clock.Start();
+            int allocations = QualityAllocationEvents.Measure(() =>
+            { for (int i = 0; i < iterations; i++) view.Highlight(enabled); });
+            clock.Stop();
+            Check(allocations == 0, iterations + " repeated " + (enabled ? "hint" : "clear") + " calls produce zero GC.Alloc events", results);
             results.Add("MEASURE: " + iterations + " repeated " + enabled + " calls: " +
-                clock.Elapsed.TotalMilliseconds.ToString("F3", CultureInfo.InvariantCulture) + " ms; " + bytes + " bytes");
+                clock.Elapsed.TotalMilliseconds.ToString("F3", CultureInfo.InvariantCulture) + " ms including profiler bracket; " + allocations + " GC.Alloc events");
         }
 
         private static Vector3[] Positions(LineRenderer body)
