@@ -7,7 +7,7 @@ Baseline: `16941ad`. The user authorizes proactive inspection and improvements, 
 - [x] 0. Inspect project rules, establish a clean baseline and audit persistence, async UI and runtime code. Protect authored assets by hashes. Commit this implementation/continuation record.
 - [x] 1. Preserve the last valid backup when recovering a corrupted primary save. Validate normal backup rotation and repeated recovery with temporary data, restoring real preferences afterwards.
 - [ ] 2. Distinguish leaderboard accounts by identity rather than display name; avoid modifying cached rows when applying the local player snapshot. Verify duplicate names, rename and cache immutability offline.
-- [ ] 3. Complete rewarded-ad requests once, including skips/failures; reject overlapping requests without overwriting callbacks. Test delayed/faulty service callbacks and production close/reward ordering without showing real ads.
+- [x] 3. Complete rewarded-ad requests once, including skips/failures; reject overlapping requests without overwriting callbacks. Test delayed/faulty service callbacks and production close/reward ordering without showing real ads.
 - [ ] 4. Prevent delayed Defense reward callbacks from using a skill in a later attempt or touching a destroyed popup/HUD. Preserve legitimately earned inventory. Exercise retry/menu/new-level transitions with delayed fake rewards.
 - [ ] 5. Restore all gap-close participants when another enemy death interrupts the retreat. Verify real pooled mobs, overlapping deaths, freeze, cancellation and reuse.
 - [ ] 6. Remove per-frame temporary position arrays from Defense arrow movement/spawn, preserving exact rendered points. Measure warmed allocation and validate actual flight/bounce.
@@ -37,3 +37,5 @@ Focused verification and screenshots belong to `Captures/QualityPass/`, with sep
 Implementation has started. Each completed phase must be checked above and described here with its MCP evidence and commit. If work is interrupted, leave the current phase and next concrete command/test documented here before stopping.
 
 Phase 1 complete: Unity MCP Play Mode passed normal rotation, repeated damaged-primary recovery, missing/blank/both-broken slots, direct save and legacy three-mode migration. Original data reference, auto-save and five preferences restored. Evidence: Captures/QualityPass/save-verification.txt.
+
+Phase 1 commit: 6ee6175. Phase 3 complete: Unity MCP passed 22 offline callback assertions for overlapping reward/interstitial requests, stale/duplicate events, provider exceptions, cancellation, and reward-before-close ownership. No live SDK playback exercised. Evidence: Captures/QualityPass/ads-verification.txt.
