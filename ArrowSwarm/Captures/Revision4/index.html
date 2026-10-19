@@ -1,0 +1,207 @@
+<!doctype html><html lang="tr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Shapes Revision4 Overview</title>
+<style>body{background:#eeeae1;color:#183350;font:16px system-ui;margin:28px}h1{margin-bottom:8px}a{color:#0065b5}nav a{display:inline-block;padding:10px 20px;background:white;border-radius:12px;margin:4px}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}article{background:white;border-radius:16px;padding:16px}h2{font-size:19px}p{font-size:15px;line-height:1.55}.metric{font-weight:700;color:#075c8c}img{width:100%;height:auto;border-radius:12px}header{max-width:1100px;margin-bottom:24px}</style>
+<header><h1>Shapes — Revision4 Overview</h1><p>50 bölümün gerçek Unity sahnesi. 41 farklı en/boy; 55–139 ok (ortalama 78.1). Görsellere basarak tam boyut açabilirsin.</p>
+<p>Açılışta seçilebilen okların ortalaması %41.5 → %23.4; çözümün orta kısmındaki serbest seçenek oranı %42.3 → %19.6. Daha fazla ok, önce başka okların çıkarılmasını gerektiriyor; tüm bölümler çözülebilir kalıyor.</p><p>Alan ağırlıklı dönüş sayısı 3.17 → 6.51. Bu ölçüm uzun yolları daha fazla ağırlıklandırır; küçük kıvrımlı oklar sonucu şişirmez. R2’nin çok sık kıvrımları ile R3’ün uzun paralel şeritleri arasında daha okunaklı yollar hedeflendi.</p><p>İlk 10 bölümde açılış seçenekleri ortalama %26.3; son 10 bölümde %20.6. Daha az serbest seçenek bırakan kademeli bir ilerleme hedeflendi. Bu oranlar yapısal ölçümlerdir; hissedilen zorluk oyuncunun çözüm sırasına göre değişir.</p>
+<p>R3’ün silüetleri, her hücrenin rengi, harita boyutları ve Shapes’e özel çizgi kalınlığı korunur. Dört yönlü ve eşzamanlı atış devam eder.</p>
+<nav><a href="Overview/shapes-before-after.jpg">R3 / R4 karşılaştırma</a><a href="Overview/shapes-01-10.jpg">1–10</a> <a href="Overview/shapes-11-20.jpg">11–20</a> <a href="Overview/shapes-21-30.jpg">21–30</a> <a href="Overview/shapes-31-40.jpg">31–40</a> <a href="Overview/shapes-41-50.jpg">41–50</a> <a href="Overview/shapes-dark.jpg">Koyu tema</a></nav>
+<p><a href="balance-comparison.txt">Denge doğrulaması</a> · <a href="balance-candidates.csv">Yeni denge ölçümleri</a> · <a href="balance-baseline.csv">R3 başlangıç ölçümleri</a> · <a href="balance-legacy-summary.json">R2 karşılaştırması</a> · <a href="policy-comparison.txt">12 farklı çözüm sırası</a> · <a href="Playthroughs/runtime-verification.txt">50 bölüm oynanış testi</a> · <a href="Playthroughs/level-metrics.csv">Sahne ölçümleri</a> · <a href="interaction-verification.txt">Hızlı atış ve etkileşim testleri</a> · <a href="ui-verification.txt">HUD ve yerelleştirme testleri</a></p></header><main><article><h2>01. Ruby Heart</h2>
+<p>44 × 36 · 55 ok · 4 renk · bağımlılık 14</p>
+<p class="metric">Açılış %27 / alan ağırlıklı dönüş 6.0</p>
+<a href="Playthroughs/run-6daf7429/shapes-01-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-01-light.png" alt="Ruby Heart"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-01-light.png">Tam boyut</a></p></article><article><h2>02. Polar Penguin</h2>
+<p>50 × 52 · 82 ok · 5 renk · bağımlılık 17</p>
+<p class="metric">Açılış %27 / alan ağırlıklı dönüş 6.4</p>
+<a href="Playthroughs/run-6daf7429/shapes-02-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-02-light.png" alt="Polar Penguin"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-02-light.png">Tam boyut</a> · <a href="Playthroughs/run-6daf7429/shapes-02-dark.png">Koyu tema</a></p></article><article><h2>03. Moon Rabbit</h2>
+<p>44 × 56 · 81 ok · 6 renk · bağımlılık 19</p>
+<p class="metric">Açılış %26 / alan ağırlıklı dönüş 6.0</p>
+<a href="Playthroughs/run-6daf7429/shapes-03-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-03-light.png" alt="Moon Rabbit"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-03-light.png">Tam boyut</a> · <a href="Playthroughs/run-6daf7429/shapes-03-dark.png">Koyu tema</a></p></article><article><h2>04. Prism Butterfly</h2>
+<p>56 × 50 · 99 ok · 5 renk · bağımlılık 19</p>
+<p class="metric">Açılış %26 / alan ağırlıklı dönüş 6.2</p>
+<a href="Playthroughs/run-6daf7429/shapes-04-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-04-light.png" alt="Prism Butterfly"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-04-light.png">Tam boyut</a></p></article><article><h2>05. Starlight Rocket</h2>
+<p>36 × 50 · 55 ok · 6 renk · bağımlılık 14</p>
+<p class="metric">Açılış %27 / alan ağırlıklı dönüş 6.0</p>
+<a href="Playthroughs/run-6daf7429/shapes-05-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-05-light.png" alt="Starlight Rocket"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-05-light.png">Tam boyut</a></p></article><article><h2>06. Marmalade Cat</h2>
+<p>52 × 56 · 91 ok · 5 renk · bağımlılık 22</p>
+<p class="metric">Açılış %26 / alan ağırlıklı dönüş 6.5</p>
+<a href="Playthroughs/run-6daf7429/shapes-06-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-06-light.png" alt="Marmalade Cat"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-06-light.png">Tam boyut</a></p></article><article><h2>07. Golden Puppy</h2>
+<p>54 × 46 · 84 ok · 5 renk · bağımlılık 24</p>
+<p class="metric">Açılış %26 / alan ağırlıklı dönüş 6.2</p>
+<a href="Playthroughs/run-6daf7429/shapes-07-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-07-light.png" alt="Golden Puppy"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-07-light.png">Tam boyut</a></p></article><article><h2>08. Honey Bear</h2>
+<p>50 × 54 · 95 ok · 4 renk · bağımlılık 25</p>
+<p class="metric">Açılış %26 / alan ağırlıklı dönüş 6.7</p>
+<a href="Playthroughs/run-6daf7429/shapes-08-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-08-light.png" alt="Honey Bear"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-08-light.png">Tam boyut</a></p></article><article><h2>09. Autumn Fox</h2>
+<p>54 × 56 · 79 ok · 4 renk · bağımlılık 19</p>
+<p class="metric">Açılış %25 / alan ağırlıklı dönüş 6.8</p>
+<a href="Playthroughs/run-6daf7429/shapes-09-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-09-light.png" alt="Autumn Fox"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-09-light.png">Tam boyut</a></p></article><article><h2>10. Twilight Owl</h2>
+<p>44 × 56 · 82 ok · 6 renk · bağımlılık 14</p>
+<p class="metric">Açılış %26 / alan ağırlıklı dönüş 6.4</p>
+<a href="Playthroughs/run-6daf7429/shapes-10-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-10-light.png" alt="Twilight Owl"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-10-light.png">Tam boyut</a></p></article><article><h2>11. Coral Fish</h2>
+<p>54 × 46 · 67 ok · 5 renk · bağımlılık 18</p>
+<p class="metric">Açılış %25 / alan ağırlıklı dönüş 7.1</p>
+<a href="Playthroughs/run-6daf7429/shapes-11-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-11-light.png" alt="Coral Fish"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-11-light.png">Tam boyut</a></p></article><article><h2>12. Emerald Turtle</h2>
+<p>54 × 58 · 98 ok · 6 renk · bağımlılık 28</p>
+<p class="metric">Açılış %26 / alan ağırlıklı dönüş 6.2</p>
+<a href="Playthroughs/run-6daf7429/shapes-12-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-12-light.png" alt="Emerald Turtle"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-12-light.png">Tam boyut</a></p></article><article><h2>13. Blue Whale</h2>
+<p>60 × 42 · 55 ok · 5 renk · bağımlılık 18</p>
+<p class="metric">Açılış %26 / alan ağırlıklı dönüş 6.2</p>
+<a href="Playthroughs/run-6daf7429/shapes-13-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-13-light.png" alt="Blue Whale"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-13-light.png">Tam boyut</a></p></article><article><h2>14. Sunset Crab</h2>
+<p>60 × 50 · 80 ok · 4 renk · bağımlılık 20</p>
+<p class="metric">Açılış %25 / alan ağırlıklı dönüş 6.7</p>
+<a href="Playthroughs/run-6daf7429/shapes-14-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-14-light.png" alt="Sunset Crab"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-14-light.png">Tam boyut</a></p></article><article><h2>15. Golden Chick</h2>
+<p>46 × 54 · 74 ok · 6 renk · bağımlılık 16</p>
+<p class="metric">Açılış %24 / alan ağırlıklı dönüş 6.4</p>
+<a href="Playthroughs/run-6daf7429/shapes-15-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-15-light.png" alt="Golden Chick"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-15-light.png">Tam boyut</a> · <a href="Playthroughs/run-6daf7429/shapes-15-dark.png">Koyu tema</a></p></article><article><h2>16. Pond Duck</h2>
+<p>58 × 48 · 58 ok · 6 renk · bağımlılık 14</p>
+<p class="metric">Açılış %24 / alan ağırlıklı dönüş 6.5</p>
+<a href="Playthroughs/run-6daf7429/shapes-16-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-16-light.png" alt="Pond Duck"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-16-light.png">Tam boyut</a></p></article><article><h2>17. Pearl Swan</h2>
+<p>60 × 54 · 59 ok · 4 renk · bağımlılık 16</p>
+<p class="metric">Açılış %25 / alan ağırlıklı dönüş 6.5</p>
+<a href="Playthroughs/run-6daf7429/shapes-17-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-17-light.png" alt="Pearl Swan"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-17-light.png">Tam boyut</a></p></article><article><h2>18. Coral Seahorse</h2>
+<p>50 × 60 · 68 ok · 6 renk · bağımlılık 22</p>
+<p class="metric">Açılış %25 / alan ağırlıklı dönüş 6.5</p>
+<a href="Playthroughs/run-6daf7429/shapes-18-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-18-light.png" alt="Coral Seahorse"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-18-light.png">Tam boyut</a></p></article><article><h2>19. Jade Dinosaur</h2>
+<p>60 × 58 · 70 ok · 5 renk · bağımlılık 16</p>
+<p class="metric">Açılış %24 / alan ağırlıklı dönüş 7.0</p>
+<a href="Playthroughs/run-6daf7429/shapes-19-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-19-light.png" alt="Jade Dinosaur"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-19-light.png">Tam boyut</a></p></article><article><h2>20. Lavender Elephant</h2>
+<p>60 × 50 · 81 ok · 6 renk · bağımlılık 22</p>
+<p class="metric">Açılış %25 / alan ağırlıklı dönüş 6.8</p>
+<a href="Playthroughs/run-6daf7429/shapes-20-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-20-light.png" alt="Lavender Elephant"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-20-light.png">Tam boyut</a> · <a href="Playthroughs/run-6daf7429/shapes-20-dark.png">Koyu tema</a></p></article><article><h2>21. Violet Octopus</h2>
+<p>58 × 56 · 75 ok · 4 renk · bağımlılık 19</p>
+<p class="metric">Açılış %24 / alan ağırlıklı dönüş 6.9</p>
+<a href="Playthroughs/run-6daf7429/shapes-21-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-21-light.png" alt="Violet Octopus"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-21-light.png">Tam boyut</a></p></article><article><h2>22. Moon Jellyfish</h2>
+<p>48 × 56 · 76 ok · 6 renk · bağımlılık 21</p>
+<p class="metric">Açılış %24 / alan ağırlıklı dönüş 6.1</p>
+<a href="Playthroughs/run-6daf7429/shapes-22-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-22-light.png" alt="Moon Jellyfish"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-22-light.png">Tam boyut</a></p></article><article><h2>23. Honey Bee</h2>
+<p>52 × 56 · 72 ok · 4 renk · bağımlılık 18</p>
+<p class="metric">Açılış %24 / alan ağırlıklı dönüş 6.8</p>
+<a href="Playthroughs/run-6daf7429/shapes-23-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-23-light.png" alt="Honey Bee"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-23-light.png">Tam boyut</a></p></article><article><h2>24. Ruby Ladybug</h2>
+<p>54 × 48 · 92 ok · 3 renk · bağımlılık 18</p>
+<p class="metric">Açılış %24 / alan ağırlıklı dönüş 6.0</p>
+<a href="Playthroughs/run-6daf7429/shapes-24-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-24-light.png" alt="Ruby Ladybug"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-24-light.png">Tam boyut</a></p></article><article><h2>25. Azure Dragonfly</h2>
+<p>60 × 54 · 65 ok · 5 renk · bağımlılık 23</p>
+<p class="metric">Açılış %23 / alan ağırlıklı dönüş 6.1</p>
+<a href="Playthroughs/run-6daf7429/shapes-25-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-25-light.png" alt="Azure Dragonfly"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-25-light.png">Tam boyut</a></p></article><article><h2>26. Tropical Parrot</h2>
+<p>56 × 60 · 66 ok · 7 renk · bağımlılık 25</p>
+<p class="metric">Açılış %23 / alan ağırlıklı dönüş 6.7</p>
+<a href="Playthroughs/run-6daf7429/shapes-26-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-26-light.png" alt="Tropical Parrot"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-26-light.png">Tam boyut</a></p></article><article><h2>27. Rose Unicorn</h2>
+<p>54 × 62 · 87 ok · 8 renk · bağımlılık 20</p>
+<p class="metric">Açılış %23 / alan ağırlıklı dönüş 7.2</p>
+<a href="Playthroughs/run-6daf7429/shapes-27-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-27-light.png" alt="Rose Unicorn"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-27-light.png">Tam boyut</a></p></article><article><h2>28. Emerald Dragon</h2>
+<p>64 × 60 · 88 ok · 6 renk · bağımlılık 22</p>
+<p class="metric">Açılış %23 / alan ağırlıklı dönüş 6.5</p>
+<a href="Playthroughs/run-6daf7429/shapes-28-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-28-light.png" alt="Emerald Dragon"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-28-light.png">Tam boyut</a> · <a href="Playthroughs/run-6daf7429/shapes-28-dark.png">Koyu tema</a></p></article><article><h2>29. Coral Flamingo</h2>
+<p>54 × 62 · 58 ok · 4 renk · bağımlılık 15</p>
+<p class="metric">Açılış %22 / alan ağırlıklı dönüş 6.5</p>
+<a href="Playthroughs/run-6daf7429/shapes-29-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-29-light.png" alt="Coral Flamingo"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-29-light.png">Tam boyut</a></p></article><article><h2>30. Copper Squirrel</h2>
+<p>56 × 60 · 103 ok · 6 renk · bağımlılık 18</p>
+<p class="metric">Açılış %22 / alan ağırlıklı dönüş 6.9</p>
+<a href="Playthroughs/run-6daf7429/shapes-30-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-30-light.png" alt="Copper Squirrel"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-30-light.png">Tam boyut</a></p></article><article><h2>31. Chestnut Hedgehog</h2>
+<p>58 × 46 · 66 ok · 4 renk · bağımlılık 22</p>
+<p class="metric">Açılış %23 / alan ağırlıklı dönüş 7.0</p>
+<a href="Playthroughs/run-6daf7429/shapes-31-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-31-light.png" alt="Chestnut Hedgehog"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-31-light.png">Tam boyut</a></p></article><article><h2>32. Lily Frog</h2>
+<p>60 × 54 · 105 ok · 5 renk · bağımlılık 27</p>
+<p class="metric">Açılış %22 / alan ağırlıklı dönüş 6.7</p>
+<a href="Playthroughs/run-6daf7429/shapes-32-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-32-light.png" alt="Lily Frog"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-32-light.png">Tam boyut</a></p></article><article><h2>33. Bamboo Panda</h2>
+<p>54 × 58 · 99 ok · 5 renk · bağımlılık 26</p>
+<p class="metric">Açılış %22 / alan ağırlıklı dönüş 6.4</p>
+<a href="Playthroughs/run-6daf7429/shapes-33-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-33-light.png" alt="Bamboo Panda"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-33-light.png">Tam boyut</a></p></article><article><h2>34. Moonlit Raccoon</h2>
+<p>56 × 58 · 110 ok · 5 renk · bağımlılık 26</p>
+<p class="metric">Açılış %23 / alan ağırlıklı dönüş 6.4</p>
+<a href="Playthroughs/run-6daf7429/shapes-34-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-34-light.png" alt="Moonlit Raccoon"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-34-light.png">Tam boyut</a> · <a href="Playthroughs/run-6daf7429/shapes-34-dark.png">Koyu tema</a></p></article><article><h2>35. Rainbow Toucan</h2>
+<p>60 × 60 · 73 ok · 8 renk · bağımlılık 21</p>
+<p class="metric">Açılış %22 / alan ağırlıklı dönüş 6.7</p>
+<a href="Playthroughs/run-6daf7429/shapes-35-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-35-light.png" alt="Rainbow Toucan"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-35-light.png">Tam boyut</a></p></article><article><h2>36. Ruby Strawberry</h2>
+<p>42 × 54 · 61 ok · 4 renk · bağımlılık 21</p>
+<p class="metric">Açılış %21 / alan ağırlıklı dönüş 6.4</p>
+<a href="Playthroughs/run-6daf7429/shapes-36-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-36-light.png" alt="Ruby Strawberry"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-36-light.png">Tam boyut</a></p></article><article><h2>37. Golden Pineapple</h2>
+<p>44 × 58 · 68 ok · 5 renk · bağımlılık 22</p>
+<p class="metric">Açılış %22 / alan ağırlıklı dönüş 6.7</p>
+<a href="Playthroughs/run-6daf7429/shapes-37-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-37-light.png" alt="Golden Pineapple"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-37-light.png">Tam boyut</a></p></article><article><h2>38. Woodland Mushroom</h2>
+<p>54 × 54 · 80 ok · 5 renk · bağımlılık 23</p>
+<p class="metric">Açılış %21 / alan ağırlıklı dönüş 6.6</p>
+<a href="Playthroughs/run-6daf7429/shapes-38-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-38-light.png" alt="Woodland Mushroom"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-38-light.png">Tam boyut</a></p></article><article><h2>39. Summer Sunflower</h2>
+<p>42 × 62 · 70 ok · 6 renk · bağımlılık 21</p>
+<p class="metric">Açılış %21 / alan ağırlıklı dönüş 6.2</p>
+<a href="Playthroughs/run-6daf7429/shapes-39-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-39-light.png" alt="Summer Sunflower"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-39-light.png">Tam boyut</a></p></article><article><h2>40. Spring Tulip</h2>
+<p>38 × 58 · 55 ok · 5 renk · bağımlılık 15</p>
+<p class="metric">Açılış %22 / alan ağırlıklı dönüş 6.1</p>
+<a href="Playthroughs/run-6daf7429/shapes-40-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-40-light.png" alt="Spring Tulip"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-40-light.png">Tam boyut</a></p></article><article><h2>41. Royal Crown</h2>
+<p>60 × 56 · 75 ok · 5 renk · bağımlılık 19</p>
+<p class="metric">Açılış %21 / alan ağırlıklı dönüş 6.5</p>
+<a href="Playthroughs/run-6daf7429/shapes-41-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-41-light.png" alt="Royal Crown"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-41-light.png">Tam boyut</a></p></article><article><h2>42. Rainbow Castle</h2>
+<p>64 × 62 · 105 ok · 6 renk · bağımlılık 24</p>
+<p class="metric">Açılış %21 / alan ağırlıklı dönüş 7.0</p>
+<a href="Playthroughs/run-6daf7429/shapes-42-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-42-light.png" alt="Rainbow Castle"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-42-light.png">Tam boyut</a></p></article><article><h2>43. Ocean Anchor</h2>
+<p>62 × 60 · 58 ok · 4 renk · bağımlılık 20</p>
+<p class="metric">Açılış %21 / alan ağırlıklı dönüş 6.4</p>
+<a href="Playthroughs/run-6daf7429/shapes-43-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-43-light.png" alt="Ocean Anchor"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-43-light.png">Tam boyut</a></p></article><article><h2>44. Sunburst Guitar</h2>
+<p>36 × 62 · 56 ok · 6 renk · bağımlılık 17</p>
+<p class="metric">Açılış %21 / alan ağırlıklı dönüş 6.7</p>
+<a href="Playthroughs/run-6daf7429/shapes-44-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-44-light.png" alt="Sunburst Guitar"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-44-light.png">Tam boyut</a></p></article><article><h2>45. Festival Balloon</h2>
+<p>48 × 58 · 84 ok · 6 renk · bağımlılık 23</p>
+<p class="metric">Açılış %20 / alan ağırlıklı dönüş 6.1</p>
+<a href="Playthroughs/run-6daf7429/shapes-45-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-45-light.png" alt="Festival Balloon"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-45-light.png">Tam boyut</a></p></article><article><h2>46. Sunset Sailboat</h2>
+<p>62 × 58 · 82 ok · 6 renk · bağımlılık 23</p>
+<p class="metric">Açılış %21 / alan ağırlıklı dönüş 6.1</p>
+<a href="Playthroughs/run-6daf7429/shapes-46-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-46-light.png" alt="Sunset Sailboat"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-46-light.png">Tam boyut</a></p></article><article><h2>47. Triple Scoop</h2>
+<p>46 × 58 · 62 ok · 6 renk · bağımlılık 20</p>
+<p class="metric">Açılış %21 / alan ağırlıklı dönüş 6.6</p>
+<a href="Playthroughs/run-6daf7429/shapes-47-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-47-light.png" alt="Triple Scoop"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-47-light.png">Tam boyut</a></p></article><article><h2>48. Porcelain Teapot</h2>
+<p>62 × 46 · 71 ok · 6 renk · bağımlılık 22</p>
+<p class="metric">Açılış %20 / alan ağırlıklı dönüş 6.5</p>
+<a href="Playthroughs/run-6daf7429/shapes-48-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-48-light.png" alt="Porcelain Teapot"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-48-light.png">Tam boyut</a></p></article><article><h2>49. Meadow Windmill</h2>
+<p>58 × 64 · 92 ok · 6 renk · bağımlılık 21</p>
+<p class="metric">Açılış %21 / alan ağırlıklı dönüş 7.1</p>
+<a href="Playthroughs/run-6daf7429/shapes-49-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-49-light.png" alt="Meadow Windmill"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-49-light.png">Tam boyut</a></p></article><article><h2>50. Royal Peacock</h2>
+<p>66 × 66 · 139 ok · 6 renk · bağımlılık 34</p>
+<p class="metric">Açılış %19 / alan ağırlıklı dönüş 6.5</p>
+<a href="Playthroughs/run-6daf7429/shapes-50-light.png"><img loading="lazy" src="Playthroughs/run-6daf7429/shapes-50-light.png" alt="Royal Peacock"></a>
+<p><a href="Playthroughs/run-6daf7429/shapes-50-light.png">Tam boyut</a> · <a href="Playthroughs/run-6daf7429/shapes-50-dark.png">Koyu tema</a></p></article></main></html>

@@ -29,16 +29,30 @@ namespace ArrowSwarm.Modes
         /// <summary>Selects an already unlocked level without unlocking any other level.</summary>
         public void Select(int level) => _currentLevel = Mathf.Clamp(level, 1, HighestLevel);
 
+        /// <summary>Unlocks newly appended entries only after the contiguous completed prefix; preserves best stars and valid selection.</summary>
+        public bool ExpandCatalog(int levelCount)
+        {
+            if (levelCount < 1) return false;
+            int next = 1;
+            while (next < levelCount && GetStars(next) > 0) next++;
+            int highest = Mathf.Clamp(Mathf.Max(HighestLevel, next), 1, levelCount);
+            int current = Mathf.Clamp(CurrentLevel, 1, highest);
+            bool changed = _highestLevel != highest || _currentLevel != current;
+            _highestLevel = highest; _currentLevel = current;
+            return changed;
+        }
+
         /// <summary>Records a personal best once and unlocks at most the following catalog entry.</summary>
         public void Complete(int level, int lives, int levelCount)
         {
+            ExpandCatalog(levelCount);
             if (level < 1 || level > levelCount || lives < 1 || level > HighestLevel) return;
             if (_stars == null) _stars = new List<LevelStarData>();
             int best = Mathf.Clamp(lives, 1, 3);
             int index = _stars.FindIndex(item => item.level == level);
             if (index < 0) _stars.Add(new LevelStarData { level = level, stars = best });
             else if (best > _stars[index].stars) _stars[index] = new LevelStarData { level = level, stars = best };
-            _highestLevel = Mathf.Max(HighestLevel, Mathf.Min(level + 1, levelCount));
+            _highestLevel = Mathf.Clamp(Mathf.Max(HighestLevel, level + 1), 1, levelCount);
         }
     }
 }

@@ -37,18 +37,25 @@ namespace ArrowSwarm.Modes.Editor
         {
             string path = U.Data + "PuzzleHead.asset";
             var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
-            if (sprite != null) return sprite;
             const int size = 32;
-            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false) { name = "PuzzleHeadTexture", filterMode = FilterMode.Bilinear };
+            string texturePath = U.Data + "PuzzleHeadTexture.asset";
+            var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
+            bool createTexture = texture == null;
+            if (createTexture) texture = new Texture2D(size, size, TextureFormat.RGBA32, false) { name = "PuzzleHeadTexture" };
+            texture.filterMode = FilterMode.Bilinear; texture.wrapMode = TextureWrapMode.Clamp;
             var pixels = new Color[size * size];
             for (int y = 0; y < size; y++)
             {
-                int half = Mathf.FloorToInt(size * .5f * (1f - (float)y / size));
-                for (int x = Mathf.Max(0, size / 2 - half); x <= Mathf.Min(size - 1, size / 2 + half); x++)
-                    pixels[y * size + x] = Color.white;
+                for (int x = 0; x < size; x++)
+                {
+                    float side = (30.5f - (y + .5f) - Mathf.Abs(x + .5f - 16f) * (29f / 14f)) / Mathf.Sqrt(1f + (29f / 14f) * (29f / 14f));
+                    float inside = Mathf.Min(y + .5f - 1.5f, side);
+                    pixels[y * size + x] = new Color(1f, 1f, 1f, Mathf.Clamp01(inside + .5f));
+                }
             }
             texture.SetPixels(pixels); texture.Apply();
-            AssetDatabase.CreateAsset(texture, U.Data + "PuzzleHeadTexture.asset");
+            if (createTexture) AssetDatabase.CreateAsset(texture, texturePath); else EditorUtility.SetDirty(texture);
+            if (sprite != null) return sprite;
             sprite = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(.5f, .5f), size, 0, SpriteMeshType.FullRect);
             sprite.name = "PuzzleHead"; AssetDatabase.CreateAsset(sprite, path);
             return sprite;

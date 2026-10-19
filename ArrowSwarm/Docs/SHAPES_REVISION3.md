@@ -1,0 +1,48 @@
+# Shapes Revision 3
+
+## Goal
+
+Rework all 50 Shapes puzzles so each object is recognizable at the normal mobile zoom. Preserve four firing directions, full silhouette coverage, solvable dependencies, three lives, shared best stars, independent progress and rapid concurrent arrow input. Color Shift and Defense retain their current content and presentation.
+
+## Phases and commits
+
+1. **P00 — Baseline and design.** Record the current state and protect existing local edits. Define the visual and verification requirements in this document.
+2. **P01 — Shapes presentation isolation.** Give Shapes its own Inspector-editable puzzle config with stronger strokes/heads and suitable color contrast. Keep scene-authored HUD, zoom, controls and shared gameplay intact. Verify through Unity MCP and commit.
+3. **P02 — Fifty redesigned puzzles.** Choose each object's proportions and sampling detail independently, crop unused grid margins, preserve important color regions and replace repetitive tiny curls with longer readable paths. Refine silhouettes and distinctive features across the catalog. Validate every mask, path, dependency graph and solution before persisting assets while retaining all level/catalog GUIDs. Inspect representative maps in Unity; commit.
+4. **P03 — Visual review and correction.** Capture all fifty actual gameplay scenes, inspect every overview sheet, fix unclear silhouettes or color regions and check light/dark phone/tablet views. Commit any corrections with their evidence.
+5. **P04 — Runtime and delivery.** Play every redesigned level using actual pooled arrow animations and rapid firing; check retry, collision, skills, pause, completion, save isolation and protected modes. Produce `Captures/Revision3/Overview` and a clickable index with full-size captures, level dimensions, arrow counts and test results. Commit the final verification artifacts and record outcomes here.
+
+## Acceptance
+
+- All 50 levels keep unique titles and geometry, filled coverage, no overlap/out-of-bounds cells, a valid solver witness, inward dependencies and varied cardinal directions.
+- Size follows the subject: wide animals remain wide, tall subjects remain tall, and unused rectangular borders do not dictate the composition.
+- Body, face, wings, shell, beak and similar distinctive regions use coherent colors and enough sample area to survive path partitioning.
+- Stronger Shapes-only strokes and heads improve the silhouette at default zoom. Arrow count is managed through longer paths rather than increasing taps just to gain detail.
+- The final overview is built from actual Unity gameplay captures, not illustrations or a separate rendering of the data.
+- Existing local edits are snapshotted before work; unrelated dirty files are excluded from commits. No push is requested.
+
+## Verification record
+
+Baseline: `4e9d6a8`. Unity 6000.3.18f1, MainMenuScene clean, Play Mode stopped, console errors zero. Ten initially modified files were backed up outside the project, including fonts, MapTestScene, TimeManager and the solution file.
+
+P01: Unity MCP compiled the Shapes-only config authoring and verified the saved Shapes scene reference (stroke0.42, head0.72). Shared tuning remains stroke0.28/head0.58. Shapes camera coverage0.95 and inset0.015; existing HUD geometry is retained. Protected Color Shift assets and GameScene hashes remain unchanged. Runtime checks follow after catalog generation.
+
+P02: Unity MCP generated and validated all50 final Shapes candidates before updating their existing assets. Object-specific grids range36–66 cells per axis, are tightly cropped and preserve uniform sampling pitch. Color-coherent ribbons replace per-tile curls; important face/wing/shell regions are not averaged away. All50 have four directions, inward heads and acyclic solver witnesses. First actual1080x1920 gameplay captures of penguin, rabbit and fish show the stronger Shapes strokes and retained original HUD. Authoring metrics are in Captures/Revision3/authoring-metrics.csv. All existing level/catalog GUIDs and protected mode file hashes are unchanged.
+
+P03: Reviewed all50 actual gameplay captures and selected dark captures. A second visual pass replaced the whale's oversized vertical tail with a small fork and changed the dragon from a symmetric bat-like front view to a long-snouted side profile with distinct wing, horns, feet and curled tail. Only levels13 and28 changed in this pass. Unity MCP rebuilt/validated all50 and the final real rapid-tap playthrough passed50/50 again. All remaining images passed the silhouette/region/cropping review.
+
+## Final verification and review
+
+- **50/50 final Shapes cleared** through real rapid `Tap` input and pooled animations, with three lives, unchanged Rocket inventory, settled terminal states and no campaign/backup writes. All have four directions, exact coverage and inward dependencies.
+- **396 interaction checks** passed with the new catalog: real mouse clicks while arrows move, repeated blocked-arrow taps, overlapping damage, pause/retry cleanup, hints/Rocket, final-arrow completion and existing Color Shift rotation/recovery behavior.
+- **184 HUD/popup/localization checks** passed: original visible press feedback, zoom, lives, retry, win/lose/hint popups, TR/EN text and save isolation.
+- **41 distinct grid dimensions**; axes span36–66 cells. Arrow counts36–117, mean63.7, versus baseline mean67.5/max174. Stronger Shapes-only strokes render at6.5–11.9 pixels in the1080x1920 captures.
+- Live1080x1920,1080x2400 and1536x2048 checks keep the complete card between the original HUD bars. Resizing retains the same attempt version, remaining arrows and three lives.
+- **57 fresh capture files** decode at1080x1920:50 light and7 dark. Capture runs use unique directories so an older file cannot satisfy the screenshot checks or block overwrite. The final capture run finished with zero Unity console errors.
+- Existing level/catalog GUIDs, all protected Color Shift assets, shared PuzzleConfig and GameScene are unchanged. All ten initially dirty files match their pre-task bytes and remain outside these commits.
+
+Review entry: `Captures/Revision3/README.md` and the full-size HTML gallery `Captures/Revision3/index.html`. Five overview sheets cover all fifty maps; a sixth shows dark themes. Full captures, per-level CSV/JSON, interaction/UI reports, layout captures and verification notes are included in the same folder.
+
+Phase commits: P00 `1713e48`, P01 `653d613`, P02 `9956269`, P03 `b399dc4`. P04 contains the reusable capture/verification runner and final review artifacts. No push performed.
+
+Editor cleanup: a transient Windows mapped-file lock affected the external Android resolver's existing settings save after testing. Unity cached file handles were released and the identical existing preference was saved successfully; resolver settings have no Git diff and the final Unity console has zero errors. Automatic refresh is enabled, Play Mode stopped and MainMenuScene clean.

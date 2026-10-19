@@ -1,0 +1,455 @@
+PASS: Rocket, flowing rounded frame and real gesture interactions in both preview modes
+PASS: Shapes: all checks remain in preview
+PASS: Shapes: scene uses configured initial rocket charges
+PASS: Shapes: cloned configurable two-charge fixture applied
+PASS: Shapes: original-sized Rescue Rocket control is bound
+PASS: Rocket: visible authored image has existing button feedback
+PASS: Rocket: held pointer visibly scales/tints its artwork, release restores authored scale
+PASS: Shapes: arm costs no charge
+PASS: Shapes: cancel costs no charge
+PASS: Shapes: empty world tap preserves armed charge
+PASS: Shapes: world tap selects and extracts exactly one physically blocked arrow
+PASS: Shapes: blocked Rocket extraction costs no life or rotation and releases its pooled view
+PASS: Shapes: exhausted Rocket button disables during an otherwise playable attempt
+PASS: Shapes: exhausted Rocket cannot arm or remove another arrow
+PASS: Shapes: authored Rocket effect sprite is present
+PASS: Shapes: Rocket effect visibly moves the selected arrow while input is locked
+PASS: Shapes: retry during Rocket FX restores complete attempt state
+PASS: Shapes: retry during Rocket FX restores pooled arrow visibility/opacity
+PASS: Shapes: live rocket count matches session
+PASS: Shapes: retry cancels stale Rocket FX and restores original arrow geometry
+PASS: Shapes: production flight fixture includes level 50
+PASS: Shapes: legal escape is measured with unchanged production speed and duration cap
+PASS: Shapes: level 50 has a normal legal shot
+PASS: Shapes: longest legal level-50 arrow exercises the adaptive escape-speed cap
+PASS: Shapes: production shot is active, removes its occupancy and preserves the mode-specific input contract
+TIMING: Shapes level 50 arrow 100, distance 64,62, production speed 23,0, elapsed 0,633s, configured cap 0,70s
+PASS: Shapes: long legal escape finishes within the production cap plus scheduling tolerance
+PASS: Shapes: capped legal shot releases its pooled view without life, rotation or Rocket loss
+PASS: Shapes: rapid pointer fixture has a legal next arrow
+PASS: Shapes: real pointer release fires arrow 1
+PASS: Shapes: rapid pointer fixture has a legal next arrow
+PASS: Shapes: real pointer release fires arrow 2
+PASS: Shapes: two real rapid clicks animate concurrently without waiting for the first exit
+PASS: Shapes: exclusive skills wait while ordinary arrow input remains available
+PASS: Shapes: pause freezes every concurrent shot and rejects new input
+PASS: Shapes: both rapid shots release exactly one pooled view each
+PASS: Shapes: repeated taps cannot start a second flight on the same blocked arrow
+PASS: Shapes: another arrow can escape while a blocked arrow travels or rebounds
+PASS: Shapes: direct skill calls cannot alter moving arrow geometry
+PASS: Shapes: duplicate collision taps cost exactly one life and restore the blocked arrow
+PASS: Shapes: a returned arrow becomes selectable for the next attempt
+PASS: Shapes: retry fixture contains two active shots
+PASS: Shapes: retry clears all pending flight counters and per-arrow locks
+PASS: Shapes: retry during multiple normal shots restores complete attempt state
+PASS: Shapes: retry during multiple normal shots restores pooled arrow visibility/opacity
+PASS: Shapes: live rocket count matches session
+PASS: Shapes: concurrent cancellation never duplicates pooled arrow bindings
+PASS: Shapes: collision fixture contains more pending mistakes than lives
+PASS: Shapes: distinct blocked arrows also support overlapping shots
+PASS: Shapes: zero lives immediately stops new shots before rebounds finish
+PASS: Shapes: terminal damage rejects additional arrow input
+PASS: Shapes: overlapping damage cannot make lives negative or award a premature win
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: next dependent arrow remains immediately selectable
+PASS: Shapes 1: last-arrow launch waits for every pending animation before winning
+PASS: Shapes 1: rapid dependent chain wins with three stars and no leaked pooled views
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: next dependent arrow remains immediately selectable
+PASS: Shapes 50: last-arrow launch waits for every pending animation before winning
+PASS: Shapes 50: rapid dependent chain wins with three stars and no leaked pooled views
+PASS: Shapes: first level has a real solvable witness
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real witness action starts idle in preview
+PASS: Shapes: witness preserves last arrow for Rocket
+PASS: Shapes: real gameplay leaves one arrow and one Rocket
+PASS: Shapes: final-arrow Rocket completes actual level without losing life
+PASS: Shapes: no campaign or inventory writes
+PASS: ColorShift: all checks remain in preview
+PASS: ColorShift: scene uses configured initial rocket charges
+PASS: ColorShift: cloned configurable two-charge fixture applied
+PASS: ColorShift: original-sized Rescue Rocket control is bound
+PASS: Rocket: visible authored image has existing button feedback
+PASS: Rocket: held pointer visibly scales/tints its artwork, release restores authored scale
+PASS: ColorShift: arm costs no charge
+PASS: ColorShift: cancel costs no charge
+PASS: ColorShift: empty world tap preserves armed charge
+PASS: ColorShift: world tap selects and extracts exactly one physically blocked arrow
+PASS: ColorShift: blocked Rocket extraction costs no life or rotation and releases its pooled view
+PASS: ColorShift: exhausted Rocket button disables during an otherwise playable attempt
+PASS: ColorShift: exhausted Rocket cannot arm or remove another arrow
+PASS: ColorShift: authored Rocket effect sprite is present
+PASS: ColorShift: Rocket effect visibly moves the selected arrow while input is locked
+PASS: ColorShift: retry during Rocket FX restores complete attempt state
+PASS: ColorShift: retry during Rocket FX restores pooled arrow visibility/opacity
+PASS: ColorShift: live rocket count matches session
+PASS: ColorShift: retry cancels stale Rocket FX and restores original arrow geometry
+PASS: ColorShift: four rounded multi-point border paths
+PASS: ColorShift: rounded frame joins form one continuous border
+PASS: ColorShift: one visible-tint bar Button and one pointer gesture owner
+PASS: ColorShift: center counter displays only remaining-turn number
+PASS: ColorShift: center tap and short vertical drag beyond tap slop do not rotate
+PASS: ColorShift: right tap consumes one turn and exposes intermediate paint phase while input is locked
+PASS: ColorShift: busy paint rejects gesture, shot and Rocket arming
+PASS: ColorShift: settled paint matches logical orientation and interior arrows remain fixed
+PASS: ColorShift: steady wall centers match logical exit colors without rectangle rotation
+PASS: ColorShift: left tap and duplicate release consume exactly one turn
+PASS: ColorShift: left tap settles visual/logical orientation together
+PASS: ColorShift: stale left tap release after flow completion is ignored
+PASS: ColorShift: right swipe and duplicate release consume exactly one turn
+PASS: ColorShift: right swipe settles visual/logical orientation together
+PASS: ColorShift: stale right swipe release after flow completion is ignored
+PASS: ColorShift: left swipe and duplicate release consume exactly one turn
+PASS: ColorShift: left swipe settles visual/logical orientation together
+PASS: ColorShift: stale left swipe release after flow completion is ignored
+PASS: ColorShift: Pause freezes in-progress paint flow
+PASS: ColorShift: retry during paused paint restores complete attempt state
+PASS: ColorShift: retry during paused paint restores pooled arrow visibility/opacity
+PASS: ColorShift: live rocket count matches session
+PASS: ColorShift: retry cancels old paint phase and restores arrows
+PASS: ColorShift: zero-budget bar disables and rejects all rotation input
+FIXTURES: one-Rocket recovery level 1; impossible with one Rocket level 3
+PASS: ColorShift: real fixture provides a rotation budget to waste
+PASS: ColorShift: legal normal exits remain playable after the last rotation
+PASS: ColorShift: real legal shots clear the zero-turn closure without life loss
+PASS: ColorShift: one wrong-color arrow at zero turns remains recoverable with one Rocket
+PASS: ColorShift: recoverable zero-turn state displays localized Rocket instruction
+PASS: ColorShift: actual Hint control freely arms Rocket and highlights the required arrow
+PASS: ColorShift: hinted Rocket completes zero-turn recovery without life, turn or hint cost
+PASS: ColorShift: real fixture provides a rotation budget to waste
+PASS: ColorShift: legal normal exits remain playable after the last rotation
+PASS: ColorShift: real legal shots clear the zero-turn closure without life loss
+PASS: ColorShift: impossible zero-turn remainder loses immediately without wasting the remaining Rocket
+PASS: ColorShift: retry after impossible zero-turn board restores complete attempt state
+PASS: ColorShift: retry after impossible zero-turn board restores pooled arrow visibility/opacity
+PASS: ColorShift: live rocket count matches session
+PASS: ColorShift: retry clears the cached recovery instruction state
+PASS: ColorShift: production flight fixture includes level 50
+PASS: ColorShift: legal escape is measured with unchanged production speed and duration cap
+PASS: ColorShift: level 50 has a normal legal shot
+PASS: ColorShift: longest legal level-50 arrow exercises the adaptive escape-speed cap
+PASS: ColorShift: production shot is active, removes its occupancy and preserves the mode-specific input contract
+TIMING: ColorShift level 50 arrow 0, distance 64,48, production speed 23,0, elapsed 0,686s, configured cap 0,70s
+PASS: ColorShift: long legal escape finishes within the production cap plus scheduling tolerance
+PASS: ColorShift: capped legal shot releases its pooled view without life, rotation or Rocket loss
+PASS: ColorShift: first level has a real solvable witness
+PASS: ColorShift: real witness action starts idle in preview
+PASS: ColorShift: witness preserves last arrow for Rocket
+PASS: ColorShift: real witness action starts idle in preview
+PASS: ColorShift: witness preserves last arrow for Rocket
+PASS: ColorShift: real witness action starts idle in preview
+PASS: ColorShift: witness preserves last arrow for Rocket
+PASS: ColorShift: real witness action starts idle in preview
+PASS: ColorShift: witness preserves last arrow for Rocket
+PASS: ColorShift: real witness action starts idle in preview
+PASS: ColorShift: witness preserves last arrow for Rocket
+PASS: ColorShift: real witness action starts idle in preview
+PASS: ColorShift: witness preserves last arrow for Rocket
+PASS: ColorShift: real witness action starts idle in preview
+PASS: ColorShift: witness preserves last arrow for Rocket
+PASS: ColorShift: real witness action starts idle in preview
+PASS: ColorShift: witness preserves last arrow for Rocket
+PASS: ColorShift: real witness action starts idle in preview
+PASS: ColorShift: witness preserves last arrow for Rocket
+PASS: ColorShift: real witness action starts idle in preview
+PASS: ColorShift: witness preserves last arrow for Rocket
+PASS: ColorShift: real gameplay leaves one arrow and one Rocket
+PASS: ColorShift: final-arrow Rocket completes actual level without losing life
+PASS: ColorShift: no campaign or inventory writes
+PASS: Campaign save, backup and language preferences unchanged
+RESTORED: original tuning assets, player data, auto-save, preview fields and time scale

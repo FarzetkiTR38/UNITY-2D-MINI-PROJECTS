@@ -36,6 +36,7 @@ namespace ArrowSwarm.Modes
         [SerializeField, Min(0)] private int _turnBudget = 5;
         [SerializeField, Range(0, 1)] private int _initialOrientation;
         [SerializeField] private Texture2D _sourceImage;
+        [SerializeField] private List<Vector2Int> _coverageMask;
         public GameModeId Mode => _mode;
         public string Title => _title;
         public int Width => _width;
@@ -45,6 +46,7 @@ namespace ArrowSwarm.Modes
         public int TurnBudget => _turnBudget;
         public int InitialOrientation => _initialOrientation;
         public Texture2D SourceImage => _sourceImage;
+        public IReadOnlyList<Vector2Int> CoverageMask => _coverageMask;
 
         /// <summary>Sets generated content; editor owns all authored assets.</summary>
         public void Author(GameModeId mode, string title, int width, int height, List<PuzzleArrowData> arrows,
@@ -53,6 +55,22 @@ namespace ArrowSwarm.Modes
             _mode = mode; _title = title; _width = width; _height = height; _arrows = arrows;
             if (palette != null) _wallColors = palette;
             _turnBudget = turns; _initialOrientation = 0; _sourceImage = source;
+            _coverageMask = null; CaptureCoverageIfMissing();
+        }
+
+        /// <summary>Captures an original cell union once for legacy authoring data; subsequent manual edits retain this mask.</summary>
+        public bool CaptureCoverageIfMissing()
+        {
+            if (_coverageMask != null && _coverageMask.Count > 0) return false;
+            if (_arrows == null || _arrows.Count == 0) return false;
+            var unique = new HashSet<Vector2Int>(); var captured = new List<Vector2Int>();
+            foreach (var arrow in _arrows)
+            {
+                if (arrow?.Points == null) continue;
+                foreach (var cell in arrow.Points) if (unique.Add(cell)) captured.Add(cell);
+            }
+            if (captured.Count == 0) return false;
+            _coverageMask = captured; return true;
         }
     }
 }
