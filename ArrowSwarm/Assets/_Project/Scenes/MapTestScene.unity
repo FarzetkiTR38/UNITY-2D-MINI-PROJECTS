@@ -350,6 +350,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 439181b258c6ac64c990f267a45c3ff8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Camera.CameraController
+  _puzzleSurface: {fileID: 0}
+  _puzzleWidthCoverage: 0.92
+  _puzzleVerticalInset: 0.025
   _zoomSpeed: 0.5
   _smoothTime: 0.1
   _padding: 1
@@ -670,6 +673,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7e2df944bfc43942bcd249b9b9af858, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Core.MapSceneController
+  _previewMode: 1
+  _puzzleLevel: 2
   _mapDataAssets:
   - {fileID: 11400000, guid: 58b8b0ace2e55644cba4369a30b9cdcd, type: 2}
   - {fileID: 11400000, guid: 219562aed34de604387a3e716d3bf695, type: 2}
