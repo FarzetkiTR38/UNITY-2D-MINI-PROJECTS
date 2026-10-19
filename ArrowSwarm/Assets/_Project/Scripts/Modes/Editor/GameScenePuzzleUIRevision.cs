@@ -33,7 +33,7 @@ namespace ArrowSwarm.Modes.Editor
                 string[] controllers = { "GameHUD", "OverlayManager", "PauseMenuUI", "LevelCompleteUI", "GameOverUI", "TipPopupUI", "FreezePopupUI" };
                 foreach (var component in copy.GetComponentsInChildren<MonoBehaviour>(true))
                     if (component != null && controllers.Contains(component.GetType().Name)) UnityEngine.Object.DestroyImmediate(component);
-                foreach (string child in new[] { "Tutorial_Root", "BottomBar/Skill2", "FreezePopupPanel", "FlashOverlay" })
+                foreach (string child in new[] { "Tutorial_Root", "FreezePopupPanel", "FlashOverlay" })
                     if (copy.transform.Find(child) != null) UnityEngine.Object.DestroyImmediate(copy.transform.Find(child).gameObject);
                 PrefabUtility.SaveAsPrefabAsset(copy, Folder + name + ".prefab");
                 UnityEngine.Object.DestroyImmediate(copy);
@@ -41,11 +41,13 @@ namespace ArrowSwarm.Modes.Editor
             AssetDatabase.SaveAssets();
         }
 
+        /// <summary>Rebuilds puzzle-only scene canvases, artwork, skills and grid cards.</summary>
         [MenuItem("Arrow Swarm/Puzzles/Apply GameScene UI To Puzzle Scenes")]
         public static void Apply()
         {
             EnsureShells();
             PuzzleArrowArtwork.Upgrade();
+            PuzzleRocketAuthoring.Import();
             foreach (string name in new[] { "ShapesScene", "ColorShiftScene" })
             {
                 var scene = EditorSceneManager.OpenScene(SceneRoot + name + ".unity");
@@ -70,11 +72,19 @@ namespace ArrowSwarm.Modes.Editor
             bool colorShift = new SerializedObject(session).FindProperty("_mode").enumValueIndex == (int)GameModeId.ColorShift;
             PuzzleHUDAuthoring.Bind(hud, camera, colorShift);
             PuzzlePopupAuthoring.Bind(overlay);
+            PuzzleRocketAuthoring.Bind(session);
+            BindSurface(camera);
+        }
+
+        /// <summary>Installs the grid-only card without any Defense path or outer container.</summary>
+        public static void BindSurface(ArrowSwarm.Camera.CameraController camera)
+        {
+            var old = GameObject.Find("Board Surface");
+            if (old != null) UnityEngine.Object.DestroyImmediate(old);
             var surface = new GameObject("Board Surface").AddComponent<PuzzleBoardSurface>();
             int layer = LayerMask.NameToLayer("PuzzleBoard"); surface.gameObject.layer = layer;
-            var outer = Card("Layer2_OuterCard", surface.transform, layer, -10);
             var inner = Card("Layer3_InnerGrid", surface.transform, layer, -9);
-            U.Set(surface, "_outerCard", outer); U.Set(surface, "_innerCard", inner);
+            U.Set(surface, "_innerCard", inner);
             U.Set(camera, "_puzzleSurface", surface);
             var cam = camera.GetComponent<UnityEngine.Camera>();
             cam.backgroundColor = new Color(.96f, .94f, .90f, 1f);

@@ -15,11 +15,11 @@ namespace ArrowSwarm.Data
 
         /// <summary>Returns independent unlock progress for the selected campaign.</summary>
         public int GetHighestLevel(GameModeId mode) => mode == GameModeId.Defense
-            ? PlayerData.highestLevel : PlayerData.GetModeProgress(mode).HighestLevel;
+            ? PlayerData.highestLevel : ExpandedProgress(mode).HighestLevel;
 
         /// <summary>Returns independent current level for the selected campaign.</summary>
         public int GetCurrentLevel(GameModeId mode) => mode == GameModeId.Defense
-            ? PlayerData.currentLevel : PlayerData.GetModeProgress(mode).CurrentLevel;
+            ? PlayerData.currentLevel : ExpandedProgress(mode).CurrentLevel;
 
         /// <summary>Returns the best star record from the specified campaign.</summary>
         public int GetLevelStars(GameModeId mode, int level) => mode == GameModeId.Defense
@@ -29,7 +29,7 @@ namespace ArrowSwarm.Data
         public void SetCurrentLevel(GameModeId mode, int level)
         {
             if (mode == GameModeId.Defense) { SetCurrentLevel(level); return; }
-            PlayerData.GetModeProgress(mode).Select(level);
+            ExpandedProgress(mode).Select(level);
             NotifyAndSave();
         }
 
@@ -39,6 +39,18 @@ namespace ArrowSwarm.Data
             if (mode == GameModeId.Defense) return;
             PlayerData.GetModeProgress(mode).Complete(level, lives, levelCount);
             NotifyAndSave();
+        }
+
+        private ModeProgress ExpandedProgress(GameModeId mode)
+        {
+            var progress = PlayerData.GetModeProgress(mode);
+            int count = 0;
+            // Menu and gameplay serialize these catalog assets, including while their panels are inactive.
+            foreach (var catalog in UnityEngine.Resources.FindObjectsOfTypeAll<PuzzleCatalog>())
+                if (catalog != null && catalog.Count > 0 && catalog.Get(1) != null && catalog.Get(1).Mode == mode)
+                    count = UnityEngine.Mathf.Max(count, catalog.Count);
+            progress.ExpandCatalog(count);
+            return progress;
         }
     }
 }

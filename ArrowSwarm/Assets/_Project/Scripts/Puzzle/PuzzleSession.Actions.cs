@@ -7,7 +7,7 @@ namespace ArrowSwarm.Puzzle
     using ArrowSwarm.Modes;
     using UnityEngine;
 
-    /// <summary>Atomic shot/rotation actions and scene-safe reward callbacks.</summary>
+    /// <summary>Per-arrow shots, exclusive frame rotation and scene-safe reward callbacks.</summary>
     public sealed partial class PuzzleSession
     {
         /// <summary>Finds the nearest stationary path within the configured touch radius.</summary>
@@ -17,45 +17,53 @@ namespace ArrowSwarm.Puzzle
             int best = -1; float distance = _config.HitRadius;
             for (int i = 0; i < _views.Length; i++)
             {
-                if (_removed[i]) continue;
+                if (_removed[i] || _inFlight[i]) continue;
                 float d = _views[i].DistanceTo(world);
                 if (d < distance) { distance = d; best = i; }
             }
-            if (best >= 0) Fire(best);
+            if (best >= 0) { if (RocketArmed) FireRocket(best); else Fire(best); }
         }
 
-        /// <summary>Starts exactly one shot; blocked shots keep occupancy until the player retries.</summary>
+        /// <summary>Starts a stationary arrow; Shapes accepts other shots while this one is moving.</summary>
         public void Fire(int index)
         {
-            if (!Ready || index < 0 || index >= _removed.Length || _removed[index]) return;
-            _busy = true;
-            for (int i = 0; i < _views.Length; i++) if (!_removed[i]) _views[i].Highlight(false);
+            if (!Ready || index < 0 || index >= _removed.Length || _removed[index] || _inFlight[index]) return;
+            RocketArmed = false;
+            for (int i = 0; i < _views.Length; i++) if (!_removed[i] && !_inFlight[i]) _views[i].Highlight(false);
+            _inFlight[index] = true; _activeShots++;
             StartCoroutine(Shot(index));
             Notify();
         }
 
         private IEnumerator Shot(int index)
         {
+            int version = _version;
             var arrow = Level.Arrows[index]; var view = _views[index];
             float obstacle = PuzzleRules.ObstacleDistance(Level, _removed, index);
             bool match = PuzzleRules.MatchesWall(Level, index, Orientation);
             bool blocked = !float.IsPositiveInfinity(obstacle) || !match;
             float wallDistance = arrow.Direction.x > 0 ? Level.Width - 1 - arrow.Head.x : arrow.Direction.x < 0 ? arrow.Head.x : arrow.Direction.y > 0 ? Level.Height - 1 - arrow.Head.y : arrow.Head.y;
-            float distance = blocked ? Mathf.Max(.1f, Mathf.Min(obstacle - _config.StrokeWidth, wallDistance + _config.WallOffset - _config.StrokeWidth))
-                : wallDistance + view.Length + Mathf.Max(Level.Width, Level.Height);
+            float distance = blocked ? Mathf.Max(.1f, Mathf.Min(obstacle - _config.StrokeWidth, wallDistance + _config.WallOffset - _config.StrokeWidth) - view.HeadForwardOffset)
+                : wallDistance + view.Length + _config.WallOffset + _config.HeadSize;
+            float speed = blocked ? _config.Speed : Mathf.Max(_config.Speed, distance / _config.MaximumFlightDuration);
             if (!blocked) { _removed[index] = true; Remaining--; AudioManager.Instance?.PlayArrowFire(false); }
             float travel = 0;
-            while (travel < distance) { travel = Mathf.Min(distance, travel + Time.deltaTime * _config.Speed); view.RenderTravel(travel); yield return null; }
+            while (travel < distance) { travel = Mathf.Min(distance, travel + Time.deltaTime * speed); view.RenderTravel(travel); yield return null; }
             if (blocked)
             {
-                Lives--; AudioManager.Instance?.PlayArrowWrong(); Notify();
+                Lives = Mathf.Max(0, Lives - 1); AudioManager.Instance?.PlayArrowWrong(); Notify();
+                if (version != _version) yield break;
                 while (travel > 0) { travel = Mathf.Max(0, travel - Time.deltaTime * _config.Speed); view.RenderTravel(travel); yield return null; }
             }
             else _pool.Release(view);
-            _busy = false;
-            if (Lives <= 0) End(false);
-            else if (Remaining == 0) End(true);
-            else CheckStuck();
+            _inFlight[index] = false; _activeShots--;
+            // Pending collisions must resolve before awarding stars or presenting a terminal popup.
+            if (!HasActiveShots)
+            {
+                if (Lives <= 0) End(false);
+                else if (Remaining == 0) End(true);
+                else CheckStuck();
+            }
             Notify();
         }
 
@@ -63,6 +71,7 @@ namespace ArrowSwarm.Puzzle
         public void Rotate(int direction)
         {
             if (!Ready || _mode != GameModeId.ColorShift || Turns <= 0) return;
+            RocketArmed = false;
             _busy = true; Turns--; Orientation ^= 1; Notify();
             StartCoroutine(Turn(direction));
         }
@@ -73,15 +82,19 @@ namespace ArrowSwarm.Puzzle
         }
         private void CheckStuck()
         {
-            if (_mode == GameModeId.ColorShift && Turns == 0 && !PuzzleSolver.Solve(Level, _removed, Orientation, 0).Solvable)
-            {
-                // Allow every remaining legal shot before presenting the exhausted-frame failure.
-                for (int i = 0; i < _removed.Length; i++) if (PuzzleRules.CanRemove(Level, _removed, i, Orientation)) return;
-                SetMessage("puzzle_stuck"); End(false);
-            }
+            RocketNeeded = false;
+            if (_mode != GameModeId.ColorShift || Turns > 0) return;
+            // All normally legal shots remain available, even after the last rotation.
+            for (int i = 0; i < _removed.Length; i++) if (PuzzleRules.CanRemove(Level, _removed, i, Orientation)) return;
+            int required = 0;
+            for (int i = 0; i < _removed.Length; i++)
+                if (!_removed[i] && !PuzzleRules.MatchesWall(Level, i, Orientation)) required++;
+            if (required == 0 || required > RocketCharges) { SetMessage("puzzle_stuck"); End(false); }
+            else { RocketNeeded = true; SetMessage("puzzle_rocket_needed"); }
         }
         private void End(bool won)
         {
+            if (Won || Lost) return;
             Won = won; Lost = !won;
             if (won)
             {
@@ -96,7 +109,15 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Uses the solution witness for a safe arrow or needed frame rotation.</summary>
         public void Hint()
         {
-            if (!Ready) return;
+            if (!Idle) return;
+            RocketArmed = false;
+            if (RocketNeeded)
+            {
+                RocketArmed = true;
+                for (int i = 0; i < _removed.Length; i++)
+                    if (!_removed[i] && !PuzzleRules.MatchesWall(Level, i, Orientation)) { _views[i].Highlight(true); break; }
+                SetMessage("puzzle_rocket_needed"); Notify(); return;
+            }
             var solution = PuzzleSolver.Solve(Level, _removed, Orientation, Turns);
             if (!solution.Solvable || solution.Steps.Count == 0) { SetMessage("puzzle_restart_hint"); Notify(); return; }
             if (!Preview && DataManager.Instance.PlayerData.tipCount <= 0)

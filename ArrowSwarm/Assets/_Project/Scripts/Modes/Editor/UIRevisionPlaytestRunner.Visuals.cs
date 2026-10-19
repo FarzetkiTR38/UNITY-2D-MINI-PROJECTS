@@ -63,7 +63,7 @@ namespace ArrowSwarm.Modes.Editor
                     Field<TMP_Text>(popups, "_loseLevel").text == string.Format(_localization.GetText("puzzle_level_failed"), session.LevelNumber),
                     session.Mode + ": live " + code + " dynamic win/lose popup labels");
                 if (session.Mode == GameModeId.ColorShift)
-                    Check(Field<TMP_Text>(hud, "_turns").text == string.Format(_localization.GetText("puzzle_rotations"), session.Turns),
+                    Check(Field<TMP_Text>(hud, "_turns").text == session.Turns.ToString(),
                         "ColorShift: live " + code + " rotation counter");
             }
         }

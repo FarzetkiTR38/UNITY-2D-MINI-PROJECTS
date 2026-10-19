@@ -6,7 +6,7 @@ namespace ArrowSwarm.Puzzle
     using UnityEngine;
 
     /// <summary>Pooled bent stroke with a sliding path window, independent of combat Arrow.</summary>
-    public sealed class PuzzleArrowView : MonoBehaviour
+    public sealed partial class PuzzleArrowView : MonoBehaviour
     {
         [SerializeField] private LineRenderer _body;
         [SerializeField] private LineRenderer _head;
@@ -20,9 +20,11 @@ namespace ArrowSwarm.Puzzle
         private bool _usingFilledHead;
         private Transform _filledHeadTransform;
         private Vector3 _filledHeadBaseScale, _filledHeadTipOffset;
-        private float _filledHeadDepth, _headScale = 1f, _travel;
+        private float _filledHeadDepth, _headScale = 1f, _travel, _headForwardOffset, _headRearExtent;
         public int Index { get; private set; }
         public float Length => _length;
+        /// <summary>Forward tip offset from the logical head, used to keep blocked-shot contact unchanged.</summary>
+        public float HeadForwardOffset => _usingFilledHead ? _headForwardOffset * _headScale : 0f;
 
         private void OnEnable()
         {
@@ -44,6 +46,8 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Assigns path data and color when acquired from the pool.</summary>
         public void Bind(PuzzleArrowData data, int index, Vector3 origin, PuzzleConfig config)
         {
+            if (!PuzzleRules.HasNaturalNeck(data))
+                throw new System.ArgumentException("Puzzle arrow requires an aligned unit neck behind its head.", nameof(data));
             _data = data; Index = index; _origin = origin; _config = config;
             _length = data.Points.Count - 1;
             _path = new Vector3[data.Points.Count];
@@ -52,6 +56,7 @@ namespace ArrowSwarm.Puzzle
             _headScale = 1f;
             transform.localScale = Vector3.one;
             BindHead(config.ThemeColor(data.Color, ThemeManager.CurrentTheme));
+            PrepareStroke();
             ApplyTheme(ThemeManager.CurrentTheme);
             RenderTravel(0);
         }
@@ -74,8 +79,11 @@ namespace ArrowSwarm.Puzzle
             float scale = _config.HeadSize / Mathf.Max(.001f, bounds.size.y);
             _filledHeadBaseScale = new Vector3(scale, scale, 1f);
             _filledHeadTipOffset = new Vector3(bounds.center.x * scale, bounds.max.y * scale, 0f);
+            _headForwardOffset = _config.CenterHeadOnGridPoint ? bounds.max.y * scale : 0f;
+            _headRearExtent = Mathf.Max(0f, -bounds.min.y * scale);
             _filledHeadDepth = _filledHeadTransform.localPosition.z;
             _filledHeadTransform.localScale = _filledHeadBaseScale;
+            MeasureHeadInset();
         }
 
         /// <summary>Moves a fixed-length snake window along its own path then its forward ray.</summary>
@@ -83,19 +91,14 @@ namespace ArrowSwarm.Puzzle
         {
             _travel = distance;
             float begin = Mathf.Max(0, distance), end = _length + distance;
-            // End the stroke inside a filled triangle, preventing the rounded cap from protruding past its tip.
-            float bodyEnd = _usingFilledHead ? Mathf.Max(begin, end - _config.HeadSize * _headScale * .5f) : end;
-            int count = 2;
-            for (int i = 1; i < _path.Length; i++) if (i > begin && i < bodyEnd) count++;
-            _body.positionCount = count;
-            int n = 0; _body.SetPosition(n++, PointAt(begin));
-            for (int i = 1; i < _path.Length; i++) if (i > begin && i < bodyEnd) _body.SetPosition(n++, _path[i]);
+            float bodyEnd = _usingFilledHead ? Mathf.Max(begin, end - (_headInset - _headForwardOffset) * _headScale) : end;
+            RenderStroke(begin, bodyEnd);
             Vector3 tip = PointAt(end);
-            _body.SetPosition(n, PointAt(bodyEnd));
             Vector3 direction = end > _length ? (Vector3)(Vector2)_data.Direction : (tip - PointAt(Mathf.Max(begin, end - .01f))).normalized;
             if (direction.sqrMagnitude < .1f) direction = (Vector3)(Vector2)_data.Direction;
             if (_usingFilledHead)
             {
+                tip += direction * (_headForwardOffset * _headScale);
                 Quaternion rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f);
                 Vector3 position = tip - rotation * (_filledHeadTipOffset * _headScale);
                 position.z += _filledHeadDepth;
@@ -127,7 +130,8 @@ namespace ArrowSwarm.Puzzle
                 float t = Mathf.Clamp01(Vector2.Dot(world - a, b - a) / (b - a).sqrMagnitude);
                 result = Mathf.Min(result, Vector2.Distance(world, Vector2.Lerp(a, b, t)));
             }
-            return result;
+            return _usingFilledHead && _config.CenterHeadOnGridPoint
+                ? Mathf.Min(result, HeadDistanceTo(world)) : result;
         }
 
         /// <summary>Highlights a safe hint without changing its configured color.</summary>
@@ -140,8 +144,9 @@ namespace ArrowSwarm.Puzzle
             {
                 _filledHeadTransform.localScale = new Vector3(
                     _filledHeadBaseScale.x * _headScale, _filledHeadBaseScale.y * _headScale, _filledHeadBaseScale.z);
-                RenderTravel(_travel);
             }
+            PrepareStroke();
+            RenderTravel(_travel);
         }
     }
 }
