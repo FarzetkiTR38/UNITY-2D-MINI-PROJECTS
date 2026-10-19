@@ -13,7 +13,8 @@ Baseline: `16941ad`. The user authorizes proactive inspection and improvements, 
 - [x] 6. Remove per-frame temporary position arrays from Defense arrow movement/spawn, preserving exact rendered points. Measure warmed allocation and validate actual flight/bounce.
 - [x] 7. Avoid rebuilding every stationary Shapes arrow when clearing an already absent hint. Verify unchanged geometry and real rapid input; measure the no-op path.
 - [x] 8. Make the menu level header consistently follow the selected mode and localization. Verify actual shared TMP label after mode changes, player-data notifications and language changes.
-- [ ] 9. Run integration checks appropriate to the changed paths through Unity MCP. Restore player data/settings and original editor scene, verify protected assets, publish reports and record commits/completion below.
+- [ ] 9. Marshal SDK callbacks onto the Unity main thread before lifecycle, game and UI access. Preserve reward/close order and release requests even if cleanup/preload throws; verify background thread dispatch without live ads.
+- [ ] 10. Run integration checks appropriate to the changed paths through Unity MCP. Restore player data/settings and original editor scene, verify protected assets, publish reports and record commits/completion below.
 
 ## Evidence and working rules
 
@@ -42,7 +43,7 @@ Phase 1 commit: 6ee6175. Phase 3 complete: Unity MCP passed 22 offline callback 
 
 Phase 3 commit: 266f4b4. Phase 5 complete: Unity MCP real pooled Defense101 passed overlapping D/B deaths, retreat expiry, pause/freeze independence, StopSpawning and same-object/new-spawn reuse. Original configuration, progress and preferences restored. Evidence: Captures/QualityPass/gap-close-verification.txt.
 
-Phase 5 commit: 29ba498. Phase 7 focused check complete: Unity MCP edit-mode real PuzzleArrow prefab passed repeated clear/hint geometry, actual transitions, in-flight window and Rocket pool rebind. The initial Mono byte measurement was later rejected by a positive-control check; see native profiler verification below. Rapid gameplay integration remains in phase 9. Evidence: Captures/QualityPass/hint-performance-verification.txt.
+Phase 5 commit: 29ba498. Phase 7 focused check complete: Unity MCP edit-mode real PuzzleArrow prefab passed repeated clear/hint geometry, actual transitions, in-flight window and Rocket pool rebind. The initial Mono byte measurement was later rejected by a positive-control check; see native profiler verification below. Rapid gameplay integration remains in phase 10. Evidence: Captures/QualityPass/hint-performance-verification.txt.
 
 Phase 7 commit: 6e1c7b3. Phase 2 complete: Unity MCP passed duplicate nicknames, authenticated identity, profile rename, aggregate stars, cloud-ahead scores, detached rows/cache immutability, null/empty cache and ranking. The lazy manager fixture is inactive to avoid UGS initialization. Evidence: Captures/QualityPass/leaderboard-verification.txt.
 
@@ -53,3 +54,5 @@ Phase 4 commit: 225dc1c. Phase 7 measurement correction passed via Unity MCP: na
 Measurement correction commit: 3854e5f. Phase 8 complete: Unity MCP actual shared TMP menu header passed 92 assertions across Defense/Shapes/ColorShift, separate progress, both UI refresh writers, data notifications and all ten localized prefixes. Existing scene styling untouched. Evidence: Captures/QualityPass/menu-header-verification.txt.
 
 Phase 8 commit: b8f4fae. Phase 6 complete: Unity MCP real Defense renderer preserved every point across growing/shrinking body buffers and all head poses. Native GC.Alloc: empty bracket=0, old ToArray=2,048 events, current slither=0 and shared spawn uploader=0 across 2,048 calls. Gap-close isolation and original renderer restoration passed too. Evidence: Captures/QualityPass/arrow-allocation-verification.txt.
+
+Phase 6 commit: 93ba59f. Integration so far: original Defense101 full regression passed, then all 50 Shapes plus 50 ColorShift levels passed real pooled runtime playthroughs. Additional final-review finding: installed GoogleMobileAds 11.5 changelog and official Unity global-settings docs require main-thread dispatch for callbacks that touch Unity objects. Added phase 9; fake service tests cannot prove SDK thread affinity, so this gets a real background-thread/Unity-update check before final acceptance. Source: https://developers.google.com/admob/unity/global-settings#raise_ad_events_on_the_unity_main_thread .
