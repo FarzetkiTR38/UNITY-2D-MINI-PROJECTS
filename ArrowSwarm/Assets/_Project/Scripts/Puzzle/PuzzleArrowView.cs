@@ -137,7 +137,9 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Highlights a safe hint without changing its configured color.</summary>
         public void Highlight(bool value)
         {
-            _headScale = value ? 1.8f : 1f;
+            float scale = value ? 1.8f : 1f;
+            if (_headScale == scale) return;
+            _headScale = scale;
             _body.widthMultiplier = _config.StrokeWidth * _headScale;
             if (_head != null) _head.widthMultiplier = _config.StrokeWidth * _headScale;
             if (_usingFilledHead)

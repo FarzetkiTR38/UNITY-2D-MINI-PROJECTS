@@ -11,7 +11,7 @@ Baseline: `16941ad`. The user authorizes proactive inspection and improvements, 
 - [ ] 4. Prevent delayed Defense reward callbacks from using a skill in a later attempt or touching a destroyed popup/HUD. Preserve legitimately earned inventory. Exercise retry/menu/new-level transitions with delayed fake rewards.
 - [x] 5. Restore all gap-close participants when another enemy death interrupts the retreat. Verify real pooled mobs, overlapping deaths, freeze, cancellation and reuse.
 - [ ] 6. Remove per-frame temporary position arrays from Defense arrow movement/spawn, preserving exact rendered points. Measure warmed allocation and validate actual flight/bounce.
-- [ ] 7. Avoid rebuilding every stationary Shapes arrow when clearing an already absent hint. Verify unchanged geometry and real rapid input; measure the no-op path.
+- [x] 7. Avoid rebuilding every stationary Shapes arrow when clearing an already absent hint. Verify unchanged geometry and real rapid input; measure the no-op path.
 - [ ] 8. Make the menu level header consistently follow the selected mode and localization. Verify actual shared TMP label after mode changes, player-data notifications and language changes.
 - [ ] 9. Run integration checks appropriate to the changed paths through Unity MCP. Restore player data/settings and original editor scene, verify protected assets, publish reports and record commits/completion below.
 
@@ -41,3 +41,5 @@ Phase 1 complete: Unity MCP Play Mode passed normal rotation, repeated damaged-p
 Phase 1 commit: 6ee6175. Phase 3 complete: Unity MCP passed 22 offline callback assertions for overlapping reward/interstitial requests, stale/duplicate events, provider exceptions, cancellation, and reward-before-close ownership. No live SDK playback exercised. Evidence: Captures/QualityPass/ads-verification.txt.
 
 Phase 3 commit: 266f4b4. Phase 5 complete: Unity MCP real pooled Defense101 passed overlapping D/B deaths, retreat expiry, pause/freeze independence, StopSpawning and same-object/new-spawn reuse. Original configuration, progress and preferences restored. Evidence: Captures/QualityPass/gap-close-verification.txt.
+
+Phase 5 commit: 29ba498. Phase 7 focused check complete: Unity MCP edit-mode real PuzzleArrow prefab passed repeated clear/hint geometry, actual transitions, in-flight window and Rocket pool rebind. Each warmed 10,000-call no-op loop allocated zero managed bytes. Rapid gameplay integration remains in phase 9. Evidence: Captures/QualityPass/hint-performance-verification.txt.
