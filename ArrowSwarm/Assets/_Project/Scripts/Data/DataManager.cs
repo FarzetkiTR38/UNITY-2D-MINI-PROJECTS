@@ -54,7 +54,8 @@ namespace ArrowSwarm.Data
             if (PlayerPrefs.HasKey(SAVE_KEY))
             {
                 string previous = PlayerPrefs.GetString(SAVE_KEY);
-                if (!string.IsNullOrEmpty(previous))
+                // Recovery must never replace a healthy backup with the damaged primary.
+                if (!string.IsNullOrWhiteSpace(previous) && TryLoadKey(SAVE_KEY) != null)
                 {
                     PlayerPrefs.SetString(BACKUP_KEY, previous);
                 }

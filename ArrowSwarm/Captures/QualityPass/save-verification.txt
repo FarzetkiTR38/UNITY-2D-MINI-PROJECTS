@@ -1,0 +1,36 @@
+PASS: production save, backup and legacy migration checks
+PASS: valid primary loads without resetting progress
+PASS: healthy save rotates the previous primary byte for byte
+PASS: new primary stores the current progress
+PASS: all three campaigns retain their aggregate stars after reload
+PASS: independent Shapes selection survives normal save and reload
+PASS: first damaged primary: restores Defense progress
+PASS: first damaged primary: retains shared stars and skill balances
+PASS: first damaged primary: retains independent puzzle progress
+PASS: first damaged primary: healthy backup remains byte identical
+PASS: first damaged primary: repaired primary can be read again
+PASS: second consecutive damaged primary: restores Defense progress
+PASS: second consecutive damaged primary: retains shared stars and skill balances
+PASS: second consecutive damaged primary: retains independent puzzle progress
+PASS: second consecutive damaged primary: healthy backup remains byte identical
+PASS: second consecutive damaged primary: repaired primary can be read again
+PASS: missing primary: restores Defense progress
+PASS: missing primary: retains shared stars and skill balances
+PASS: missing primary: retains independent puzzle progress
+PASS: missing primary: healthy backup remains byte identical
+PASS: missing primary: repaired primary can be read again
+PASS: blank primary: restores Defense progress
+PASS: blank primary: retains shared stars and skill balances
+PASS: blank primary: retains independent puzzle progress
+PASS: blank primary: healthy backup remains byte identical
+PASS: blank primary: repaired primary can be read again
+PASS: direct save never rotates a damaged primary over a healthy backup
+PASS: direct save still replaces a damaged primary with current progress
+PASS: two unreadable slots create the documented default data
+PASS: default recovery immediately writes a readable primary
+PASS: legacy JSON retains the original Defense levels
+PASS: legacy JSON retains skill balances and Defense stars
+PASS: missing legacy puzzle fields safely initialize at level one
+PASS: legacy JSON starts new modes without changing aggregate stars or the selected mode
+PASS: migrated legacy data survives another save and reload
+PASS: original data object, auto-save and all five data-service preferences restored
