@@ -6,7 +6,7 @@ Baseline: `16941ad`. The user authorizes proactive inspection and improvements, 
 
 - [x] 0. Inspect project rules, establish a clean baseline and audit persistence, async UI and runtime code. Protect authored assets by hashes. Commit this implementation/continuation record.
 - [x] 1. Preserve the last valid backup when recovering a corrupted primary save. Validate normal backup rotation and repeated recovery with temporary data, restoring real preferences afterwards.
-- [ ] 2. Distinguish leaderboard accounts by identity rather than display name; avoid modifying cached rows when applying the local player snapshot. Verify duplicate names, rename and cache immutability offline.
+- [x] 2. Distinguish leaderboard accounts by identity rather than display name; avoid modifying cached rows when applying the local player snapshot. Verify duplicate names, rename and cache immutability offline.
 - [x] 3. Complete rewarded-ad requests once, including skips/failures; reject overlapping requests without overwriting callbacks. Test delayed/faulty service callbacks and production close/reward ordering without showing real ads.
 - [ ] 4. Prevent delayed Defense reward callbacks from using a skill in a later attempt or touching a destroyed popup/HUD. Preserve legitimately earned inventory. Exercise retry/menu/new-level transitions with delayed fake rewards.
 - [x] 5. Restore all gap-close participants when another enemy death interrupts the retreat. Verify real pooled mobs, overlapping deaths, freeze, cancellation and reuse.
@@ -43,3 +43,5 @@ Phase 1 commit: 6ee6175. Phase 3 complete: Unity MCP passed 22 offline callback 
 Phase 3 commit: 266f4b4. Phase 5 complete: Unity MCP real pooled Defense101 passed overlapping D/B deaths, retreat expiry, pause/freeze independence, StopSpawning and same-object/new-spawn reuse. Original configuration, progress and preferences restored. Evidence: Captures/QualityPass/gap-close-verification.txt.
 
 Phase 5 commit: 29ba498. Phase 7 focused check complete: Unity MCP edit-mode real PuzzleArrow prefab passed repeated clear/hint geometry, actual transitions, in-flight window and Rocket pool rebind. Each warmed 10,000-call no-op loop allocated zero managed bytes. Rapid gameplay integration remains in phase 9. Evidence: Captures/QualityPass/hint-performance-verification.txt.
+
+Phase 7 commit: 6e1c7b3. Phase 2 complete: Unity MCP passed duplicate nicknames, authenticated identity, profile rename, aggregate stars, cloud-ahead scores, detached rows/cache immutability, null/empty cache and ranking. The lazy manager fixture is inactive to avoid UGS initialization. Evidence: Captures/QualityPass/leaderboard-verification.txt.
