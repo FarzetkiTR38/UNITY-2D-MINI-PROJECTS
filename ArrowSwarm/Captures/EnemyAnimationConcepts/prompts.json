@@ -1,0 +1,20 @@
+{
+  "common": "Use case: stylized-concept / animated 2D mobile game sprite. Input image is the exact character identity/style reference, not a layout reference. Generate a production sprite-animation atlas, a perfectly regular 4 columns x 4 rows grid, exactly 16 equally sized square cells. No gutters or drawn grid. One complete character in every cell on truly transparent background. Frames read left-to-right then top-to-bottom. Same character, same face proportions, same rendering style, same light direction and no camera movement in all 16 frames. Character centered at the same registration point per cell, occupying about 66% of the cell height with safe margins; all horns, fins and tail completely within their own cell. Preserve reference identity: glossy lavender purple floating round ghost, two magenta horns, pointed cyan crystal fins on both sides, one pink diamond crystal on forehead, two large magenta eyes and playful tiny fanged smile, curved tapering pink/cyan ghost tail. Thick dark-purple outline, polished vibrant casual-mobile-game shading. No legs, no ground shadow, no text, no numbers, no labels, no checkerboard painted into image, no scenery, no additional characters, no particles crossing frames. This must be an actual frame-by-frame animation sheet, not a contact sheet of different designs. Every pose is a deliberate sequential phase of the same smooth looping cycle; final pose connects to first. Animate anatomy and expression; do not just translate a static illustration.",
+  "variants": [
+    {
+      "id": "01-kristal-hayalet",
+      "motion": "Animation A, gentle magical hovering: one slow sinusoidal breath cycle over 16 frames, body softly expands and contracts 3%, left and right cyan fins flap in opposite phases through 15 degrees, flowing tail curls gently left through center to right and back, horns flex subtly. Eyes gently blink closed at frames 9 and 10 and reopen by 12. Forehead crystal softly brightens then dims, same crystal geometry. Calm, mischievous, readable idle movement."
+    },
+    {
+      "id": "02-yaramaz-vizildayan",
+      "motion": "Animation B, lively fluttering flight: a complete 16-frame wing/fin flap cycle with clearly visible fins rising, spreading and lowering, playful tilt a few degrees left then right, delayed swish in ghost tail. Body stays recognizable and anchored, motion carried by fins and tail rather than huge translation. Quick squint then cheerful wide eyes midcycle, smile retained. Fins have clear distinct upstroke/downstroke silhouettes, crisp no motion blur. Energetic but polished looping flying enemy."
+    },
+    {
+      "id": "03-jole-kristal",
+      "motion": "Animation C, bouncy jelly ghost: 16 sequential frames of a complete squash/stretch cycle, body starts neutral, gradually squashes sideways 10% and down 8%, returns, stretches taller 7% and narrower 5%, returns neutral. Fin tips and tail lag with elastic follow-through, forehead crystal remains rigid and slides with forehead. Face squints on squash then opens mischievous eyes on stretch, no swapping facial parts. Glossy cute liquid purple body with cyan tail. Smooth readable elastic movement, not an explosion or death."
+    }
+  ],
+  "reference": "C:/Users/Farzetki/Desktop/GitHub/UNITY-2D-MINI-PROJECTS/ArrowSwarm/Assets/_Project/Art/_FarzetkiArts/ArrowSwarm_Artx (3).png",
+  "tool": "built-in image_gen",
+  "intent": "Preview-only animation concepts, no Unity scene/prefab/runtime integration"
+}

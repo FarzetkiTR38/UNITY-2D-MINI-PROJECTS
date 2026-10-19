@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Arrow Swarm · Enemy animasyon denemeleri</title>
+  <style>
+    :root { --page:#f3f0e6; --surface:#fffdf7; --stage:#f6f1e5; --ink:#222548; --muted:#747389; --line:#ded9cc; --accent:#6754cb; --chip:#ede8fc; --shadow:0 14px 40px #3a2b6320; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--page); color:var(--ink); font:15px/1.5 "Segoe UI",Arial,sans-serif; transition:background .2s,color .2s; }
+    body.dark { --page:#17172b; --surface:#242338; --stage:#191a2c; --ink:#f1edff; --muted:#b5adc9; --line:#3c3751; --accent:#c0a2ff; --chip:#39304f; --shadow:0 14px 40px #0003; }
+    button,a { -webkit-tap-highlight-color:transparent; }
+    button { font:inherit; cursor:pointer; }
+    button:focus-visible,a:focus-visible { outline:3px solid #eb8dd5; outline-offset:4px; }
+    .wrap { max-width:1240px; padding:46px 28px 28px; margin:auto; }
+    .eyebrow { margin:0 0 9px; font-size:12px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); }
+    h1 { margin:0; font-size:clamp(27px,3.3vw,42px); letter-spacing:-.04em; line-height:1.15; }
+    .intro { max-width:720px; margin:14px 0 24px; font-size:16px; color:var(--muted); }
+    .toolbar { display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin:0 0 28px; }
+    .control,.segmented { border:1px solid var(--line); background:var(--surface); border-radius:13px; padding:5px; }
+    .control { padding:10px 17px; color:var(--ink); font-weight:700; min-width:125px; box-shadow:0 3px 8px #00000005; }
+    .control.primary { background:var(--ink); color:var(--surface); border-color:transparent; }
+    .segmented { display:flex; gap:3px; }
+    .segmented button { border:0; border-radius:9px; padding:6px 12px; color:var(--muted); background:transparent; }
+    .segmented button[aria-pressed="true"] { color:var(--ink); background:var(--chip); font-weight:700; }
+    .toolbar-label { font-size:12px; color:var(--muted); padding-left:3px; }
+    .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
+    .card { min-width:0; border:1px solid var(--line); border-radius:24px; overflow:hidden; background:var(--surface); box-shadow:var(--shadow); }
+    .card-head { padding:20px 22px 0; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .number { width:29px; height:29px; border-radius:10px; display:grid; place-items:center; color:var(--accent); background:var(--chip); font-size:12px; font-weight:800; }
+    .timing { color:var(--muted); font-size:12px; font-variant-numeric:tabular-nums; }
+    .stage { position:relative; margin:16px 16px 0; height:292px; display:flex; align-items:center; justify-content:center; background:var(--stage); border:1px solid var(--line); border-radius:18px; overflow:hidden; }
+    .stage::after { content:""; position:absolute; bottom:22px; width:88px; height:12px; border-radius:50%; background:#3c255e12; filter:blur(5px); pointer-events:none; }
+    .dark .stage::after { background:#0003; }
+    canvas { display:block; }
+    .hero { position:relative; z-index:1; width:250px; height:250px; max-width:100%; }
+    .load-state { position:absolute; inset:0; padding:30px; display:flex; align-items:center; justify-content:center; text-align:center; color:var(--muted); font-size:13px; background:var(--stage); z-index:2; }
+    .load-state[hidden] { display:none; }
+    .card-copy { padding:17px 22px 19px; }
+    h2 { font-size:20px; letter-spacing:-.025em; margin:0 0 6px; }
+    .description { margin:0; min-height:66px; color:var(--muted); font-size:13px; }
+    .tags { display:flex; flex-wrap:wrap; gap:6px; margin:13px 0 0; }
+    .tag { font-size:11px; border:1px solid var(--line); border-radius:6px; padding:3px 7px; color:var(--muted); }
+    .mini-block { padding:0 16px 17px; }
+    .mini-label { padding:0 6px 8px; display:flex; align-items:baseline; justify-content:space-between; color:var(--muted); font-size:11px; }
+    .mini-label strong { font-size:11px; font-weight:600; }
+    .mini-stage { display:flex; gap:12px; align-items:center; justify-content:center; min-height:108px; background:var(--stage); border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+    .mini-mob { display:flex; flex-direction:column; align-items:center; gap:0; }
+    .hp { color:var(--accent); font-weight:700; font-size:12px; line-height:17px; }
+    .mini { width:64px; height:64px; }
+    .card-footer { border-top:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding:13px 22px; gap:8px; font-size:12px; }
+    .card-footer a { color:var(--accent); font-weight:700; text-decoration:none; }
+    .card-footer a:hover { text-decoration:underline; }
+    .frame { color:var(--muted); font-variant-numeric:tabular-nums; }
+    .page-footer { display:flex; justify-content:space-between; gap:16px; margin:23px 3px 0; color:var(--muted); font-size:12px; }
+    @media(max-width:950px) { .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .description { min-height:60px; } }
+    @media(max-width:620px) { .wrap { padding:28px 16px 22px; } .grid { grid-template-columns:1fr; gap:18px; } .card { max-width:430px; width:100%; margin:auto; } .toolbar { gap:8px; } .toolbar-label { width:100%; } .intro { font-size:14px; } .stage { height:280px; } .description { min-height:0; } .page-footer { flex-direction:column; gap:3px; } }
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <p class="eyebrow">Arrow Swarm · GameScene</p>
+    <h1>Enemy animasyon denemeleri</h1>
+    <p class="intro">Kristal karakter için üç hareket tarzı. Büyük önizlemede ayrıntıları, alttaki küçük sırada oyun içindeki hissini karşılaştır.</p>
+  </header>
+  <div class="toolbar" aria-label="Animasyon kontrolleri">
+    <button class="control primary" id="play" type="button" aria-pressed="true">Ⅱ Duraklat</button>
+    <div class="segmented" role="group" aria-label="Arka plan">
+      <button type="button" data-theme="cream" aria-pressed="true">Krem</button>
+      <button type="button" data-theme="dark" aria-pressed="false">Koyu</button>
+    </div>
+    <div class="segmented" role="group" aria-label="Oynatma hızı">
+      <button type="button" data-speed="1" aria-pressed="true">Normal hız</button>
+      <button type="button" data-speed="0.5" aria-pressed="false">Yavaş · ½</button>
+    </div>
+    <span class="toolbar-label">Her örnek kesintisiz döner.</span>
+  </div>
+
+  <section class="grid" aria-label="Üç animasyon seçeneği">
+    <article class="card" data-atlas="01-kristal-hayalet.png" data-duration="2">
+      <div class="card-head"><span class="number">01</span><span class="timing">2,00 sn · 16 kare</span></div>
+      <div class="stage"><canvas class="hero" aria-label="Kristal Hayalet büyük animasyon"></canvas><span class="load-state">Animasyon yükleniyor…</span></div>
+      <div class="card-copy">
+        <h2>Kristal Hayalet</h2>
+        <p class="description">Yumuşak bir yükselip alçalma, hafif nefes ve geriden gelen kuyruk. Sakin, akıcı bir süzülme hissi.</p>
+        <div class="tags"><span class="tag">Süzülme</span><span class="tag">Nefes</span><span class="tag">Kuyruk salınımı</span></div>
+      </div>
+      <div class="mini-block"><div class="mini-label"><strong>Küçük ölçekte görünüm</strong><span>64 px</span></div><div class="mini-stage">
+        <div class="mini-mob"><span class="hp">21</span><canvas class="mini" data-offset="0"></canvas></div>
+        <div class="mini-mob"><span class="hp">19</span><canvas class="mini" data-offset="0.33"></canvas></div>
+        <div class="mini-mob"><span class="hp">17</span><canvas class="mini" data-offset="0.66"></canvas></div>
+      </div></div>
+      <div class="card-footer"><a href="01-kristal-hayalet.gif" target="_blank">GIF’i aç ↗</a><span class="frame" aria-hidden="true">01 / 16</span></div>
+    </article>
+    <article class="card" data-atlas="02-yaramaz-vizildayan.png" data-duration="1">
+      <div class="card-head"><span class="number">02</span><span class="timing">1,00 sn · 16 kare</span></div>
+      <div class="stage"><canvas class="hero" aria-label="Yaramaz Vızıldayan büyük animasyon"></canvas><span class="load-state">Animasyon yükleniyor…</span></div>
+      <div class="card-copy">
+        <h2>Yaramaz Vızıldayan</h2>
+        <p class="description">Daha hızlı yüzgeç hareketleri ve küçük gövde salınımları. Yolda ilerlerken hareketli ve yaramaz bir karakter.</p>
+        <div class="tags"><span class="tag">Hızlı çırpınma</span><span class="tag">Hafif yalpalama</span><span class="tag">Enerjik</span></div>
+      </div>
+      <div class="mini-block"><div class="mini-label"><strong>Küçük ölçekte görünüm</strong><span>64 px</span></div><div class="mini-stage">
+        <div class="mini-mob"><span class="hp">21</span><canvas class="mini" data-offset="0"></canvas></div>
+        <div class="mini-mob"><span class="hp">19</span><canvas class="mini" data-offset="0.33"></canvas></div>
+        <div class="mini-mob"><span class="hp">17</span><canvas class="mini" data-offset="0.66"></canvas></div>
+      </div></div>
+      <div class="card-footer"><a href="02-yaramaz-vizildayan.gif" target="_blank">GIF’i aç ↗</a><span class="frame" aria-hidden="true">01 / 16</span></div>
+    </article>
+    <article class="card" data-atlas="03-jole-kristal.png" data-duration="1.35">
+      <div class="card-head"><span class="number">03</span><span class="timing">1,35 sn · 16 kare</span></div>
+      <div class="stage"><canvas class="hero" aria-label="Jöle Kristal büyük animasyon"></canvas><span class="load-state">Animasyon yükleniyor…</span></div>
+      <div class="card-copy">
+        <h2>Jöle Kristal</h2>
+        <p class="description">Esneyip toparlanan bir gövde ve gecikmeli kuyruk hareketi. Daha yumuşak, oyuncak gibi bir zıplama hissi.</p>
+        <div class="tags"><span class="tag">Esneme</span><span class="tag">Ezilip toparlanma</span><span class="tag">Jöle hissi</span></div>
+      </div>
+      <div class="mini-block"><div class="mini-label"><strong>Küçük ölçekte görünüm</strong><span>64 px</span></div><div class="mini-stage">
+        <div class="mini-mob"><span class="hp">21</span><canvas class="mini" data-offset="0"></canvas></div>
+        <div class="mini-mob"><span class="hp">19</span><canvas class="mini" data-offset="0.33"></canvas></div>
+        <div class="mini-mob"><span class="hp">17</span><canvas class="mini" data-offset="0.66"></canvas></div>
+      </div></div>
+      <div class="card-footer"><a href="03-jole-kristal.gif" target="_blank">GIF’i aç ↗</a><span class="frame" aria-hidden="true">01 / 16</span></div>
+    </article>
+  </section>
+  <footer class="page-footer"><span>Kristal renkler · Koyu mor kontur · Şeffaf animasyon kareleri</span><span>Önizleme galerisi</span></footer>
+</main>
+<script src="frame-rects.js"></script>
+<script>
+  (() => {
+    'use strict';
+    let playing = true;
+    let speed = 1;
+    let clock = 0;
+    let previousTime = null;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const entries = Array.from(document.querySelectorAll('.card'), card => {
+      const image = new Image();
+      const state = card.querySelector('.load-state');
+      const entry = { image, ready:false, duration:Number(card.dataset.duration), label:card.querySelector('.frame'), lastFrame:-1 };
+      entry.surfaces = Array.from(card.querySelectorAll('canvas'), canvas => {
+        const size = canvas.classList.contains('hero') ? 250 : 64;
+        canvas.width = Math.round(size * dpr);
+        canvas.height = Math.round(size * dpr);
+        return { canvas, ctx:canvas.getContext('2d'), offset:Number(canvas.dataset.offset || 0), lastFrame:-1 };
+      });
+      image.onload = () => {
+        if (image.naturalWidth < 128 || image.naturalHeight < 128) {
+          state.textContent = 'Animasyon görselinin kare düzeni kontrol edilmeli.';
+          return;
+        }
+        entry.frames = window.ENEMY_FRAMES[card.dataset.atlas];
+        entry.width = entry.frames.max_width + 8;
+        entry.height = entry.frames.max_height + 8;
+        entry.ready = true;
+        state.hidden = true;
+        draw(entry);
+      };
+      image.onerror = () => { state.textContent = 'Animasyon görseli açılamadı. PNG dosyasının bu sayfayla aynı klasörde bulunduğunu kontrol et.'; };
+      image.src = card.dataset.atlas;
+      return entry;
+    });
+    function draw(entry) {
+      if (!entry.ready) return;
+      const progress = clock / entry.duration;
+      const frame = Math.floor((progress % 1) * 16);
+      if (entry.lastFrame !== frame) {
+        entry.label.textContent = String(frame + 1).padStart(2, '0') + ' / 16';
+        entry.lastFrame = frame;
+      }
+      for (const surface of entry.surfaces) {
+        const index = Math.floor(((progress + surface.offset) % 1) * 16);
+        if (surface.lastFrame === index) continue;
+        const { canvas, ctx } = surface;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        const fit = Math.min(canvas.width / entry.width, canvas.height / entry.height);
+        const rectangle = entry.frames.rects[index];
+        const width = rectangle.w * fit;
+        const height = rectangle.h * fit;
+        ctx.drawImage(entry.image, rectangle.x, rectangle.y, rectangle.w, rectangle.h,
+          (canvas.width - width) / 2, (canvas.height - height) / 2, width, height);
+        surface.lastFrame = index;
+      }
+    }
+    function tick(time) {
+      if (previousTime !== null && playing) clock += Math.min((time - previousTime) / 1000, .1) * speed;
+      previousTime = time;
+      entries.forEach(draw);
+      requestAnimationFrame(tick);
+    }
+    document.getElementById('play').addEventListener('click', event => {
+      playing = !playing;
+      event.currentTarget.textContent = playing ? 'Ⅱ Duraklat' : '▶ Oynat';
+      event.currentTarget.setAttribute('aria-pressed', String(playing));
+    });
+    document.querySelectorAll('[data-theme]').forEach(button => button.addEventListener('click', () => {
+      document.body.classList.toggle('dark', button.dataset.theme === 'dark');
+      document.querySelectorAll('[data-theme]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+    }));
+    document.querySelectorAll('[data-speed]').forEach(button => button.addEventListener('click', () => {
+      speed = Number(button.dataset.speed);
+      document.querySelectorAll('[data-speed]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+    }));
+    document.addEventListener('visibilitychange', () => { previousTime = null; });
+    requestAnimationFrame(tick);
+  })();
+</script>
+</body>
+</html>
