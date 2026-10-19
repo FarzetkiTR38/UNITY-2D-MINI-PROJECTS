@@ -14,7 +14,7 @@ Baseline: `16941ad`. The user authorizes proactive inspection and improvements, 
 - [x] 7. Avoid rebuilding every stationary Shapes arrow when clearing an already absent hint. Verify unchanged geometry and real rapid input; measure the no-op path.
 - [x] 8. Make the menu level header consistently follow the selected mode and localization. Verify actual shared TMP label after mode changes, player-data notifications and language changes.
 - [x] 9. Marshal SDK callbacks onto the Unity main thread before lifecycle, game and UI access. Preserve reward/close order and release requests even if cleanup/preload throws; verify background thread dispatch without live ads.
-- [ ] 10. Run integration checks appropriate to the changed paths through Unity MCP. Restore player data/settings and original editor scene, verify protected assets, publish reports and record commits/completion below.
+- [x] 10. Run integration checks appropriate to the changed paths through Unity MCP. Restore player data/settings and original editor scene, verify protected assets, publish reports and record commits/completion below.
 
 ## Evidence and working rules
 
@@ -35,7 +35,7 @@ Focused verification and screenshots belong to `Captures/QualityPass/`, with sep
 
 ## Progress / resume notes
 
-Implementation has started. Each completed phase must be checked above and described here with its MCP evidence and commit. If work is interrupted, leave the current phase and next concrete command/test documented here before stopping.
+All selected phases are complete. Continue by reading the final overview and commit table below. The scheduled follow-up should start a fresh evidence-led project audit, preserving these fixes and avoiding repeat work. Deferred notes above are candidates to investigate, not automatically approved defects or a reason to change working behavior.
 
 Phase 1 complete: Unity MCP Play Mode passed normal rotation, repeated damaged-primary recovery, missing/blank/both-broken slots, direct save and legacy three-mode migration. Original data reference, auto-save and five preferences restored. Evidence: Captures/QualityPass/save-verification.txt.
 
@@ -60,3 +60,26 @@ Phase 6 commit: 93ba59f. Integration so far: original Defense101 full regression
 Phase 10 integration evidence complete so far: Defense101 passed 50 assertions; all 100 puzzle levels completed with three lives through actual pooled animations; both modes passed 450 real-input/skill/recovery/rapid-shot assertions. 100 untouched gameplay captures saved under Captures/QualityPass/Playthroughs. Console had zero errors after this run. Editor returned to original BootScene; all 364 protected authored files match baseline SHA256. Final acceptance still waits for phase 9 native SDK callback threading test and final preference restoration. Phase 9 is the current resume point.
 
 Integration evidence commit: aac3b16. Phase 9 complete: Unity MCP passed 45 assertions with genuine worker threads through installed SDK executor: 24-event FIFO, static delegate, destroyed owner/orphan cleanup, mixed-origin reward/close order, inline main-thread behavior, and cleanup/preload exceptions. Existing 22 ad-manager checks passed again. Native Unity LogEntries counts confirm errors=0; two warnings are deliberate throwing fake providers. No native SDK initialize/load/show invoked by fixture. Evidence: Captures/QualityPass/ad-thread-verification.txt. Source implementation verified against SDK v11.5.0 MobileAdsEventExecutor.cs, whose staged callbacks run outside its queue lock.
+
+Phase 9 commit: 344ca2f. Phase 10 complete: final MCP checks restored all five preferences exactly to the pre-Play snapshot (including key existence), returned to BootScene with Play Mode off, and confirmed zero native Unity console errors. All 364 protected authored files still match baseline SHA256. Two console warnings deliberately exercise fake provider failures. Reports and 100 captures are committed. Final overview: Captures/QualityPass/README.md. No remaining work in this pass.
+
+## Completed commit map
+
+| Commit | Completed work |
+| --- | --- |
+| e4da0b5 | Initial phased implementation and resume plan |
+| 6ee6175 | Healthy backup preservation and save recovery verification |
+| 266f4b4 | Fullscreen request ownership and exactly-once completion |
+| 29ba498 | Interrupted retreat participant restoration |
+| 6e1c7b3 | Unchanged Shapes hint rebuild optimization |
+| ef08fc4 | Leaderboard identity and detached display rows |
+| 225dc1c | Delayed Defense reward owner/attempt guards |
+| 3854e5f | Corrected native allocation measurement with positive controls |
+| b8f4fae | Selected-mode localized menu level header |
+| 93ba59f | Reusable Defense body upload buffer |
+| b7a3d00 | Added SDK threading phase after final review |
+| aac3b16 | Real Defense, all 100 puzzle levels and 450 interaction checks |
+| 344ca2f | Main-thread SDK callbacks, event ordering and cleanup completion |
+| Final overview commit | Completion record, final state verification and report index |
+
+The user requested a single same-chat follow-up after 240 minutes. Heartbeat automation `arrow-swarm-al-mas-na-devam-et` is configured for one future occurrence around 05:11 Europe/Istanbul, 20 October 2026. Its prompt resumes unfinished work, or starts the broader project improvement audit if this pass is complete. Do not create a duplicate follow-up.
