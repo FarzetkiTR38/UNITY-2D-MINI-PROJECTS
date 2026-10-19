@@ -30,6 +30,7 @@ namespace ArrowSwarm.Modes.Editor
                 throw new InvalidOperationException("Could not create the Shapes-only config.");
             var config = AssetDatabase.LoadAssetAtPath<PuzzleConfig>(ConfigPath);
             U.Set(config, "_strokeWidth", .42f); U.Set(config, "_headSize", .72f);
+            U.Set(config, "_centerHeadOnGridPoint", true);
             U.Set(config, "_hitRadius", .42f);
             U.Set(config, "_minimumDarkLuminance", .28f); U.Set(config, "_maximumLightLuminance", .46f);
             AssetDatabase.SaveAssetIfDirty(config);

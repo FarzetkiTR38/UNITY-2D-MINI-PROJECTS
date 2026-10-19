@@ -10,6 +10,8 @@ namespace ArrowSwarm.Modes
         [SerializeField, Min(1)] private int _lives = 3;
         [SerializeField, Min(.01f)] private float _strokeWidth = .16f;
         [SerializeField, Min(.01f)] private float _headSize = .4f;
+        [Tooltip("Center the filled head on its logical grid point, as in Defense, keeping the straight neck visible.")]
+        [SerializeField] private bool _centerHeadOnGridPoint;
         [SerializeField, Min(.01f)] private float _speed = 23f;
         [Tooltip("Maximum legal escape animation duration; long paths speed up rather than wait outside the board.")]
         [SerializeField, Min(.1f)] private float _maximumFlightDuration = .7f;
@@ -33,6 +35,8 @@ namespace ArrowSwarm.Modes
         public int Lives => _lives;
         public float StrokeWidth => _strokeWidth;
         public float HeadSize => _headSize;
+        /// <summary>Whether the head center, rather than its tip, occupies the logical head point.</summary>
+        public bool CenterHeadOnGridPoint => _centerHeadOnGridPoint;
         public float Speed => _speed;
         public float MaximumFlightDuration => _maximumFlightDuration;
         public float RotationDuration => _rotationDuration;

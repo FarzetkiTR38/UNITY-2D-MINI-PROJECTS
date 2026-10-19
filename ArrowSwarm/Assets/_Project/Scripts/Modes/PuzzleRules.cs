@@ -35,6 +35,11 @@ namespace ArrowSwarm.Modes
         public static bool CanRemove(PuzzleLevel level, bool[] removed, int index, int orientation) =>
             !removed[index] && MatchesWall(level, index, orientation) && float.IsPositiveInfinity(ObstacleDistance(level, removed, index));
 
+        /// <summary>Defense's natural-neck rule: one unit edge directly behind the head continues its firing direction.</summary>
+        public static bool HasNaturalNeck(PuzzleArrowData arrow) => arrow != null && arrow.Points != null &&
+            arrow.Points.Count >= 2 && Mathf.Abs(arrow.Direction.x) + Mathf.Abs(arrow.Direction.y) == 1 &&
+            arrow.Head - arrow.Points[1] == arrow.Direction;
+
         /// <summary>Rejects malformed paths before they reach the runtime or solver.</summary>
         public static string Validate(PuzzleLevel level)
         {
@@ -45,7 +50,7 @@ namespace ArrowSwarm.Modes
             foreach (var arrow in level.Arrows)
             {
                 if (arrow == null || arrow.Points == null || arrow.Points.Count < 2 || Mathf.Abs(arrow.Direction.x) + Mathf.Abs(arrow.Direction.y) != 1) return "Invalid arrow path/direction.";
-                if (arrow.Head - arrow.Points[1] != arrow.Direction) return "Head direction must continue the first path segment.";
+                if (!HasNaturalNeck(arrow)) return "Head direction must continue one unit of straight neck behind the head.";
                 if (level.Mode == GameModeId.ColorShift && (arrow.ColorId < 0 || arrow.ColorId > 1)) return "Invalid wall color key.";
                 for (int i = 0; i < arrow.Points.Count; i++)
                 {
