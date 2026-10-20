@@ -14,7 +14,7 @@ Five font paths showed preexisting modifications at initial status (some may be 
 - [x] 1. Recover Unity MCP and establish before-fix runtime evidence with isolated Editor fixtures.
 - [ ] 2. Reject canceled ColorShift frame gestures and stale releases across pause/retry. Keep fresh click/swipe controls working; test actual Input System UI events.
 - [x] 3. Retry pending leaderboard synchronization after an offline first opening and reconnection. Prevent duplicate/infinite refresh-submit loops; use a deterministic fake provider through the actual panel lifecycle.
-- [ ] 4. Preserve explicitly selected language when profile name/country is saved. Verify real UI Save without live cloud activity or losing draft/profile behavior.
+- [x] 4. Preserve explicitly selected language when profile name/country is saved. Verify real UI Save without live cloud activity or losing draft/profile behavior.
 - [ ] 5. Run appropriate integration, restore exact preferences and preexisting file bytes, verify authored hashes and starting Editor/process state, publish evidence and commit the overview.
 
 ## Ownership and verification
@@ -30,3 +30,5 @@ Real before-fix proofs are retained under Captures/QualityPass3/: frame-input-be
 Current resume point: agents are implementing the three minimal fixes in Edit Mode. Wait for stable files, compile, run each focused fixture and older affected regressions before its commit. The first frame fixture run stopped on an unready UI-raycast prerequisite; its settled rerun acquired native UI ownership and demonstrated all three defects. Preserve strict event ACK/raycast checks and improve the initial layout settling rather than accepting the unready run as evidence.
 
 Phase1 evidence commit: `856cd80`. All three fixes compile without errors. Cloud phase3 passed26 focused checks using the actual offline-first panel, latest shared stars/profile, failed retries, explicit synchronization, and a delayed concurrent upload joined by refresh/explicit callers. Original startup10 and pending/version19 regressions also passed; their previous report files were restored and fresh results copied under QualityPass3. No live service was constructed. The refresh-only core prevents recursive or immediate duplicate retries. Frame and profile focused verification are next, followed by integration and restoration.
+
+Phase3 commit: `33bd6f4`. Profile phase4 passed67 checks: actual Show/name/Save across ten explicit languages, mismatched profile countries, normal profile persistence/close and startup-default English with no explicit preference. Saving a profile now leaves language selection to the language setting; it no longer creates or replaces a language preference. Exact data object, preference existence, live language, modal state and offline provider ownership restored. Evidence: profile-language-verification.txt. Frame phase2 is running; no source changes are currently pending from agents.
