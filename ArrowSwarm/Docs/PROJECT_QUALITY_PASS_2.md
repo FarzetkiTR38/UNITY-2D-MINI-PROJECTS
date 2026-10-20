@@ -13,7 +13,7 @@ Preserve working gameplay, all campaigns, artwork and authored styling. Changes 
 - [x] 4. Restore the existing localization keys in Defense HUD, profile Save/Skip reopening and level-range labels. Language changes refresh text without resetting modal drafts, awards or page selection. Preserve Inspector styling and dictionaries.
 - [x] 5. Start the leaderboard service on the first real panel opening so cached/global rows can appear. Verify laziness before opening, cached immediate rendering and safe panel lifecycle without live cloud traffic.
 - [x] 6. Preserve pending score synchronization when progress changes before the lazy leaderboard manager exists. Verify initialization consumes the latest score through a deterministic fake service, restoring all real data/preferences.
-- [ ] 7. Run appropriate integration and visual checks, restore original player preferences and BootScene/Edit Mode, compare protected hashes, publish reports and commit the final overview.
+- [x] 7. Run appropriate integration and visual checks, restore original player preferences and BootScene/Edit Mode, compare protected hashes, publish reports and commit the final overview.
 
 ## Verification and safety of existing work
 
@@ -25,7 +25,7 @@ Localize through existing `menu_level_short`, `hud_arrows`, `profile_save_play`,
 
 ## Progress / resume point
 
-Audit complete. Implementation starts with the first unchecked phase. Each phase must record its actual MCP evidence and commit below before completion. If interrupted, resume at the first unchecked phase and inspect the current working tree before editing.
+All phases are complete. The reports and commit map below distinguish finished work from a fresh audit. No repeat run or new automation is required. Inspect the working tree and preserved evidence before making any further changes.
 
 ## Deferred notes
 
@@ -42,3 +42,19 @@ Phase 6 commit: 0262ac9. Phase 2 complete: real Dynamic Input System state passe
 Phase 2 commit: d6fdbf3. Phase 3 complete: actual pre-change method measured 4,096 GC.Alloc events per 2,048 HUD-ratio/clamp calls, retained in camera-performance-before.txt. After four array replacements, native positive-control test measured legacy=4,096, empty=0, cached ratios=0 and cached clamp=0. Authored HUD ratios and camera bounds matched at three zoom levels. Evidence: camera-performance-verification.txt. No bound calculations or Inspector styling changed.
 
 Phase 3 commit: 4c4c723. Phase 4 complete: real Defense HUD, profile reopening/draft preservation and three independent mode page ranges passed 313 checks across all ten languages. Compact Turkish range now fits one line without changing fonts or bounds. Visual inspection found the active profile behind ReferenceMainMenu despite alpha=1; Show now raises it above sibling panels. Actual graphic-depth checks and a new German profile capture confirm the fix. Japanese Defense and Korean range labels remain visible with authored TMP Overflow behavior; diagnostic preferred-height overflow is not a claim of clipping. Evidence: localization-verification.txt, localization-before-fit.txt and verified captures. Next: complete Defense, 100 puzzle playthroughs and interaction regression, then restore baseline preferences/assets/Editor.
+
+Phase 4 commit: 0f17cd1. Phase 7 complete: original Defense101 passed 50 checks; all 50 Shapes and 50 ColorShift levels completed with three lives through real pooled animations; interaction verification passed 450 checks including rapid shots, Rocket, recovery, rounded flowing frame and actual click/swipe rotations. The regression runner can now skip only duplicate screenshot creation while retaining every gameplay/presentation/save check. All five pre-Play preferences were restored exactly, including existence; all 364 protected authored assets match baseline SHA256. BootScene is restored with Play Mode off; native Unity console errors=0, warnings=7. Warnings come from the baseline orphan Editor cleanup component on ConfettiParticle and the baseline U+2715 close-label glyph; native particles and runtime pool cleanup remain valid. No protected asset was rewritten to silence them. Evidence: Captures/QualityPass2/README.md and final-state-verification.txt.
+
+## Completed commit map
+
+| Commit | Completed work |
+| --- | --- |
+| 95d3b5f | Scheduled continuation implementation and resume plan |
+| 896fbef | First-open lazy leaderboard/cache lifecycle |
+| dd7b1ca | Defense canceled and multi-finger touch ownership |
+| 0262ac9 | Pending score persistence and newest-submission completion |
+| d6fdbf3 | Camera active-finger tracking and gesture release |
+| 4c4c723 | Reusable HUD corner buffer with native allocation proof |
+| 0f17cd1 | Live localization, compact ranges and profile draw order |
+| Integration commit | Defense, 100 puzzle levels, 450 interactions and final restoration evidence |
+| Final overview commit | Finished report index and completion record |
