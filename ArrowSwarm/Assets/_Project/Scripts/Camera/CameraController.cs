@@ -163,7 +163,7 @@ namespace ArrowSwarm.Camera
             float topLimit = Screen.height * (1f - _fallbackTopMarginRatio);
             if (_topPanelRect != null && _topPanelRect.gameObject.activeInHierarchy)
             {
-                Vector3[] topCorners = new Vector3[4];
+                Vector3[] topCorners = _hudCornerBuffer;
                 _topPanelRect.GetWorldCorners(topCorners);
                 topLimit = Mathf.Min(topCorners[0].y, topCorners[3].y);
             }
@@ -172,7 +172,7 @@ namespace ArrowSwarm.Camera
             float bottomLimit = Screen.height * _fallbackBottomMarginRatio;
             if (_bottomPanelRect != null && _bottomPanelRect.gameObject.activeInHierarchy)
             {
-                Vector3[] bottomCorners = new Vector3[4];
+                Vector3[] bottomCorners = _hudCornerBuffer;
                 _bottomPanelRect.GetWorldCorners(bottomCorners);
                 bottomLimit = Mathf.Max(bottomCorners[1].y, bottomCorners[2].y);
             }
@@ -198,7 +198,7 @@ namespace ArrowSwarm.Camera
             topRatio = 0.085f;
             if (_topPanelRect != null && _topPanelRect.gameObject.activeInHierarchy && Screen.height > 0)
             {
-                Vector3[] topCorners = new Vector3[4];
+                Vector3[] topCorners = _hudCornerBuffer;
                 _topPanelRect.GetWorldCorners(topCorners);
                 float topLimit = Mathf.Min(topCorners[0].y, topCorners[3].y);
                 float measuredRatio = (Screen.height - topLimit) / (float)Screen.height;
@@ -211,7 +211,7 @@ namespace ArrowSwarm.Camera
             bottomRatio = 0.130f;
             if (_bottomPanelRect != null && _bottomPanelRect.gameObject.activeInHierarchy && Screen.height > 0)
             {
-                Vector3[] bottomCorners = new Vector3[4];
+                Vector3[] bottomCorners = _hudCornerBuffer;
                 _bottomPanelRect.GetWorldCorners(bottomCorners);
                 float bottomLimit = Mathf.Max(bottomCorners[1].y, bottomCorners[2].y);
                 float measuredRatio = bottomLimit / (float)Screen.height;
