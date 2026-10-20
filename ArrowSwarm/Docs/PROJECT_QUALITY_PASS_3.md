@@ -11,7 +11,7 @@ Five font paths showed preexisting modifications at initial status (some may be 
 ## Phases
 
 - [x] 0. Read earlier completion records, inspect current state, protect existing changes, define this resumable implementation and commit it.
-- [ ] 1. Recover Unity MCP and establish before-fix runtime evidence with isolated Editor fixtures.
+- [x] 1. Recover Unity MCP and establish before-fix runtime evidence with isolated Editor fixtures.
 - [ ] 2. Reject canceled ColorShift frame gestures and stale releases across pause/retry. Keep fresh click/swipe controls working; test actual Input System UI events.
 - [ ] 3. Retry pending leaderboard synchronization after an offline first opening and reconnection. Prevent duplicate/infinite refresh-submit loops; use a deterministic fake provider through the actual panel lifecycle.
 - [ ] 4. Preserve explicitly selected language when profile name/country is saved. Verify real UI Save without live cloud activity or losing draft/profile behavior.
@@ -23,4 +23,8 @@ Root controls MCP and all commits. Runtime agent owns the frame gesture fixture/
 
 ## Resume point
 
-Resume the first unchecked phase after checking Git status and bridge availability. Implementation has not started. Confirmed call chains: InputSystemUIInputModule sends pointer-up on canceled touches; FrameSwipeUI currently treats it as rotation and does not tie a held gesture to attempt/pause lifecycle. Offline LeaderboardManager initialization never retries pending sync on later panel refresh. Profile Save unconditionally replaces explicit language with a country-derived choice.
+Phase0 commit: `3e389a7`. Phase1 is complete. The installed MCP bridge reconnected to ArrowSwarm@3f240769be4f5e6f; native Unity tools are available again. All 364 authored hashes remained identical before implementation, and private byte copies are now retained for exact final restoration.
+
+Real before-fix proofs are retained under Captures/QualityPass3/: frame-input-before.txt shows three actual UI gesture failures (OS cancellation, held release after Pause/Retry, and held release after Pause/Resume each consumed a turn, 2→1); fresh tap/swipe controls still passed. leaderboard-reconnect-before.txt shows real online reopening fetching rows while never submitting pending latest progress. profile-language-before.txt shows actual name Save preserving the name but switching explicit en preference/live/data language to tr because the country is TR. Fixtures restore user data, preference existence and scoped fake ownership; no live backend was used.
+
+Current resume point: agents are implementing the three minimal fixes in Edit Mode. Wait for stable files, compile, run each focused fixture and older affected regressions before its commit. The first frame fixture run stopped on an unready UI-raycast prerequisite; its settled rerun acquired native UI ownership and demonstrated all three defects. Preserve strict event ACK/raycast checks and improve the initial layout settling rather than accepting the unready run as evidence.
