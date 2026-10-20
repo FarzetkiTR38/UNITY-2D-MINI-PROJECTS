@@ -3,6 +3,8 @@ namespace ArrowSwarm.UI
     using ArrowSwarm.Puzzle;
     using UnityEngine;
     using UnityEngine.EventSystems;
+    using UnityEngine.InputSystem;
+    using UnityEngine.InputSystem.UI;
 
     /// <summary>One deliberate swipe or side tap rotates the fixed board's colored border once.</summary>
     public sealed class FrameSwipeUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
@@ -12,9 +14,12 @@ namespace ArrowSwarm.UI
         [SerializeField, Range(0f, .8f)] private float _tapCenterDeadZoneFraction = .14f;
         private Vector2 _start;
         private int _pointerId = int.MinValue;
+        private int _attemptVersion;
+        private PuzzleSession _owner;
         private Canvas _canvas;
         private RectTransform _rect;
         private void Awake() { _canvas = GetComponentInParent<Canvas>(); _rect = transform as RectTransform; }
+        private void OnEnable() { PuzzleSession.OnChanged += SessionChanged; }
 
         private static bool CanRotate(PuzzleSession session) => session != null && session.Ready &&
             session.Mode == ArrowSwarm.Modes.GameModeId.ColorShift && session.Turns > 0;
@@ -24,6 +29,7 @@ namespace ArrowSwarm.UI
         {
             if (_pointerId != int.MinValue || e.button != PointerEventData.InputButton.Left || !CanRotate(PuzzleSession.Active)) return;
             _start = e.position; _pointerId = e.pointerId;
+            _owner = PuzzleSession.Active; _attemptVersion = _owner.AttemptVersion;
         }
 
         /// <summary>Captures drag so camera input cannot consume this UI gesture.</summary>
@@ -38,9 +44,10 @@ namespace ArrowSwarm.UI
         public void OnPointerUp(PointerEventData e)
         {
             if (e.pointerId != _pointerId) return;
-            _pointerId = int.MinValue;
+            var owner = _owner; int attempt = _attemptVersion;
+            ResetGesture();
             var session = PuzzleSession.Active;
-            if (!CanRotate(session)) return;
+            if (session != owner || session == null || session.AttemptVersion != attempt || !CanRotate(session) || IsCanceledTouch(e)) return;
             Vector2 delta = e.position - _start;
             float scale = CanvasScale;
             if (Mathf.Abs(delta.x) >= session.Config.SwipeThreshold * scale && Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
@@ -59,6 +66,23 @@ namespace ArrowSwarm.UI
         public void RotateLeft() { if (CanRotate(PuzzleSession.Active)) PuzzleSession.Active.Rotate(-1); }
         /// <summary>Rotates clockwise for an optional authored right-side control.</summary>
         public void RotateRight() { if (CanRotate(PuzzleSession.Active)) PuzzleSession.Active.Rotate(1); }
-        private void OnDisable() { _pointerId = int.MinValue; }
+        private void SessionChanged()
+        {
+            var session = PuzzleSession.Active;
+            if (_pointerId != int.MinValue && (session != _owner || session == null ||
+                session.AttemptVersion != _attemptVersion || !CanRotate(session))) ResetGesture();
+        }
+
+        private static bool IsCanceledTouch(PointerEventData data)
+        {
+            if (!(data is ExtendedPointerEventData pointer) || !(pointer.control?.device is Touchscreen screen)) return false;
+            foreach (var touch in screen.touches)
+                if (touch.touchId.ReadValue() == pointer.touchId)
+                    return touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Canceled;
+            return false;
+        }
+
+        private void ResetGesture() { _pointerId = int.MinValue; _owner = null; }
+        private void OnDisable() { PuzzleSession.OnChanged -= SessionChanged; ResetGesture(); }
     }
 }
