@@ -352,24 +352,6 @@ namespace ArrowSwarm.UI
                 LeaderboardManager.Instance.SetPlayerName(finalName);
             }
 
-            if (Localization.LocalizationManager.HasInstance)
-            {
-                string lang = selectedCode switch
-                {
-                    "TR" => "tr",
-                    "DE" => "de",
-                    "FR" => "fr",
-                    "ES" => "es",
-                    "IT" => "it",
-                    "BR" => "pt",
-                    "JP" => "ja",
-                    "KR" => "ko",
-                    "RU" => "ru",
-                    _ => "en"
-                };
-                Localization.LocalizationManager.Instance.SetLanguage(lang, saveToPrefs: true);
-            }
-
             // Save and cleanly close modal (stay on MainMenu)
             Hide();
         }
