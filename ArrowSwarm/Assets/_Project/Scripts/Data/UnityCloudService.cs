@@ -14,7 +14,7 @@ namespace ArrowSwarm.Data
     /// Handles anonymous authentication, leaderboard score uploads with metadata,
     /// fetching global rankings, and graceful offline fallback.
     /// </summary>
-    public class UnityCloudService : ICloudService
+    public class UnityCloudService : ICloudService, ILeaderboardCloudService
     {
         public const string LEADERBOARD_ID = "arrow_swarm_leaderboard";
 

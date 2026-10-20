@@ -170,10 +170,12 @@ namespace ArrowSwarm.UI
                 StartCoroutine(UIPopupAnimator.AnimateOpen(_dialogBox, _canvasGroup));
             }
 
+            // Opening the board is the first intentional request for the lazy leaderboard service.
+            var leaderboard = LeaderboardManager.Instance;
             RefreshLeaderboardData();
-            if (LeaderboardManager.HasInstance)
+            if (leaderboard != null)
             {
-                _ = LeaderboardManager.Instance.RefreshFromCloudAsync();
+                _ = leaderboard.RefreshFromCloudAsync();
             }
         }
 

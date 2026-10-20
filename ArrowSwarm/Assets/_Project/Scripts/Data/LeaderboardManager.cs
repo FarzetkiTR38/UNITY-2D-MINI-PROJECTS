@@ -12,7 +12,7 @@ namespace ArrowSwarm.Data
     /// </summary>
     public partial class LeaderboardManager : Singleton<LeaderboardManager>
     {
-        private readonly UnityCloudService _cloudService = new UnityCloudService();
+        private ILeaderboardCloudService _cloudService;
         private List<LeaderboardEntry> _cachedEntries = new List<LeaderboardEntry>();
         private int _cachedPlayerRank = -1;
         private bool _isRefreshing;
@@ -25,6 +25,7 @@ namespace ArrowSwarm.Data
 
         protected override void OnSingletonAwake()
         {
+            _cloudService = CreateCloudService();
             LoadCachedLeaderboard();
             _ = InitializeAndSyncAsync();
         }

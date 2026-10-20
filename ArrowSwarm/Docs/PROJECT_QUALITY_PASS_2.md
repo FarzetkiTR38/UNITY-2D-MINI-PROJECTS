@@ -11,7 +11,7 @@ Preserve working gameplay, all campaigns, artwork and authored styling. Changes 
 - [ ] 2. Make the camera follow actual active touch controls and rebase when fingers change. Reset drag/pinch state after pan-to-pinch-to-release/cancel. Verify real Input System events.
 - [ ] 3. Remove temporary HUD corner arrays from camera pan/smooth-zoom calculations. Confirm exact bounds and native GC.Alloc counts with positive controls.
 - [ ] 4. Restore the existing localization keys in Defense HUD, profile Save/Skip reopening and level-range labels. Language changes refresh text without resetting modal drafts, awards or page selection. Preserve Inspector styling and dictionaries.
-- [ ] 5. Start the leaderboard service on the first real panel opening so cached/global rows can appear. Verify laziness before opening, cached immediate rendering and safe panel lifecycle without live cloud traffic.
+- [x] 5. Start the leaderboard service on the first real panel opening so cached/global rows can appear. Verify laziness before opening, cached immediate rendering and safe panel lifecycle without live cloud traffic.
 - [ ] 6. Preserve pending score synchronization when progress changes before the lazy leaderboard manager exists. Verify initialization consumes the latest score through a deterministic fake service, restoring all real data/preferences.
 - [ ] 7. Run appropriate integration and visual checks, restore original player preferences and BootScene/Edit Mode, compare protected hashes, publish reports and commit the final overview.
 
@@ -30,3 +30,5 @@ Audit complete. Implementation starts with the first unchecked phase. Each phase
 ## Deferred notes
 
 Duplicate ObjectPool release has no demonstrated production trigger; keep deferred. Do not alter gameplay or pool ownership speculatively. Cloud concurrency concerns require a controlled reproducer before expanding the two confirmed leaderboard fixes.
+
+Phase 5 complete: Unity MCP passed 10 actual first-open panel/cache/lifecycle checks using a delayed fake provider. Opening creates one lazy manager, cached rows appear immediately, late refresh does not reveal a closed panel, and reopening reuses it. Exact data/preference/provider restoration passed. Evidence: Captures/QualityPass2/leaderboard-startup-verification.txt.
