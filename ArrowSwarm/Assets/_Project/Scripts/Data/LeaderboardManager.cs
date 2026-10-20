@@ -123,29 +123,20 @@ namespace ArrowSwarm.Data
         /// </summary>
         public async Task<bool> SubmitScoreAsync(int highestLevel, int totalStars)
         {
+            int version = ++_submissionVersion;
             var playerData = DataManager.Instance?.PlayerData;
             string playerName = playerData?.playerName ?? "Player";
             string country = playerData?.playerCountry ?? "TR";
 
             if (!_cloudService.IsOnline())
             {
-                PlayerPrefs.SetInt(PENDING_SYNC_KEY, 1);
-                PlayerPrefs.Save();
+                RecordSubmissionResult(version, false);
                 LogDebug("Saved score locally (Offline). Will sync when online.");
                 return false;
             }
 
             bool success = await _cloudService.SubmitScoreAsync(highestLevel, totalStars, playerName, country);
-            if (success)
-            {
-                PlayerPrefs.SetInt(PENDING_SYNC_KEY, 0);
-                PlayerPrefs.Save();
-            }
-            else
-            {
-                PlayerPrefs.SetInt(PENDING_SYNC_KEY, 1);
-                PlayerPrefs.Save();
-            }
+            RecordSubmissionResult(version, success);
 
             return success;
         }

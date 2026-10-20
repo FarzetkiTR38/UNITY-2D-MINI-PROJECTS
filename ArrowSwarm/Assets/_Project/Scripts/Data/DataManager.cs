@@ -474,6 +474,8 @@ namespace ArrowSwarm.Data
             OnPlayerDataChanged?.Invoke(_playerData);
             if (_autoSaveOnChange)
             {
+                // Persist unsent progress even before the first intentional leaderboard opening.
+                PlayerPrefs.SetInt("ArrowSwarm_PendingCloudSync", 1);
                 Save();
                 if (LeaderboardManager.HasInstance)
                 {
