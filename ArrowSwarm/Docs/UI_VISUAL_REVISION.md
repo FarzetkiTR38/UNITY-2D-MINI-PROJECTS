@@ -17,6 +17,12 @@ Preserve gameplay, campaign data, progress, localization and the existing button
 
 ## Progress
 - [x] Phase 1: repository and Editor baseline inspected; implementation plan recorded.
-- [ ] Phase 2: button alpha correction and MCP evidence.
+- [x] Phase 2: button alpha correction and MCP evidence.
 - [ ] Phase 3: themed transition and MCP evidence.
 - [ ] Phase 4: integration checks and final overview.
+
+## Button result
+- Root cause: `MainMenuTextless.png` has RGB cream padding baked into rectangular sprite slices. Unity's normal pressed tint colored those opaque corners too; `UIButtonFeedback` itself only scales.
+- Five main-menu illustrations now use authored, antialiased rounded artwork masks. Coverage multiplies sampled alpha, so outside padding stays clear and white artwork inside remains intact. Source artwork and existing TMP labels, tint colors and squeeze/bounce settings are unchanged.
+- Unity MCP: 30 actual Input System mouse checks passed across Play, Game Mode, Levels, Leaderboard and Settings (hold scale/tint, exit recovery, outside release, disabled press). Held screenshots inspected; no dark rectangle remains. Console: no errors.
+- Evidence: `Captures/UIVisualRevision/held-*.png`, `pointer-verification.txt`, before/after screenshots.
