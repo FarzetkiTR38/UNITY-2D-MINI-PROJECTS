@@ -1,0 +1,26 @@
+# Project quality pass 3 — lifecycle follow-up
+
+Baseline: `3cc995f`. Previous quality passes are complete. This scheduled continuation starts a narrow audit of newly demonstrated lifecycle defects, preserving gameplay, campaign data, authored styling and all preexisting work.
+
+## Starting state
+
+Unity and its MCP server were closed when the continuation began; the Unity tool namespace was unavailable. Root is starting the same installed Unity6000.3.18f1 project and local MCP10.3.0 bridge. Actual Unity MCP evidence is required before accepting production fixes. If the connection cannot be recovered, retain reproduction plans and report that runtime validation is blocked; do not claim tests passed.
+
+Five font paths showed preexisting modifications at initial status (some may be line-ending/cache changes). Private byte copies and hashes protect this work; never stage, discard or overwrite it. All 364 authored scene/prefab/config/font files are protected against incidental test changes. Original Editor was closed; close the Editor and server started by this pass after verification, preserving the starting file state. Preserve PlayerPrefs values and key existence before Play Mode, and restore after leaving it. No live ads or synthetic cloud requests.
+
+## Phases
+
+- [x] 0. Read earlier completion records, inspect current state, protect existing changes, define this resumable implementation and commit it.
+- [ ] 1. Recover Unity MCP and establish before-fix runtime evidence with isolated Editor fixtures.
+- [ ] 2. Reject canceled ColorShift frame gestures and stale releases across pause/retry. Keep fresh click/swipe controls working; test actual Input System UI events.
+- [ ] 3. Retry pending leaderboard synchronization after an offline first opening and reconnection. Prevent duplicate/infinite refresh-submit loops; use a deterministic fake provider through the actual panel lifecycle.
+- [ ] 4. Preserve explicitly selected language when profile name/country is saved. Verify real UI Save without live cloud activity or losing draft/profile behavior.
+- [ ] 5. Run appropriate integration, restore exact preferences and preexisting file bytes, verify authored hashes and starting Editor/process state, publish evidence and commit the overview.
+
+## Ownership and verification
+
+Root controls MCP and all commits. Runtime agent owns the frame gesture fixture/fix; data agent owns cloud reconnect; UI agent owns profile language. Fixtures first, actual failing old-behavior evidence next, then minimal production changes. Every new script stays under200lines with summaries. Evidence belongs to `Captures/QualityPass3/`; private snapshots remain outside the repository. Keep previous pass reports intact.
+
+## Resume point
+
+Resume the first unchecked phase after checking Git status and bridge availability. Implementation has not started. Confirmed call chains: InputSystemUIInputModule sends pointer-up on canceled touches; FrameSwipeUI currently treats it as rotation and does not tie a held gesture to attempt/pause lifecycle. Offline LeaderboardManager initialization never retries pending sync on later panel refresh. Profile Save unconditionally replaces explicit language with a country-derived choice.
