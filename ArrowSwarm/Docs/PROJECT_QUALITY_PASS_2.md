@@ -56,5 +56,5 @@ Phase 4 commit: 0f17cd1. Phase 7 complete: original Defense101 passed 50 checks;
 | d6fdbf3 | Camera active-finger tracking and gesture release |
 | 4c4c723 | Reusable HUD corner buffer with native allocation proof |
 | 0f17cd1 | Live localization, compact ranges and profile draw order |
-| Integration commit | Defense, 100 puzzle levels, 450 interactions and final restoration evidence |
+| 8c01ab8 | Defense, 100 puzzle levels, 450 interactions and final restoration evidence |
 | Final overview commit | Finished report index and completion record |
