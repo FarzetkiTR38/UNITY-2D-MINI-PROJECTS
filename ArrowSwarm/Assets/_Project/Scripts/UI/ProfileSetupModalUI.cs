@@ -15,7 +15,7 @@ namespace ArrowSwarm.UI
     /// allowing players to choose their Leaderboard username and country.
     /// Features random nickname generator, clean country stepper, and direct Save &amp; Play transition.
     /// </summary>
-    public class ProfileSetupModalUI : MonoBehaviour
+    public partial class ProfileSetupModalUI : MonoBehaviour
     {
         public static ProfileSetupModalUI Instance { get; private set; }
 
@@ -115,10 +115,13 @@ namespace ArrowSwarm.UI
         {
             AutoWireComponents();
             BindButtons();
+            ArrowSwarm.Localization.LocalizationManager.OnLanguageChanged += ApplyLocalization;
+            ApplyLocalization();
         }
 
         private void OnDisable()
         {
+            ArrowSwarm.Localization.LocalizationManager.OnLanguageChanged -= ApplyLocalization;
             UnbindButtons();
         }
 
@@ -197,6 +200,7 @@ namespace ArrowSwarm.UI
             // Do not let its initial hide cancel the requested opening.
             _showRequested = true;
             gameObject.SetActive(true);
+            transform.SetAsLastSibling();
             AutoWireComponents();
             BindButtons();
             ApplyLocalization();
@@ -287,38 +291,6 @@ namespace ArrowSwarm.UI
             _currentCountryIndex++;
             UpdateCountryDisplay();
             if (_nextCountryButton != null) StartCoroutine(PunchTransformRoutine(_nextCountryButton.transform));
-        }
-
-        private void ApplyLocalization()
-        {
-            string lang = DataManager.Instance?.PlayerData?.selectedLanguage ?? "ENGLISH";
-            bool isTr = lang.Equals("TURKISH", StringComparison.OrdinalIgnoreCase);
-
-            if (_titleText != null)
-            {
-                _titleText.text = isTr
-                    ? "<color=#FFE066>PROFİLİNİ OLUŞTUR</color>"
-                    : "<color=#FFE066>CREATE PROFILE</color>";
-            }
-
-            if (_subtitleText != null)
-            {
-                _subtitleText.text = isTr
-                    ? "Lider Tablosunda gözükecek adını ve ülkeni belirle!"
-                    : "Choose your username and country for the Leaderboard!";
-            }
-
-            var saveText = _saveButton?.GetComponentInChildren<TextMeshProUGUI>(true);
-            if (saveText != null)
-            {
-                saveText.text = isTr ? "KAYDET & OYNA" : "SAVE & PLAY";
-            }
-
-            var skipText = _skipButton?.GetComponentInChildren<TextMeshProUGUI>(true);
-            if (skipText != null)
-            {
-                skipText.text = isTr ? "ATLA" : "SKIP";
-            }
         }
 
         private int GetInitialCountryIndex()

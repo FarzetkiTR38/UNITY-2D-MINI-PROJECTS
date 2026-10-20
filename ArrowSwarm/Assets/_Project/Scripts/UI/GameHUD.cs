@@ -127,11 +127,13 @@ namespace ArrowSwarm.UI
             LevelManager.OnArrowCountChanged += UpdateArrowCount;
             LevelManager.OnLevelReady += HandleLevelReady;
             DataManager.OnPlayerDataChanged += HandlePlayerDataChanged;
+            ArrowSwarm.Localization.LocalizationManager.OnLanguageChanged += RefreshLocalizedGameplayLabels;
 
             TipManager.OnTipUsed += HandleTipUsed;
             FreezeManager.OnFreezeStarted += HandleFreezeStarted;
             FreezeManager.OnFreezeTick += HandleFreezeTick;
             FreezeManager.OnFreezeEnded += HandleFreezeEnded;
+            RefreshLocalizedGameplayLabels();
         }
 
         private void OnDisable()
@@ -141,6 +143,7 @@ namespace ArrowSwarm.UI
             LevelManager.OnArrowCountChanged -= UpdateArrowCount;
             LevelManager.OnLevelReady -= HandleLevelReady;
             DataManager.OnPlayerDataChanged -= HandlePlayerDataChanged;
+            ArrowSwarm.Localization.LocalizationManager.OnLanguageChanged -= RefreshLocalizedGameplayLabels;
 
             TipManager.OnTipUsed -= HandleTipUsed;
             FreezeManager.OnFreezeStarted -= HandleFreezeStarted;
@@ -193,10 +196,8 @@ namespace ArrowSwarm.UI
         {
             EnsurePanels();
 
-            if (_levelText != null)
-            {
-                _levelText.text = $"Lv.{levelParams.Level}";
-            }
+            _displayLevel = levelParams.Level;
+            RefreshLocalizedGameplayLabels();
 
             UpdateSkillBadges();
 
@@ -339,9 +340,11 @@ namespace ArrowSwarm.UI
 
         private void UpdateArrowCount(int fired, int total)
         {
+            _displayFired = fired;
+            _displayTotal = total;
             if (_arrowCountText != null)
             {
-                _arrowCountText.text = $"Arrows: {fired}/{total}";
+                RefreshLocalizedGameplayLabels();
                 EnsureFeedbackEffects();
                 _feedbackEffects?.PunchArrowCount();
             }
