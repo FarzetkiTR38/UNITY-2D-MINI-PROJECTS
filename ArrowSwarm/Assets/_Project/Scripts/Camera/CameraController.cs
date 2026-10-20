@@ -320,123 +320,6 @@ namespace ArrowSwarm.Camera
             UpdateZoom();
         }
 
-        private void HandleTouchInput()
-        {
-            var touchscreen = Touchscreen.current;
-            if (touchscreen == null) return;
-
-            int touchCount = touchscreen.touches.Count;
-            int activeTouches = 0;
-            for (int i = 0; i < touchCount; i++)
-            {
-                if (touchscreen.touches[i].press.isPressed) activeTouches++;
-            }
-
-            if (activeTouches == 2)
-            {
-                HandlePinchZoom(touchscreen);
-            }
-            else if (activeTouches == 1 && !_isPinching)
-            {
-                HandleTouchPan(touchscreen);
-            }
-            else
-            {
-                if (_isPanning)
-                {
-                    _isPanning = false;
-                    StartCoroutine(ResetDraggingNextFrame());
-                }
-                _isPinching = false;
-                _isTouchDragValid = false;
-            }
-        }
-
-        private void HandlePinchZoom(Touchscreen touchscreen)
-        {
-            var touch0 = touchscreen.touches[0];
-            var touch1 = touchscreen.touches[1];
-
-            Vector2 pos0 = touch0.position.ReadValue();
-            Vector2 pos1 = touch1.position.ReadValue();
-
-            if (!_isPinching)
-            {
-                if (!IsValidPanStartPosition(pos0, touch0.touchId.ReadValue()) ||
-                    !IsValidPanStartPosition(pos1, touch1.touchId.ReadValue()))
-                {
-                    return;
-                }
-
-                _isPinching = true;
-                _lastPinchDistance = Vector2.Distance(pos0, pos1);
-                _isPanning = false;
-                _isTouchDragValid = false;
-                return;
-            }
-
-            float currentDistance = Vector2.Distance(pos0, pos1);
-            float delta = currentDistance - _lastPinchDistance;
-            _targetOrthoSize -= delta * _zoomSpeed * 0.01f;
-            _targetOrthoSize = Mathf.Clamp(_targetOrthoSize, _minOrthoSize, _maxOrthoSize);
-            _lastPinchDistance = currentDistance;
-        }
-
-        private void HandleTouchPan(Touchscreen touchscreen)
-        {
-            var touch = touchscreen.touches[0];
-            Vector2 touchPos = touch.position.ReadValue();
-            var phase = touch.phase.ReadValue();
-
-            if (phase == UnityEngine.InputSystem.TouchPhase.Began)
-            {
-                _isTouchDragValid = IsValidPanStartPosition(touchPos, touch.touchId.ReadValue());
-                if (!_isTouchDragValid)
-                {
-                    _isPanning = false;
-                    _isDragging = false;
-                    return;
-                }
-
-                _dragStartScreenPos = touchPos;
-                _lastPanPosition = touchPos;
-                _isPanning = false;
-                _isDragging = false;
-                return;
-            }
-
-            if (!_isTouchDragValid) return;
-
-            if (phase == UnityEngine.InputSystem.TouchPhase.Moved || phase == UnityEngine.InputSystem.TouchPhase.Stationary)
-            {
-                float dist = Vector2.Distance(touchPos, _dragStartScreenPos);
-                if (!_isPanning && dist > DragThreshold)
-                {
-                    _isPanning = true;
-                    _isDragging = true;
-                    _lastPanPosition = touchPos;
-                }
-
-                if (_isPanning)
-                {
-                    Vector2 delta = touchPos - _lastPanPosition;
-                    float unitsPerPixel = (Cam.orthographicSize * 2f) / Mathf.Max(1f, Screen.height);
-                    Vector3 worldDelta = new Vector3(-delta.x * unitsPerPixel, -delta.y * unitsPerPixel, 0f);
-                    PanCamera(worldDelta);
-                    _lastPanPosition = touchPos;
-                }
-            }
-            else if (phase == UnityEngine.InputSystem.TouchPhase.Ended || phase == UnityEngine.InputSystem.TouchPhase.Canceled)
-            {
-                _isTouchDragValid = false;
-                if (_isPanning)
-                {
-                    _isPanning = false;
-                    StartCoroutine(ResetDraggingNextFrame());
-                }
-            }
-        }
-
         private void HandleMouseInput()
         {
             var mouse = Mouse.current;
@@ -453,6 +336,7 @@ namespace ArrowSwarm.Camera
             // Left-click or Right-click drag pan
             if (mouse.leftButton.wasPressedThisFrame || mouse.rightButton.wasPressedThisFrame)
             {
+                _gestureVersion++;
                 Vector2 mousePos = mouse.position.ReadValue();
                 _isMouseDragValid = IsValidPanStartPosition(mousePos, -1);
                 if (!_isMouseDragValid)
@@ -501,8 +385,9 @@ namespace ArrowSwarm.Camera
 
         private System.Collections.IEnumerator ResetDraggingNextFrame()
         {
+            int version = _gestureVersion;
             yield return null;
-            _isDragging = false;
+            if (version == _gestureVersion) _isDragging = false;
         }
 
         private void PanCamera(Vector3 worldDelta)

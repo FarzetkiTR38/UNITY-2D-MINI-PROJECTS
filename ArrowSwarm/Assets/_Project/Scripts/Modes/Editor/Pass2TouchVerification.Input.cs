@@ -24,25 +24,28 @@ namespace ArrowSwarm.Modes.Editor
                 Check(blocked != null && legal != null, "Real Defense101 contains visible blocked and legal touch fixtures");
                 Vector2 position = ScreenHead(blocked); int lives = GameManager.Instance.CurrentLives;
                 int fired = LevelManager.Instance.ArrowsFired;
-                devices.Send(1, TouchPhase.Began, position); yield return .06f;
-                devices.Send(1, TouchPhase.Canceled, position); yield return .08f;
+                devices.Send(1, TouchPhase.Began, position); yield return devices.WaitForEvents();
+                Check(ValidDefensePress(), "Defense actually owns the blocked-arrow touch before its OS cancellation");
+                devices.Send(1, TouchPhase.Canceled, position); yield return devices.WaitForEvents();
                 Check(!blocked.IsBlockedAnimating && !blocked.IsMarkedBlocked && GameManager.Instance.CurrentLives == lives &&
                     LevelManager.Instance.ArrowsFired == fired, "Canceled touch never starts a shot or spends a life");
                 Status = "Rejecting a real multi-finger gesture as an arrow tap";
-                devices.Send(2, TouchPhase.Began, position); yield return .06f;
-                devices.Send(3, TouchPhase.Began, position + Vector2.right * 40f); yield return .06f;
-                devices.Send(2, TouchPhase.Ended, position); yield return .06f;
-                devices.Send(3, TouchPhase.Ended, position + Vector2.right * 40f); yield return .08f;
+                devices.Send(2, TouchPhase.Began, position); yield return devices.WaitForEvents();
+                devices.Send(3, TouchPhase.Began, position + Vector2.right * 40f); yield return devices.WaitForEvents();
+                Check(!ValidDefensePress(), "The second real finger invalidates the previously owned Defense press");
+                devices.Send(2, TouchPhase.Ended, position); yield return devices.WaitForEvents();
+                devices.Send(3, TouchPhase.Ended, position + Vector2.right * 40f); yield return devices.WaitForEvents();
                 Check(!blocked.IsBlockedAnimating && !blocked.IsMarkedBlocked && GameManager.Instance.CurrentLives == lives &&
                     LevelManager.Instance.ArrowsFired == fired, "Ending a two-finger gesture never becomes a Defense tap");
-                devices.Send(4, TouchPhase.Began, position); yield return .06f;
-                devices.Send(5, TouchPhase.Began, position + Vector2.right * 40f); yield return .06f;
-                devices.Send(4, TouchPhase.Canceled, position); devices.Send(5, TouchPhase.Canceled, position); yield return .08f;
+                devices.Send(4, TouchPhase.Began, position); yield return devices.WaitForEvents();
+                devices.Send(5, TouchPhase.Began, position + Vector2.right * 40f); yield return devices.WaitForEvents();
+                devices.Send(4, TouchPhase.Canceled, position); devices.Send(5, TouchPhase.Canceled, position); yield return devices.WaitForEvents();
                 Check(GameManager.Instance.CurrentLives == lives && !blocked.IsMarkedBlocked,
                     "Canceling every finger clears gesture ownership without a wrong-click penalty");
                 Status = "Firing a new normal single-finger touch after cancellation";
-                position = ScreenHead(legal); devices.Send(6, TouchPhase.Began, position); yield return .06f;
-                devices.Send(6, TouchPhase.Ended, position); yield return .08f;
+                position = ScreenHead(legal); devices.Send(6, TouchPhase.Began, position); yield return devices.WaitForEvents();
+                Check(ValidDefensePress(), "A fresh legal-arrow touch acquires normal Defense tap ownership");
+                devices.Send(6, TouchPhase.Ended, position); yield return devices.WaitForEvents();
                 Check(legal.IsFired && LevelManager.Instance.ArrowsFired == fired + 1 && GameManager.Instance.CurrentLives == lives,
                     "A fresh single-finger release still fires exactly one legal Defense arrow");
                 Check(Touchscreen.current == devices.Screen, "Production input consumed the synthetic current Touchscreen device");
@@ -68,6 +71,14 @@ namespace ArrowSwarm.Modes.Editor
             var grid = GridManager.Instance;
             Vector2 world = grid.Origin + (Vector2)arrow.HeadPoint * grid.PointSpacing;
             return ArrowSwarm.Camera.CameraController.Instance.GetComponent<UnityEngine.Camera>().WorldToScreenPoint(world);
+        }
+
+        private static bool ValidDefensePress()
+        {
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var input = InputManager.Instance;
+            return (bool)typeof(InputManager).GetField("_isPointerDown", flags).GetValue(input) &&
+                (bool)typeof(InputManager).GetField("_isGameplayPressValid", flags).GetValue(input);
         }
     }
 }

@@ -1,10 +1,25 @@
 PASS: touch-input-verification with real Input System events
 PASS: Real Defense101 contains visible blocked and legal touch fixtures
+INPUT ACK: 1 actual touch events; playerFrame=1084, afterUpdates=15, lastAfterUpdateFrame=1084, lastUpdateType=Dynamic, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: Defense actually owns the blocked-arrow touch before its OS cancellation
+INPUT ACK: 1 actual touch events; playerFrame=1087, afterUpdates=18, lastAfterUpdateFrame=1087, lastUpdateType=Dynamic, updateMode=ProcessEventsInDynamicUpdate, pending=1
 PASS: Canceled touch never starts a shot or spends a life
+INPUT ACK: 1 actual touch events; playerFrame=1090, afterUpdates=21, lastAfterUpdateFrame=1090, lastUpdateType=Dynamic, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=1093, afterUpdates=24, lastAfterUpdateFrame=1093, lastUpdateType=Dynamic, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: The second real finger invalidates the previously owned Defense press
+INPUT ACK: 1 actual touch events; playerFrame=1096, afterUpdates=27, lastAfterUpdateFrame=1096, lastUpdateType=Dynamic, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=1099, afterUpdates=30, lastAfterUpdateFrame=1099, lastUpdateType=Dynamic, updateMode=ProcessEventsInDynamicUpdate, pending=1
 PASS: Ending a two-finger gesture never becomes a Defense tap
+INPUT ACK: 1 actual touch events; playerFrame=1102, afterUpdates=33, lastAfterUpdateFrame=1102, lastUpdateType=Dynamic, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=1105, afterUpdates=36, lastAfterUpdateFrame=1105, lastUpdateType=Dynamic, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 2 actual touch events; playerFrame=1108, afterUpdates=39, lastAfterUpdateFrame=1108, lastUpdateType=Dynamic, updateMode=ProcessEventsInDynamicUpdate, pending=2
 PASS: Canceling every finger clears gesture ownership without a wrong-click penalty
+INPUT ACK: 1 actual touch events; playerFrame=1111, afterUpdates=42, lastAfterUpdateFrame=1111, lastUpdateType=Dynamic, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: A fresh legal-arrow touch acquires normal Defense tap ownership
+INPUT ACK: 1 actual touch events; playerFrame=1114, afterUpdates=45, lastAfterUpdateFrame=1114, lastUpdateType=Dynamic, updateMode=ProcessEventsInDynamicUpdate, pending=1
 PASS: A fresh single-finger release still fires exactly one legal Defense arrow
 PASS: Production input consumed the synthetic current Touchscreen device
+INPUT FINAL: playerFrame=1114, afterUpdates=45, lastAfterUpdateFrame=1114, lastUpdateType=Dynamic, updateMode=ProcessEventsInDynamicUpdate, pending=0
 PASS: Original camera pose/enabled state, input devices and Input System settings restored
 PASS: Original GameConfig remained unchanged
 PASS: Player progress, skills, stars and settings remained unchanged
