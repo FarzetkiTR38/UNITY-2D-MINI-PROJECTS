@@ -37,10 +37,6 @@ namespace ArrowSwarm.Data
                 bool initialized = await _cloudService.EnsureInitializedAsync();
                 if (initialized)
                 {
-                    if (PlayerPrefs.GetInt(PENDING_SYNC_KEY, 0) == 1)
-                    {
-                        await SyncCurrentPlayerDataAsync();
-                    }
                     await RefreshFromCloudAsync();
                 }
             }
@@ -85,37 +81,7 @@ namespace ArrowSwarm.Data
         /// <summary>
         /// Asynchronously refreshes the leaderboard from UGS Cloud.
         /// </summary>
-        public async Task<List<LeaderboardEntry>> RefreshFromCloudAsync(int count = 10)
-        {
-            if (_isRefreshing) return GetTopPlayers(count);
-            _isRefreshing = true;
-
-            try
-            {
-                if (_cloudService.IsOnline())
-                {
-                    List<LeaderboardEntry> cloudScores = await _cloudService.FetchTopScoresAsync(count);
-                    if (cloudScores != null && cloudScores.Count > 0)
-                    {
-                        _cachedEntries = cloudScores;
-                        SaveCachedLeaderboard();
-                    }
-
-                    _cachedPlayerRank = await _cloudService.FetchPlayerRankAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogWarning($"[ArrowSwarm] Leaderboard cloud refresh failed: {ex.Message}");
-            }
-            finally
-            {
-                _isRefreshing = false;
-                OnLeaderboardUpdated?.Invoke();
-            }
-
-            return GetTopPlayers(count);
-        }
+        public Task<List<LeaderboardEntry>> RefreshFromCloudAsync(int count = 10) => RefreshCoreAsync(count, true);
 
         /// <summary>
         /// Submits the current player's highest level and stars to UGS.
@@ -156,20 +122,8 @@ namespace ArrowSwarm.Data
         /// </summary>
         public async Task SyncCurrentPlayerDataAsync()
         {
-            var playerData = DataManager.Instance?.PlayerData;
-            if (playerData == null) return;
-
-            if (_cloudService.IsOnline())
-            {
-                await _cloudService.UpdatePlayerNameAsync(playerData.playerName);
-                await SubmitScoreAsync(playerData.highestLevel, playerData.GetTotalStars());
-                await RefreshFromCloudAsync();
-            }
-            else
-            {
-                PlayerPrefs.SetInt(PENDING_SYNC_KEY, 1);
-                PlayerPrefs.Save();
-            }
+            await SynchronizeCurrentWithoutRefreshAsync();
+            await RefreshCoreAsync(10, false);
         }
 
         /// <summary>
