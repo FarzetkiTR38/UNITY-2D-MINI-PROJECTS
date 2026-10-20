@@ -34,7 +34,7 @@ namespace ArrowSwarm.Modes.Editor
                 throw new InvalidOperationException("Enter Play Mode with normal game managers first.");
             Snapshot(); _running = true; _restored = _exiting = false; _condition = null; _until = 0;
             _checks = checks; _report = "Captures/QualityPass2/" + report;
-            _deadline = EditorApplication.timeSinceStartup + 120; Results.Clear(); Steps.Clear(); Steps.Push(Run());
+            _deadline = EditorApplication.timeSinceStartup + 180; Results.Clear(); Steps.Clear(); Steps.Push(Run());
             Status = "Loading real Defense101"; EditorApplication.update += Tick;
             EditorApplication.playModeStateChanged += ModeChanged; AssemblyReloadEvents.beforeAssemblyReload += BeforeReload;
         }
@@ -49,7 +49,8 @@ namespace ArrowSwarm.Modes.Editor
                 LevelManager.HasInstance && LevelManager.Instance.CurrentLevelData.IsValid &&
                 LevelManager.Instance.CurrentParams.Level == 101 && GameManager.Instance.CurrentState == GameState.Playing &&
                 (!SceneTransitionManager.HasInstance || !SceneTransitionManager.Instance.IsTransitioning));
-            yield return .6f;
+            float inputReadyTime = Time.unscaledTime + .6f;
+            yield return (Func<bool>)(() => Time.unscaledTime >= inputReadyTime);
             ArrowSwarm.Mob.MobSpawner.Instance.StopSpawning(); ArrowSwarm.Mob.MobSpawner.Instance.ClearAllMobs();
             yield return _checks();
             Check(JsonUtility.ToJson(GameManager.Instance.Config) == _savedConfig, "Original GameConfig remained unchanged");

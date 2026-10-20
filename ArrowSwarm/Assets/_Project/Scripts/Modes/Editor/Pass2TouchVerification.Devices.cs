@@ -2,6 +2,7 @@ namespace ArrowSwarm.Modes.Editor
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections;
     using System.Reflection;
     using UnityEngine;
     using UnityEngine.InputSystem;
@@ -17,6 +18,39 @@ namespace ArrowSwarm.Modes.Editor
             private readonly Touchscreen _previousTouch;
             private readonly Mouse _mouse, _previousMouse;
             private readonly InputSettings _originalSettings, _temporarySettings;
+            private readonly List<ExpectedTouch> _pending = new List<ExpectedTouch>();
+            private int _updates, _lastUpdateFrame = -1;
+            private InputUpdateType _lastUpdateType;
+            private readonly ObservedTouch[] _gameTouches;
+            private int _lastGameFrame = -1, _lastGameDevice = -1;
+
+            /// <summary>Copies the actual game-update state before Unity switches to its separate Editor input buffer.</summary>
+            internal readonly struct ObservedTouch
+            {
+                internal readonly int Id;
+                internal readonly TouchPhase Phase;
+                internal readonly Vector2 Position;
+                internal readonly bool Pressed;
+
+                internal ObservedTouch(UnityEngine.InputSystem.Controls.TouchControl touch)
+                { Id = touch.touchId.ReadValue(); Phase = touch.phase.ReadValue(); Position = touch.position.ReadValue(); Pressed = touch.press.isPressed; }
+            }
+
+            internal int SlotCount => _gameTouches.Length;
+            internal ObservedTouch Slot(int index) => _gameTouches[index];
+
+            private struct ExpectedTouch
+            {
+                internal int Id, AckFrame;
+                internal TouchPhase Phase;
+                internal Vector2 Position;
+                internal bool Acknowledged;
+            }
+
+            internal string Diagnostics => "playerFrame=" + Time.frameCount + ", afterUpdates=" + _updates +
+                ", lastAfterUpdateFrame=" + _lastUpdateFrame + ", lastUpdateType=" + _lastUpdateType +
+                ", lastGameFrame=" + _lastGameFrame + ", lastGameCurrentDevice=" + _lastGameDevice +
+                ", updateMode=" + InputSystem.settings.updateMode + ", pending=" + _pending.Count;
 
             internal Devices()
             {
@@ -29,13 +63,54 @@ namespace ArrowSwarm.Modes.Editor
                 _mouse = InputSystem.AddDevice<Mouse>("QualityPass2Mouse");
                 InputSystem.QueueStateEvent(_mouse, new MouseState { position = new Vector2(UnityEngine.Screen.width * .5f, UnityEngine.Screen.height * .5f) });
                 Screen = InputSystem.AddDevice<Touchscreen>("QualityPass2Touchscreen");
+                _gameTouches = new ObservedTouch[Screen.touches.Count];
+                InputSystem.onAfterUpdate += AfterInputUpdate;
             }
 
-            internal void Send(int id, TouchPhase phase, Vector2 position) => InputSystem.QueueStateEvent(Screen,
-                new TouchState { touchId = id, phase = phase, position = position, pressure = phase == TouchPhase.Ended || phase == TouchPhase.Canceled ? 0f : 1f });
+            internal void Send(int id, TouchPhase phase, Vector2 position)
+            {
+                _pending.Add(new ExpectedTouch { Id = id, Phase = phase, Position = position, AckFrame = -1 });
+                InputSystem.QueueStateEvent(Screen, new TouchState { touchId = id, phase = phase, position = position,
+                    pressure = phase == TouchPhase.Ended || phase == TouchPhase.Canceled ? 0f : 1f });
+            }
+
+            internal IEnumerator WaitForEvents()
+            {
+                yield return (Func<bool>)(() =>
+                {
+                    foreach (var item in _pending)
+                        if (!item.Acknowledged || Time.frameCount <= item.AckFrame + 1) return false;
+                    return true;
+                });
+                Results.Add("INPUT ACK: " + _pending.Count + " actual touch events; " + Diagnostics);
+                _pending.Clear();
+            }
+
+            private void AfterInputUpdate()
+            {
+                _updates++; _lastUpdateFrame = Time.frameCount; _lastUpdateType = InputState.currentUpdateType;
+                if (_lastUpdateType == InputUpdateType.Editor) return;
+                _lastGameFrame = Time.frameCount; _lastGameDevice = Touchscreen.current != null ? Touchscreen.current.deviceId : -1;
+                for (int index = 0; index < Screen.touches.Count; index++) _gameTouches[index] = new ObservedTouch(Screen.touches[index]);
+                for (int index = 0; index < _pending.Count; index++)
+                {
+                    var expected = _pending[index];
+                    if (expected.Acknowledged) continue;
+                    foreach (var touch in _gameTouches)
+                    {
+                        if (touch.Id != expected.Id || touch.Phase != expected.Phase ||
+                            (touch.Position - expected.Position).sqrMagnitude > .001f) continue;
+                        expected.Acknowledged = true; expected.AckFrame = Time.frameCount; _pending[index] = expected; break;
+                    }
+                }
+            }
 
             public void Dispose()
             {
+                Results.Add("INPUT FINAL: " + Diagnostics);
+                foreach (var item in _pending)
+                    Results.Add("PENDING: id=" + item.Id + ", phase=" + item.Phase + ", acknowledged=" + item.Acknowledged + ", ackFrame=" + item.AckFrame);
+                InputSystem.onAfterUpdate -= AfterInputUpdate;
                 if (Screen != null && Screen.added) InputSystem.RemoveDevice(Screen);
                 if (_mouse != null && _mouse.added) InputSystem.RemoveDevice(_mouse);
                 InputSystem.settings = _originalSettings;
