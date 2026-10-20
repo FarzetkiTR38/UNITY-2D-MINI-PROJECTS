@@ -1,0 +1,12 @@
+FAIL: offline-first leaderboard reconnect
+PASS: fresh main menu leaves the leaderboard lazy until the real panel opens
+PASS: offline first opening creates exactly one manager using only the scoped fake provider
+PASS: offline startup performs no provider initialization, fetch or upload
+PASS: real offline progress changes remain pending without provider uploads
+PASS: latest fixture includes independent puzzle stars in the shared score
+PASS: online reopening reuses the existing offline-created manager
+PASS: online reopening reaches the actual refresh path and obtains provider rows
+FAIL: online reopening submits the pending latest progress exactly once
+FAIL: online reopening submits the pending latest progress exactly once
+PASS: original data object, auto-save and all five data-service preferences restored
+PASS: temporary fake singleton removed and exact original provider factory restored

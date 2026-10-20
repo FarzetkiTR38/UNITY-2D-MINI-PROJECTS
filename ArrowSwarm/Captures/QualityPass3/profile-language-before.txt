@@ -1,0 +1,12 @@
+FAIL: en: profile Save preserves the explicitly selected live language
+PASS: Offline fake factory is installed before any leaderboard manager exists
+PASS: en: fixture establishes a genuine explicit saved language choice
+PASS: en: actual profile shows the requested country independently of its language
+OBSERVED: explicit=en; country=TR; live=tr; preference=tr; data=tr; editedNameSaved=True
+PASS: en: actual Save uses the scoped offline manager and never starts auth, rows or score traffic
+PASS: en: actual Save stores the new name and country and closes normally
+FAIL: en: profile Save preserves the explicitly selected live language
+PASS: original data object, auto-save and all five data-service preferences restored
+PASS: Exact original live language restored after success or expected regression failure
+PASS: Temporary offline manager removed and exact original provider factory restored
+PASS: Original profile visibility and draft restored
