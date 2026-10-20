@@ -7,7 +7,7 @@ Preserve working gameplay, all campaigns, artwork and authored styling. Changes 
 ## Phases
 
 - [x] 0. Review previous work and project rules, establish a clean baseline, audit new areas and protect authored assets. Commit this continuation plan.
-- [ ] 1. Correct Defense touch cancellation and multi-touch tap ownership. A canceled OS touch must never fire an arrow or lose a life; fresh single-finger taps still work.
+- [x] 1. Correct Defense touch cancellation and multi-touch tap ownership. A canceled OS touch must never fire an arrow or lose a life; fresh single-finger taps still work.
 - [ ] 2. Make the camera follow actual active touch controls and rebase when fingers change. Reset drag/pinch state after pan-to-pinch-to-release/cancel. Verify real Input System events.
 - [ ] 3. Remove temporary HUD corner arrays from camera pan/smooth-zoom calculations. Confirm exact bounds and native GC.Alloc counts with positive controls.
 - [ ] 4. Restore the existing localization keys in Defense HUD, profile Save/Skip reopening and level-range labels. Language changes refresh text without resetting modal drafts, awards or page selection. Preserve Inspector styling and dictionaries.
@@ -32,3 +32,5 @@ Audit complete. Implementation starts with the first unchecked phase. Each phase
 Duplicate ObjectPool release has no demonstrated production trigger; keep deferred. Do not alter gameplay or pool ownership speculatively. Cloud concurrency concerns require a controlled reproducer before expanding the two confirmed leaderboard fixes.
 
 Phase 5 complete: Unity MCP passed 10 actual first-open panel/cache/lifecycle checks using a delayed fake provider. Opening creates one lazy manager, cached rows appear immediately, late refresh does not reveal a closed panel, and reopening reuses it. Exact data/preference/provider restoration passed. Evidence: Captures/QualityPass2/leaderboard-startup-verification.txt.
+
+Phase 5 commit: 896fbef. Phase 1 complete: real queued Input System touches in Defense101 proved canceled touch causes no shot/life loss, two-finger release cannot become a tap, canceled gestures clear ownership, and a fresh single-finger release fires exactly one legal arrow. Original devices, settings, camera, player and preferences restored. Evidence: Captures/QualityPass2/touch-input-verification.txt. Controlled old score method also reproduced pending-loss race; before report retained for phase 6.
