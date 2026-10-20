@@ -12,7 +12,7 @@ namespace ArrowSwarm.UI
     /// Displays 20 levels per page, starts at the highest reached level's page,
     /// and lets players jump into any unlocked level.
     /// </summary>
-    public class LevelSelectUI : MonoBehaviour
+    public partial class LevelSelectUI : MonoBehaviour
     {
         public const int LEVELS_PER_PAGE = 20;
 
@@ -45,6 +45,7 @@ namespace ArrowSwarm.UI
 
         private void OnEnable()
         {
+            ArrowSwarm.Localization.LocalizationManager.OnLanguageChanged += RefreshPageLabel;
             AutoWire();
             UpdatePageToHighest();
         }
@@ -56,6 +57,7 @@ namespace ArrowSwarm.UI
             _nextPageButton?.onClick.AddListener(NextPage);
         }
 
+        /// <summary>Discovers authored controls without replacing their styling.</summary>
         public void AutoWire()
         {
             if (_canvasGroup == null) _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
@@ -79,6 +81,7 @@ namespace ArrowSwarm.UI
             UpdatePage();
         }
 
+        /// <summary>Moves back one unlocked page.</summary>
         public void PrevPage()
         {
             if (_currentPage > 1)
@@ -88,6 +91,7 @@ namespace ArrowSwarm.UI
             }
         }
 
+        /// <summary>Moves forward one unlocked page.</summary>
         public void NextPage()
         {
             int highestLevel = SelectedHighest;
@@ -113,12 +117,8 @@ namespace ArrowSwarm.UI
             if (_nextPageButton != null) _nextPageButton.interactable = _currentPage < maxPage;
 
             int startLevel = (_currentPage - 1) * LEVELS_PER_PAGE + 1;
-            int endLevel = Mathf.Min(_currentPage * LEVELS_PER_PAGE, CampaignCount);
 
-            if (_pageText != null)
-            {
-                _pageText.text = $"Levels {startLevel} - {endLevel}";
-            }
+            RefreshPageLabel();
 
             // Collect existing child buttons in container if pool is empty
             if (_buttonPool.Count == 0)
