@@ -35,7 +35,7 @@ namespace ArrowSwarm.Core
     /// Fully configurable via Inspector on CoreManagers or runtime script.
     /// </summary>
     [DisallowMultipleComponent]
-    public class SceneTransitionManager : Singleton<SceneTransitionManager>
+    public partial class SceneTransitionManager : Singleton<SceneTransitionManager>
     {
 
         [Header("--- Transition Style & Preset ---")]
@@ -158,7 +158,7 @@ namespace ArrowSwarm.Core
         {
             if (_customMaterialOverride != null)
             {
-                return _customMaterialOverride;
+                return GetOverrideMaterial();
             }
 
             if (_materialCache.TryGetValue(style, out Material cached) && cached != null)
