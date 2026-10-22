@@ -18,6 +18,9 @@ namespace ArrowSwarm.UI.Editor
         private static double _deadline;
         private static readonly List<string> Results = new List<string>();
         private static int _failures;
+        private static bool _acknowledged, _expectedPressed;
+        private static int _ackFrame;
+        private static Vector2 _expectedPosition;
         /// <summary>Current verification result.</summary>
         public static string Status { get; private set; } = "Idle";
 
@@ -38,11 +41,19 @@ namespace ArrowSwarm.UI.Editor
             var originalSettings = InputSystem.settings;
             var settings = UnityEngine.Object.Instantiate(originalSettings);
             var previous = Mouse.current;
-            var mouse = InputSystem.AddDevice<Mouse>("MenuVisualVerificationMouse");
             bool background = Application.runInBackground;
             settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
             settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
             settings.hideFlags = HideFlags.HideAndDontSave; InputSystem.settings = settings; Application.runInBackground = true;
+            var mouse = InputSystem.AddDevice<Mouse>("MenuVisualVerificationMouse");
+            InputSystem.EnableDevice(mouse);
+            Action observeInput = () =>
+            {
+                if (InputState.currentUpdateType == InputUpdateType.Editor || _acknowledged) return;
+                if (mouse.leftButton.isPressed != _expectedPressed || (mouse.position.ReadValue()-_expectedPosition).sqrMagnitude > .001f) return;
+                _acknowledged = true; _ackFrame = Time.frameCount;
+            };
+            InputSystem.onAfterUpdate += observeInput;
             Directory.CreateDirectory("Captures/UIVisualRevision");
             try
             {
@@ -54,8 +65,9 @@ namespace ArrowSwarm.UI.Editor
                     Status = "Holding " + name;
                     var feedback = button.GetComponent<UIButtonFeedback>(); bool breath = feedback.EnableIdleBreath;
                     bool interactable = button.interactable; feedback.EnableIdleBreath = false;
-                    Vector3 baseline = button.transform.localScale;
-                    if (name == "PlayButton") baseline = Vector3.one;
+                    Vector3 baseline = (Vector3)typeof(UIButtonFeedback).GetField("_baseScale",
+                        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(feedback);
+                    button.transform.localScale = baseline;
                     int clicks = 0; UnityEngine.Events.UnityAction observe = () => clicks++;
                     button.onClick.AddListener(observe);
                     try
@@ -66,9 +78,10 @@ namespace ArrowSwarm.UI.Editor
                         Send(mouse,center,true); yield return Settled();
                         Check(button.transform.localScale.x < baseline.x * .99f, name + " shrinks on actual hold");
                         Check(button.image.canvasRenderer.GetColor().r < .95f, name + " visible artwork receives pressed tint");
-                        string shot = "Captures/UIVisualRevision/held-" + name + ".png";
+                        string shot = "Captures/UIVisualRevision/held-" + name + "-" + DateTime.UtcNow.Ticks + ".png";
                         ScreenCapture.CaptureScreenshot(shot); int frame = Time.frameCount;
                         yield return (Func<bool>)(() => Time.frameCount > frame+2 && File.Exists(shot) && new FileInfo(shot).Length > 0);
+                        Results.Add("CAPTURE: " + shot);
                         Send(mouse,new Vector2(2,2),true); yield return Settled();
                         Check(Mathf.Abs(button.transform.localScale.x-baseline.x) < .002f, name + " restores after pointer exits while held");
                         Send(mouse,new Vector2(2,2),false); yield return Settled();
@@ -85,6 +98,7 @@ namespace ArrowSwarm.UI.Editor
             }
             finally
             {
+                InputSystem.onAfterUpdate -= observeInput;
                 if (mouse.added) InputSystem.RemoveDevice(mouse);
                 InputSystem.settings = originalSettings; UnityEngine.Object.DestroyImmediate(settings);
                 if (previous != null && previous.added) previous.MakeCurrent();
@@ -93,9 +107,12 @@ namespace ArrowSwarm.UI.Editor
         }
 
         private static void Send(Mouse mouse, Vector2 position, bool pressed)
-        { InputSystem.QueueStateEvent(mouse,new MouseState { position = position, buttons = (ushort)(pressed ? 1 : 0) }); }
+        {
+            _acknowledged = false; _expectedPressed = pressed; _expectedPosition = position;
+            InputSystem.QueueStateEvent(mouse,new MouseState { position = position, buttons = (ushort)(pressed ? 1 : 0) });
+        }
         private static Func<bool> Settled()
-        { float until = Time.unscaledTime+.28f; int frame=Time.frameCount; return () => Time.unscaledTime > until && Time.frameCount > frame+2; }
+        { float until = Time.unscaledTime+.28f; return () => _acknowledged && Time.unscaledTime > until && Time.frameCount > _ackFrame+2; }
         private static void Check(bool condition, string label)
         { Results.Add((condition ? "PASS: " : "FAIL: ")+label); if (!condition) _failures++; }
         private static void Tick()
@@ -103,6 +120,7 @@ namespace ArrowSwarm.UI.Editor
             try
             {
                 if (!Application.isPlaying || EditorApplication.timeSinceStartup > _deadline) throw new Exception("Timeout or Play Mode ended: "+Status);
+                EditorApplication.QueuePlayerLoopUpdate();
                 if (_wait != null) { if (!_wait()) return; _wait=null; }
                 if (!_steps.MoveNext()) { Finish((_failures==0 ? "PASS" : "FAIL")+": actual menu mouse feedback, failures="+_failures); return; }
                 _wait = _steps.Current as Func<bool>;
