@@ -45,7 +45,10 @@ namespace ArrowSwarm.UI.Editor
                 var modal=root.Find("GameModeOverlay/ModalDesign");
                 Bind(modal.Find("ModalFrame").GetComponent<Graphic>(),DarkThemeMaterials.Surface,true,Color.white);
                 Bind(modal.Find("Title").GetComponent<Graphic>(),null,false,Hex("F0F6FF"));
-                Bind(modal.Find("Close").GetComponent<Graphic>(),DarkThemeMaterials.Control,true,Color.white);
+                var close=Material("DarkCloseArtwork","ArrowSwarm/UI/ButtonArtwork");
+                close.SetVector("_Bounds",new Vector4(.06f,.06f,.95f,.95f));
+                close.SetVector("_Corner",new Vector4(.19f,.19f,0,0));close.SetFloat("_SurfaceStrength",0);
+                EditorUtility.SetDirty(close);Bind(modal.Find("Close").GetComponent<Graphic>(),close,true,Color.white);
                 foreach(string mode in new[]{"Defense","Shapes","ColorShift"})
                 {
                     var card=modal.Find(mode+"Card");

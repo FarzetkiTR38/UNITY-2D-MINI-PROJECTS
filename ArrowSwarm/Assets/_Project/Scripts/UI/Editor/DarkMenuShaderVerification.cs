@@ -55,6 +55,20 @@ namespace ArrowSwarm.UI.Editor
                     }
                 }
                 VerifyBackdrop(renderer);
+                var closeSprite=AssetDatabase.LoadAssetAtPath<Sprite>(Sprites+"Close.asset");
+                using(var close=new TemporaryMaterial(AssetDatabase.LoadAssetAtPath<Material>(Folder+"DarkCloseArtwork.mat")))
+                {
+                    var normal=renderer.Render(close.Value,closeSprite.texture,DataUtility.GetOuterUV(closeSprite),Color.white,128,128);
+                    var held=renderer.Render(close.Value,closeSprite.texture,DataUtility.GetOuterUV(closeSprite),new Color(.72f,.8f,.93f,1),128,128);
+                    Check(Clear(normal)&&Clear(held),"Mode close button removes baked white corner padding in Dark and held states");
+                    using(var original=new TemporaryMaterial(Shader.Find("ArrowSwarm/UI/ButtonArtwork")))
+                    {
+                        original.Value.SetVector("_Bounds",new Vector4(0,0,1,1));original.Value.SetVector("_Corner",new Vector4(.001f,.001f,0,0));
+                        var source=renderer.Render(original.Value,closeSprite.texture,DataUtility.GetOuterUV(closeSprite),Color.white,128,128);
+                        Check(Mathf.Abs(normal.At(.5f,.5f).a-source.At(.5f,.5f).a)<.01f&&normal.At(.5f,.5f).a>.5f,"Mode close retains the source cross alpha inside its rounded plaque");
+                    }
+                    Check(Lum(held.At(.5f,.5f))<Lum(normal.At(.5f,.5f)),"Mode close preserves held feedback inside its plaque");
+                }
             }
             string summary=(_failed==0?"PASS":"FAIL")+": "+Results.Count+" real GPU theme checks; failures="+_failed;
             Directory.CreateDirectory(output);File.WriteAllText(Path.Combine(output,"dark-menu-gpu.txt"),summary+"\n"+string.Join("\n",Results));
@@ -87,11 +101,14 @@ namespace ArrowSwarm.UI.Editor
         private static bool Clear(ShaderPixelFrame f)=>f.At(.01f,.01f).a<.01f&&f.At(.99f,.99f).a<.01f;
         private static float Lum(Color c)=>c.r*.2126f+c.g*.7152f+c.b*.0722f;
         private static void Check(bool value,string message){Results.Add((value?"PASS: ":"FAIL: ")+message);if(!value)_failed++;}
+        /// <summary>Owns a test-only clone without modifying authored material assets.</summary>
         private sealed class TemporaryMaterial:IDisposable
         {
             internal readonly Material Value;
-            internal TemporaryMaterial(Material source){Value=new Material(source){hideFlags=HideFlags.HideAndDontSave};}
-            internal TemporaryMaterial(Shader shader){Value=new Material(shader){hideFlags=HideFlags.HideAndDontSave};}
+            internal TemporaryMaterial(Material source){Value=new Material(source){hideFlags=HideFlags.HideAndDontSave};Prepare();}
+            internal TemporaryMaterial(Shader shader){Value=new Material(shader){hideFlags=HideFlags.HideAndDontSave};Prepare();}
+            private void Prepare(){Value.SetColor("_Color",Color.white);Value.SetVector("_TextureSampleAdd",Vector4.zero);}
+            /// <summary>Destroys the temporary material after GPU readback.</summary>
             public void Dispose(){UnityEngine.Object.DestroyImmediate(Value);}
         }
     }
