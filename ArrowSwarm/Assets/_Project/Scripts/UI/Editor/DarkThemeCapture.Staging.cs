@@ -108,6 +108,7 @@ namespace ArrowSwarm.UI.Editor
                 }
                 report.Add("PASS: "+label+" restores "+checkedCount+" authored graphic materials/sprites/colors after Dark");
             }
+            /// <summary>Records one original Graphic without owning its scene object.</summary>
             private sealed class Entry
             {
                 internal readonly Graphic Graphic;internal readonly Material Material;internal readonly Color Color;internal readonly Sprite Sprite;

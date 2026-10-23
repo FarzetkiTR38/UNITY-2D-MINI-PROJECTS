@@ -47,7 +47,9 @@ namespace ArrowSwarm.UI.Editor
         private static void StartCapture(string folder)
         {
             if (_running || !Application.isPlaying || SceneManager.GetActiveScene().name != "MainMenuScene" ||
-                SceneTransitionManager.Instance.IsTransitioning) throw new InvalidOperationException("Start once in idle MainMenuScene Play Mode.");
+                !SceneTransitionManager.HasInstance || SceneTransitionManager.Instance.IsTransitioning ||
+                typeof(SceneTransitionManager).GetField("_customMaterialOverride",Flags).GetValue(SceneTransitionManager.Instance)==null)
+                throw new InvalidOperationException("Start once in the idle main menu reached through BootScene.");
             _folder = folder; Directory.CreateDirectory(folder); Results.Clear(); Steps.Clear(); _wait = null;
             _scope = new Scope(); _running = true; _deadline = EditorApplication.timeSinceStartup+420;
             Steps.Push(Run()); Status="Capturing paired themes"; EditorApplication.update+=Tick;
