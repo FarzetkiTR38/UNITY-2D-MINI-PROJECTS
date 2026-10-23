@@ -12,7 +12,7 @@ namespace ArrowSwarm.UI
     /// Manages the in-game HUD: level display, lives (hearts),
     /// arrow counter, active skills (Tips &amp; Freeze), and pause menu.
     /// </summary>
-    public class GameHUD : MonoBehaviour
+    public partial class GameHUD : MonoBehaviour
     {
         [Header("Top Bar")]
         [SerializeField] private RectTransform _topPanelRect;
@@ -127,11 +127,13 @@ namespace ArrowSwarm.UI
             LevelManager.OnArrowCountChanged += UpdateArrowCount;
             LevelManager.OnLevelReady += HandleLevelReady;
             DataManager.OnPlayerDataChanged += HandlePlayerDataChanged;
+            ArrowSwarm.Localization.LocalizationManager.OnLanguageChanged += RefreshLocalizedGameplayLabels;
 
             TipManager.OnTipUsed += HandleTipUsed;
             FreezeManager.OnFreezeStarted += HandleFreezeStarted;
             FreezeManager.OnFreezeTick += HandleFreezeTick;
             FreezeManager.OnFreezeEnded += HandleFreezeEnded;
+            RefreshLocalizedGameplayLabels();
         }
 
         private void OnDisable()
@@ -141,6 +143,7 @@ namespace ArrowSwarm.UI
             LevelManager.OnArrowCountChanged -= UpdateArrowCount;
             LevelManager.OnLevelReady -= HandleLevelReady;
             DataManager.OnPlayerDataChanged -= HandlePlayerDataChanged;
+            ArrowSwarm.Localization.LocalizationManager.OnLanguageChanged -= RefreshLocalizedGameplayLabels;
 
             TipManager.OnTipUsed -= HandleTipUsed;
             FreezeManager.OnFreezeStarted -= HandleFreezeStarted;
@@ -193,10 +196,8 @@ namespace ArrowSwarm.UI
         {
             EnsurePanels();
 
-            if (_levelText != null)
-            {
-                _levelText.text = $"Lv.{levelParams.Level}";
-            }
+            _displayLevel = levelParams.Level;
+            RefreshLocalizedGameplayLabels();
 
             UpdateSkillBadges();
 
@@ -339,9 +340,11 @@ namespace ArrowSwarm.UI
 
         private void UpdateArrowCount(int fired, int total)
         {
+            _displayFired = fired;
+            _displayTotal = total;
             if (_arrowCountText != null)
             {
-                _arrowCountText.text = $"Arrows: {fired}/{total}";
+                RefreshLocalizedGameplayLabels();
                 EnsureFeedbackEffects();
                 _feedbackEffects?.PunchArrowCount();
             }
@@ -388,19 +391,7 @@ namespace ArrowSwarm.UI
                 TipManager.Instance?.UseTip();
                 UpdateSkillBadges();
             }
-            else
-            {
-                // Request rewarded ad via AdManager
-                ArrowSwarm.Ads.AdManager.Instance?.ShowRewardedAd(rewardGranted =>
-                {
-                    if (rewardGranted)
-                    {
-                        DataManager.Instance?.ModifyTipCount(1);
-                        TipManager.Instance?.UseTip();
-                        UpdateSkillBadges();
-                    }
-                });
-            }
+            else RequestSkillReward(false);
         }
 
         private void OnFreezeClicked()
@@ -411,19 +402,7 @@ namespace ArrowSwarm.UI
                 FreezeManager.Instance?.UseFreeze();
                 UpdateSkillBadges();
             }
-            else
-            {
-                // Request rewarded ad via AdManager
-                ArrowSwarm.Ads.AdManager.Instance?.ShowRewardedAd(rewardGranted =>
-                {
-                    if (rewardGranted)
-                    {
-                        DataManager.Instance?.ModifyFreezeCount(1);
-                        FreezeManager.Instance?.UseFreeze();
-                        UpdateSkillBadges();
-                    }
-                });
-            }
+            else RequestSkillReward(true);
         }
 
         private static void EnsureButtonFeedback(Button btn)

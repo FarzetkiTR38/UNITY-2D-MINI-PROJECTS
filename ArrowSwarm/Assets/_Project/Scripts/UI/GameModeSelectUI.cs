@@ -107,8 +107,7 @@ namespace ArrowSwarm.UI
             SetLabel(_modeLabel, key, GameModeSelection.DisplayName(mode));
             if (_levelLabel != null)
             {
-                string prefix = LocalizationManager.HasInstance ? LocalizationManager.Instance.GetText("menu_level_short", "Lv.") : "Lv.";
-                _levelLabel.text = prefix + (DataManager.HasInstance ? DataManager.Instance.GetHighestLevel(mode) : 1);
+                _levelLabel.text = ModeMenuHeader.LevelText();
             }
             if (_choiceLabels != null)
                 for (int i=0;i<_choiceLabels.Length;i++)

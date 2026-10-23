@@ -14,8 +14,9 @@ namespace ArrowSwarm.Modes.Editor
     /// <summary>Exercises original Defense gameplay and UI in Play Mode without changing saved progress or tuning assets.</summary>
     public static partial class DefenseRevisionVerification
     {
-        private const string Report = "Captures/Revision2/defense-verification.txt";
-        private const string Capture = "Captures/Revision2/defense-101.png";
+        private static string _folder = "Captures/Revision2";
+        private static string Report => Path.Combine(_folder, "defense-verification.txt");
+        private static string Capture => Path.Combine(_folder, "defense-101.png");
         private static readonly Stack<IEnumerator> Steps = new Stack<IEnumerator>();
         private static readonly List<string> Results = new List<string>();
         private static bool _running, _restored, _exiting;
@@ -25,14 +26,19 @@ namespace ArrowSwarm.Modes.Editor
 
         /// <summary>Starts a real level101 smoke test with temporary inventory and an in-memory debug override.</summary>
         [MenuItem("Arrow Swarm/Puzzles/Verify Original Defense 101 (Play Mode)")]
-        public static void Begin()
+        public static void Begin() => BeginAt("Captures/Revision2");
+
+        /// <summary>Writes a new verification run into its own folder without replacing earlier evidence.</summary>
+        public static void BeginAt(string folder)
         {
             if (_running) throw new InvalidOperationException("Defense verification is already running.");
             if (!Application.isPlaying || !DataManager.HasInstance || !GameManager.HasInstance)
                 throw new InvalidOperationException("Enter Play Mode with the existing game managers before verifying Defense.");
+            if (string.IsNullOrWhiteSpace(folder)) throw new ArgumentException("A report folder is required.", nameof(folder));
+            _folder = folder;
             Snapshot(); _running = true; _restored = _exiting = false; _condition = null; _until = 0;
             _deadline = EditorApplication.timeSinceStartup + 180; Results.Clear(); Steps.Clear(); Steps.Push(Run());
-            Directory.CreateDirectory("Captures/Revision2"); if (File.Exists(Capture)) File.Delete(Capture);
+            Directory.CreateDirectory(_folder); if (File.Exists(Capture)) File.Delete(Capture);
             Status = "Loading original Defense level101";
             EditorApplication.update += Tick; EditorApplication.playModeStateChanged += ChangedPlayMode;
             AssemblyReloadEvents.beforeAssemblyReload += BeforeReload;
@@ -127,7 +133,7 @@ namespace ArrowSwarm.Modes.Editor
             try { CheckPreferences(); }
             catch (Exception exception) { outcome += " / PREFERENCES CHANGED: " + exception.Message; }
             Steps.Clear(); _condition = null; Status = outcome;
-            Directory.CreateDirectory("Captures/Revision2");
+            Directory.CreateDirectory(_folder);
             File.WriteAllText(Report, outcome + "\n" + string.Join("\n", Results) + "\n");
             Debug.Log("[ArrowSwarm] " + outcome + " (" + Report + ")");
         }

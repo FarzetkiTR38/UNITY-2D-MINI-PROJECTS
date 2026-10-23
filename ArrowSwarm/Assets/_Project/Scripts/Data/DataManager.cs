@@ -54,7 +54,8 @@ namespace ArrowSwarm.Data
             if (PlayerPrefs.HasKey(SAVE_KEY))
             {
                 string previous = PlayerPrefs.GetString(SAVE_KEY);
-                if (!string.IsNullOrEmpty(previous))
+                // Recovery must never replace a healthy backup with the damaged primary.
+                if (!string.IsNullOrWhiteSpace(previous) && TryLoadKey(SAVE_KEY) != null)
                 {
                     PlayerPrefs.SetString(BACKUP_KEY, previous);
                 }
@@ -473,6 +474,8 @@ namespace ArrowSwarm.Data
             OnPlayerDataChanged?.Invoke(_playerData);
             if (_autoSaveOnChange)
             {
+                // Persist unsent progress even before the first intentional leaderboard opening.
+                PlayerPrefs.SetInt("ArrowSwarm_PendingCloudSync", 1);
                 Save();
                 if (LeaderboardManager.HasInstance)
                 {
