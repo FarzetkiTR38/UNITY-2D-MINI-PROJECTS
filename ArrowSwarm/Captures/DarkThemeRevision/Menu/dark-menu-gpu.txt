@@ -1,4 +1,4 @@
-PASS: 44 real GPU theme checks; failures=0
+PASS: 47 real GPU theme checks; failures=0
 PASS: Play retains exact authored capsule geometry
 PASS: Play Dark preserves all source alpha and rounded padding
 PASS: Play normal, held and disabled corners stay fully transparent
@@ -43,3 +43,6 @@ PASS: Dark artwork preserves exact cutout alpha at every pixel
 PASS: All sampled characters, logo, ribbons and decorations preserve source RGBA and gloss
 PASS: Both stat text plaques become dark
 PASS: Golden hero artwork retains its warm color
+PASS: Mode close button removes baked white corner padding in Dark and held states
+PASS: Mode close retains the source cross alpha inside its rounded plaque
+PASS: Mode close preserves held feedback inside its plaque
