@@ -51,11 +51,13 @@ namespace ArrowSwarm.UI
         private void OnEnable()
         {
             DataManager.OnPlayerDataChanged += HandlePlayerDataChanged;
+            ArrowSwarm.Localization.LocalizationManager.OnLanguageChanged += SetupUI;
         }
 
         private void OnDisable()
         {
             DataManager.OnPlayerDataChanged -= HandlePlayerDataChanged;
+            ArrowSwarm.Localization.LocalizationManager.OnLanguageChanged -= SetupUI;
         }
 
         private void Awake()
@@ -192,12 +194,11 @@ namespace ArrowSwarm.UI
 
         private void SetupUI()
         {
-            int level = DataManager.Instance?.PlayerData?.highestLevel ?? 1;
             int totalStars = DataManager.Instance?.GetTotalStars() ?? 0;
 
             if (_levelText != null)
             {
-                _levelText.text = $"Lv.{level}";
+                _levelText.text = ModeMenuHeader.LevelText();
             }
 
             if (_starsText != null)

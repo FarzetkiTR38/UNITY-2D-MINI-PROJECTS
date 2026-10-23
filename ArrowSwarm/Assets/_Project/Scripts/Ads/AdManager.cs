@@ -9,7 +9,7 @@ namespace ArrowSwarm.Ads
     /// Wraps IAdService allowing seamless plug-and-play switching between
     /// MockAdService (editor/testing) and real SDKs (Unity Ads, AdMob, LevelPlay).
     /// </summary>
-    public class AdManager : Singleton<AdManager>
+    public partial class AdManager : Singleton<AdManager>
     {
         [SerializeField] private MonoBehaviour _adServiceProvider;
 
@@ -59,6 +59,7 @@ namespace ArrowSwarm.Ads
         public void SetAdService(IAdService service)
         {
             _adService = service;
+            CancelPendingRequest();
         }
 
         /// <summary>
@@ -68,15 +69,17 @@ namespace ArrowSwarm.Ads
         public void ShowRewardedAd(Action<bool> onRewardGranted)
         {
             ResolveService();
-
-            if (_adService != null)
+            if (_isShowingAd) { onRewardGranted?.Invoke(false); return; }
+            int request = BeginRequest(onRewardGranted, null);
+            try
             {
-                _adService.ShowRewardedAd(onRewardGranted);
+                if (_adService != null) _adService.ShowRewardedAd(success => CompleteRequest(request, success));
+                else CompleteRequest(request, false);
             }
-            else
+            catch (Exception error)
             {
-                Debug.LogWarning("[ArrowSwarm] AdManager: No ad service available! Simulating direct reward.");
-                onRewardGranted?.Invoke(true);
+                Debug.LogWarning("[ArrowSwarm] Rewarded ad provider failed: " + error.Message);
+                CompleteRequest(request, false);
             }
         }
 
@@ -86,7 +89,7 @@ namespace ArrowSwarm.Ads
         public bool IsRewardedAdReady()
         {
             ResolveService();
-            return _adService != null && _adService.IsAdReady();
+            return !_isShowingAd && _adService != null && _adService.IsAdReady();
         }
 
         /// <summary>
@@ -95,11 +98,17 @@ namespace ArrowSwarm.Ads
         public void ShowInterstitialAd(Action onClosed)
         {
             ResolveService();
-
+            if (_isShowingAd) { onClosed?.Invoke(); return; }
             if (_adService != null && _adService.IsInterstitialAdReady())
             {
                 _lastInterstitialTime = Time.realtimeSinceStartup;
-                _adService.ShowInterstitialAd(onClosed);
+                int request = BeginRequest(null, onClosed);
+                try { _adService.ShowInterstitialAd(() => CompleteRequest(request, false)); }
+                catch (Exception error)
+                {
+                    Debug.LogWarning("[ArrowSwarm] Interstitial ad provider failed: " + error.Message);
+                    CompleteRequest(request, false);
+                }
             }
             else
             {
@@ -134,7 +143,7 @@ namespace ArrowSwarm.Ads
         public bool IsInterstitialAdReady()
         {
             ResolveService();
-            return _adService != null && _adService.IsInterstitialAdReady();
+            return !_isShowingAd && _adService != null && _adService.IsInterstitialAdReady();
         }
     }
 }

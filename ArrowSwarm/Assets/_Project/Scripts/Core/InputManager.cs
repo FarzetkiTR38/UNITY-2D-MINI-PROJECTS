@@ -12,7 +12,7 @@ namespace ArrowSwarm.Core
     /// Handles player input globally for clicking/touching arrows
     /// using the New Input System with strict UI and scene transition bleed-through prevention.
     /// </summary>
-    public class InputManager : Singleton<InputManager>
+    public partial class InputManager : Singleton<InputManager>
     {
         private const float DefaultBlockDuration = 0.35f;
         private const float MaxTapDistance = 30f;
@@ -91,21 +91,6 @@ namespace ArrowSwarm.Core
             else if (_isPointerDown && mouse.leftButton.isPressed) OnPointerMove(pos);
 
             if (mouse.leftButton.wasReleasedThisFrame) OnPointerUp(pos, -1);
-        }
-
-        private void HandleTouchInput()
-        {
-            var ts = Touchscreen.current;
-            if (ts == null || ts.touches.Count == 0) return;
-
-            var touch = ts.touches[0];
-            var phase = touch.phase.ReadValue();
-            Vector2 pos = touch.position.ReadValue();
-            int id = touch.touchId.ReadValue();
-
-            if (phase == UnityEngine.InputSystem.TouchPhase.Began) OnPointerDown(pos, id);
-            else if (_isPointerDown && phase == UnityEngine.InputSystem.TouchPhase.Moved) OnPointerMove(pos);
-            else if (phase == UnityEngine.InputSystem.TouchPhase.Ended || phase == UnityEngine.InputSystem.TouchPhase.Canceled) OnPointerUp(pos, id);
         }
 
         private void OnPointerDown(Vector2 screenPos, int touchId)

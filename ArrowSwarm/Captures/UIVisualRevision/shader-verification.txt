@@ -1,0 +1,114 @@
+PASS: 111 checks, 0 failures
+Actual GPU UI shader verification
+RGBA clear-target alpha follows srcAlpha squared under Blend SrcAlpha OneMinusSrcAlpha.
+PASS: PlayButton authored shader binding
+PASS: PlayButton normal corners are transparent
+PASS: PlayButton pressed corners stay transparent
+PASS: PlayButton disabled corners stay transparent
+PASS: PlayButton normal center is opaque
+PASS: PlayButton pressed center retains opacity
+PASS: PlayButton disabled alpha follows vertex opacity
+PASS: PlayButton source colors visibly dim while pressed
+PASS: PlayButton disabled appearance dims
+PASS: GameModeButton authored shader binding
+PASS: GameModeButton normal corners are transparent
+PASS: GameModeButton pressed corners stay transparent
+PASS: GameModeButton disabled corners stay transparent
+PASS: GameModeButton normal center is opaque
+PASS: GameModeButton pressed center retains opacity
+PASS: GameModeButton disabled alpha follows vertex opacity
+PASS: GameModeButton source colors visibly dim while pressed
+PASS: GameModeButton disabled appearance dims
+PASS: LevelsButton authored shader binding
+PASS: LevelsButton normal corners are transparent
+PASS: LevelsButton pressed corners stay transparent
+PASS: LevelsButton disabled corners stay transparent
+PASS: LevelsButton normal center is opaque
+PASS: LevelsButton pressed center retains opacity
+PASS: LevelsButton disabled alpha follows vertex opacity
+PASS: LevelsButton source colors visibly dim while pressed
+PASS: LevelsButton disabled appearance dims
+PASS: LeaderboardButton authored shader binding
+PASS: LeaderboardButton normal corners are transparent
+PASS: LeaderboardButton pressed corners stay transparent
+PASS: LeaderboardButton disabled corners stay transparent
+PASS: LeaderboardButton normal center is opaque
+PASS: LeaderboardButton pressed center retains opacity
+PASS: LeaderboardButton disabled alpha follows vertex opacity
+PASS: LeaderboardButton source colors visibly dim while pressed
+PASS: LeaderboardButton disabled appearance dims
+PASS: SettingsButton authored shader binding
+PASS: SettingsButton normal corners are transparent
+PASS: SettingsButton pressed corners stay transparent
+PASS: SettingsButton disabled corners stay transparent
+PASS: SettingsButton normal center is opaque
+PASS: SettingsButton pressed center retains opacity
+PASS: SettingsButton disabled alpha follows vertex opacity
+PASS: SettingsButton source colors visibly dim while pressed
+PASS: SettingsButton disabled appearance dims
+PASS: sampled texture alpha 0 survives material and vertex opacity
+PASS: sampled texture alpha 0,25 survives material and vertex opacity
+PASS: sampled texture alpha 0,5 survives material and vertex opacity
+PASS: sampled texture alpha 1 survives material and vertex opacity
+PASS: UI clip rectangle trims outside pixels
+PASS: UI clip rectangle retains center artwork
+PASS: iris aspect=0,5625 center=(0.50, 0.50) p0 entire frame is transparent
+PASS: iris aspect=0,5625 center=(0.50, 0.50) p0 corners and center clear
+PASS: iris aspect=0,5625 center=(0.50, 0.50) p.001 has no endpoint flash
+PASS: iris aspect=0,5625 center=(0.50, 0.50) opening endpoint is continuous
+PASS: iris aspect=0,5625 center=(0.50, 0.50) p.5 has open and covered areas
+PASS: iris aspect=0,5625 center=(0.50, 0.50) p.5 center remains open
+PASS: iris aspect=0,5625 center=(0.50, 0.50) p.5 farthest corner is covered
+PASS: iris aspect=0,5625 center=(0.50, 0.50) p1 entire frame is fully covered
+PASS: iris aspect=0,5625 center=(0.50, 0.50) p1 center is covered
+PASS: iris aspect=0,5625 center=(0.50, 0.50) closing endpoint has no full-frame pop
+PASS: iris aspect=0,5625 center=(0.15, 0.80) p0 entire frame is transparent
+PASS: iris aspect=0,5625 center=(0.15, 0.80) p0 corners and center clear
+PASS: iris aspect=0,5625 center=(0.15, 0.80) p.001 has no endpoint flash
+PASS: iris aspect=0,5625 center=(0.15, 0.80) opening endpoint is continuous
+PASS: iris aspect=0,5625 center=(0.15, 0.80) p.5 has open and covered areas
+PASS: iris aspect=0,5625 center=(0.15, 0.80) p.5 center remains open
+PASS: iris aspect=0,5625 center=(0.15, 0.80) p.5 farthest corner is covered
+PASS: iris aspect=0,5625 center=(0.15, 0.80) p1 entire frame is fully covered
+PASS: iris aspect=0,5625 center=(0.15, 0.80) p1 center is covered
+PASS: iris aspect=0,5625 center=(0.15, 0.80) closing endpoint has no full-frame pop
+PASS: iris aspect=0,4 center=(0.50, 0.50) p0 entire frame is transparent
+PASS: iris aspect=0,4 center=(0.50, 0.50) p0 corners and center clear
+PASS: iris aspect=0,4 center=(0.50, 0.50) p.001 has no endpoint flash
+PASS: iris aspect=0,4 center=(0.50, 0.50) opening endpoint is continuous
+PASS: iris aspect=0,4 center=(0.50, 0.50) p.5 has open and covered areas
+PASS: iris aspect=0,4 center=(0.50, 0.50) p.5 center remains open
+PASS: iris aspect=0,4 center=(0.50, 0.50) p.5 farthest corner is covered
+PASS: iris aspect=0,4 center=(0.50, 0.50) p1 entire frame is fully covered
+PASS: iris aspect=0,4 center=(0.50, 0.50) p1 center is covered
+PASS: iris aspect=0,4 center=(0.50, 0.50) closing endpoint has no full-frame pop
+PASS: iris aspect=0,4 center=(0.15, 0.80) p0 entire frame is transparent
+PASS: iris aspect=0,4 center=(0.15, 0.80) p0 corners and center clear
+PASS: iris aspect=0,4 center=(0.15, 0.80) p.001 has no endpoint flash
+PASS: iris aspect=0,4 center=(0.15, 0.80) opening endpoint is continuous
+PASS: iris aspect=0,4 center=(0.15, 0.80) p.5 has open and covered areas
+PASS: iris aspect=0,4 center=(0.15, 0.80) p.5 center remains open
+PASS: iris aspect=0,4 center=(0.15, 0.80) p.5 farthest corner is covered
+PASS: iris aspect=0,4 center=(0.15, 0.80) p1 entire frame is fully covered
+PASS: iris aspect=0,4 center=(0.15, 0.80) p1 center is covered
+PASS: iris aspect=0,4 center=(0.15, 0.80) closing endpoint has no full-frame pop
+PASS: iris aspect=1,78 center=(0.50, 0.50) p0 entire frame is transparent
+PASS: iris aspect=1,78 center=(0.50, 0.50) p0 corners and center clear
+PASS: iris aspect=1,78 center=(0.50, 0.50) p.001 has no endpoint flash
+PASS: iris aspect=1,78 center=(0.50, 0.50) opening endpoint is continuous
+PASS: iris aspect=1,78 center=(0.50, 0.50) p.5 has open and covered areas
+PASS: iris aspect=1,78 center=(0.50, 0.50) p.5 center remains open
+PASS: iris aspect=1,78 center=(0.50, 0.50) p.5 farthest corner is covered
+PASS: iris aspect=1,78 center=(0.50, 0.50) p1 entire frame is fully covered
+PASS: iris aspect=1,78 center=(0.50, 0.50) p1 center is covered
+PASS: iris aspect=1,78 center=(0.50, 0.50) closing endpoint has no full-frame pop
+PASS: iris aspect=1,78 center=(0.15, 0.80) p0 entire frame is transparent
+PASS: iris aspect=1,78 center=(0.15, 0.80) p0 corners and center clear
+PASS: iris aspect=1,78 center=(0.15, 0.80) p.001 has no endpoint flash
+PASS: iris aspect=1,78 center=(0.15, 0.80) opening endpoint is continuous
+PASS: iris aspect=1,78 center=(0.15, 0.80) p.5 has open and covered areas
+PASS: iris aspect=1,78 center=(0.15, 0.80) p.5 center remains open
+PASS: iris aspect=1,78 center=(0.15, 0.80) p.5 farthest corner is covered
+PASS: iris aspect=1,78 center=(0.15, 0.80) p1 entire frame is fully covered
+PASS: iris aspect=1,78 center=(0.15, 0.80) p1 center is covered
+PASS: iris aspect=1,78 center=(0.15, 0.80) closing endpoint has no full-frame pop

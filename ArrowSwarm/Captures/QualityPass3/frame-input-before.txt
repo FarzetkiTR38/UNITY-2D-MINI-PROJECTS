@@ -1,0 +1,98 @@
+FAIL: 3 gesture invariants failed; real Color Shift cancel, paused/retried ownership and fresh tap/swipe checks
+PASS: Authored Color Shift uses the real InputSystemUIInputModule
+PASS: Real rotation bar owns gestures in a save-isolated preview attempt
+PASS: Preview level one provides a positive rotation budget for the fresh attempt
+PASS: Native UI raycast reaches the authored rotation-bar side
+INPUT ACK: 1 actual touch events; playerFrame=20373, afterUpdates=5, lastAfterUpdateFrame=20373, lastUpdateType=Dynamic, lastGameFrame=20373, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: Native UI PointerDown actually acquired the right-side rotation gesture
+INPUT ACK: 1 actual touch events; playerFrame=20376, afterUpdates=8, lastAfterUpdateFrame=20376, lastUpdateType=Dynamic, lastGameFrame=20376, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+FAIL: OS-canceled right-side bar touch preserves turn budget and orientation (before=2, after=1)
+PASS: Preview level one provides a positive rotation budget for the fresh attempt
+PASS: Native UI raycast reaches the authored rotation-bar side
+INPUT ACK: 1 actual touch events; playerFrame=20381, afterUpdates=13, lastAfterUpdateFrame=20381, lastUpdateType=Dynamic, lastGameFrame=20381, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: after OS cancellation: fresh normal tap acquires actual UI ownership
+INPUT ACK: 1 actual touch events; playerFrame=20384, afterUpdates=16, lastAfterUpdateFrame=20384, lastUpdateType=Dynamic, lastGameFrame=20384, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: after OS cancellation: new valid side tap rotates exactly once
+PASS: Preview level one provides a positive rotation budget for the fresh attempt
+PASS: Native UI raycast reaches the authored rotation-bar side
+PASS: Native UI raycast reaches the authored rotation-bar side
+INPUT ACK: 1 actual touch events; playerFrame=20389, afterUpdates=21, lastAfterUpdateFrame=20389, lastUpdateType=Dynamic, lastGameFrame=20389, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=20392, afterUpdates=24, lastAfterUpdateFrame=20392, lastUpdateType=Dynamic, lastGameFrame=20392, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=20395, afterUpdates=27, lastAfterUpdateFrame=20395, lastUpdateType=Dynamic, lastGameFrame=20395, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: after OS cancellation: new valid swipe rotates exactly once
+PASS: Preview level one provides a positive rotation budget for the fresh attempt
+PASS: Native UI raycast reaches the authored rotation-bar side
+INPUT ACK: 1 actual touch events; playerFrame=20400, afterUpdates=32, lastAfterUpdateFrame=20400, lastUpdateType=Dynamic, lastGameFrame=20400, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: A new held UI gesture owns the bar before pausing
+PASS: authored pause button: native raycast reaches the actual authored control
+INPUT ACK: 1 actual touch events; playerFrame=20404, afterUpdates=36, lastAfterUpdateFrame=20404, lastUpdateType=Dynamic, lastGameFrame=20404, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=20407, afterUpdates=39, lastAfterUpdateFrame=20407, lastUpdateType=Dynamic, lastGameFrame=20407, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: Second real finger opens pause while the first stays on the bar
+PASS: authored pause retry button: native raycast reaches the actual authored control
+INPUT ACK: 1 actual touch events; playerFrame=20412, afterUpdates=44, lastAfterUpdateFrame=20412, lastUpdateType=Dynamic, lastGameFrame=20412, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=20415, afterUpdates=47, lastAfterUpdateFrame=20415, lastUpdateType=Dynamic, lastGameFrame=20415, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: Real retry button starts a fresh playable attempt
+INPUT ACK: 1 actual touch events; playerFrame=20418, afterUpdates=50, lastAfterUpdateFrame=20418, lastUpdateType=Dynamic, lastGameFrame=20418, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+FAIL: Old UI gesture release cannot spend the retried attempt's turn (before=2, after=1)
+PASS: Preview level one provides a positive rotation budget for the fresh attempt
+PASS: Native UI raycast reaches the authored rotation-bar side
+INPUT ACK: 1 actual touch events; playerFrame=20423, afterUpdates=55, lastAfterUpdateFrame=20423, lastUpdateType=Dynamic, lastGameFrame=20423, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: after retry with a held finger: fresh normal tap acquires actual UI ownership
+INPUT ACK: 1 actual touch events; playerFrame=20426, afterUpdates=58, lastAfterUpdateFrame=20426, lastUpdateType=Dynamic, lastGameFrame=20426, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: after retry with a held finger: new valid side tap rotates exactly once
+PASS: Preview level one provides a positive rotation budget for the fresh attempt
+PASS: Native UI raycast reaches the authored rotation-bar side
+PASS: Native UI raycast reaches the authored rotation-bar side
+INPUT ACK: 1 actual touch events; playerFrame=20431, afterUpdates=63, lastAfterUpdateFrame=20431, lastUpdateType=Dynamic, lastGameFrame=20431, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=20434, afterUpdates=66, lastAfterUpdateFrame=20434, lastUpdateType=Dynamic, lastGameFrame=20434, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=20437, afterUpdates=69, lastAfterUpdateFrame=20437, lastUpdateType=Dynamic, lastGameFrame=20437, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: after retry with a held finger: new valid swipe rotates exactly once
+PASS: Preview level one provides a positive rotation budget for the fresh attempt
+PASS: Native UI raycast reaches the authored rotation-bar side
+INPUT ACK: 1 actual touch events; playerFrame=20442, afterUpdates=74, lastAfterUpdateFrame=20442, lastUpdateType=Dynamic, lastGameFrame=20442, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: A held UI gesture owns the bar before the pause/resume cycle
+PASS: authored pause button: native raycast reaches the actual authored control
+INPUT ACK: 1 actual touch events; playerFrame=20446, afterUpdates=78, lastAfterUpdateFrame=20446, lastUpdateType=Dynamic, lastGameFrame=20446, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=20449, afterUpdates=81, lastAfterUpdateFrame=20449, lastUpdateType=Dynamic, lastGameFrame=20449, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: Real pause button pauses the current attempt
+PASS: authored resume button: native raycast reaches the actual authored control
+INPUT ACK: 1 actual touch events; playerFrame=20453, afterUpdates=85, lastAfterUpdateFrame=20453, lastUpdateType=Dynamic, lastGameFrame=20453, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=20456, afterUpdates=88, lastAfterUpdateFrame=20456, lastUpdateType=Dynamic, lastGameFrame=20456, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: Real resume button restores the same playable attempt
+INPUT ACK: 1 actual touch events; playerFrame=20459, afterUpdates=91, lastAfterUpdateFrame=20459, lastUpdateType=Dynamic, lastGameFrame=20459, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+FAIL: Pre-pause UI gesture release cannot spend a turn after resume (before=2, after=1)
+PASS: Preview level one provides a positive rotation budget for the fresh attempt
+PASS: Native UI raycast reaches the authored rotation-bar side
+INPUT ACK: 1 actual touch events; playerFrame=20464, afterUpdates=96, lastAfterUpdateFrame=20464, lastUpdateType=Dynamic, lastGameFrame=20464, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: after pause/resume with a held finger: fresh normal tap acquires actual UI ownership
+INPUT ACK: 1 actual touch events; playerFrame=20467, afterUpdates=99, lastAfterUpdateFrame=20467, lastUpdateType=Dynamic, lastGameFrame=20467, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: after pause/resume with a held finger: new valid side tap rotates exactly once
+PASS: Preview level one provides a positive rotation budget for the fresh attempt
+PASS: Native UI raycast reaches the authored rotation-bar side
+PASS: Native UI raycast reaches the authored rotation-bar side
+INPUT ACK: 1 actual touch events; playerFrame=20472, afterUpdates=104, lastAfterUpdateFrame=20472, lastUpdateType=Dynamic, lastGameFrame=20472, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=20475, afterUpdates=107, lastAfterUpdateFrame=20475, lastUpdateType=Dynamic, lastGameFrame=20475, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=20478, afterUpdates=110, lastAfterUpdateFrame=20478, lastUpdateType=Dynamic, lastGameFrame=20478, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: after pause/resume with a held finger: new valid swipe rotates exactly once
+INPUT FINAL: playerFrame=20478, afterUpdates=110, lastAfterUpdateFrame=20478, lastUpdateType=Dynamic, lastGameFrame=20478, lastGameCurrentDevice=18, updateMode=ProcessEventsInDynamicUpdate, pending=0
+PASS: Authored Color Shift configuration remained unchanged
+PASS: Original camera, input settings and current devices restored after native UI gestures
+PASS: Original GameConfig unchanged
+PASS: Player data and all saved progress unchanged
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
+RESTORED: PlayerData, auto-save, debug, preview, time scale, theme and background setting
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
+PASS: Original main-menu scene, player data and normal game state restored
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged

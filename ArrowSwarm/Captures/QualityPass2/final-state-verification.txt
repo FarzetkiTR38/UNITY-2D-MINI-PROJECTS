@@ -1,0 +1,12 @@
+PASS: exact post-test restoration
+PASS: original preference value and existence restored: ArrowSwarm_PlayerData
+PASS: original preference value and existence restored: ArrowSwarm_PlayerData_Backup
+PASS: original preference value and existence restored: ArrowSwarm_SelectedLanguage
+PASS: original preference value and existence restored: ArrowSwarm_CachedLeaderboard
+PASS: original preference value and existence restored: ArrowSwarm_PendingCloudSync
+PASS: original BootScene, Edit Mode, Play Mode off
+Native Unity console counts: errors=0, warnings=7, logs=631
+PASS: all 364 protected scenes, ScriptableObjects, prefabs and fonts match the pre-test SHA256 baseline
+PASS: all 25 new C# scripts remain within 200 lines
+PASS: git diff --check for changed C# sources
+NOTE: 7 console warnings are existing authored missing-script/glyph warnings. ConfettiParticle retains its native particle system and runtime pool cleanup; its orphan Assembly-CSharp-Editor::ParticleSystemDestroyer has m_Script fileID 0 in baseline 10d4919. MainMenu close label U+2715 is absent from its authored LiberationSans font. Protected assets left unchanged.

@@ -1,0 +1,15 @@
+PASS: no-op hint work skipped; genuine hint, flight and pool geometry preserved
+PASS: Empty native profiler bracket records no allocation
+PASS: Positive control proves the native profiler detects managed allocations
+PASS: 10000 repeated clear calls produce zero GC.Alloc events
+MEASURE: 10000 repeated False calls: 0.871 ms including profiler bracket; 0 GC.Alloc events
+PASS: Repeated clear keeps every normal point and head pose unchanged
+PASS: First hint request enlarges the authored head/stroke
+PASS: 10000 repeated hint calls produce zero GC.Alloc events
+MEASURE: 10000 repeated True calls: 1.061 ms including profiler bracket; 0 GC.Alloc events
+PASS: Repeated hint request keeps highlighted geometry unchanged
+PASS: A real clear transition restores all normal geometry
+PASS: No-op clear never resets a moving arrow to its spawn pose
+PASS: Hint transitions preserve the current travel window
+PASS: Pool rebind after Rocket restores normal geometry and opacity
+PASS: Authored Inspector config remains unchanged

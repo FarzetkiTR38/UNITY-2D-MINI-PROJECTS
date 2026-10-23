@@ -13,7 +13,7 @@ namespace ArrowSwarm.Arrow
     /// pulse animation, fire/blocked effects.
     /// </summary>
     [RequireComponent(typeof(Arrow))]
-    public class ArrowVisuals : MonoBehaviour
+    public partial class ArrowVisuals : MonoBehaviour
     {
         [SerializeField] private float _lineWidth = 0.08f;
         [SerializeField] private float _headSize = 0.2f;
@@ -323,8 +323,7 @@ namespace ArrowSwarm.Arrow
 
                     if (_lineRenderer != null)
                     {
-                        _lineRenderer.positionCount = _spawnPointsBuffer.Count;
-                        _lineRenderer.SetPositions(_spawnPointsBuffer.ToArray());
+                        UploadBodyPoints(_spawnPointsBuffer);
                     }
 
                     yield return null;
@@ -561,8 +560,7 @@ namespace ArrowSwarm.Arrow
                 if (bodyPoints != null && bodyPoints.Count >= 2)
                 {
                     _lineRenderer.enabled = true;
-                    _lineRenderer.positionCount = bodyPoints.Count;
-                    _lineRenderer.SetPositions(bodyPoints.ToArray());
+                    UploadBodyPoints(bodyPoints);
                 }
                 else
                 {

@@ -1,0 +1,387 @@
+PASS: real Defense HUD, profile reopening and mode-aware level ranges across ten languages
+PASS: Actual GameScene HUD is present
+PASS: All ten configured languages are available
+PASS: en: language-only HUD refresh does not restart count feedback
+PASS: en: actual Defense level label uses the existing translated prefix
+PASS: en: actual Defense arrow count translates without resetting its values
+PASS: en: a real legal arrow remains available
+PASS: en: real gameplay shot updates the level counter once
+PASS: en: gameplay count update preserves the selected language
+PASS: en: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: en/Defense/Level; preferred=261,4x93,8; rect=318,1x200,0; overflow=False
+FIT: en/Defense/Arrows; preferred=395,7x70,3; rect=800,0x80,0; overflow=False
+PASS: tr: language-only HUD refresh does not restart count feedback
+PASS: tr: actual Defense level label uses the existing translated prefix
+PASS: tr: actual Defense arrow count translates without resetting its values
+PASS: tr: a real legal arrow remains available
+PASS: tr: real gameplay shot updates the level counter once
+PASS: tr: gameplay count update preserves the selected language
+PASS: tr: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: tr/Defense/Level; preferred=312,1x93,8; rect=318,1x200,0; overflow=False
+FIT: tr/Defense/Arrows; preferred=343,0x70,3; rect=800,0x80,0; overflow=False
+PASS: es: language-only HUD refresh does not restart count feedback
+PASS: es: actual Defense level label uses the existing translated prefix
+PASS: es: actual Defense arrow count translates without resetting its values
+PASS: es: a real legal arrow remains available
+PASS: es: real gameplay shot updates the level counter once
+PASS: es: gameplay count update preserves the selected language
+PASS: es: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: es/Defense/Level; preferred=279,3x93,8; rect=318,1x200,0; overflow=False
+FIT: es/Defense/Arrows; preferred=417,1x70,3; rect=800,0x80,0; overflow=False
+PASS: de: language-only HUD refresh does not restart count feedback
+PASS: de: actual Defense level label uses the existing translated prefix
+PASS: de: actual Defense arrow count translates without resetting its values
+PASS: de: a real legal arrow remains available
+PASS: de: real gameplay shot updates the level counter once
+PASS: de: gameplay count update preserves the selected language
+PASS: de: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: de/Defense/Level; preferred=261,4x93,8; rect=318,1x200,0; overflow=False
+FIT: de/Defense/Arrows; preferred=359,9x70,3; rect=800,0x80,0; overflow=False
+PASS: fr: language-only HUD refresh does not restart count feedback
+PASS: fr: actual Defense level label uses the existing translated prefix
+PASS: fr: actual Defense arrow count translates without resetting its values
+PASS: fr: a real legal arrow remains available
+PASS: fr: real gameplay shot updates the level counter once
+PASS: fr: gameplay count update preserves the selected language
+PASS: fr: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: fr/Defense/Level; preferred=306,2x93,8; rect=318,1x200,0; overflow=False
+FIT: fr/Defense/Arrows; preferred=417,3x70,3; rect=800,0x80,0; overflow=False
+PASS: pt: language-only HUD refresh does not restart count feedback
+PASS: pt: actual Defense level label uses the existing translated prefix
+PASS: pt: actual Defense arrow count translates without resetting its values
+PASS: pt: a real legal arrow remains available
+PASS: pt: real gameplay shot updates the level counter once
+PASS: pt: gameplay count update preserves the selected language
+PASS: pt: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: pt/Defense/Level; preferred=279,3x93,8; rect=318,1x200,0; overflow=False
+FIT: pt/Defense/Arrows; preferred=417,1x70,3; rect=800,0x80,0; overflow=False
+PASS: it: language-only HUD refresh does not restart count feedback
+PASS: it: actual Defense level label uses the existing translated prefix
+PASS: it: actual Defense arrow count translates without resetting its values
+PASS: it: a real legal arrow remains available
+PASS: it: real gameplay shot updates the level counter once
+PASS: it: gameplay count update preserves the selected language
+PASS: it: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: it/Defense/Level; preferred=293,0x93,8; rect=318,1x200,0; overflow=False
+FIT: it/Defense/Arrows; preferred=384,7x70,3; rect=800,0x80,0; overflow=False
+PASS: ru: language-only HUD refresh does not restart count feedback
+PASS: ru: actual Defense level label uses the existing translated prefix
+PASS: ru: actual Defense arrow count translates without resetting its values
+PASS: ru: a real legal arrow remains available
+PASS: ru: real gameplay shot updates the level counter once
+PASS: ru: gameplay count update preserves the selected language
+PASS: ru: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: ru/Defense/Level; preferred=281,3x93,8; rect=318,1x200,0; overflow=False
+FIT: ru/Defense/Arrows; preferred=423,6x70,3; rect=800,0x80,0; overflow=False
+PASS: ja: language-only HUD refresh does not restart count feedback
+PASS: ja: actual Defense level label uses the existing translated prefix
+PASS: ja: actual Defense arrow count translates without resetting its values
+PASS: ja: a real legal arrow remains available
+PASS: ja: real gameplay shot updates the level counter once
+PASS: ja: gameplay count update preserves the selected language
+PASS: ja: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: ja/Defense/Level; preferred=261,4x93,8; rect=318,1x200,0; overflow=False
+FIT: ja/Defense/Arrows; preferred=242,8x86,9; rect=800,0x80,0; overflow=True
+CAPTURE: Captures/QualityPass2\defense-ja-639280627729315984.png; frame=703->704; bytes=571577
+PASS: ko: language-only HUD refresh does not restart count feedback
+PASS: ko: actual Defense level label uses the existing translated prefix
+PASS: ko: actual Defense arrow count translates without resetting its values
+PASS: ko: a real legal arrow remains available
+PASS: ko: real gameplay shot updates the level counter once
+PASS: ko: gameplay count update preserves the selected language
+PASS: ko: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: ko/Defense/Level; preferred=261,4x93,8; rect=318,1x200,0; overflow=False
+FIT: ko/Defense/Arrows; preferred=336,0x86,9; rect=800,0x80,0; overflow=True
+PASS: Language changes and legal-shot fixture do not alter lives or saved stars
+PASS: Actual authored main menu and profile modal are present
+PASS: en: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: en: switching language preserves the typed name and country draft
+PASS: en: switching language does not restart the profile opening animation
+PASS: en: restoring the selected language preserves authored button text styling
+FIT: en/Profile/Save; preferred=1010,1x175,8; rect=1392,3x458,2; overflow=False
+FIT: en/Profile/Skip; preferred=109,3x58,6; rect=394,0x49,5; overflow=True
+PASS: en: modal closes normally before reopening
+PASS: tr: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: tr: switching language preserves the typed name and country draft
+PASS: tr: switching language does not restart the profile opening animation
+PASS: tr: restoring the selected language preserves authored button text styling
+FIT: tr/Profile/Save; preferred=1250,1x175,8; rect=1392,3x458,2; overflow=False
+FIT: tr/Profile/Skip; preferred=94,9x58,6; rect=394,0x49,5; overflow=True
+PASS: tr: modal closes normally before reopening
+PASS: es: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: es: switching language preserves the typed name and country draft
+PASS: es: switching language does not restart the profile opening animation
+PASS: es: restoring the selected language preserves authored button text styling
+FIT: es/Profile/Save; preferred=1484,3x351,6; rect=1392,3x458,2; overflow=False
+FIT: es/Profile/Skip; preferred=180,0x58,6; rect=394,0x49,5; overflow=True
+PASS: es: modal closes normally before reopening
+PASS: de: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: de: switching language preserves the typed name and country draft
+PASS: de: switching language does not restart the profile opening animation
+PASS: de: restoring the selected language preserves authored button text styling
+FIT: de/Profile/Save; preferred=1757,9x351,6; rect=1392,3x458,2; overflow=False
+FIT: de/Profile/Skip; preferred=367,1x58,6; rect=394,0x49,5; overflow=True
+PASS: German profile opening completed with visible CanvasGroup ancestors before capture
+PASS: Profile modal is above the active reference main menu in the authored Canvas hierarchy
+PASS: Every visible modal graphic renders above the active sibling menu graphics
+CAPTURE: Captures/QualityPass2\profile-de-639280627770566412.png; frame=1110->1111; bytes=715206
+PASS: de: modal closes normally before reopening
+PASS: fr: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: fr: switching language preserves the typed name and country draft
+PASS: fr: switching language does not restart the profile opening animation
+PASS: fr: restoring the selected language preserves authored button text styling
+FIT: fr/Profile/Save; preferred=1344,6x175,8; rect=1392,3x458,2; overflow=False
+FIT: fr/Profile/Skip; preferred=183,1x58,6; rect=394,0x49,5; overflow=True
+PASS: fr: modal closes normally before reopening
+PASS: pt: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: pt: switching language preserves the typed name and country draft
+PASS: pt: switching language does not restart the profile opening animation
+PASS: pt: restoring the selected language preserves authored button text styling
+FIT: pt/Profile/Save; preferred=1330,3x175,8; rect=1392,3x458,2; overflow=False
+FIT: pt/Profile/Skip; preferred=158,3x58,6; rect=394,0x49,5; overflow=True
+PASS: pt: modal closes normally before reopening
+PASS: it: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: it: switching language preserves the typed name and country draft
+PASS: it: switching language does not restart the profile opening animation
+PASS: it: restoring the selected language preserves authored button text styling
+FIT: it/Profile/Save; preferred=1186,4x175,8; rect=1392,3x458,2; overflow=False
+FIT: it/Profile/Skip; preferred=148,1x58,6; rect=394,0x49,5; overflow=True
+PASS: it: modal closes normally before reopening
+PASS: ru: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: ru: switching language preserves the typed name and country draft
+PASS: ru: switching language does not restart the profile opening animation
+PASS: ru: restoring the selected language preserves authored button text styling
+FIT: ru/Profile/Save; preferred=1823,4x351,6; rect=1392,3x458,2; overflow=False
+FIT: ru/Profile/Skip; preferred=328,7x58,6; rect=394,0x49,5; overflow=True
+PASS: ru: modal closes normally before reopening
+PASS: ja: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: ja: switching language preserves the typed name and country draft
+PASS: ja: switching language does not restart the profile opening animation
+PASS: ja: restoring the selected language preserves authored button text styling
+FIT: ja/Profile/Save; preferred=1113,0x217,2; rect=1392,3x458,2; overflow=False
+FIT: ja/Profile/Skip; preferred=200,0x72,4; rect=394,0x49,5; overflow=True
+PASS: ja: modal closes normally before reopening
+PASS: ko: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: ko: switching language preserves the typed name and country draft
+PASS: ko: switching language does not restart the profile opening animation
+PASS: ko: restoring the selected language preserves authored button text styling
+FIT: ko/Profile/Save; preferred=827,7x217,2; rect=1392,3x458,2; overflow=False
+FIT: ko/Profile/Skip; preferred=184,0x72,4; rect=394,0x49,5; overflow=True
+PASS: ko: modal closes normally before reopening
+PASS: Defense: authored Levels opens on the independent highest page
+PASS: Defense/en: actual Previous button moves to page two
+PASS: Defense/en: language change translates the range without resetting pagination
+PASS: Defense/en: actual Next button shows the correct independent campaign edge
+PASS: Defense/en: last-page navigation stays correct
+PASS: Defense/en: catalog ends keep the correct number of authored level controls visible
+PASS: Defense/en: localized range retains Inspector-owned text styling
+FIT: Defense/en/Levels/LastPage; preferred=358,9x58,6; rect=480,0x70,0; overflow=False
+PASS: Defense/tr: actual Previous button moves to page two
+PASS: Defense/tr: language change translates the range without resetting pagination
+PASS: Defense/tr: actual Next button shows the correct independent campaign edge
+PASS: Defense/tr: last-page navigation stays correct
+PASS: Defense/tr: catalog ends keep the correct number of authored level controls visible
+PASS: Defense/tr: localized range retains Inspector-owned text styling
+FIT: Defense/tr/Levels/LastPage; preferred=448,8x58,6; rect=480,0x70,0; overflow=False
+CAPTURE: Captures/QualityPass2\levels-tr-639280627808019540.png; frame=1596->1597; bytes=1675548
+PASS: Defense/es: actual Previous button moves to page two
+PASS: Defense/es: language change translates the range without resetting pagination
+PASS: Defense/es: actual Next button shows the correct independent campaign edge
+PASS: Defense/es: last-page navigation stays correct
+PASS: Defense/es: catalog ends keep the correct number of authored level controls visible
+PASS: Defense/es: localized range retains Inspector-owned text styling
+FIT: Defense/es/Levels/LastPage; preferred=385,2x58,6; rect=480,0x70,0; overflow=False
+PASS: Defense/de: actual Previous button moves to page two
+PASS: Defense/de: language change translates the range without resetting pagination
+PASS: Defense/de: actual Next button shows the correct independent campaign edge
+PASS: Defense/de: last-page navigation stays correct
+PASS: Defense/de: catalog ends keep the correct number of authored level controls visible
+PASS: Defense/de: localized range retains Inspector-owned text styling
+FIT: Defense/de/Levels/LastPage; preferred=358,9x58,6; rect=480,0x70,0; overflow=False
+PASS: Defense/fr: actual Previous button moves to page two
+PASS: Defense/fr: language change translates the range without resetting pagination
+PASS: Defense/fr: actual Next button shows the correct independent campaign edge
+PASS: Defense/fr: last-page navigation stays correct
+PASS: Defense/fr: catalog ends keep the correct number of authored level controls visible
+PASS: Defense/fr: localized range retains Inspector-owned text styling
+FIT: Defense/fr/Levels/LastPage; preferred=397,2x58,6; rect=480,0x70,0; overflow=False
+PASS: Defense/pt: actual Previous button moves to page two
+PASS: Defense/pt: language change translates the range without resetting pagination
+PASS: Defense/pt: actual Next button shows the correct independent campaign edge
+PASS: Defense/pt: last-page navigation stays correct
+PASS: Defense/pt: catalog ends keep the correct number of authored level controls visible
+PASS: Defense/pt: localized range retains Inspector-owned text styling
+FIT: Defense/pt/Levels/LastPage; preferred=341,1x58,6; rect=480,0x70,0; overflow=False
+PASS: Defense/it: actual Previous button moves to page two
+PASS: Defense/it: language change translates the range without resetting pagination
+PASS: Defense/it: actual Next button shows the correct independent campaign edge
+PASS: Defense/it: last-page navigation stays correct
+PASS: Defense/it: catalog ends keep the correct number of authored level controls visible
+PASS: Defense/it: localized range retains Inspector-owned text styling
+FIT: Defense/it/Levels/LastPage; preferred=359,8x58,6; rect=480,0x70,0; overflow=False
+PASS: Defense/ru: actual Previous button moves to page two
+PASS: Defense/ru: language change translates the range without resetting pagination
+PASS: Defense/ru: actual Next button shows the correct independent campaign edge
+PASS: Defense/ru: last-page navigation stays correct
+PASS: Defense/ru: catalog ends keep the correct number of authored level controls visible
+PASS: Defense/ru: localized range retains Inspector-owned text styling
+FIT: Defense/ru/Levels/LastPage; preferred=385,7x58,6; rect=480,0x70,0; overflow=False
+PASS: Defense/ja: actual Previous button moves to page two
+PASS: Defense/ja: language change translates the range without resetting pagination
+PASS: Defense/ja: actual Next button shows the correct independent campaign edge
+PASS: Defense/ja: last-page navigation stays correct
+PASS: Defense/ja: catalog ends keep the correct number of authored level controls visible
+PASS: Defense/ja: localized range retains Inspector-owned text styling
+FIT: Defense/ja/Levels/LastPage; preferred=324,6x72,4; rect=480,0x70,0; overflow=True
+PASS: Defense/ko: actual Previous button moves to page two
+PASS: Defense/ko: language change translates the range without resetting pagination
+PASS: Defense/ko: actual Next button shows the correct independent campaign edge
+PASS: Defense/ko: last-page navigation stays correct
+PASS: Defense/ko: catalog ends keep the correct number of authored level controls visible
+PASS: Defense/ko: localized range retains Inspector-owned text styling
+FIT: Defense/ko/Levels/LastPage; preferred=263,1x72,4; rect=480,0x70,0; overflow=True
+PASS: Shapes: authored Levels opens on the independent highest page
+PASS: Shapes/en: actual Previous button moves to page two
+PASS: Shapes/en: language change translates the range without resetting pagination
+PASS: Shapes/en: actual Next button shows the correct independent campaign edge
+PASS: Shapes/en: last-page navigation stays correct
+PASS: Shapes/en: catalog ends keep the correct number of authored level controls visible
+PASS: Shapes/en: localized range retains Inspector-owned text styling
+FIT: Shapes/en/Levels/LastPage; preferred=358,9x58,6; rect=480,0x70,0; overflow=False
+PASS: Shapes/tr: actual Previous button moves to page two
+PASS: Shapes/tr: language change translates the range without resetting pagination
+PASS: Shapes/tr: actual Next button shows the correct independent campaign edge
+PASS: Shapes/tr: last-page navigation stays correct
+PASS: Shapes/tr: catalog ends keep the correct number of authored level controls visible
+PASS: Shapes/tr: localized range retains Inspector-owned text styling
+FIT: Shapes/tr/Levels/LastPage; preferred=448,8x58,6; rect=480,0x70,0; overflow=False
+PASS: Shapes/es: actual Previous button moves to page two
+PASS: Shapes/es: language change translates the range without resetting pagination
+PASS: Shapes/es: actual Next button shows the correct independent campaign edge
+PASS: Shapes/es: last-page navigation stays correct
+PASS: Shapes/es: catalog ends keep the correct number of authored level controls visible
+PASS: Shapes/es: localized range retains Inspector-owned text styling
+FIT: Shapes/es/Levels/LastPage; preferred=385,2x58,6; rect=480,0x70,0; overflow=False
+PASS: Shapes/de: actual Previous button moves to page two
+PASS: Shapes/de: language change translates the range without resetting pagination
+PASS: Shapes/de: actual Next button shows the correct independent campaign edge
+PASS: Shapes/de: last-page navigation stays correct
+PASS: Shapes/de: catalog ends keep the correct number of authored level controls visible
+PASS: Shapes/de: localized range retains Inspector-owned text styling
+FIT: Shapes/de/Levels/LastPage; preferred=358,9x58,6; rect=480,0x70,0; overflow=False
+PASS: Shapes/fr: actual Previous button moves to page two
+PASS: Shapes/fr: language change translates the range without resetting pagination
+PASS: Shapes/fr: actual Next button shows the correct independent campaign edge
+PASS: Shapes/fr: last-page navigation stays correct
+PASS: Shapes/fr: catalog ends keep the correct number of authored level controls visible
+PASS: Shapes/fr: localized range retains Inspector-owned text styling
+FIT: Shapes/fr/Levels/LastPage; preferred=397,2x58,6; rect=480,0x70,0; overflow=False
+PASS: Shapes/pt: actual Previous button moves to page two
+PASS: Shapes/pt: language change translates the range without resetting pagination
+PASS: Shapes/pt: actual Next button shows the correct independent campaign edge
+PASS: Shapes/pt: last-page navigation stays correct
+PASS: Shapes/pt: catalog ends keep the correct number of authored level controls visible
+PASS: Shapes/pt: localized range retains Inspector-owned text styling
+FIT: Shapes/pt/Levels/LastPage; preferred=341,1x58,6; rect=480,0x70,0; overflow=False
+PASS: Shapes/it: actual Previous button moves to page two
+PASS: Shapes/it: language change translates the range without resetting pagination
+PASS: Shapes/it: actual Next button shows the correct independent campaign edge
+PASS: Shapes/it: last-page navigation stays correct
+PASS: Shapes/it: catalog ends keep the correct number of authored level controls visible
+PASS: Shapes/it: localized range retains Inspector-owned text styling
+FIT: Shapes/it/Levels/LastPage; preferred=359,8x58,6; rect=480,0x70,0; overflow=False
+PASS: Shapes/ru: actual Previous button moves to page two
+PASS: Shapes/ru: language change translates the range without resetting pagination
+PASS: Shapes/ru: actual Next button shows the correct independent campaign edge
+PASS: Shapes/ru: last-page navigation stays correct
+PASS: Shapes/ru: catalog ends keep the correct number of authored level controls visible
+PASS: Shapes/ru: localized range retains Inspector-owned text styling
+FIT: Shapes/ru/Levels/LastPage; preferred=385,7x58,6; rect=480,0x70,0; overflow=False
+PASS: Shapes/ja: actual Previous button moves to page two
+PASS: Shapes/ja: language change translates the range without resetting pagination
+PASS: Shapes/ja: actual Next button shows the correct independent campaign edge
+PASS: Shapes/ja: last-page navigation stays correct
+PASS: Shapes/ja: catalog ends keep the correct number of authored level controls visible
+PASS: Shapes/ja: localized range retains Inspector-owned text styling
+FIT: Shapes/ja/Levels/LastPage; preferred=324,6x72,4; rect=480,0x70,0; overflow=True
+PASS: Shapes/ko: actual Previous button moves to page two
+PASS: Shapes/ko: language change translates the range without resetting pagination
+PASS: Shapes/ko: actual Next button shows the correct independent campaign edge
+PASS: Shapes/ko: last-page navigation stays correct
+PASS: Shapes/ko: catalog ends keep the correct number of authored level controls visible
+PASS: Shapes/ko: localized range retains Inspector-owned text styling
+FIT: Shapes/ko/Levels/LastPage; preferred=263,1x72,4; rect=480,0x70,0; overflow=True
+PASS: ColorShift: authored Levels opens on the independent highest page
+PASS: ColorShift/en: actual Previous button moves to page two
+PASS: ColorShift/en: language change translates the range without resetting pagination
+PASS: ColorShift/en: actual Next button shows the correct independent campaign edge
+PASS: ColorShift/en: last-page navigation stays correct
+PASS: ColorShift/en: catalog ends keep the correct number of authored level controls visible
+PASS: ColorShift/en: localized range retains Inspector-owned text styling
+FIT: ColorShift/en/Levels/LastPage; preferred=358,9x58,6; rect=480,0x70,0; overflow=False
+PASS: ColorShift/tr: actual Previous button moves to page two
+PASS: ColorShift/tr: language change translates the range without resetting pagination
+PASS: ColorShift/tr: actual Next button shows the correct independent campaign edge
+PASS: ColorShift/tr: last-page navigation stays correct
+PASS: ColorShift/tr: catalog ends keep the correct number of authored level controls visible
+PASS: ColorShift/tr: localized range retains Inspector-owned text styling
+FIT: ColorShift/tr/Levels/LastPage; preferred=448,8x58,6; rect=480,0x70,0; overflow=False
+PASS: ColorShift/es: actual Previous button moves to page two
+PASS: ColorShift/es: language change translates the range without resetting pagination
+PASS: ColorShift/es: actual Next button shows the correct independent campaign edge
+PASS: ColorShift/es: last-page navigation stays correct
+PASS: ColorShift/es: catalog ends keep the correct number of authored level controls visible
+PASS: ColorShift/es: localized range retains Inspector-owned text styling
+FIT: ColorShift/es/Levels/LastPage; preferred=385,2x58,6; rect=480,0x70,0; overflow=False
+PASS: ColorShift/de: actual Previous button moves to page two
+PASS: ColorShift/de: language change translates the range without resetting pagination
+PASS: ColorShift/de: actual Next button shows the correct independent campaign edge
+PASS: ColorShift/de: last-page navigation stays correct
+PASS: ColorShift/de: catalog ends keep the correct number of authored level controls visible
+PASS: ColorShift/de: localized range retains Inspector-owned text styling
+FIT: ColorShift/de/Levels/LastPage; preferred=358,9x58,6; rect=480,0x70,0; overflow=False
+PASS: ColorShift/fr: actual Previous button moves to page two
+PASS: ColorShift/fr: language change translates the range without resetting pagination
+PASS: ColorShift/fr: actual Next button shows the correct independent campaign edge
+PASS: ColorShift/fr: last-page navigation stays correct
+PASS: ColorShift/fr: catalog ends keep the correct number of authored level controls visible
+PASS: ColorShift/fr: localized range retains Inspector-owned text styling
+FIT: ColorShift/fr/Levels/LastPage; preferred=397,2x58,6; rect=480,0x70,0; overflow=False
+PASS: ColorShift/pt: actual Previous button moves to page two
+PASS: ColorShift/pt: language change translates the range without resetting pagination
+PASS: ColorShift/pt: actual Next button shows the correct independent campaign edge
+PASS: ColorShift/pt: last-page navigation stays correct
+PASS: ColorShift/pt: catalog ends keep the correct number of authored level controls visible
+PASS: ColorShift/pt: localized range retains Inspector-owned text styling
+FIT: ColorShift/pt/Levels/LastPage; preferred=341,1x58,6; rect=480,0x70,0; overflow=False
+PASS: ColorShift/it: actual Previous button moves to page two
+PASS: ColorShift/it: language change translates the range without resetting pagination
+PASS: ColorShift/it: actual Next button shows the correct independent campaign edge
+PASS: ColorShift/it: last-page navigation stays correct
+PASS: ColorShift/it: catalog ends keep the correct number of authored level controls visible
+PASS: ColorShift/it: localized range retains Inspector-owned text styling
+FIT: ColorShift/it/Levels/LastPage; preferred=359,8x58,6; rect=480,0x70,0; overflow=False
+PASS: ColorShift/ru: actual Previous button moves to page two
+PASS: ColorShift/ru: language change translates the range without resetting pagination
+PASS: ColorShift/ru: actual Next button shows the correct independent campaign edge
+PASS: ColorShift/ru: last-page navigation stays correct
+PASS: ColorShift/ru: catalog ends keep the correct number of authored level controls visible
+PASS: ColorShift/ru: localized range retains Inspector-owned text styling
+FIT: ColorShift/ru/Levels/LastPage; preferred=385,7x58,6; rect=480,0x70,0; overflow=False
+PASS: ColorShift/ja: actual Previous button moves to page two
+PASS: ColorShift/ja: language change translates the range without resetting pagination
+PASS: ColorShift/ja: actual Next button shows the correct independent campaign edge
+PASS: ColorShift/ja: last-page navigation stays correct
+PASS: ColorShift/ja: catalog ends keep the correct number of authored level controls visible
+PASS: ColorShift/ja: localized range retains Inspector-owned text styling
+FIT: ColorShift/ja/Levels/LastPage; preferred=324,6x72,4; rect=480,0x70,0; overflow=True
+PASS: ColorShift/ko: actual Previous button moves to page two
+PASS: ColorShift/ko: language change translates the range without resetting pagination
+PASS: ColorShift/ko: actual Next button shows the correct independent campaign edge
+PASS: ColorShift/ko: last-page navigation stays correct
+PASS: ColorShift/ko: catalog ends keep the correct number of authored level controls visible
+PASS: ColorShift/ko: localized range retains Inspector-owned text styling
+FIT: ColorShift/ko/Levels/LastPage; preferred=263,1x72,4; rect=480,0x70,0; overflow=True
+PASS: Original player data, inventory, settings and preference existence restored
+PASS: Original GameConfig remained unchanged
+PASS: Real managers returned safely to the menu

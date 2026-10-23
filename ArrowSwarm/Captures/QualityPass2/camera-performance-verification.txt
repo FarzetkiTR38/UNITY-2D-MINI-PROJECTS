@@ -1,0 +1,37 @@
+PASS: camera-performance-verification with real Input System events
+PASS: Real authored Defense HUD panels supply both camera boundaries
+PASS: Cached HUD ratios exactly match the original authored-corner calculation
+PASS: Camera clamp preserves exact original bounds at zoom 0 for (0.00, 0.00, 0.00)
+PASS: Camera clamp preserves exact original bounds at zoom 0 for (-1000.00, -1000.00, -10.00)
+PASS: Camera clamp preserves exact original bounds at zoom 0 for (1000.00, 1000.00, -10.00)
+PASS: Camera clamp preserves exact original bounds at zoom 0,5 for (0.00, 0.00, 0.00)
+PASS: Camera clamp preserves exact original bounds at zoom 0,5 for (-1000.00, -1000.00, -10.00)
+PASS: Camera clamp preserves exact original bounds at zoom 0,5 for (1000.00, 1000.00, -10.00)
+PASS: Camera clamp preserves exact original bounds at zoom 1 for (0.00, 0.00, 0.00)
+PASS: Camera clamp preserves exact original bounds at zoom 1 for (-1000.00, -1000.00, -10.00)
+PASS: Camera clamp preserves exact original bounds at zoom 1 for (1000.00, 1000.00, -10.00)
+MEASURED: current-thread Unity GC.Alloc events / 2048 calls; empty=0, original corner arrays=4096, cached ratios=0, cached clamp=0
+PASS: Native recorder's empty measurement bracket produces zero allocation events
+PASS: Positive control: original two corner arrays produce at least 4096 native GC.Alloc events
+PASS: Warmed HUD ratio and camera clamp paths produce zero native GC.Alloc events
+PASS: Original camera pose, zoom target, smoothing and enabled state restored after profiling
+PASS: Original GameConfig remained unchanged
+PASS: Player progress, skills, stars and settings remained unchanged
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
+RESTORED: PlayerData, auto-save, debug, preview, time scale, theme and background setting
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
+PASS: Complete original PlayerData restored
+PASS: Normal game managers safely returned to menu
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged

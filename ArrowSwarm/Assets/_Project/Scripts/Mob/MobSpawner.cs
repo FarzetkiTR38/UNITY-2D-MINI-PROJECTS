@@ -13,7 +13,7 @@ namespace ArrowSwarm.Mob
     /// Manages relaxed perimeter-proportional speed, clear spacing,
     /// and event-driven backward gap-closing triggered when mobs in the chain die.
     /// </summary>
-    public class MobSpawner : Singleton<MobSpawner>
+    public partial class MobSpawner : Singleton<MobSpawner>
     {
         [SerializeField] private Mob _mobPrefab;
         [SerializeField] private Transform _mobParent;
@@ -156,11 +156,7 @@ namespace ArrowSwarm.Mob
                 StopCoroutine(_spawnCoroutine);
                 _spawnCoroutine = null;
             }
-            if (_gapCloseCoroutine != null)
-            {
-                StopCoroutine(_gapCloseCoroutine);
-                _gapCloseCoroutine = null;
-            }
+            CancelGapClose();
         }
 
         /// <summary>
@@ -300,10 +296,7 @@ namespace ArrowSwarm.Mob
             if (actualGap > _desiredSpacing + 0.10f)
             {
                 float excessDistance = actualGap - _desiredSpacing;
-                if (_gapCloseCoroutine != null)
-                {
-                    StopCoroutine(_gapCloseCoroutine);
-                }
+                CancelGapClose();
                 _gapCloseCoroutine = StartCoroutine(GapCloseRoutine(frontGroupEndIndex, excessDistance));
             }
         }
@@ -320,22 +313,14 @@ namespace ArrowSwarm.Mob
                 Mob m = _activeMobs[i];
                 if (m != null && m.IsAlive)
                 {
+                    _gapCloseParticipants.Add(new GapCloseParticipant(m));
                     m.Movement.SetSpeed(-reverseSpeed);
                 }
             }
 
             yield return new WaitForSeconds(duration);
 
-            // Restore forward base speed
-            for (int i = 0; i <= frontGroupEndIndex && i < _activeMobs.Count; i++)
-            {
-                Mob m = _activeMobs[i];
-                if (m != null && m.IsAlive)
-                {
-                    m.Movement.SetSpeed(_baseMobSpeed);
-                }
-            }
-
+            RestoreGapCloseParticipants();
             _gapCloseCoroutine = null;
         }
 
@@ -353,6 +338,7 @@ namespace ArrowSwarm.Mob
 
         protected override void OnDestroy()
         {
+            CancelGapClose();
             Mob.OnMobKilled -= HandleMobKilled;
             Mob.OnMobFinished -= HandleMobFinished;
             ArrowSwarm.Skills.FreezeManager.OnFreezeStarted -= HandleFreezeStarted;

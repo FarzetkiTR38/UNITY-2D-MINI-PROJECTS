@@ -1,0 +1,20 @@
+PASS: leaderboard-pending-verification.txt
+PASS: first saved change records pending work without creating or contacting the lazy service
+PASS: the same production save persists the new Defense level
+PASS: multiple campaign and profile changes remain pending with no eager initialization
+PASS: actual panel startup waits for its controlled provider initialization
+PASS: initial synchronization submits the latest Defense level, shared campaign stars and profile
+PASS: name synchronization runs once and pending survives until the score is accepted
+PASS: successful initial submission clears pending without duplicating uploads
+PASS: two overlapping controlled score snapshots can complete out of order
+PASS: newer failed submission reports failure
+PASS: newer failed submission retains pending work
+PASS: older successful submission still reports its own outcome
+PASS: older success cannot clear a newer failed score's pending flag
+PASS: newer successful submission reports success
+PASS: newer successful submission clears pending
+PASS: older failed submission still reports its own outcome
+PASS: older failure cannot restore pending after the newest score succeeded
+PASS: offline submission stays pending without a provider request
+PASS: original data object, auto-save and all five data-service preferences restored
+PASS: temporary singleton removed and exact original Editor provider factory restored

@@ -88,13 +88,26 @@ namespace ArrowSwarm.Modes.Editor
             Check(follower.IsPaused && Mathf.Abs(follower.CurrentDistance - distance) < .001f &&
                 MobSpawner.Instance.SpawnedCount == spawned, "Freeze stops real mob movement and spawning");
             Field<Button>(hud, "_pauseButton").onClick.Invoke();
-            float paused = freeze.RemainingTime; yield return .35f;
+            float paused = freeze.RemainingTime; int pauseFrame = Time.frameCount; float pauseTime = Time.unscaledTime;
             var pause = UnityEngine.Object.FindFirstObjectByType<PauseMenuUI>(FindObjectsInactive.Include);
+            var pauseGroup = Field<CanvasGroup>(pause, "_canvasGroup");
+            PauseDiagnostic("immediate pause", freeze, paused, pauseGroup);
+            Check(GameManager.Instance.CurrentState == GameState.Paused && Time.timeScale == 0f,
+                "Actual Pause immediately enters Paused state and zero time scale");
+            yield return (Func<bool>)(() => pauseGroup.interactable && pauseGroup.alpha > .999f &&
+                Time.frameCount > pauseFrame + 1 && Time.unscaledTime > pauseTime + .15f);
+            PauseDiagnostic("settled pause", freeze, paused, pauseGroup);
             Check(GameManager.Instance.CurrentState == GameState.Paused && Time.timeScale == 0f &&
                 freeze.IsFrozen && Mathf.Abs(freeze.RemainingTime - paused) < .001f &&
-                Field<CanvasGroup>(pause, "_canvasGroup").interactable, "Actual Pause freezes gameplay and the active Freeze timer");
+                pauseGroup.interactable, "Actual Pause freezes gameplay and the active Freeze timer");
             var resume = Field<Button>(pause, "_continueButton"); Check(Usable(resume), "Original Continue button is visible and enabled");
-            resume.onClick.Invoke(); yield return .2f;
+            resume.onClick.Invoke(); int resumeFrame = Time.frameCount;
+            PauseDiagnostic("immediate resume", freeze, paused, pauseGroup);
+            Check(GameManager.Instance.CurrentState == GameState.Playing && Time.timeScale == 1f,
+                "Actual Continue immediately enters Playing state and restores time scale");
+            yield return (Func<bool>)(() => Time.frameCount > resumeFrame + 1 && pauseGroup.alpha < .001f &&
+                !pauseGroup.interactable && GameManager.Instance.CurrentState == GameState.Playing);
+            PauseDiagnostic("settled resume", freeze, paused, pauseGroup);
             Check(GameManager.Instance.CurrentState == GameState.Playing && Time.timeScale == 1f &&
                 freeze.RemainingTime < paused, "Actual Continue resumes gameplay and Freeze countdown");
             yield return (Func<bool>)(() => !freeze.IsFrozen || freeze.RemainingTime <= .5f);
@@ -129,8 +142,13 @@ namespace ArrowSwarm.Modes.Editor
             Check(_data.PlayerData.freezeCount == 1, "One temporary Freeze charge remains before retry cancellation check");
             Field<Button>(hud, "_skill2FreezeButton").onClick.Invoke();
             Check(FreezeManager.Instance.IsFrozen && _data.PlayerData.freezeCount == 0, "Second temporary Freeze is active before retry");
-            Field<Button>(hud, "_pauseButton").onClick.Invoke(); yield return .35f;
+            Field<Button>(hud, "_pauseButton").onClick.Invoke(); int pauseFrame = Time.frameCount;
             var pause = UnityEngine.Object.FindFirstObjectByType<PauseMenuUI>(FindObjectsInactive.Include);
+            var pauseGroup = Field<CanvasGroup>(pause, "_canvasGroup");
+            Check(GameManager.Instance.CurrentState == GameState.Paused && Time.timeScale == 0f,
+                "Pause before Retry immediately freezes the original game state");
+            yield return (Func<bool>)(() => pauseGroup.interactable && pauseGroup.alpha > .999f && Time.frameCount > pauseFrame + 1);
+            PauseDiagnostic("settled pause before Retry", FreezeManager.Instance, FreezeManager.Instance.RemainingTime, pauseGroup);
             var retry = Field<Button>(pause, "_retryButton"); Check(Usable(retry), "Original Retry button is visible and enabled");
             int scene = SceneManager.GetActiveScene().handle; retry.onClick.Invoke();
             yield return (Func<bool>)(() => SceneManager.GetActiveScene().handle != scene && DefenseReady());
@@ -144,6 +162,12 @@ namespace ArrowSwarm.Modes.Editor
         }
 
         private static bool Usable(Button button) => button != null && button.gameObject.activeInHierarchy && button.IsInteractable();
+        private static void PauseDiagnostic(string stage, FreezeManager freeze, float paused, CanvasGroup group)
+        {
+            Results.Add("PAUSE TIMING: " + stage + ", frame=" + Time.frameCount + ", state=" + GameManager.Instance.CurrentState +
+                ", timeScale=" + Time.timeScale + ", frozen=" + freeze.IsFrozen + ", remaining=" + freeze.RemainingTime +
+                ", remainingDiff=" + (freeze.RemainingTime - paused) + ", alpha=" + group.alpha + ", interactable=" + group.interactable);
+        }
         private static T Field<T>(UnityEngine.Object source, string name) where T : UnityEngine.Object
         { return new SerializedObject(source).FindProperty(name).objectReferenceValue as T; }
         private static T Private<T>(object source, string name) => (T)source.GetType().GetField(name,

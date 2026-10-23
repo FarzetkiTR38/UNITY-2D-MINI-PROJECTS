@@ -1,0 +1,23 @@
+PASS
+PASS: First rewarded request is pending
+PASS: Readiness excludes an occupied fullscreen request
+PASS: Repeated reward tap is rejected without replacing its owner
+PASS: Faulty duplicate reward/failure callbacks complete once
+PASS: Old reward callback cannot complete a later request
+PASS: Later reward keeps its own callback
+PASS: Failure result settles once and unlocks another request
+PASS: A null caller callback cannot leave the manager busy
+PASS: A throwing provider settles failure and unlocks requests
+PASS: Replacing a service cancels its owner and ignores late success
+PASS: Interstitial playback excludes a simultaneous rewarded request
+PASS: Duplicate interstitial close completes once
+PASS: Old interstitial event cannot close a later playback
+PASS: Later interstitial closes its own request
+PASS: Throwing interstitial provider still releases navigation
+PASS: SDK reward records intent without applying effects during fullscreen playback
+PASS: SDK earned reward is delivered once only after close
+PASS: SDK unrewarded close settles failure once
+PASS: Recorded SDK reward keeps the fullscreen gate until close
+PASS: Fullscreen close releases the manager and delivers its earned reward
+PASS: Original provider and idle request state restored
+PASS: Original interstitial pacing timestamp restored

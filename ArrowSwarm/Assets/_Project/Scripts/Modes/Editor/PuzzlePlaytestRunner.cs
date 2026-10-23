@@ -14,7 +14,7 @@ namespace ArrowSwarm.Modes.Editor
         private static string CaptureFolder = "Captures/Revision2/Playthroughs";
         private static int _modeIndex, _level, _step, _stage, _catalogCount, _captureFrame;
         private static double _deadline, _pauseUntil, _captureUntil;
-        private static bool _initializing, _captured, _running;
+        private static bool _initializing, _captured, _running, _captureScreenshots;
         private static PuzzleSolution _solution;
         private static readonly List<string> Results = new List<string>();
         public static string Status { get; private set; } = "Idle";
@@ -27,10 +27,18 @@ namespace ArrowSwarm.Modes.Editor
 
         /// <summary>Runs the same campaign checks while preserving earlier review captures.</summary>
         public static void BeginAt(string captureFolder)
+            => StartAt(captureFolder, true);
+
+        /// <summary>Replays the complete campaign without duplicating the existing hundred gameplay images.</summary>
+        public static void BeginWithoutCaptures(string reportFolder)
+            => StartAt(reportFolder, false);
+
+        private static void StartAt(string captureFolder, bool captureScreenshots)
         {
             if (_running) throw new InvalidOperationException("A campaign playtest is already running.");
             if (!Application.isPlaying) throw new InvalidOperationException("Enter Play Mode first.");
             CaptureFolder = captureFolder;
+            _captureScreenshots = captureScreenshots;
             Snapshot(); _running = true; Results.Clear(); _modeIndex = 0; _level = 1; _stage = 0;
             Directory.CreateDirectory(CaptureFolder);
             EditorApplication.update += Tick; EditorApplication.playModeStateChanged += PlayModeChanged;
@@ -85,7 +93,8 @@ namespace ArrowSwarm.Modes.Editor
                     VerifyPresentation(session); VerifyNoSaveWrites();
                     Results.Add(Mode + " " + _level + "/" + _catalogCount + " (" + session.Level.Title +
                         "): PASS " + session.Level.Arrows.Count + " arrows, " + _step + " actual actions, 3 lives, " +
-                        session.Turns + " turns left, frame parity, grid-only card, no save writes; " + CapturePath());
+                        session.Turns + " turns left, frame parity, grid-only card, no save writes; " +
+                        (_captureScreenshots ? CapturePath() : "screenshots disabled for regression rerun"));
                     if (_level < _catalogCount)
                     {
                         _level++; session.LoadLevel(_level); _solution = null; _captured = false;
@@ -105,7 +114,8 @@ namespace ArrowSwarm.Modes.Editor
                 if (!_captured)
                 {
                     if (now < _captureUntil) return;
-                    VerifyPresentation(session); ScreenCapture.CaptureScreenshot(CapturePath());
+                    VerifyPresentation(session);
+                    if (_captureScreenshots) ScreenCapture.CaptureScreenshot(CapturePath());
                     _captured = true; _captureFrame = Time.frameCount; return;
                 }
                 if (Time.frameCount <= _captureFrame) return;

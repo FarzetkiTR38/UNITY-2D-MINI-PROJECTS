@@ -1,0 +1,60 @@
+PASS: original Defense101 UI, arrows, bounce damage, hint, freeze, pause and retry
+PASS: Original GameHUD and both authored bars remain visible at101
+PASS: Original enabled Hint and Freeze skill buttons remain present
+PASS: Defense retains Freeze and has no puzzle HUD or rescue rocket
+PASS: Defense retains one original zoom slider
+PASS: TopBar uses the saved original GameScene sprite
+PASS: BottomBar uses the saved original GameScene sprite
+PASS: Level101 keeps the normal HUD and disables tutorial guidance
+PASS: Defense starts with three lives and zero fired arrows
+PASS: Original LevelManager generated a valid populated101 map
+PASS: Original grid and perimeter path are initialized
+PASS: Original portal effects and living Defense enemies remain present
+PASS: Captured original Defense101 with populated arrows, portal, enemies and original HUD
+PASS: Temporary inventory avoids all rewarded ad paths
+PASS: Actual Hint button spends one temporary token and highlights a legal original arrow
+PASS: Actual Freeze button spends one temporary charge and shows its live timer
+PASS: Freeze stops real mob movement and spawning
+PAUSE TIMING: immediate pause, frame=63, state=Paused, timeScale=0, frozen=True, remaining=4,161593, remainingDiff=0, alpha=1, interactable=False
+PASS: Actual Pause immediately enters Paused state and zero time scale
+PAUSE TIMING: settled pause, frame=65, state=Paused, timeScale=0, frozen=True, remaining=4,161593, remainingDiff=0, alpha=1, interactable=True
+PASS: Actual Pause freezes gameplay and the active Freeze timer
+PASS: Original Continue button is visible and enabled
+PAUSE TIMING: immediate resume, frame=65, state=Playing, timeScale=1, frozen=True, remaining=4,161593, remainingDiff=0, alpha=0, interactable=False
+PASS: Actual Continue immediately enters Playing state and restores time scale
+PAUSE TIMING: settled resume, frame=67, state=Playing, timeScale=1, frozen=True, remaining=3,494926, remainingDiff=-0,6666665, alpha=0, interactable=False
+PASS: Actual Continue resumes gameplay and Freeze countdown
+PASS: Enemies and spawns remain frozen for the active duration
+PASS: Freeze expires and clears the timer and movement pause
+PASS: Original101 contains an unblocked legal arrow
+PASS: Actual legal Arrow.OnPlayerClick fires, updates the HUD counter and preserves lives
+PASS: Original101 contains a blocked-arrow fixture
+PASS: Actual blocked Arrow.OnPlayerClick starts the original bounce and costs exactly one life
+PASS: Blocked bounce returns without firing and original HUD shows two remaining lives
+PASS: One temporary Freeze charge remains before retry cancellation check
+PASS: Second temporary Freeze is active before retry
+PASS: Pause before Retry immediately freezes the original game state
+PAUSE TIMING: settled pause before Retry, frame=100, state=Paused, timeScale=0, frozen=True, remaining=4,666667, remainingDiff=0, alpha=1, interactable=True
+PASS: Original Retry button is visible and enabled
+PASS: Actual Retry reloads101, restores three visible lives/zero fired arrows and cancels Freeze
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
+PASS: Only temporary test inventory changed; Defense/puzzle progress, stars, profile and settings stayed intact
+PASS: Automatic save and leaderboard submission stayed disabled during skill use
+PASS: Original GameConfig asset remained unchanged
+RESTORED: complete PlayerData, auto-save, debug override/cheats/speed, preview context, time scale and background setting
+PASS: Complete original PlayerData restored
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
+PASS: Original game managers returned safely to menu
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
