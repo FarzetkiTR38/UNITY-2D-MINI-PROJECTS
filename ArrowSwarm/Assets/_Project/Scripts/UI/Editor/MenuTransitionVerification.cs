@@ -5,6 +5,7 @@ namespace ArrowSwarm.UI.Editor
     using System.Collections.Generic;
     using System.IO;
     using ArrowSwarm.Core;
+    using ArrowSwarm.Data;
     using ArrowSwarm.Modes;
     using ArrowSwarm.Puzzle;
     using UnityEditor;
@@ -15,7 +16,8 @@ namespace ArrowSwarm.UI.Editor
     /// <summary>Exercises the real shared scene transition without advancing any campaign.</summary>
     public static partial class MenuTransitionVerification
     {
-        private const string Output = "Captures/UIVisualRevision";
+        private static string Output = "Captures/UIVisualRevision";
+        private static ThemeMode _theme;
         private static readonly List<string> Results = new List<string>();
         private static IEnumerator _steps;
         private static Func<bool> _wait;
@@ -29,11 +31,16 @@ namespace ArrowSwarm.UI.Editor
 
         /// <summary>Starts in an idle MainMenuScene in Play Mode and uses production mode navigation.</summary>
         public static void Begin()
+        { BeginForTheme(ThemeMode.Light,"Captures/UIVisualRevision"); }
+
+        /// <summary>Exercises the same production routes in the specified saved theme with separate evidence.</summary>
+        public static void BeginForTheme(ThemeMode theme,string folder)
         {
             if (!Application.isPlaying || _running || SceneManager.GetActiveScene().name != "MainMenuScene" ||
                 !SceneTransitionManager.HasInstance || SceneTransitionManager.Instance.IsTransitioning)
                 throw new InvalidOperationException("Start once in idle MainMenuScene Play Mode.");
             Results.Clear(); Captures.Clear(); _failures = _midpoints = _sceneLoads = 0;
+            _theme=theme;Output=folder;
             _scope = null; _expectedScene = null; _capturing = false; _captureError = null;
             _running = true; _deadline = EditorApplication.timeSinceStartup + 180;
             Directory.CreateDirectory(Output); _steps = Run(); Status = "Starting transition verification";
@@ -48,6 +55,7 @@ namespace ArrowSwarm.UI.Editor
         private static IEnumerator Run()
         {
             _scope = new Scope();
+            _scope.Player.theme=_theme;ThemeManager.Instance.ApplyCurrentTheme();
             try
             {
                 var manager = SceneTransitionManager.Instance;
