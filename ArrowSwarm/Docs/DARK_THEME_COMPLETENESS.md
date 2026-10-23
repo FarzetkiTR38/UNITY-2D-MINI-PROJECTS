@@ -9,7 +9,7 @@ Audit every player-facing screen, fix remaining light-only surfaces and low-cont
 - Source art, campaign generation/data and gameplay rules stay unchanged unless a demonstrated theme defect requires a narrowly scoped correction.
 
 ## Phases and completion
-- [ ] 1. **Inventory and visual baseline**: inspect six build scenes, shared UI prefabs, material families and runtime theme owners; capture paired Light/Dark menu, modal, gameplay and tutorial states. Commit the plan, audit and findings.
+- [x] 1. **Inventory and visual baseline**: inspect six build scenes, shared UI prefabs, material families and runtime theme owners; capture paired Light/Dark menu, modal, gameplay and tutorial states. Commit the plan, audit and findings.
 - [ ] 2. **Menu and mode selection**: cover the illustrated backdrop/stat surfaces, five buttons, localized labels, mode modal/cards and dynamic menu screens. Verify dark contrast and exact return to authored Light; commit.
 - [ ] 3. **Gameplay and shared overlays**: inspect Defense, Shapes and Color Shift HUDs, boards, rotation controls, pause/results/hint/skill prompts, tutorial and reusable list/profile elements. Fix only demonstrated gaps, verify both themes, commit.
 - [ ] 4. **Boot and scene transitions**: apply saved Dark from startup through shared circular wipes; preserve progress/input ownership when the theme changes during animation. Verify Light unchanged, commit.
