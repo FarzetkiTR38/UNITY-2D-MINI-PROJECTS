@@ -9,11 +9,14 @@ namespace ArrowSwarm.UI
         [SerializeField] private Vector2 _referenceSize = new Vector2(941,1672);
         private Rect _previous;
         private Vector2Int _screen;
+        private Canvas _canvas;
+        private float _canvasScale;
         private void OnEnable() => Fit();
         private void Update()
         {
             var size=new Vector2Int(Screen.width,Screen.height);
-            if (_previous!=Screen.safeArea || _screen!=size) Fit();
+            if (_canvas==null)_canvas=GetComponentInParent<Canvas>();
+            if (_previous!=Screen.safeArea || _screen!=size || (_canvas!=null&&!Mathf.Approximately(_canvasScale,_canvas.scaleFactor))) Fit();
         }
         private void Fit()
         {
@@ -21,7 +24,9 @@ namespace ArrowSwarm.UI
             var parent=rect.parent as RectTransform;
             if (parent==null || Screen.width==0 || Screen.height==0) return;
             _previous=Screen.safeArea; _screen=new Vector2Int(Screen.width,Screen.height);
-            float scale=GetComponentInParent<Canvas>().scaleFactor;
+            if (_canvas==null)_canvas=GetComponentInParent<Canvas>();
+            if (_canvas==null)return;
+            float scale=Mathf.Max(.001f,_canvas.scaleFactor);_canvasScale=scale;
             Vector2 safeSize=_previous.size/scale;
             rect.anchorMin=rect.anchorMax=new Vector2(.5f,.5f); rect.pivot=new Vector2(.5f,.5f);
             rect.sizeDelta=_referenceSize;

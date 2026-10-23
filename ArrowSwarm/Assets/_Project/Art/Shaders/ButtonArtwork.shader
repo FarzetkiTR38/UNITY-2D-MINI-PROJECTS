@@ -6,6 +6,8 @@ Shader "ArrowSwarm/UI/ButtonArtwork"
         _Color ("Tint", Color) = (1,1,1,1)
         _Bounds ("Artwork Bounds (left, bottom, right, top)", Vector) = (0.005,0.005,0.995,0.995)
         _Corner ("Artwork Corner Radius XY", Vector) = (0.16,0.49,0,0)
+        _SurfaceColor ("Optional Theme Surface", Color) = (0.1255,0.1961,0.3098,1)
+        _SurfaceStrength ("Replace Pale Artwork (0 preserves Light)", Range(0,1)) = 0
         _StencilComp ("Stencil Comparison", Float) = 8
         _Stencil ("Stencil ID", Float) = 0
         _StencilOp ("Stencil Operation", Float) = 0
@@ -37,7 +39,8 @@ Shader "ArrowSwarm/UI/ButtonArtwork"
             struct appdata { float4 vertex:POSITION; float4 color:COLOR; float2 uv:TEXCOORD0; float4 localUV:TEXCOORD1; };
             struct v2f { float4 vertex:SV_POSITION; fixed4 color:COLOR; float2 uv:TEXCOORD0; float2 localUV:TEXCOORD1; float4 position:TEXCOORD2; };
             sampler2D _MainTex;
-            fixed4 _Color, _TextureSampleAdd;
+            fixed4 _Color, _TextureSampleAdd, _SurfaceColor;
+            half _SurfaceStrength;
             float4 _Bounds, _Corner, _ClipRect;
             v2f vert(appdata v)
             {
@@ -51,7 +54,15 @@ Shader "ArrowSwarm/UI/ButtonArtwork"
             }
             fixed4 frag(v2f i):SV_Target
             {
-                fixed4 c = (tex2D(_MainTex,i.uv) + _TextureSampleAdd) * i.color;
+                fixed4 texel = tex2D(_MainTex,i.uv) + _TextureSampleAdd;
+                half hi = max(texel.r,max(texel.g,texel.b));
+                half lo = min(texel.r,min(texel.g,texel.b));
+                half saturation = (hi-lo)/max(hi,0.001);
+                half pale = 1-smoothstep(0.38,0.80,saturation);
+                half luminance = dot(texel.rgb,half3(0.2126,0.7152,0.0722));
+                half3 surface = _SurfaceColor.rgb * lerp(0.78,1.14,luminance);
+                texel.rgb = lerp(texel.rgb,surface,pale*_SurfaceStrength);
+                fixed4 c = texel * i.color;
                 // The source illustration contains baked cream padding. Clip its actual
                 // rounded plaque independently of tint, leaving white artwork inside intact.
                 float2 radius = max(_Corner.xy,0.001);
