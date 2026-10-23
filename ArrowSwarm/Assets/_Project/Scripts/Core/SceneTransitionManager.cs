@@ -199,6 +199,7 @@ namespace ArrowSwarm.Core
             if (mat.HasProperty(PropColor)) mat.SetColor(PropColor, _backgroundColor);
             if (mat.HasProperty(PropBorderColor)) mat.SetColor(PropBorderColor, _neonGlowColor);
             if (mat.HasProperty(PropSecondaryGlow)) mat.SetColor(PropSecondaryGlow, _secondaryGlowColor);
+            ApplyThemePalette(mat);
         }
 
         private void ApplyActiveMaterial()

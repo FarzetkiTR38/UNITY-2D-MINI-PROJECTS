@@ -45,6 +45,8 @@ namespace ArrowSwarm.UI.Editor
             var image = Field<Image>(SceneTransitionManager.Instance, "_overlayImage");
             Check(image.material == _scope.Runtime && RuntimeCount() == 1, context + " reuses the same single runtime clone");
             Check(EditorJsonUtility.ToJson(_scope.Source) == _scope.SourceJson, context + " preserves exact authored material JSON");
+            string colorField=_theme==ArrowSwarm.Data.ThemeMode.Dark?"_darkBackgroundColor":"_backgroundColor";
+            Check(image.material.GetColor("_Color")==Field<Color>(SceneTransitionManager.Instance,colorField),context+" uses the saved theme palette");
         }
 
         private static int RuntimeCount()

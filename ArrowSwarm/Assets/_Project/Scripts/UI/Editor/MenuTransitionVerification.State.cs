@@ -85,6 +85,7 @@ namespace ArrowSwarm.UI.Editor
                 finally
                 {
                     _data.Dispose(); _data.VerifyRestored(Results);
+                    ThemeManager.Instance.ApplyCurrentTheme();
                     Check(JsonUtility.ToJson(DataManager.Instance.PlayerData) == _playerJson, "Original player JSON, progress and inventory restored exactly");
                     if (GameManager.HasInstance)
                     {

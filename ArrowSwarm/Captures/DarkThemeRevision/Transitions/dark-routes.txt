@@ -1,0 +1,74 @@
+PASS: real shared transitions; failures=0
+PASS: Authored custom material has a separate runtime clone
+PASS: Actual overlay uses the authored Swarm iris shader
+PASS: Exactly one runtime custom material instance exists
+PASS: Paused transition activates its full-screen input blocker immediately
+PASS: Paused callback midpoint is fully covered and blocks input
+PASS: Render capture callback did not throw: none
+PASS: Action executes once and finishes using unscaled time while paused
+PASS: Paused action clears progress, overlay, coroutine and input blocking
+PASS: Ten distinct actual transition frames were captured
+CAPTURE: Captures/DarkThemeRevision/TransitionsDark/transition-closing-1-639283466707440139.png; progress=0,200; frame=40590; bytes=433191
+CAPTURE: Captures/DarkThemeRevision/TransitionsDark/transition-closing-2-639283466711827468.png; progress=0,401; frame=40705; bytes=357461
+CAPTURE: Captures/DarkThemeRevision/TransitionsDark/transition-closing-3-639283466715839757.png; progress=0,600; frame=40809; bytes=237549
+CAPTURE: Captures/DarkThemeRevision/TransitionsDark/transition-closing-4-639283466720239695.png; progress=0,801; frame=40920; bytes=87649
+CAPTURE: Captures/DarkThemeRevision/TransitionsDark/transition-closed-midpoint-639283466728840552.png; progress=1,000; frame=41138; bytes=21385
+CAPTURE: Captures/DarkThemeRevision/TransitionsDark/transition-opening-1-639283466736331101.png; progress=0,849; frame=41340; bytes=63455
+CAPTURE: Captures/DarkThemeRevision/TransitionsDark/transition-opening-2-639283466740946734.png; progress=0,649; frame=41459; bytes=200711
+CAPTURE: Captures/DarkThemeRevision/TransitionsDark/transition-opening-3-639283466745012567.png; progress=0,448; frame=41568; bytes=330405
+CAPTURE: Captures/DarkThemeRevision/TransitionsDark/transition-opening-4-639283466749201005.png; progress=0,249; frame=41678; bytes=416318
+CAPTURE: Captures/DarkThemeRevision/TransitionsDark/transition-opening-5-639283466754939041.png; progress=0,049; frame=41829; bytes=413850
+PASS: Shapes production Play route starts the shared transition
+PASS: Expected scene loaded: ShapesScene
+PASS: ShapesScene scene-loaded midpoint is fully covered and blocks input
+PASS: Shapes reaches its real Playing state
+PASS: Shapes actual map is loaded through its normal route
+PASS: Shapes entry clears progress, overlay, coroutine and input blocking
+PASS: Shapes entry reuses the same single runtime clone
+PASS: Shapes entry preserves exact authored material JSON
+PASS: Shapes entry uses the saved theme palette
+PASS: Expected scene loaded: MainMenuScene
+PASS: MainMenuScene scene-loaded midpoint is fully covered and blocks input
+PASS: Shapes returns to actual Menu state
+PASS: Shapes return clears progress, overlay, coroutine and input blocking
+PASS: Shapes return reuses the same single runtime clone
+PASS: Shapes return preserves exact authored material JSON
+PASS: Shapes return uses the saved theme palette
+PASS: ColorShift production Play route starts the shared transition
+PASS: Expected scene loaded: ColorShiftScene
+PASS: ColorShiftScene scene-loaded midpoint is fully covered and blocks input
+PASS: ColorShift reaches its real Playing state
+PASS: ColorShift actual map is loaded through its normal route
+PASS: ColorShift entry clears progress, overlay, coroutine and input blocking
+PASS: ColorShift entry reuses the same single runtime clone
+PASS: ColorShift entry preserves exact authored material JSON
+PASS: ColorShift entry uses the saved theme palette
+PASS: Expected scene loaded: MainMenuScene
+PASS: MainMenuScene scene-loaded midpoint is fully covered and blocks input
+PASS: ColorShift returns to actual Menu state
+PASS: ColorShift return clears progress, overlay, coroutine and input blocking
+PASS: ColorShift return reuses the same single runtime clone
+PASS: ColorShift return preserves exact authored material JSON
+PASS: ColorShift return uses the saved theme palette
+PASS: Defense production Play route starts the shared transition
+PASS: Expected scene loaded: GameScene
+PASS: GameScene scene-loaded midpoint is fully covered and blocks input
+PASS: Defense reaches its real Playing state
+PASS: Defense actual map is loaded through its normal route
+PASS: Defense entry clears progress, overlay, coroutine and input blocking
+PASS: Defense entry reuses the same single runtime clone
+PASS: Defense entry preserves exact authored material JSON
+PASS: Defense entry uses the saved theme palette
+PASS: Expected scene loaded: MainMenuScene
+PASS: MainMenuScene scene-loaded midpoint is fully covered and blocks input
+PASS: Defense returns to actual Menu state
+PASS: Defense return clears progress, overlay, coroutine and input blocking
+PASS: Defense return reuses the same single runtime clone
+PASS: Defense return preserves exact authored material JSON
+PASS: Defense return uses the saved theme palette
+PASS: All six actual scene loads occurred behind the fully closed overlay
+PASS: Authored game configuration remains unchanged
+PASS: original data object, auto-save and all five data-service preferences restored
+PASS: Original player JSON, progress and inventory restored exactly
+PASS: Authored custom material remains unchanged after cleanup
+PASS: Initial MainMenu scene restored
