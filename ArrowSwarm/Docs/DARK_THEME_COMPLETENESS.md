@@ -11,7 +11,7 @@ Audit every player-facing screen, fix remaining light-only surfaces and low-cont
 ## Phases and completion
 - [x] 1. **Inventory and visual baseline**: inspect six build scenes, shared UI prefabs, material families and runtime theme owners; capture paired Light/Dark menu, modal, gameplay and tutorial states. Commit the plan, audit and findings.
 - [ ] 2. **Menu and mode selection**: cover the illustrated backdrop/stat surfaces, five buttons, localized labels, mode modal/cards and dynamic menu screens. Verify dark contrast and exact return to authored Light; commit.
-- [ ] 3. **Gameplay and shared overlays**: inspect Defense, Shapes and Color Shift HUDs, boards, rotation controls, pause/results/hint/skill prompts, tutorial and reusable list/profile elements. Fix only demonstrated gaps, verify both themes, commit.
+- [x] 3. **Gameplay and shared overlays**: inspect Defense, Shapes and Color Shift HUDs, boards, rotation controls, pause/results/hint/skill prompts, tutorial and reusable list/profile elements. Fix only demonstrated gaps, verify both themes, commit.
 - [ ] 4. **Boot and scene transitions**: apply saved Dark from startup through shared circular wipes; preserve progress/input ownership when the theme changes during animation. Verify Light unchanged, commit.
 - [ ] 5. **Complete regression and overview**: inspect all paired captures, test live switching, scene entry, pooled/list refresh and portrait/tablet layouts; correct remaining issues in tested commits. Restore original data/editor state and publish a visual overview and final commit.
 
@@ -23,3 +23,5 @@ Audit every player-facing screen, fix remaining light-only surfaces and low-cont
 
 ## Findings / continuation log
 Initial source review: theme infrastructure and legacy dark material families already exist. New illustrated menu assets and the recently added Swarm iris require explicit coverage review; global tinting would damage character/logo artwork and button transparency, so author targeted variants instead of repainting every graphic indiscriminately.
+
+Phase 3: Added the eight missing MapTest bindings (pause/results/skill/tutorial panels and zoom track) from Defense's existing authored palette. All 21 gameplay/boot pairs restore exact Light materials/sprites/colors. Runtime maps and gameplay rules unchanged. MCP visual validation used an isolated byte-for-byte project copy after the original editor's external-scene reload dialog became inaccessible to desktop input.
