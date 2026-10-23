@@ -24,20 +24,25 @@ namespace ArrowSwarm.UI.Editor
         private static string _folder;
         private static bool _supplement;
         private static bool _tail;
+        private static bool _menusOnly;
         /// <summary>Current capture stage or final result.</summary>
         public static string Status { get; private set; } = "Idle";
 
         /// <summary>Starts from an idle main menu and records every player-facing UI family in both themes.</summary>
         public static void Begin(string folder)
-        { _supplement=false; _tail=false; StartCapture(folder); }
+        { _supplement=false; _tail=false; _menusOnly=false; StartCapture(folder); }
 
         /// <summary>Captures gameplay/boot separately when completing or reviewing the visual baseline.</summary>
         public static void BeginSupplement(string folder)
-        { _supplement=true; _tail=false; StartCapture(folder); }
+        { _supplement=true; _tail=false; _menusOnly=false; StartCapture(folder); }
 
         /// <summary>Completes the optional map-preview and boot portion of an audit.</summary>
         public static void BeginTail(string folder)
-        { _supplement=true; _tail=true; StartCapture(folder); }
+        { _supplement=true; _tail=true; _menusOnly=false; StartCapture(folder); }
+
+        /// <summary>Captures all menu families for another resolution without restarting gameplay fixtures.</summary>
+        public static void BeginMenus(string folder)
+        { _supplement=false; _tail=false; _menusOnly=true; StartCapture(folder); }
 
         private static void StartCapture(string folder)
         {
@@ -57,6 +62,7 @@ namespace ArrowSwarm.UI.Editor
         {
             foreach (string screen in new[] { "Main", "ModeSelect", "Settings", "Profile", "Leaderboard", "LevelsDefense", "LevelsShapes", "LevelsColorShift", "Transition" })
                 if(!_supplement) yield return Pair("menu-"+screen, theme=>StageMenu(screen,theme));
+            if(_menusOnly)yield break;
             foreach (string scene in new[] { "GameScene", "ShapesScene", "ColorShiftScene", "MapTestScene" })
             {
                 if(_tail&&scene!="MapTestScene")continue;
