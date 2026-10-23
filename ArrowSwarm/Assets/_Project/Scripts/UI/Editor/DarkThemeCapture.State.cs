@@ -13,6 +13,7 @@ namespace ArrowSwarm.UI.Editor
     /// <summary>Owns isolated player/debug state for the paired-theme visual audit.</summary>
     public static partial class DarkThemeCapture
     {
+        /// <summary>Restores the caller's player, preferences and editor-only preview context.</summary>
         private sealed class Scope:IDisposable
         {
             internal readonly PlayerData Player;
@@ -38,6 +39,7 @@ namespace ArrowSwarm.UI.Editor
                 so.FindProperty("_gameSpeedMultiplier").floatValue=1;so.ApplyModifiedPropertiesWithoutUndo();
                 Application.runInBackground=true;Time.timeScale=1;UnityEngine.Random.InitState(523101);
             }
+            /// <summary>Releases only fixture-owned changes and refreshes the restored menu values.</summary>
             public void Dispose()
             {
                 if(_disposed)return;_disposed=true;
@@ -50,6 +52,10 @@ namespace ArrowSwarm.UI.Editor
                 if(_debug!=null){JsonUtility.FromJsonOverwrite(_debugJson,_debug);if(_createdDebug)UnityEngine.Object.DestroyImmediate(_debug.gameObject);}
                 PuzzleLaunch.Preview=_preview;PuzzleLaunch.PreviewMode=_previewMode;PuzzleLaunch.PreviewLevel=_previewLevel;
                 GameManager.Instance.SetState(GameState.Menu);ThemeManager.Instance.ApplyCurrentTheme();
+                var menu=UnityEngine.Object.FindFirstObjectByType<MainMenuUI>();
+                if(menu!=null)typeof(MainMenuUI).GetMethod("SetupUI",Flags).Invoke(menu,null);
+                var modes=UnityEngine.Object.FindFirstObjectByType<GameModeSelectUI>(FindObjectsInactive.Include);
+                if(modes!=null)typeof(GameModeSelectUI).GetMethod("Refresh",Flags).Invoke(modes,null);
                 Time.timeScale=_time;Application.runInBackground=_background;UnityEngine.Random.state=_random;
                 Results.Add("PASS: restored player, preferences, theme, debug, preview, random, time and background context");
             }
