@@ -5,8 +5,8 @@ Shader "ArrowSwarm/UI/IllustratedMenuDark"
         [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
         _Color ("Tint", Color) = (1,1,1,1)
         _StatColor ("Stat Plaque", Color) = (0.1255,0.1961,0.3098,1)
-        _LeftStat ("Left Stat Interior UV", Vector) = (0.098,0.896,0.449,0.953)
-        _RightStat ("Right Stat Interior UV", Vector) = (0.555,0.896,0.901,0.953)
+        _LeftStat ("Left Stat Interior UV", Vector) = (0.111,0.899,0.435,0.947)
+        _RightStat ("Right Stat Interior UV", Vector) = (0.570,0.899,0.886,0.947)
         _StatCorner ("Stat Corner UV", Vector) = (0.049,0.027,0,0)
         _LeftIcon ("Trophy Protected Center / Radius UV", Vector) = (0.173,0.927,0.052,0.031)
         _RightIcon ("Star Protected Center / Radius UV", Vector) = (0.631,0.927,0.048,0.030)
@@ -41,6 +41,7 @@ Shader "ArrowSwarm/UI/IllustratedMenuDark"
             struct appdata { float4 vertex:POSITION; fixed4 color:COLOR; float2 uv:TEXCOORD0; float4 localUV:TEXCOORD1; };
             struct v2f { float4 vertex:SV_POSITION; fixed4 color:COLOR; float2 uv:TEXCOORD0; float2 localUV:TEXCOORD1; float4 position:TEXCOORD2; };
             sampler2D _MainTex;
+            float4 _MainTex_TexelSize;
             float4 _LeftStat, _RightStat, _StatCorner, _LeftIcon, _RightIcon, _ClipRect;
             fixed4 _Color, _TextureSampleAdd, _StatColor;
             v2f vert(appdata v)
@@ -56,17 +57,22 @@ Shader "ArrowSwarm/UI/IllustratedMenuDark"
             }
             half icon(float2 uv,float4 region)
             { return 1-smoothstep(0.9,1.0,length((uv-region.xy)/max(region.zw,0.001))); }
+            half gold(float2 uv)
+            { half3 c=tex2D(_MainTex,uv).rgb; return smoothstep(0.015,0.08,c.r-c.b); }
             fixed4 frag(v2f i):SV_Target
             {
                 fixed4 c=tex2D(_MainTex,i.uv)+_TextureSampleAdd;
-                half hi=max(c.r,max(c.g,c.b)); half lo=min(c.r,min(c.g,c.b));
-                half saturation=(hi-lo)/max(hi,0.001);
-                half luminance=dot(c.rgb,half3(0.2126,0.7152,0.0722));
                 half region=max(plaque(i.localUV,_LeftStat),plaque(i.localUV,_RightStat));
-                half protectedIcon=max(icon(i.localUV,_LeftIcon),icon(i.localUV,_RightIcon));
-                // Only the stat plaques change color; the cutout keeps all original character/letter gloss and alpha.
-                half coverage=region*(1-protectedIcon)*(1-smoothstep(0.45,0.75,saturation));
-                c.rgb=lerp(c.rgb,_StatColor.rgb*lerp(0.8,1.12,luminance),coverage);
+                // Nearby gold retains the white specular highlights inside the icons,
+                // without protecting the old white/cyan plaque behind their silhouette.
+                float2 stepUV=_MainTex_TexelSize.xy*5;
+                half warm=max(gold(i.uv),max(max(gold(i.uv+float2(stepUV.x,0)),gold(i.uv-float2(stepUV.x,0))),
+                    max(gold(i.uv+float2(0,stepUV.y)),gold(i.uv-float2(0,stepUV.y)))));
+                half protectedIcon=max(icon(i.localUV,_LeftIcon),icon(i.localUV,_RightIcon))*warm;
+                // Replace the entire inner plaque, including its cyan lower reflection.
+                // Preserve the outer blue rim and the protected trophy/star artwork.
+                half coverage=region*(1-protectedIcon);
+                c.rgb=lerp(c.rgb,_StatColor.rgb,coverage);
                 c*=i.color;
                 #ifdef UNITY_UI_CLIP_RECT
                 c.a*=UnityGet2DClipping(i.position.xy,_ClipRect);
