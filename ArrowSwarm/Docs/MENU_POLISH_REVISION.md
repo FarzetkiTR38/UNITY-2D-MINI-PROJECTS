@@ -5,7 +5,7 @@
 
 ## Aşamalar
 - [x] 1. İstatistik göstergeleri: iç yüzeydeki beyaz/camgöbeği alt yansıma tamamen kaldırıldı; kupa/yıldızın altın renkleri ve parlak noktaları ile mavi dış çerçeve korundu. Unity'de 9 çift tema ekranı ve 50 gerçek GPU kontrolü geçti. `Captures/MenuPolishRevision/hud-after.png` yakın görünümü içerir.
-- [ ] 2. Mod düğmesi: Defense, Shapes, Color Shift için Inspector bağlantılı görseller; TMP ve yerelleştirmeyi koru; seçim, tekrar açma, tema ve basılı tutma kontrolleri; ayrı commit.
+- [x] 2. Mod düğmesi: üç modun açık/koyu tema görselleri Inspector'da bağlandı; mevcut Button, TMP etiketleri, yerelleştirme, tıklama hedefi ve basılma efekti korundu. Unity MCP üzerinden altı görünüm, üretim seçim callback'leri, tek selected etiketi, yeniden etkinleştirme ve oyuncu verisi geri yükleme kontrolleri geçti. Gerçek fare basılı tutma/sürükleme testi de başarılı. `mode-buttons.jpg` altı gerçek Unity görünümünü karşılaştırır.
 - [ ] 3. Geçiş: daha dengeli desen, derinlik ve tema uyumlu çizim; tam örtme, açılma ve sahne yükleme kontrolleri; ayrı commit.
 - [ ] 4. Birleşik kontrol: iki tema, üç mod, telefon/tablet görünümü; veri ve kaynak materyal korunması; sonuç görselleri ve rapor.
 
