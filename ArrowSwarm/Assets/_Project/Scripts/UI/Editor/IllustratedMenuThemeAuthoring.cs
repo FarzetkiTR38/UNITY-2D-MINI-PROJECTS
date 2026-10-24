@@ -34,11 +34,14 @@ namespace ArrowSwarm.UI.Editor
                 foreach(string name in new[]{"Play","GameMode","Levels","Leaderboard","Settings"})
                 {
                     var button=art.Find(name+"Button"); var image=button.GetComponent<Image>();
-                    var dark=Material("Dark"+name+"Artwork","ArrowSwarm/UI/ButtonArtwork");
-                    dark.CopyPropertiesFromMaterial(image.material);
-                    dark.SetFloat("_SurfaceStrength",name=="GameMode"?1:0);
-                    dark.SetColor("_SurfaceColor",Hex("20324F"));EditorUtility.SetDirty(dark);
-                    Bind(image,dark,true,Color.white);
+                    if(button.GetComponent<ModeButtonVisual>()==null)
+                    {
+                        var dark=Material("Dark"+name+"Artwork","ArrowSwarm/UI/ButtonArtwork");
+                        dark.CopyPropertiesFromMaterial(image.material);
+                        dark.SetFloat("_SurfaceStrength",name=="GameMode"?1:0);
+                        dark.SetColor("_SurfaceColor",Hex("20324F"));EditorUtility.SetDirty(dark);
+                        Bind(image,dark,true,Color.white);
+                    }
                     Bind(button.Find("Label").GetComponent<Graphic>(),null,false,Hex("F0F6FF"));
                     if(name=="GameMode")Bind(button.Find("SelectedMode").GetComponent<Graphic>(),null,false,Hex("91CDFF"));
                 }
