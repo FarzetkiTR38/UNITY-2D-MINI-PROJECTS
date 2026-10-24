@@ -24,8 +24,9 @@ namespace ArrowSwarm.UI.Editor
                 Bind(root.GetComponent<Graphic>(),null,false,Hex("0E1423"));
                 var art=root.Find("MenuArt");
                 var backdrop=Material("DarkIllustratedBackdrop","ArrowSwarm/UI/IllustratedMenuDark");
-                backdrop.SetVector("_LeftStat",new Vector4(.098f,.896f,.449f,.953f));
-                backdrop.SetVector("_RightStat",new Vector4(.555f,.896f,.901f,.953f));EditorUtility.SetDirty(backdrop);
+                backdrop.SetVector("_LeftStat",new Vector4(.111f,.899f,.435f,.947f));
+                backdrop.SetVector("_RightStat",new Vector4(.570f,.899f,.886f,.947f));
+                backdrop.SetVector("_StatCorner",new Vector4(.041f,.024f,0,0));EditorUtility.SetDirty(backdrop);
                 Bind(art.GetComponent<Graphic>(),backdrop,true,Color.white);
                 var artBinding=new SerializedObject(art.GetComponent<ThemedUIElement>());
                 artBinding.FindProperty("_darkSprite").objectReferenceValue=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Project/Art/Sprites/ModeMenu/MainMenuNightCutout.png");

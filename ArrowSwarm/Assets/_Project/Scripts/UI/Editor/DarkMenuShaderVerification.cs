@@ -90,6 +90,12 @@ namespace ArrowSwarm.UI.Editor
                     for(float y=.05f;y<.86f;y+=.03f)for(float x=.03f;x<.98f;x+=.03f)
                         if(frame.At(x,y)!=source.At(x,y))gloss=false;
                     Check(gloss,"All sampled characters, logo, ribbons and decorations preserve source RGBA and gloss");
+                    Check(frame.At(.35f,.906f)==frame.At(.35f,.927f)&&frame.At(.82f,.906f)==frame.At(.82f,.927f),
+                        "Both lower stat interiors are uniform navy without white/cyan reflections");
+                    Check(frame.At(.35f,.954f)==source.At(.35f,.954f)&&frame.At(.82f,.954f)==source.At(.82f,.954f),
+                        "Both outer blue stat rims retain their source colors");
+                    Check(frame.At(.173f,.927f)==source.At(.173f,.927f)&&frame.At(.631f,.927f)==source.At(.631f,.927f),
+                        "Trophy and star centers retain their gold artwork");
                 }
                 Check(Lum(frame.At(.35f,.927f))<.3f&&Lum(frame.At(.82f,.927f))<.3f,"Both stat text plaques become dark");
                 var gold=frame.At(.5f,.78f);
