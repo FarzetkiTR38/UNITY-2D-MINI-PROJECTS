@@ -20,7 +20,7 @@ namespace ArrowSwarm.UI.Editor
                 string[] fields={"_darkBackgroundColor","_darkBorderColor","_darkSecondaryColor","_darkCyanColor","_darkHighlightColor","_darkPatternColor","_darkStarColor"};
                 string[] hex={"0E1423","4AABFF","FFC655","46DDED","C5F5FF","5B8DC3","EBB34C"};
                 for(int i=0;i<fields.Length;i++){Color color;ColorUtility.TryParseHtmlString("#"+hex[i],out color);data.FindProperty(fields[i]).colorValue=color;}
-                data.FindProperty("_darkPatternOpacity").floatValue=.18f;data.ApplyModifiedPropertiesWithoutUndo();
+                data.FindProperty("_darkPatternOpacity").floatValue=.12f;data.ApplyModifiedPropertiesWithoutUndo();
                 PrefabUtility.SaveAsPrefabAsset(root,path);
             }
             finally{PrefabUtility.UnloadPrefabContents(root);}
