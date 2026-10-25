@@ -153,7 +153,7 @@ namespace ArrowSwarm.Data
         {
             if (_playerData == null) return;
             _playerData.isTutorialCompleted = completed;
-            NotifyAndSave();
+            NotifyAndSave(false);
             LogDebug($"Tutorial completion status set to: {completed}");
         }
 
@@ -310,7 +310,7 @@ namespace ArrowSwarm.Data
         {
             if (_playerData == null) return;
             _playerData.tipCount = Mathf.Max(0, tips);
-            NotifyAndSave();
+            NotifyAndSave(false);
         }
 
         /// <summary>
@@ -320,7 +320,7 @@ namespace ArrowSwarm.Data
         {
             if (_playerData == null) return;
             _playerData.tipCount = Mathf.Max(0, _playerData.tipCount + delta);
-            NotifyAndSave();
+            NotifyAndSave(false);
         }
 
         /// <summary>Number of available freeze charges.</summary>
@@ -333,7 +333,7 @@ namespace ArrowSwarm.Data
         {
             if (_playerData == null) return;
             _playerData.freezeCount = Mathf.Max(0, count);
-            NotifyAndSave();
+            NotifyAndSave(false);
         }
 
         /// <summary>
@@ -343,7 +343,7 @@ namespace ArrowSwarm.Data
         {
             if (_playerData == null) return;
             _playerData.freezeCount = Mathf.Max(0, _playerData.freezeCount + delta);
-            NotifyAndSave();
+            NotifyAndSave(false);
         }
 
         /// <summary>
@@ -354,7 +354,7 @@ namespace ArrowSwarm.Data
             if (_playerData == null) return;
             _playerData.musicVolume = Mathf.Clamp01(music);
             _playerData.sfxVolume = Mathf.Clamp01(sfx);
-            NotifyAndSave();
+            NotifyAndSave(false);
         }
 
         /// <summary>
@@ -365,7 +365,7 @@ namespace ArrowSwarm.Data
             if (_playerData == null) return;
             _playerData.sfxEnabled = enabled;
             if (enabled && _playerData.sfxVolume <= 0.05f) _playerData.sfxVolume = 1.0f;
-            NotifyAndSave();
+            NotifyAndSave(false);
         }
 
         /// <summary>
@@ -375,7 +375,7 @@ namespace ArrowSwarm.Data
         {
             if (_playerData == null) return;
             _playerData.vfxEnabled = enabled;
-            NotifyAndSave();
+            NotifyAndSave(false);
         }
 
         /// <summary>
@@ -385,7 +385,7 @@ namespace ArrowSwarm.Data
         {
             if (_playerData == null) return;
             _playerData.vibrationEnabled = enabled;
-            NotifyAndSave();
+            NotifyAndSave(false);
         }
 
         /// <summary>
@@ -395,7 +395,7 @@ namespace ArrowSwarm.Data
         {
             if (_playerData == null || string.IsNullOrEmpty(language)) return;
             _playerData.selectedLanguage = language;
-            NotifyAndSave();
+            NotifyAndSave(false);
         }
 
         /// <summary>
@@ -405,7 +405,7 @@ namespace ArrowSwarm.Data
         {
             if (_playerData == null) return;
             _playerData.theme = theme;
-            NotifyAndSave();
+            NotifyAndSave(false);
         }
 
         /// <summary>
@@ -437,7 +437,7 @@ namespace ArrowSwarm.Data
         {
             if (_playerData == null) return;
             _playerData.isProfileSetupCompleted = completed;
-            NotifyAndSave();
+            NotifyAndSave(false);
         }
 
         /// <summary>
@@ -467,17 +467,20 @@ namespace ArrowSwarm.Data
         }
 
         /// <summary>
-        /// Fires OnPlayerDataChanged and saves player data to storage.
+        /// Fires OnPlayerDataChanged, saves player data and marks score/profile changes for leaderboard synchronization.
         /// </summary>
-        public void NotifyAndSave()
+        public void NotifyAndSave() => NotifyAndSave(true);
+
+        /// <summary>Saves local preferences without replacing the pending state of an actual score/profile change.</summary>
+        private void NotifyAndSave(bool synchronizeLeaderboard)
         {
             OnPlayerDataChanged?.Invoke(_playerData);
             if (_autoSaveOnChange)
             {
                 // Persist unsent progress even before the first intentional leaderboard opening.
-                PlayerPrefs.SetInt("ArrowSwarm_PendingCloudSync", 1);
+                if (synchronizeLeaderboard) PlayerPrefs.SetInt("ArrowSwarm_PendingCloudSync", 1);
                 Save();
-                if (LeaderboardManager.HasInstance)
+                if (synchronizeLeaderboard && LeaderboardManager.HasInstance)
                 {
                     _ = LeaderboardManager.Instance.SubmitScoreAsync(_playerData.highestLevel, _playerData.GetTotalStars());
                 }
