@@ -123,12 +123,10 @@ namespace ArrowSwarm.Editor
             foreach (var sPath in scenePaths)
             {
                 Scene scene;
-                bool wasLoaded = false;
 
                 if (SceneManager.GetActiveScene().path == sPath)
                 {
                     scene = SceneManager.GetActiveScene();
-                    wasLoaded = true;
                 }
                 else
                 {
