@@ -53,14 +53,21 @@ namespace ArrowSwarm.UI.Editor
                 close.SetVector("_Bounds",new Vector4(.06f,.06f,.95f,.95f));
                 close.SetVector("_Corner",new Vector4(.19f,.19f,0,0));close.SetFloat("_SurfaceStrength",0);
                 EditorUtility.SetDirty(close);Bind(modal.Find("Close").GetComponent<Graphic>(),close,true,Color.white);
+                int cardIndex=0;
                 foreach(string mode in new[]{"Defense","Shapes","ColorShift"})
                 {
                     var card=modal.Find(mode+"Card");
                     var material=Material("Dark"+mode+"Card","ArrowSwarm/UI/ButtonArtwork");
                     material.SetVector("_Bounds",new Vector4(4f/827,4f/297,823f/827,293f/297));
                     material.SetVector("_Corner",new Vector4(65f/827,65f/297,0,0));
-                    material.SetFloat("_SurfaceStrength",1);material.SetColor("_SurfaceColor",Hex("20324F"));
+                    var night=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Project/Art/Sprites/ModeMenu/ModalNightSlices/Card"+cardIndex+".asset");cardIndex++;
+                    material.SetFloat("_SurfaceStrength",night!=null?0:1);material.SetColor("_SurfaceColor",Hex("20324F"));
                     EditorUtility.SetDirty(material);Bind(card.GetComponent<Graphic>(),material,true,Color.white);
+                    if(night!=null)
+                    {
+                        var pair=new SerializedObject(card.GetComponent<ThemedUIElement>());
+                        pair.FindProperty("_darkSprite").objectReferenceValue=night;pair.ApplyModifiedPropertiesWithoutUndo();
+                    }
                     Bind(card.Find("ModeTitle").GetComponent<Graphic>(),null,false,Hex("E6F0FF"));
                     Bind(card.Find("SelectionLabel").GetComponent<Graphic>(),null,false,Hex("F0F6FF"));
                 }
