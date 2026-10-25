@@ -7,7 +7,7 @@
 
 ## Aşamalar
 - [x] A. Mod kartları: ayrı gece çizimleri bağlandı; açık sprite'lar ve TMP korundu, shader ile renk değiştirme kapatıldı. Unity'de dokuz çift tema ekranında açık görsellerin eksiksiz geri geldiği doğrulandı. 42 gerçek GPU kontrolü; kaynak renkleri, beyaz parlamalar, alfa, basılı/kapalı durumlar ve başlık kontrastını doğruladı. Mod penceresi yakın görselleri `Captures/DarkArtworkRepair/Cards` altında.
-- [ ] B. Üst göstergeler: eski koyu göstergeleri güvenli yuvarlak alfa maskesiyle kaldır; temiz koyu göstergeleri sahnede mevcut TMP'lerin altına bağla. Açık tema değişmez. Yakın görüntü, tema dönüşü ve GPU kontrolünden sonra commit.
+- [x] B. Üst göstergeler: eski koyu göstergeler yuvarlak alfa maskesiyle kaldırıldı; iki temiz koyu çizim mevcut TMP'lerin altına bağlandı. Yakın Unity görüntüsünde mavi yamalar bulunmuyor. Açık tema geri dönüşü dokuz çift ekranla, yeni gösterge çizimi 22 GPU kontrolüyle doğrulandı. Genel 50 GPU kontrolü de geçti; yakın dekoratif oklar ve diğer maskot/logo pikselleri korunuyor. GPU koordinat kontrolleri platformun dikey okuma yönünü ve kenar yumuşatmasını dikkate alır.
 - [x] C. Lider tablosu: açık klasik liste, podyumlu liste ve koyu liste olmak üzere üç ayrı 941×1672 konsept üretildi. Yalnızca `Captures/LeaderboardConcepts20261025` altında bulunur; oyun/sahne/prefab bağlantısı yoktur. Tam istemler README'de kaydedildi. Gerçek uygulamadaki lider tablosu değişmedi. Konseptler son yanıtta gösterilir.
 - [ ] D. Birleşik kontrol: telefon/tablet, iki tema, seçili mod, basılı tutma, oyuncu verisi ve yerel dosya koruması; genel görünüm ve rapor commit'i.
 
