@@ -10,7 +10,7 @@ namespace ArrowSwarm.Data
         {
             if (!System.Enum.IsDefined(typeof(GameModeId), mode)) mode = GameModeId.Defense;
             PlayerData.selectedGameMode = mode;
-            NotifyAndSave();
+            NotifyAndSave(false);
         }
 
         /// <summary>Returns independent unlock progress for the selected campaign.</summary>
