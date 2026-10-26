@@ -12,7 +12,7 @@ Baseline: `41b739c`. Quality Pass 4 is complete. The user's continuation authori
 ## Phases
 - [x] 0. Read completed work, record continuation scope, snapshot and verify original Boot/Edit state; commit roadmap.
 - [x] 1. Reproduce leaderboard loading/offline/empty/rank ambiguities with a controlled provider and inspect the authored panel.
-- [ ] 2. Add observable refresh states and successful-cache timestamp without confusing successful empty responses with errors. Preserve pending/version/reconnect behavior.
+- [x] 2. Add observable refresh states and successful-cache timestamp without confusing successful empty responses with errors. First native state suite passed; existing cloud regressions follow in phase 5.
 - [ ] 3. Add an authored localized status/retry area and honest rows/current-player information. Verify real panel in Light/Dark and all ten languages, delayed/failure/offline/reopen cases.
 - [x] 4. Measure actual Profile Save duplicate score requests, apply a minimal ownership repair and run genuine-progress concurrency regressions. Verified early while the UI implementation was being prepared.
 - [ ] 5. Run focused existing cloud/profile/menu/localization regressions, inspect final visual evidence, restore original state and publish overview/next work. Each completed phase has its own commit.
@@ -26,5 +26,7 @@ Baseline captured through the real Boot-loaded menu and a scoped offline provide
 Implementation and targeted after-tests are in progress. Navigation audit is read-only and remains future scope for this pass. Starting Boot/Edit/background setting and eleven user-dirty files are privately preserved; no user-owned changes are staged.
 
 Actual Profile Save repair passed with zero failures: both initialized and fresh-online Save now send one score instead of three. The minimal modal change retains first-Save lazy manager creation and the genuine DataManager submission. Delayed saves, concurrent real level/shared-star updates, inverse completion order, rejected saves, pending offline edits and reconnect all passed with a scoped provider. Existing cloud/profile regressions remain phase 5. Before/after evidence is `profile-sync-before.txt` / `profile-sync-verification.txt`.
+
+Refresh model is implemented and its first actual-panel native suite passed zero failures: offline/Loading/Ready/Failed, delayed close/reopen and duplicate request guard, failure retaining rows/time, successful empty clearing stale rows, provider-order rows detached from callers, authoritative rank 27 versus unknown, persisted successful UTC timestamp, local progress separate from global standings. Production fetch failure now returns null (and retains its warning), distinct from a successful empty list. Legacy optimistic APIs stay available; the player-facing UI uses the new snapshot/verified-rank APIs. No arbitrary timeout or request abandonment was introduced. Final scene cleanup, expanded input/language/theme tests and existing regressions are pending.
 
 Evidence belongs under `Captures/QualityPass5/`. Record tested limits honestly; fake-provider tests do not prove live UGS connectivity or Android device performance.

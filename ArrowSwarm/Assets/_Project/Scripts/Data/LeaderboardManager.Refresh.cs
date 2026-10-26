@@ -14,6 +14,8 @@ namespace ArrowSwarm.Data
         {
             if (_isRefreshing) return GetTopPlayers(count);
             _isRefreshing = true;
+            RefreshState = LeaderboardRefreshState.Loading;
+            OnLeaderboardUpdated?.Invoke();
             try
             {
                 if (_cloudService.IsOnline())
@@ -21,16 +23,22 @@ namespace ArrowSwarm.Data
                     if (retryPending && PlayerPrefs.GetInt(PENDING_SYNC_KEY, 0) == 1)
                         await SynchronizeCurrentWithoutRefreshAsync();
                     var scores = await _cloudService.FetchTopScoresAsync(count);
-                    if (scores != null && scores.Count > 0)
+                    if (scores != null)
                     {
+                        int rank = await _cloudService.FetchPlayerRankAsync();
                         _cachedEntries = scores;
+                        _cachedPlayerRank = rank;
+                        _lastSuccessfulRefreshUtc = DateTime.UtcNow;
                         SaveCachedLeaderboard();
+                        RefreshState = LeaderboardRefreshState.Ready;
                     }
-                    _cachedPlayerRank = await _cloudService.FetchPlayerRankAsync();
+                    else RefreshState = _cloudService.IsOnline() ? LeaderboardRefreshState.Failed : LeaderboardRefreshState.Offline;
                 }
+                else RefreshState = LeaderboardRefreshState.Offline;
             }
             catch (Exception error)
             {
+                RefreshState = LeaderboardRefreshState.Failed;
                 Debug.LogWarning("[ArrowSwarm] Leaderboard cloud refresh failed: " + error.Message);
             }
             finally
