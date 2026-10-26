@@ -1,0 +1,14 @@
+PASS
+PASS: Loaded authored prefab and its full hierarchy have zero missing scripts
+PASS: Original one-system/one-renderer particle design, five-second duration, two-second lifetime and pooling-compatible stop action preserved
+PASS: Actual ParticleManager.SpawnConfetti creates one native pooled confetti effect
+PASS: Actual native clone has zero missing scripts and starts playing
+PASS: First native player-loop emission produces live particles
+PASS: Existing timed ParticleManager coroutine clears and deactivates the completed effect under its pool owner
+PASS: Second real SpawnConfetti reuses exactly the same native instance instead of allocating another clone
+PASS: Reused native system emits living particles with zero missing scripts
+PASS: Reused effect returns cleared to the same existing pool
+PASS: Runtime verification does not rewrite authored particle settings
+PASS: Original player/VFX/inventory/preferences/save policy restored
+PASS: No ad provider request occurred during real particle and pool verification
+PASS: Original ad provider restored with no requests pending
