@@ -1,0 +1,43 @@
+PASS: touch-input-verification with real Input System events
+PASS: Real Defense101 contains visible blocked and legal touch fixtures
+INPUT ACK: 1 actual touch events; playerFrame=9559, afterUpdates=7, lastAfterUpdateFrame=9559, lastUpdateType=Dynamic, lastGameFrame=9559, lastGameCurrentDevice=21, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: Defense actually owns the blocked-arrow touch before its OS cancellation
+INPUT ACK: 1 actual touch events; playerFrame=9562, afterUpdates=10, lastAfterUpdateFrame=9562, lastUpdateType=Dynamic, lastGameFrame=9562, lastGameCurrentDevice=21, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: Canceled touch never starts a shot or spends a life
+INPUT ACK: 1 actual touch events; playerFrame=9565, afterUpdates=13, lastAfterUpdateFrame=9565, lastUpdateType=Dynamic, lastGameFrame=9565, lastGameCurrentDevice=21, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=9568, afterUpdates=16, lastAfterUpdateFrame=9568, lastUpdateType=Dynamic, lastGameFrame=9568, lastGameCurrentDevice=21, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: The second real finger invalidates the previously owned Defense press
+INPUT ACK: 1 actual touch events; playerFrame=9571, afterUpdates=19, lastAfterUpdateFrame=9571, lastUpdateType=Dynamic, lastGameFrame=9571, lastGameCurrentDevice=21, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=9574, afterUpdates=22, lastAfterUpdateFrame=9574, lastUpdateType=Dynamic, lastGameFrame=9574, lastGameCurrentDevice=21, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: Ending a two-finger gesture never becomes a Defense tap
+INPUT ACK: 1 actual touch events; playerFrame=9577, afterUpdates=25, lastAfterUpdateFrame=9577, lastUpdateType=Dynamic, lastGameFrame=9577, lastGameCurrentDevice=21, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=9580, afterUpdates=28, lastAfterUpdateFrame=9580, lastUpdateType=Dynamic, lastGameFrame=9580, lastGameCurrentDevice=21, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 2 actual touch events; playerFrame=9583, afterUpdates=31, lastAfterUpdateFrame=9583, lastUpdateType=Dynamic, lastGameFrame=9583, lastGameCurrentDevice=21, updateMode=ProcessEventsInDynamicUpdate, pending=2
+PASS: Canceling every finger clears gesture ownership without a wrong-click penalty
+INPUT ACK: 1 actual touch events; playerFrame=9586, afterUpdates=34, lastAfterUpdateFrame=9586, lastUpdateType=Dynamic, lastGameFrame=9586, lastGameCurrentDevice=21, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: A fresh legal-arrow touch acquires normal Defense tap ownership
+INPUT ACK: 1 actual touch events; playerFrame=9589, afterUpdates=37, lastAfterUpdateFrame=9589, lastUpdateType=Dynamic, lastGameFrame=9589, lastGameCurrentDevice=21, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: A fresh single-finger release still fires exactly one legal Defense arrow
+PASS: Production input consumed the synthetic current Touchscreen device
+INPUT FINAL: playerFrame=9589, afterUpdates=37, lastAfterUpdateFrame=9589, lastUpdateType=Dynamic, lastGameFrame=9589, lastGameCurrentDevice=21, updateMode=ProcessEventsInDynamicUpdate, pending=0
+PASS: Original camera pose/enabled state, input devices and Input System settings restored
+PASS: Original GameConfig remained unchanged
+PASS: Player progress, skills, stars and settings remained unchanged
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
+RESTORED: PlayerData, auto-save, debug, preview, time scale, theme and background setting
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
+PASS: Complete original PlayerData restored
+PASS: Normal game managers safely returned to menu
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged

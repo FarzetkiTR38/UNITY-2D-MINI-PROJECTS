@@ -1,0 +1,68 @@
+PASS: camera-touch-verification with real Input System events
+PASS: Authored gameplay viewport supplies valid gesture positions outside the HUD
+INPUT ACK: 1 actual touch events; playerFrame=17452, afterUpdates=53, lastAfterUpdateFrame=17452, lastUpdateType=Dynamic, lastGameFrame=17452, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=1
+TOUCH STATE: after finger1 began; device=23, current=23; playerFrame=17452, afterUpdates=53, lastAfterUpdateFrame=17452, lastUpdateType=Dynamic, lastGameFrame=17452, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=0
+  game slot=0, id=1, phase=Began, pressed=True, position=(432.00, 960.00)
+  game slot=1, id=0, phase=None, pressed=False, position=(0.00, 0.00)
+  game slot=2, id=0, phase=None, pressed=False, position=(0.00, 0.00)
+INPUT ACK: 1 actual touch events; playerFrame=17455, afterUpdates=56, lastAfterUpdateFrame=17455, lastUpdateType=Dynamic, lastGameFrame=17455, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=1
+TOUCH STATE: after finger2 began; device=23, current=23; playerFrame=17455, afterUpdates=56, lastAfterUpdateFrame=17455, lastUpdateType=Dynamic, lastGameFrame=17455, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=0
+  game slot=0, id=1, phase=Began, pressed=True, position=(432.00, 960.00)
+  game slot=1, id=2, phase=Began, pressed=True, position=(540.00, 960.00)
+  game slot=2, id=0, phase=None, pressed=False, position=(0.00, 0.00)
+INPUT ACK: 1 actual touch events; playerFrame=17458, afterUpdates=59, lastAfterUpdateFrame=17458, lastUpdateType=Dynamic, lastGameFrame=17458, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=1
+TOUCH STATE: after finger3 began; device=23, current=23; playerFrame=17458, afterUpdates=59, lastAfterUpdateFrame=17458, lastUpdateType=Dynamic, lastGameFrame=17458, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=0
+  game slot=0, id=1, phase=Began, pressed=True, position=(432.00, 960.00)
+  game slot=1, id=2, phase=Began, pressed=True, position=(540.00, 960.00)
+  game slot=2, id=3, phase=Began, pressed=True, position=(648.00, 960.00)
+INPUT ACK: 1 actual touch events; playerFrame=17461, afterUpdates=62, lastAfterUpdateFrame=17461, lastUpdateType=Dynamic, lastGameFrame=17461, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=1
+TOUCH STATE: after finger1 ended / sparse pair; device=23, current=23; playerFrame=17461, afterUpdates=62, lastAfterUpdateFrame=17461, lastUpdateType=Dynamic, lastGameFrame=17461, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=0
+  game slot=0, id=1, phase=Ended, pressed=False, position=(432.00, 960.00)
+  game slot=1, id=2, phase=Began, pressed=True, position=(540.00, 960.00)
+  game slot=2, id=3, phase=Began, pressed=True, position=(648.00, 960.00)
+PASS: Actual game-update Input System state has pressed sparse slots1/2 (IDs2/3), with slot0 released
+PASS: Camera tracks the two active finger IDs rather than stale slot0
+INPUT ACK: 2 actual touch events; playerFrame=17464, afterUpdates=65, lastAfterUpdateFrame=17464, lastUpdateType=Dynamic, lastGameFrame=17464, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=2
+PASS: Moving sparse fingers apart zooms in with the correct direction
+INPUT ACK: 2 actual touch events; playerFrame=17467, afterUpdates=68, lastAfterUpdateFrame=17467, lastUpdateType=Dynamic, lastGameFrame=17467, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=2
+PASS: A changed active pair rebases its initial distance without changing the zoom target
+INPUT ACK: 1 actual touch events; playerFrame=17470, afterUpdates=71, lastAfterUpdateFrame=17470, lastUpdateType=Dynamic, lastGameFrame=17470, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: The remaining finger in slot2 becomes the actual pan owner
+INPUT ACK: 1 actual touch events; playerFrame=17473, afterUpdates=74, lastAfterUpdateFrame=17473, lastUpdateType=Dynamic, lastGameFrame=17473, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=17476, afterUpdates=77, lastAfterUpdateFrame=17476, lastUpdateType=Dynamic, lastGameFrame=17476, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: The sparse remaining finger pans the real zoomed board
+INPUT ACK: 1 actual touch events; playerFrame=17479, afterUpdates=80, lastAfterUpdateFrame=17479, lastUpdateType=Dynamic, lastGameFrame=17479, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: Adding a finger changes the active pan into a pinch
+INPUT ACK: 2 actual touch events; playerFrame=17482, afterUpdates=83, lastAfterUpdateFrame=17482, lastUpdateType=Dynamic, lastGameFrame=17482, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=2
+PASS: Releasing every finger after pan-to-pinch clears all drag/pinch ownership
+INPUT ACK: 1 actual touch events; playerFrame=17485, afterUpdates=86, lastAfterUpdateFrame=17485, lastUpdateType=Dynamic, lastGameFrame=17485, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=17488, afterUpdates=89, lastAfterUpdateFrame=17488, lastUpdateType=Dynamic, lastGameFrame=17488, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=17491, afterUpdates=92, lastAfterUpdateFrame=17491, lastUpdateType=Dynamic, lastGameFrame=17491, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 2 actual touch events; playerFrame=17494, afterUpdates=95, lastAfterUpdateFrame=17494, lastUpdateType=Dynamic, lastGameFrame=17494, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=2
+PASS: OS cancellation after pan-to-pinch clears the camera gesture too
+PASS: A legal visible arrow remains after camera gesture tests
+INPUT ACK: 1 actual touch events; playerFrame=17508, afterUpdates=109, lastAfterUpdateFrame=17508, lastUpdateType=Dynamic, lastGameFrame=17508, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=1
+INPUT ACK: 1 actual touch events; playerFrame=17511, afterUpdates=112, lastAfterUpdateFrame=17511, lastUpdateType=Dynamic, lastGameFrame=17511, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=1
+PASS: A new normal touch fires immediately after canceled camera gestures
+INPUT FINAL: playerFrame=17511, afterUpdates=112, lastAfterUpdateFrame=17511, lastUpdateType=Dynamic, lastGameFrame=17511, lastGameCurrentDevice=23, updateMode=ProcessEventsInDynamicUpdate, pending=0
+PASS: Original camera, devices and Input System settings restored after real gesture checks
+PASS: Original GameConfig remained unchanged
+PASS: Player progress, skills, stars and settings remained unchanged
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
+RESTORED: PlayerData, auto-save, debug, preview, time scale, theme and background setting
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
+PASS: Complete original PlayerData restored
+PASS: Normal game managers safely returned to menu
+PASS: ArrowSwarm_PlayerData unchanged (including key existence)
+PASS: ArrowSwarm_PlayerData_Backup unchanged (including key existence)
+PASS: ArrowSwarm_SelectedLanguage unchanged (including key existence)
+PASS: ArrowSwarm_CachedLeaderboard unchanged (including key existence)
+PASS: Leaderboard pending-sync preference unchanged
