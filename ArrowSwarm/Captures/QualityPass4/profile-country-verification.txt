@@ -1,20 +1,20 @@
 PASS: real left, right and label profile country controls
 PASS: Authored menu uses the actual InputSystemUIInputModule
 PASS: left arrow: actual graphic raycast has a hit
-INPUT ACK: native mouse down; dynamicFrame=1050; settledPlayerFrame=1052; dynamicUpdates=5
-INPUT ACK: native mouse up; dynamicFrame=1053; settledPlayerFrame=1055; dynamicUpdates=8
+INPUT ACK: native mouse down; dynamicFrame=3679; settledPlayerFrame=3681; dynamicUpdates=5
+INPUT ACK: native mouse up; dynamicFrame=3682; settledPlayerFrame=3684; dynamicUpdates=8
 OBSERVED: left arrow; hit=Canvas_MainMenu/ProfileSetupModal/Card/Country/CountrySelector/PrevButtonIMG/PrevButton; before=1; after=0; expected=0; callbacks(left/right/label)=1/0/0
 PASS: left arrow: changes country exactly once in the displayed direction
 PASS: left arrow: actual pointer invokes its own authored Button rather than its ancestor
 PASS: right arrow: actual graphic raycast has a hit
-INPUT ACK: native mouse down; dynamicFrame=1056; settledPlayerFrame=1058; dynamicUpdates=11
-INPUT ACK: native mouse up; dynamicFrame=1059; settledPlayerFrame=1061; dynamicUpdates=14
+INPUT ACK: native mouse down; dynamicFrame=3685; settledPlayerFrame=3687; dynamicUpdates=11
+INPUT ACK: native mouse up; dynamicFrame=3688; settledPlayerFrame=3690; dynamicUpdates=14
 OBSERVED: right arrow; hit=Canvas_MainMenu/ProfileSetupModal/Card/Country/CountrySelector/NextButtonIMG/NextButton; before=0; after=1; expected=1; callbacks(left/right/label)=0/1/0
 PASS: right arrow: changes country exactly once in the displayed direction
 PASS: right arrow: actual pointer invokes its own authored Button rather than its ancestor
 PASS: country label: actual graphic raycast has a hit
-INPUT ACK: native mouse down; dynamicFrame=1062; settledPlayerFrame=1064; dynamicUpdates=17
-INPUT ACK: native mouse up; dynamicFrame=1065; settledPlayerFrame=1067; dynamicUpdates=20
+INPUT ACK: native mouse down; dynamicFrame=3691; settledPlayerFrame=3693; dynamicUpdates=17
+INPUT ACK: native mouse up; dynamicFrame=3694; settledPlayerFrame=3696; dynamicUpdates=20
 OBSERVED: country label; hit=Canvas_MainMenu/ProfileSetupModal/Card/Country/CountrySelector/Label; before=1; after=2; expected=2; callbacks(left/right/label)=0/0/1
 PASS: country label: changes country exactly once in the displayed direction
 PASS: country label: actual pointer invokes its own authored Button rather than its ancestor
@@ -27,3 +27,5 @@ PASS: Exact original player data unchanged
 PASS: Original live language restored
 PASS: Original lazy cloud provider restored
 PASS: Original modal visibility, draft, country and sibling restored
+PASS: Exact original random state restored after nickname generation
+PASS: Exact original dice scale restored

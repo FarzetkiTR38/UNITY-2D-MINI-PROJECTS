@@ -15830,6 +15830,7 @@ GameObject:
   - component: {fileID: 1221326321}
   - component: {fileID: 1221326325}
   - component: {fileID: 1221326326}
+  - component: {fileID: 1221326327}
   m_Layer: 0
   m_Name: DiceButton
   m_TagString: Untagged
@@ -29634,7 +29635,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
@@ -29664,7 +29665,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
@@ -29702,7 +29703,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 34faef7c507d09e40ad9daf6f980f9b0, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIButtonFeedback
   _targetTransform: {fileID: 1577096980}
   _pressedScale: 0.92
@@ -29722,9 +29723,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 34faef7c507d09e40ad9daf6f980f9b0, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIButtonFeedback
   _targetTransform: {fileID: 503055576}
+  _pressedScale: 0.92
+  _punchScale: 1.06
+  _pressDuration: 0.08
+  _releaseDuration: 0.14
+  _enableIdleBreath: 0
+  _breathScale: 1.04
+  _breathSpeed: 2.2
+--- !u!114 &1221326327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1221326319}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34faef7c507d09e40ad9daf6f980f9b0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.UI.UIButtonFeedback
+  _targetTransform: {fileID: 1221326320}
   _pressedScale: 0.92
   _punchScale: 1.06
   _pressDuration: 0.08

@@ -1,0 +1,38 @@
+PASS: actual profile feedback, callback burst and hide recovery
+PASS: Dice uses the authored standard UIButtonFeedback on its actual button transform
+PASS: Two same-frame callbacks genuinely generate a nickname without bypassing the production handler
+PASS: Callback burst completes at the original scale without the old 25% drift
+PASS: Graphic raycast reaches the actual Dice button artwork
+INPUT ACK: native mouse down; dynamicFrame=4186; settledPlayerFrame=4188; dynamicUpdates=28
+PASS: Native pointer genuinely squeezes the visible Dice while held
+INPUT ACK: native mouse up; dynamicFrame=4208; settledPlayerFrame=4210; dynamicUpdates=50
+PASS: Actual native release invokes one nickname callback through the authored button
+PASS: Native release finishes its bounce at the exact original scale
+PASS: Graphic raycast reaches the actual Dice button artwork
+INPUT ACK: native mouse down; dynamicFrame=4257; settledPlayerFrame=4259; dynamicUpdates=99
+PASS: Native held pointer actually owns Dice press feedback before disable
+PASS: Disabling a held Dice restores the original scale immediately
+INPUT ACK: native mouse up; dynamicFrame=4281; settledPlayerFrame=4283; dynamicUpdates=123
+PASS: Reopened profile retains its original Dice scale after a held-pointer cancellation
+PASS: Graphic raycast reaches the actual Dice button artwork
+INPUT ACK: native mouse down; dynamicFrame=4335; settledPlayerFrame=4337; dynamicUpdates=177
+INPUT ACK: native mouse up; dynamicFrame=4338; settledPlayerFrame=4340; dynamicUpdates=180
+PASS: Disabling during release cancels the bounce and restores the base scale
+PASS: Graphic raycast reaches the actual Dice button artwork
+INPUT ACK: native mouse down; dynamicFrame=4396; settledPlayerFrame=4398; dynamicUpdates=238
+PASS: Native pointer genuinely squeezes the visible Dice while held
+INPUT ACK: native mouse up; dynamicFrame=4424; settledPlayerFrame=4426; dynamicUpdates=266
+PASS: Actual native release invokes one nickname callback through the authored button
+PASS: Native release finishes its bounce at the exact original scale
+PASS: Fresh native Dice clicks still work normally after disable/reopen cycles
+PASS: Nickname generation and feedback never save a profile or alter progress/inventory
+PASS: No Save, leaderboard manager, auth, network or cloud operation was invoked
+PASS: Exact original InputSettings restored
+PASS: Temporary native mouse removed
+PASS: original data object, auto-save and all five data-service preferences restored
+PASS: Exact original player data unchanged
+PASS: Original live language restored
+PASS: Original lazy cloud provider restored
+PASS: Original modal visibility, draft, country and sibling restored
+PASS: Exact original random state restored after nickname generation
+PASS: Exact original dice scale restored
