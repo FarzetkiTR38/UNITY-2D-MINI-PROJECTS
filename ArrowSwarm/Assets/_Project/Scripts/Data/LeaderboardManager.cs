@@ -53,6 +53,8 @@ namespace ArrowSwarm.Data
                     if (wrapper != null && wrapper.Entries != null)
                     {
                         _cachedEntries = wrapper.Entries;
+                        if (wrapper.LastSuccessfulRefreshTicks > 0 && wrapper.LastSuccessfulRefreshTicks <= DateTime.MaxValue.Ticks)
+                            _lastSuccessfulRefreshUtc = new DateTime(wrapper.LastSuccessfulRefreshTicks, DateTimeKind.Utc);
                     }
                 }
                 catch (Exception ex)
@@ -67,7 +69,8 @@ namespace ArrowSwarm.Data
         {
             try
             {
-                var wrapper = new LeaderboardWrapper { Entries = _cachedEntries };
+                var wrapper = new LeaderboardWrapper { Entries = _cachedEntries,
+                    LastSuccessfulRefreshTicks = _lastSuccessfulRefreshUtc?.Ticks ?? 0 };
                 string json = JsonUtility.ToJson(wrapper);
                 PlayerPrefs.SetString(CACHE_KEY, json);
                 PlayerPrefs.Save();
@@ -150,6 +153,7 @@ namespace ArrowSwarm.Data
         private class LeaderboardWrapper
         {
             public List<LeaderboardEntry> Entries;
+            public long LastSuccessfulRefreshTicks;
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
