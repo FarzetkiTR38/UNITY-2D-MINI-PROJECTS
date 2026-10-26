@@ -1,7 +1,6 @@
 namespace ArrowSwarm.UI
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using ArrowSwarm.Core;
     using ArrowSwarm.Data;
@@ -283,14 +282,12 @@ namespace ArrowSwarm.UI
         {
             _currentCountryIndex--;
             UpdateCountryDisplay();
-            if (_prevCountryButton != null) StartCoroutine(PunchTransformRoutine(_prevCountryButton.transform));
         }
 
         private void OnNextCountryClicked()
         {
             _currentCountryIndex++;
             UpdateCountryDisplay();
-            if (_nextCountryButton != null) StartCoroutine(PunchTransformRoutine(_nextCountryButton.transform));
         }
 
         private int GetInitialCountryIndex()
@@ -322,10 +319,6 @@ namespace ArrowSwarm.UI
                 _nameInput.text = GenerateRandomNickname();
             }
 
-            if (_diceButton != null)
-            {
-                StartCoroutine(PunchTransformRoutine(_diceButton.transform));
-            }
         }
 
         private void OnSaveClicked()
@@ -373,17 +366,6 @@ namespace ArrowSwarm.UI
             }
 
             Hide();
-        }
-
-
-
-        private IEnumerator PunchTransformRoutine(Transform target)
-        {
-            if (target == null) yield break;
-            Vector3 origScale = target.localScale;
-            target.localScale = origScale * 1.25f;
-            yield return new WaitForSecondsRealtime(0.08f);
-            target.localScale = origScale;
         }
     }
 }

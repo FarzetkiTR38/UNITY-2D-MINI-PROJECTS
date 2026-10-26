@@ -23,19 +23,24 @@ namespace ArrowSwarm.Modes.Editor
         private static bool _running;
         private static double _deadline;
         private static int _failures, _leftClicks, _rightClicks, _labelClicks;
+        private static string _reportName;
 
         /// <summary>Current real-pointer check stage or final outcome for MCP polling.</summary>
         public static string Status { get; private set; } = "Idle";
 
         /// <summary>Starts in fresh Boot-to-MainMenu Play Mode before opening the leaderboard.</summary>
         public static void Begin()
+        { StartVerification(Run(), "profile-country-verification.txt"); }
+
+        private static void StartVerification(IEnumerator run, string reportName)
         {
             if (_running) throw new InvalidOperationException("Country pointer verification is already running.");
             Results.Clear(); Steps.Clear(); _failures = _leftClicks = _rightClicks = _labelClicks = 0; _condition = null;
+            _reportName = reportName;
             try
             {
                 _scope = new Scope(); _devices = new Devices(); _running = true;
-                _deadline = EditorApplication.timeSinceStartup + 75; Steps.Push(Run());
+                _deadline = EditorApplication.timeSinceStartup + 75; Steps.Push(run);
                 EditorApplication.update += Tick; EditorApplication.playModeStateChanged += ModeChanged;
                 AssemblyReloadEvents.beforeAssemblyReload += BeforeReload;
                 Status = "Opening actual profile modal for native mouse country checks";
@@ -112,7 +117,8 @@ namespace ArrowSwarm.Modes.Editor
                     _condition = step.Current as Func<bool>; return;
                 }
                 Finish((_failures == 0 ? "PASS: " : "FAIL: " + _failures + " country pointer checks; ") +
-                    "real left, right and label profile country controls");
+                    (_reportName == "profile-feedback-verification.txt" ? "actual profile feedback, callback burst and hide recovery" :
+                    "real left, right and label profile country controls"));
             }
             catch (Exception error) { Finish("FAIL: " + error.Message); }
         }
@@ -134,7 +140,7 @@ namespace ArrowSwarm.Modes.Editor
             }
             _devices = null; _scope = null; _condition = null; Status = outcome;
             Directory.CreateDirectory("Captures/QualityPass4");
-            File.WriteAllText("Captures/QualityPass4/profile-country-verification.txt", outcome + "\n" + string.Join("\n", Results) + "\n");
+            File.WriteAllText("Captures/QualityPass4/" + _reportName, outcome + "\n" + string.Join("\n", Results) + "\n");
             Debug.Log("[ArrowSwarm] " + outcome);
         }
 

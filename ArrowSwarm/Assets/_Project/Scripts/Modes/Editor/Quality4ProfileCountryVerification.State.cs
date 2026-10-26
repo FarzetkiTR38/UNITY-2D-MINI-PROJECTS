@@ -18,6 +18,7 @@ namespace ArrowSwarm.Modes.Editor
         private const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
         private static readonly FieldInfo Factory = typeof(LeaderboardManager).GetField("_editorCloudFactory", BindingFlags.Static | BindingFlags.NonPublic);
 
+        /// <summary>Preserves the exact pre-test modal, draft, player, preference and lazy-provider state.</summary>
         private sealed class Scope : IDisposable
         {
             internal readonly MainMenuUI Menu;
@@ -71,6 +72,7 @@ namespace ArrowSwarm.Modes.Editor
                 Application.runInBackground = true;
             }
 
+            /// <summary>Restores every captured profile and service value after either successful or failing checks.</summary>
             public void Dispose()
             {
                 if (_disposed) return; _disposed = true;
@@ -94,6 +96,7 @@ namespace ArrowSwarm.Modes.Editor
                         Left.transform.localScale = _leftScale; Right.transform.localScale = _rightScale; _dice.localScale = _diceScale;
                         Set(Profile, "_showRequested", _show); Set(Profile, "_currentCountryIndex", _country);
                         Profile.gameObject.SetActive(_active);
+                        Left.transform.localScale = _leftScale; Right.transform.localScale = _rightScale; _dice.localScale = _diceScale;
                         var input = Field<TMP_InputField>(Profile, "_nameInput"); input.SetTextWithoutNotify(_name);
                         input.selectionAnchorPosition = _anchor; input.selectionFocusPosition = _focus;
                         Field<TextMeshProUGUI>(Profile, "_countryText").text = _countryText;
@@ -109,6 +112,8 @@ namespace ArrowSwarm.Modes.Editor
                     Check(Profile == null || (Profile.gameObject.activeSelf == _active &&
                         Field<int>(Profile, "_currentCountryIndex") == _country && Field<TMP_InputField>(Profile, "_nameInput").text == _name &&
                         Profile.transform.GetSiblingIndex() == _sibling), "Original modal visibility, draft, country and sibling restored");
+                    Check(UnityEngine.Random.state.Equals(_random), "Exact original random state restored after nickname generation");
+                    Check(_dice == null || _dice.localScale == _diceScale, "Exact original dice scale restored");
                 }
             }
         }
