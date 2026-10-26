@@ -13,7 +13,7 @@ namespace ArrowSwarm.UI
     /// <summary>
     /// Modal dialog shown after the Tutorial / on first Main Menu entrance
     /// allowing players to choose their Leaderboard username and country.
-    /// Features random nickname generator, clean country stepper, and direct Save &amp; Play transition.
+    /// Features a random nickname generator, country stepper, and profile saving without leaving the menu.
     /// </summary>
     public partial class ProfileSetupModalUI : MonoBehaviour
     {
@@ -330,7 +330,7 @@ namespace ArrowSwarm.UI
 
         private void OnSaveClicked()
         {
-            Debug.Log("[ArrowSwarm] ProfileSetupModalUI: Save & Play button clicked!");
+            Debug.Log("[ArrowSwarm] ProfileSetupModalUI: Save profile button clicked!");
 
             string finalName = _nameInput != null ? _nameInput.text.Trim() : "";
             if (string.IsNullOrEmpty(finalName))
