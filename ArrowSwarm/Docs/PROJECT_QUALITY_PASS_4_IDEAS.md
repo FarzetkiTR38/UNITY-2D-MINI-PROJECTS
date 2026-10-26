@@ -1,5 +1,7 @@
 # Arrow Swarm — öncelikli geliştirme fikirleri
 
+Güncel durum: **1, 2 ve 3. maddeler Quality Pass 5'te uygulandı ve Unity MCP ile doğrulandı.** [Sonuç ve kanıtlar](PROJECT_QUALITY_PASS_5_OVERVIEW.md). Aşağıdaki dayanak/kapsam metinleri ilk değerlendirmeyi korur; bu üç maddeyi yeniden başlanacak iş saymayın. Kalan 4–7. maddeler henüz uygulanmadı.
+
 Bu liste Quality Pass 4 sırasında gerçek kaynaklar okunarak hazırlandı. Aşağıdaki işler uygulanmış kabul edilmemeli; her biri için yarar, sınır, bağımlılık ve kabul testi belirtiliyor. Yerel ayarların gereksiz skor göndermesi bu listede tekrar iş değildir: `61ca3d5` ile düzeltildi ve MCP doğrulaması geçti. Daha önce istenen leaderboard görsel tasarımları, bir tasarım seçilene kadar yalnızca önizleme kapsamındadır.
 
 “Kaynakta doğrulanan boşluk” mevcut davranışın koddan görülebildiğini belirtir; bu belge yeni bir cihaz/MCP testi yapıldığı anlamına gelmez. “Fikir” mevcut mekanik arızası iddiası değildir. Eforlar süre taahhüdü değil, göreli kapsamdır.
