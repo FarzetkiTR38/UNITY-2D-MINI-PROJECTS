@@ -36,7 +36,9 @@ namespace ArrowSwarm.UI
 
             if (_levelText != null)
             {
-                _levelText.text = $"Lv.{level}";
+                string prefix = ArrowSwarm.Localization.LocalizationManager.HasInstance
+                    ? ArrowSwarm.Localization.LocalizationManager.Instance.GetText("menu_level_short", "Lv.") : "Lv.";
+                _levelText.text = prefix + level;
             }
 
             if (_starsText != null)
