@@ -1,0 +1,26 @@
+# Quality Pass 5 — leaderboard reliability and honest presentation
+
+Baseline: `41b739c`. Quality Pass 4 is complete. The user's continuation authorizes the next scoped improvements from its ideas list. Read this file first when resuming; do not redo completed passes.
+
+## Protect
+- Preserve the working Defense and both puzzle campaigns, actual progress and original dirty files. A private TEMP snapshot holds the five original preference values/existence and initial dirty-file bytes/hashes. Never publish player data.
+- Root owns Unity MCP and commits. Delegated source work stays disjoint. No script edits during active runtime fixtures.
+- No live ads or synthetic production cloud writes. Use scoped fake providers and restore the original factory, manager ownership, data, input, language/theme and preferences.
+- Keep the authored glossy panel, TMP/localization and Inspector-owned Light/Dark styling. Previous leaderboard art concepts remain unselected previews; this is a content/reliability improvement.
+- Every coherent phase is verified and committed separately. New scripts stay under 200 lines.
+
+## Phases
+- [x] 0. Read completed work, record continuation scope, snapshot and verify original Boot/Edit state; commit roadmap.
+- [ ] 1. Reproduce leaderboard loading/offline/empty/rank ambiguities with a controlled provider and inspect the authored panel.
+- [ ] 2. Add observable refresh states and successful-cache timestamp without confusing successful empty responses with errors. Preserve pending/version/reconnect behavior.
+- [ ] 3. Add an authored localized status/retry area and honest rows/current-player information. Verify real panel in Light/Dark and all ten languages, delayed/failure/offline/reopen cases.
+- [ ] 4. Measure actual Profile Save duplicate score requests, apply a minimal ownership repair and run genuine-progress concurrency regressions.
+- [ ] 5. Run focused existing cloud/profile/menu/localization regressions, inspect final visual evidence, restore original state and publish overview/next work. Each completed phase has its own commit.
+
+## Acceptance
+No invented empty accounts or unverified world #1. Current local progress remains visible separately. A delayed refresh is visible and cannot start duplicate concurrent reads; failure retains the last successful cache and timestamp. A real successful empty result clears stale rows. Offline first-open explains local-only information. Retry uses the same existing refresh path; closing/reopening during a request stays safe. Ten translations fit authored rectangles; exact Light restoration passes. Actual Profile Save submits once per meaningful save while newer profile/stars and pending retry semantics remain intact.
+
+## Current resume point
+Starting phase 1. Unity source instance `ArrowSwarm@3f240769be4f5e6f` is stopped on BootScene; no compile in progress and serialized run-in-background is false. Source audit found provider failures currently return an empty list, indistinguishable from a genuinely empty global board; UI also fills absent slots with Level 1 / 0-star blank accounts and derives world rank from a local optimistic list. These are hypotheses pending targeted native reproduction. Navigation audit is read-only and remains future scope for this pass.
+
+Evidence belongs under `Captures/QualityPass5/`. Record tested limits honestly; fake-provider tests do not prove live UGS connectivity or Android device performance.
