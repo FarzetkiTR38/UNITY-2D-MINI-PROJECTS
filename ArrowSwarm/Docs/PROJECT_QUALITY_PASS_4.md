@@ -36,11 +36,16 @@ Baseline sweep complete. Settings synchronization fix has passed its before/afte
 - After: `settings-sync-verification.txt` passes with zero failures, zero uploads for the full local-only batch, and genuine progress/reconnect/profile/auto-save controls intact. Original data reference, preferences, provider factory and lazy manager ownership restore exactly. No real cloud operations were performed.
 - Evidence: `Captures/QualityPass4/settings-sync-before.txt`, `settings-sync-verification.txt`.
 
-### Confirmed remaining findings
-- Native pointer input: profile left arrow advances the country forward; both arrows route clicks to the ancestor selector. Before report records three failed checks. Repair is limited to authored hit graphics/target graphics and existing feedback.
-- All four gameplay pause headings overflow in Turkish in both themes. Existing four-layer curved title needs optional geometry fitting; fonts/colors/arch are retained.
-- Defense's late final arrow completion may publish Win after the real final-life mob exit. Complete the deterministic native reproduction before modifying terminal guards.
-- Puzzle Hint reward is checked against the old session before crediting earned inventory; exercise Retry/Menu/destroyed owner through delayed fake ads before fixing.
-- Profile action says Save & Play while the actual action saves and closes to the menu. Correct copy in all ten languages after checking its only bindings.
+### Terminal gameplay and earned rewards
+- Defense BEFORE: a real generated board launched all pooled arrows; a real mob consumed the last life while the final arrow was still moving. Later completions published Win, opened success above Game Over and unlocked progress after losing (three failed checks).
+- Defense AFTER: spawner and central completion entry both require Playing. The same real sequence stays Lose with zero wins and no new progress. A separate normal board still wins once with three stars; repeated completion in Lose, Win and Menu cannot publish another win.
+- Puzzle BEFORE: six failed checks showed earned Hint inventory being discarded after actual Retry, Menu transition or scene destruction in both Shapes and Color Shift.
+- Puzzle AFTER: successful earned inventory is credited before the stale-owner/attempt check. Old sessions cannot show messages or change the new board. Current-owner, failure and duplicate-provider controls also pass; existing AdManager exactly-once ownership is retained.
+- Evidence: `defense-terminal-before.txt`, `defense-terminal-verification.txt`, `puzzle-reward-before.txt`, `puzzle-reward-verification.txt` in `Captures/QualityPass4/`. Every scope restored data/preferences/providers/debug/config. Real ads and cloud submissions were not used.
+
+### Visual/profile repairs under final review
+- Native country pointer repair now passes left/right/label input checks with exactly one owned callback per click. Before report recorded three failed checks. Repair is limited to authored hit graphics/target graphics and existing feedback.
+- Optional geometry fitting on the four gameplay pause headings passes 80 actual scene/language/theme combinations, including repeated refresh stability and viewport bounds. Fonts/colors/arch are retained. A final graphical sweep will recheck the persisted scene overrides.
+- Profile action now says Save in all ten languages, matching the real save-and-close action. Actual profile Save/language regressions are running before commit.
 
 Previously observed cloud Leaderboards connectivity warning remains evidence of unavailable connectivity; do not hide it or treat a fake-provider success as live service certification.

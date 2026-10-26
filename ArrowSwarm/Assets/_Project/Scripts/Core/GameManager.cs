@@ -147,6 +147,7 @@ namespace ArrowSwarm.Core
         /// </summary>
         public void HandleAllArrowsFired()
         {
+            if (_currentState != GameState.Playing) return;
             SetState(GameState.Win);
             OnLevelWon?.Invoke();
             LogDebug("Level WON!");

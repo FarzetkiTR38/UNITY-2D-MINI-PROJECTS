@@ -131,10 +131,13 @@ namespace ArrowSwarm.Puzzle
         private void RewardHint()
         {
             int version = _version;
+            var data = DataManager.Instance;
             AdManager.Instance.ShowRewardedAd(success =>
             {
+                if (!success) return;
+                if (data != null) data.ModifyTipCount(1);
                 if (this == null || version != _version) return;
-                if (success) { DataManager.Instance.ModifyTipCount(1); SetMessage("puzzle_hint_added"); Notify(); }
+                SetMessage("puzzle_hint_added"); Notify();
             });
         }
 
