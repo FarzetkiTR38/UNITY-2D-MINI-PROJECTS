@@ -9,7 +9,7 @@ namespace ArrowSwarm.UI
     {
         private void ApplyLocalization()
         {
-            RefreshAction(_saveButton, "profile_save_play", "SAVE & PLAY");
+            RefreshAction(_saveButton, "profile_save_play", "SAVE");
             RefreshAction(_skipButton, "profile_skip", "SKIP");
         }
 

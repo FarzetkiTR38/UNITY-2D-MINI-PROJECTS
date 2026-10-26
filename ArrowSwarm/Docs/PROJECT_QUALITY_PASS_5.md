@@ -1,0 +1,48 @@
+# Quality Pass 5 — leaderboard reliability and honest presentation
+
+Baseline: `41b739c`. Quality Pass 4 is complete. The user's continuation authorizes the next scoped improvements from its ideas list. Read this file first when resuming; do not redo completed passes.
+
+## Protect
+- Preserve the working Defense and both puzzle campaigns, actual progress and original dirty files. A private TEMP snapshot holds the five original preference values/existence and initial dirty-file bytes/hashes. Never publish player data.
+- Root owns Unity MCP and commits. Delegated source work stays disjoint. No script edits during active runtime fixtures.
+- No live ads or synthetic production cloud writes. Use scoped fake providers and restore the original factory, manager ownership, data, input, language/theme and preferences.
+- Keep the authored glossy panel, TMP/localization and Inspector-owned Light/Dark styling. Previous leaderboard art concepts remain unselected previews; this is a content/reliability improvement.
+- Every coherent phase is verified and committed separately. New scripts stay under 200 lines.
+
+## Phases
+- [x] 0. Read completed work, record continuation scope, snapshot and verify original Boot/Edit state; commit roadmap.
+- [x] 1. Reproduce leaderboard loading/offline/empty/rank ambiguities with a controlled provider and inspect the authored panel.
+- [x] 2. Add observable refresh states and successful-cache timestamp without confusing successful empty responses with errors. First native state suite passed; existing cloud regressions follow in phase 5.
+- [x] 3. Add an authored localized status/retry area and honest rows/current-player information. Final merged scene passed real native Retry input, 100 rendered state/language/theme combinations and exact Light restoration.
+- [x] 4. Measure actual Profile Save duplicate score requests, apply a minimal ownership repair and run genuine-progress concurrency regressions. Verified early while the UI implementation was being prepared.
+- [x] 5. Run focused existing cloud/profile/menu/localization regressions and inspect final visual evidence. Startup, pending, reconnect, local-settings isolation, actual ten-language Profile Save and broad Defense/profile/level localization passed; 18 menu captures passed exact Light restoration. Final preservation/overview closeout is below.
+
+## Acceptance
+No invented empty accounts or unverified world #1. Current local progress remains visible separately. A delayed refresh is visible and cannot start duplicate concurrent reads; failure retains the last successful cache and timestamp. A real successful empty result clears stale rows. Offline first-open explains local-only information. Retry uses the same existing refresh path; closing/reopening during a request stays safe. Ten translations fit authored rectangles; exact Light restoration passes. Actual Profile Save submits once per meaningful save while newer profile/stars and pending retry semantics remain intact.
+
+## Current resume point
+
+**Quality Pass 5 is complete.** All phases and final preservation passed. Six enabled scenes and 14 project prefabs were checked; the expanded leaderboard matrix, real Retry input, genuine Profile Save count/concurrency cases, old cloud/profile/settings/localization regressions and 18 menu screenshots all passed. All eleven original dirty-file hashes and five preference values/existence match the private initial snapshot. Editor is stopped on original BootScene, background false, with no remaining fake manager/provider override. Final observed Console counts are zero after recorded verification diagnostics were cleared; the separate TMP Editor reimport warning is documented rather than claimed repaired. No required task-owned change remains uncommitted after closeout.
+
+Next continuation: start a separate scoped phase from the remaining ideas (shared Back/Cancel routing, Color Shift accessibility patterns, reduced decorative motion or Shapes dependency tooling). The first three original ideas are now implemented. Read the overview's scope/acceptance notes; do not repeat passed changes or the full 100-level campaign run solely because of a continuation prompt.
+
+## Implementation and verification record
+Baseline captured through the real Boot-loaded menu and a scoped offline provider: zero global records produced ten visible rows, nine blank invented accounts and reported rank 1. No status field existed. Native actual Profile Save verification recorded six request-count failures: initialized and fresh-online saves each sent three scores. The original data, preferences, provider factory, modal draft/scale and RNG restored. Evidence: `leaderboard-before.json`, `leaderboard-before.png`, `profile-sync-before.txt`.
+
+Navigation audit remained read-only and is future scope for this pass. Starting Boot/Edit/background setting and eleven user-dirty files were privately preserved; no user-owned changes were staged.
+
+Actual Profile Save repair passed with zero failures: both initialized and fresh-online Save now send one score instead of three. The minimal modal change retains first-Save lazy manager creation and the genuine DataManager submission. Delayed saves, concurrent real level/shared-star updates, inverse completion order, rejected saves, pending offline edits and reconnect all passed with a scoped provider. Existing cloud/profile regressions passed again in phase 5. Before/after evidence is `profile-sync-before.txt` / `profile-sync-verification.txt`.
+
+Refresh model is implemented and its actual-panel native suites passed zero failures: offline/Loading/Ready/Failed, delayed close/reopen and duplicate request guard, failure retaining rows/time, successful empty clearing stale rows, provider-order rows detached from callers, authoritative rank 27 versus unknown, persisted successful UTC timestamp, local progress separate from global standings. Production fetch failure now returns null (and retains its warning), distinct from a successful empty list. Legacy optimistic APIs stay available; the player-facing UI uses the new snapshot/verified-rank APIs. No arbitrary timeout or request abandonment was introduced. Final scene cleanup, expanded input/language/theme tests and existing regressions also passed.
+
+Final UI implementation passed on the persisted, surgically merged scene. The original panel/art/fonts remain; 19 intentional existing document changes, 31 new authored documents and one removed layout component preserve the other 1,119 scene documents (field comparison ignoring trailing whitespace). Status, saved-result time, empty explanation, local name/level/shared stars/world rank and Refresh are TMP with scene-authored palettes. All ten dictionaries contain 112 matching keys; all 1,000 previous translated entries remain unchanged. Actual native mouse press/release verifies squeeze, callback, busy-button blocking, scale restoration and original input devices/settings. Five views × ten languages × two themes passed, with exact Light material/color/sprite restoration and a reversible negative control. Eleven real screenshots were captured; representative Light ten-row and Dark Turkish states were visually inspected.
+
+Additional confirmed display fix: a valid-length nickname like `<size=999>A` previously entered raw TMP rich text. Rich text is disabled only on the three authored podium name labels and the regular-row prefab name label, matching the new literal-text local summary. The real provider-row test confirms the literal `<` is rendered and text fits. Row level prefixes also follow the existing localized abbreviation. Native report: `Captures/QualityPass5/Leaderboard/verification.txt`; scene audit: `scene-authoring-diff.json`.
+
+All targeted and existing regressions passed. The expanded leaderboard suite records 1,147 PASS lines including its outcome header and zero FAIL lines (not a claim of 1,147 distinct scenarios). Eighteen actual menu/transition screenshots passed exact Light restoration; both contact sheets were inspected. Six enabled scenes contain 4,721 scanned components with zero broken serialized object references or missing scripts; all 14 project prefabs have zero missing scripts. The initial native audit call timed out at the MCP transport while scanning, but completed its report and returned Editor to Boot; subsequent MCP state checks confirmed normal readiness.
+
+Known Editor diagnostic: ten-language rendering and an explicit forced reimport produced a TMP dynamic Japanese-font importer consistency warning. Read-only investigation traced the render-triggered reimport to the package's `TMP_EditorResourceManager.DoPostRenderUpdates`; project CJK creation is manual, source/fallback references are valid. No runtime font defect was reproduced. The exact pre-existing font bytes are preserved; no font regeneration, package patch or Library deletion was used to silence it. Details and final console observation belong in `Captures/QualityPass5/editor-diagnostics.txt`. This is separate from the intentionally thrown fake-provider warning used to test failure recovery.
+
+Commits: `ccc6c0c` roadmap; `f38a95a` before evidence; `ef36576` single profile Save submission; `7a4d143` refresh/cache/rank provenance; `63ae1bef` authored localized panel/native input; `adbd68d8` integration/reference/visual regressions; closing documentation records final preservation and directs the generic continuation plan here.
+
+Evidence belongs under `Captures/QualityPass5/`. Record tested limits honestly; fake-provider tests do not prove live UGS connectivity or Android device performance.

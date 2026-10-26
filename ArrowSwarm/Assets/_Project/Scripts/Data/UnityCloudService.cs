@@ -168,7 +168,7 @@ namespace ArrowSwarm.Data
             var result = new List<LeaderboardEntry>();
 
             bool isReady = await EnsureInitializedAsync();
-            if (!isReady) return result;
+            if (!isReady) return null;
 
             try
             {
@@ -232,6 +232,7 @@ namespace ArrowSwarm.Data
             catch (Exception ex)
             {
                 Debug.LogWarning($"[ArrowSwarm] Failed to fetch leaderboard from cloud: {ex.Message}");
+                return null;
             }
 
             return result;

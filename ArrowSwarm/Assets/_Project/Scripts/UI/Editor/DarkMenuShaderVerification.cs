@@ -45,7 +45,7 @@ namespace ArrowSwarm.UI.Editor
                 int index=0;
                 foreach(string mode in new[]{"Defense","Shapes","ColorShift"})
                 {
-                    var sprite=AssetDatabase.LoadAssetAtPath<Sprite>(Sprites+"Card"+(index++)+".asset");
+                    var sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Project/Art/Sprites/ModeMenu/ModalNightSlices/Card"+(index++)+".asset");
                     using(var material=new TemporaryMaterial(AssetDatabase.LoadAssetAtPath<Material>(Folder+"Dark"+mode+"Card.mat")))
                     {
                         var normal=renderer.Render(material.Value,sprite.texture,DataUtility.GetOuterUV(sprite),Color.white,256,96);
@@ -85,13 +85,32 @@ namespace ArrowSwarm.UI.Editor
                 {
                     original.Value.SetVector("_Bounds",new Vector4(0,0,1,1));original.Value.SetVector("_Corner",new Vector4(.001f,.001f,0,0));
                     var source=renderer.Render(original.Value,sprite.texture,DataUtility.GetOuterUV(sprite),Color.white,470,836);
-                    Check(frame.MeanAlphaDifference(source)<.001f,"Dark artwork preserves exact cutout alpha at every pixel");
+                    bool outside=true;int preserved=0;float marginX=2f/470,marginY=2f/836;
+                    var left=material.Value.GetVector("_LeftStat");var right=material.Value.GetVector("_RightStat");
+                    for(int y=0;y<836;y++)for(int x=0;x<470;x++)
+                    {
+                        float u=(x+.5f)/470,v=(y+.5f)/836;
+                        // The removal edge deliberately antialiases over neighboring render pixels.
+                        bool inside=(u>=left.x-marginX&&u<=left.z+marginX&&v>=left.y-marginY&&v<=left.w+marginY)||
+                            (u>=right.x-marginX&&u<=right.z+marginX&&v>=right.y-marginY&&v<=right.w+marginY);
+                        if(inside)continue;preserved++;
+                        // At applies the platform GPU readback Y flip before comparing UV regions.
+                        if(frame.At(u,v)!=source.At(u,v))outside=false;
+                    }
+                    Check(outside&&preserved>300000,"Dark backdrop preserves all source RGBA outside stat masks and their two-pixel antialias footprint");
                     bool gloss=true;
                     for(float y=.05f;y<.86f;y+=.03f)for(float x=.03f;x<.98f;x+=.03f)
                         if(frame.At(x,y)!=source.At(x,y))gloss=false;
                     Check(gloss,"All sampled characters, logo, ribbons and decorations preserve source RGBA and gloss");
+                    Check(frame.At(.35f,.906f).a<.01f&&frame.At(.82f,.906f).a<.01f,
+                        "Both old lower stat interiors are fully removed behind the clean scene plaques");
+                    Check(frame.At(.173f,.927f).a<.01f&&frame.At(.631f,.927f).a<.01f,
+                        "Old baked trophy/star pixels cannot leave colored fringes behind new icons");
+                    Check(source.At(.074f,.95f).a>.5f&&frame.At(.074f,.95f)==source.At(.074f,.95f)&&
+                        source.At(.934f,.951f).a>.5f&&frame.At(.934f,.951f)==source.At(.934f,.951f),
+                        "Rounded removal preserves both neighboring floating cyan arrows exactly");
                 }
-                Check(Lum(frame.At(.35f,.927f))<.3f&&Lum(frame.At(.82f,.927f))<.3f,"Both stat text plaques become dark");
+                Check(frame.At(.35f,.927f).a<.01f&&frame.At(.82f,.927f).a<.01f,"Old text plaques are cleared for independent authored Dark artwork");
                 var gold=frame.At(.5f,.78f);
                 Check(gold.r>.8f&&gold.g>.6f&&gold.b<.35f,"Golden hero artwork retains its warm color");
             }

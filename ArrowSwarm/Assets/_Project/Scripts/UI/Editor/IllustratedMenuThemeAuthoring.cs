@@ -24,8 +24,9 @@ namespace ArrowSwarm.UI.Editor
                 Bind(root.GetComponent<Graphic>(),null,false,Hex("0E1423"));
                 var art=root.Find("MenuArt");
                 var backdrop=Material("DarkIllustratedBackdrop","ArrowSwarm/UI/IllustratedMenuDark");
-                backdrop.SetVector("_LeftStat",new Vector4(.098f,.896f,.449f,.953f));
-                backdrop.SetVector("_RightStat",new Vector4(.555f,.896f,.901f,.953f));EditorUtility.SetDirty(backdrop);
+                backdrop.SetVector("_LeftStat",new Vector4(.087f,.885f,.463f,.965f));
+                backdrop.SetVector("_RightStat",new Vector4(.548f,.885f,.916f,.965f));
+                backdrop.SetVector("_StatCorner",new Vector4(66f/941,66f/1672,0,0));EditorUtility.SetDirty(backdrop);
                 Bind(art.GetComponent<Graphic>(),backdrop,true,Color.white);
                 var artBinding=new SerializedObject(art.GetComponent<ThemedUIElement>());
                 artBinding.FindProperty("_darkSprite").objectReferenceValue=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Project/Art/Sprites/ModeMenu/MainMenuNightCutout.png");
@@ -33,11 +34,14 @@ namespace ArrowSwarm.UI.Editor
                 foreach(string name in new[]{"Play","GameMode","Levels","Leaderboard","Settings"})
                 {
                     var button=art.Find(name+"Button"); var image=button.GetComponent<Image>();
-                    var dark=Material("Dark"+name+"Artwork","ArrowSwarm/UI/ButtonArtwork");
-                    dark.CopyPropertiesFromMaterial(image.material);
-                    dark.SetFloat("_SurfaceStrength",name=="GameMode"?1:0);
-                    dark.SetColor("_SurfaceColor",Hex("20324F"));EditorUtility.SetDirty(dark);
-                    Bind(image,dark,true,Color.white);
+                    if(button.GetComponent<ModeButtonVisual>()==null)
+                    {
+                        var dark=Material("Dark"+name+"Artwork","ArrowSwarm/UI/ButtonArtwork");
+                        dark.CopyPropertiesFromMaterial(image.material);
+                        dark.SetFloat("_SurfaceStrength",name=="GameMode"?1:0);
+                        dark.SetColor("_SurfaceColor",Hex("20324F"));EditorUtility.SetDirty(dark);
+                        Bind(image,dark,true,Color.white);
+                    }
                     Bind(button.Find("Label").GetComponent<Graphic>(),null,false,Hex("F0F6FF"));
                     if(name=="GameMode")Bind(button.Find("SelectedMode").GetComponent<Graphic>(),null,false,Hex("91CDFF"));
                 }
@@ -49,14 +53,21 @@ namespace ArrowSwarm.UI.Editor
                 close.SetVector("_Bounds",new Vector4(.06f,.06f,.95f,.95f));
                 close.SetVector("_Corner",new Vector4(.19f,.19f,0,0));close.SetFloat("_SurfaceStrength",0);
                 EditorUtility.SetDirty(close);Bind(modal.Find("Close").GetComponent<Graphic>(),close,true,Color.white);
+                int cardIndex=0;
                 foreach(string mode in new[]{"Defense","Shapes","ColorShift"})
                 {
                     var card=modal.Find(mode+"Card");
                     var material=Material("Dark"+mode+"Card","ArrowSwarm/UI/ButtonArtwork");
                     material.SetVector("_Bounds",new Vector4(4f/827,4f/297,823f/827,293f/297));
                     material.SetVector("_Corner",new Vector4(65f/827,65f/297,0,0));
-                    material.SetFloat("_SurfaceStrength",1);material.SetColor("_SurfaceColor",Hex("20324F"));
+                    var night=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Project/Art/Sprites/ModeMenu/ModalNightSlices/Card"+cardIndex+".asset");cardIndex++;
+                    material.SetFloat("_SurfaceStrength",night!=null?0:1);material.SetColor("_SurfaceColor",Hex("20324F"));
                     EditorUtility.SetDirty(material);Bind(card.GetComponent<Graphic>(),material,true,Color.white);
+                    if(night!=null)
+                    {
+                        var pair=new SerializedObject(card.GetComponent<ThemedUIElement>());
+                        pair.FindProperty("_darkSprite").objectReferenceValue=night;pair.ApplyModifiedPropertiesWithoutUndo();
+                    }
                     Bind(card.Find("ModeTitle").GetComponent<Graphic>(),null,false,Hex("E6F0FF"));
                     Bind(card.Find("SelectionLabel").GetComponent<Graphic>(),null,false,Hex("F0F6FF"));
                 }

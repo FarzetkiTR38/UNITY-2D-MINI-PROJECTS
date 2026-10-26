@@ -108,6 +108,14 @@ namespace ArrowSwarm.UI.Editor
 
         private static IEnumerator Capture(string label)
         {
+            if(label.StartsWith("MapTestScene-Pause-",StringComparison.Ordinal))
+            {
+                var pause=UnityEngine.Object.FindFirstObjectByType<PauseMenuUI>(FindObjectsInactive.Include);
+                var group=pause!=null?pause.GetComponent<CanvasGroup>():null;
+                if(group==null||!pause.gameObject.activeInHierarchy||group.alpha<.99f||!group.interactable)
+                    throw new InvalidOperationException("The actual map-preview pause popup must finish opening before capture.");
+                Results.Add("PASS: actual map-preview pause popup is visible and interactive before "+label);
+            }
             string path=Path.Combine(_folder,label+"-"+DateTime.UtcNow.Ticks+".png"); int frame=Time.frameCount;
             Canvas.ForceUpdateCanvases(); ScreenCapture.CaptureScreenshot(path);
             yield return (Func<bool>)(()=>Time.frameCount>frame+2&&File.Exists(path)&&new FileInfo(path).Length>0);

@@ -188,6 +188,7 @@ namespace ArrowSwarm.Arrow
         private void CheckWinCondition()
         {
             LogDebug($"CheckWinCondition: Remaining={RemainingArrows}, Moving={_movingArrowsCount}");
+            if (!GameManager.HasInstance || GameManager.Instance.CurrentState != GameState.Playing) return;
             if (RemainingArrows <= 0 && _movingArrowsCount <= 0)
             {
                 // Unsubscribe to avoid multiple triggers
