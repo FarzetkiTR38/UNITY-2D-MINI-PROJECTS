@@ -13,11 +13,11 @@ Baseline: `5f057df`. User authorizes a broad, autonomous quality pass: enter eve
 ## Phases / resume checklist
 - [x] 0. Read previous records, snapshot starting state, commit this roadmap and establish current Unity baseline (`2e0d20d`).
 - [x] 1. Sweep all six scenes and visible popup families in both themes. Thirty paired screen states captured through the actual Boot-configured editor, zero missing scripts across six scenes. All ten language files parse with the same 100 keys; all 46 nonempty scene-bound keys resolve. Full navigation/input regression continues in later phases.
-- [ ] 2. Audit data/profile/leaderboard asynchronous behavior and implement only reproducible reliability/UX fixes, with offline before/after evidence.
-- [ ] 3. Audit Defense, Shapes and Color Shift lifecycle/input/skills/pooling. Reproduce and fix demonstrated gameplay problems; profile any proposed optimization with positive controls.
-- [ ] 4. Improve confirmed visual/readability/localization issues found in the full sweep. Verify each affected screen and input path before its commit.
+- [x] 2. Audit data/profile/leaderboard asynchronous behavior and implement only reproducible reliability/UX fixes, with offline before/after evidence. Local-only sync optimization passed; original startup/pending/version/reconnect suites also passed with fake providers.
+- [ ] 3. Audit Defense, Shapes and Color Shift lifecycle/input/skills/pooling. Terminal outcomes and delayed Hint fixes passed; orphan celebration prefab repair/pool verification remains in progress. No speculative solver rewrite or device FPS claim.
+- [x] 4. Improve confirmed visual/readability/localization issues found in the full sweep. Country native input, all ten actual profile Saves and 80 pause-title combinations passed. Final paired screen regression remains in phase 5.
 - [ ] 5. Exercise real Defense, tutorial/pause/win/lose/retry/menu and all 100 puzzle levels plus representative real-input/skill/rotation/camera flows. Distinguish graphical rendering evidence from timing/performance evidence.
-- [ ] 6. Publish a prioritized feature list with benefit, scope and dependencies; implement small evidence-backed improvements where appropriate, leaving speculative/new mechanics clearly separate.
+- [x] 6. Publish a prioritized feature list with benefit, scope and dependencies; implement small evidence-backed improvements where appropriate, leaving speculative/new mechanics clearly separate. Seven source-grounded ideas are in `PROJECT_QUALITY_PASS_4_IDEAS.md` and explicitly remain unimplemented.
 - [ ] 7. Final regressions, original preference/file preservation, screenshots and overview. Record finished commits and next resume point explicitly.
 
 ## Entry points to verify
@@ -27,7 +27,9 @@ Boot/startup; main Play for each mode; mode selector; separate level pages/locke
 New evidence: `Captures/QualityPass4/`. Each phase records reproduction, final behavior, meaningful MCP checks, restoration and commit. Do not label an untested path as passed. Visual preference changes must fit the game's established glossy blue/gold style and both themes. Avoid redesign solely for novelty.
 
 ## Current resume point
-Baseline sweep complete. Settings synchronization fix has passed its before/after MCP fixture. Real country pointer routing was reproduced; authored repair and optional pause-title width fitting are prepared and awaiting their runtime after checks. Defense terminal-state and delayed puzzle reward reproductions are running before their production fixes. Root owns MCP; do not modify scripts while a fixture is active. Inspect reports and git status before continuing.
+Commits: `2e0d20d` roadmap, `61ca3d5` local-only score sync isolation, `32b201a` complete paired baseline/reference audit, `5ab0138` terminal gameplay/earned Hint fixes, `9365162` native country controls + honest Save copy, `e925819` localized curved title fitting. All these changes passed their targeted MCP checks. Original startup/pending/version/reconnect and ten-language actual profile Save regressions passed again.
+
+Next: finish the newly discovered orphan `ParticleSystemDestroyer` on the runtime-instantiated ConfettiParticle prefab (native missingScripts=1 before evidence). Then run fresh Boot Play: confetti pool test, existing Defense smoke, 313 localization checks, all 100 puzzle levels, 450 interaction checks, and final paired graphical sweep. Finish exact initial dirty-file/preferences restoration and final overview. Root owns MCP; no script edits during running fixtures. Preserve old regression report bytes; copies of this run belong under QualityPass4.
 
 ## Findings / commits / ideas
 ### Local preferences no longer generate score uploads
