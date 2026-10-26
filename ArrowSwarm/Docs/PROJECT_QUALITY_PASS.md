@@ -1,5 +1,7 @@
 # Project quality pass — continuation plan
 
+Latest continuation record: [Quality Pass 5](PROJECT_QUALITY_PASS_5.md), completed after `41b739c`. Read its current resume point and [overview](PROJECT_QUALITY_PASS_5_OVERVIEW.md) first. The phases below are the completed original pass, retained as history; do not replay them. The next scoped improvement should come from the remaining priorities recorded in the latest overview.
+
 Baseline: `16941ad`. The user authorizes proactive inspection and improvements, with a commit and Unity MCP verification for each coherent change. Continue from the first unchecked phase when asked to resume. Preserve the existing game design, levels, artwork and scene styling; work from reproducible defects or measured hot paths.
 
 ## Phases
