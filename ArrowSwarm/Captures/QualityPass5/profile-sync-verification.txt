@@ -1,0 +1,38 @@
+PASS: actual profile Save synchronization (0 failures)
+PASS: Offline_Save: real Save persists the edited profile and closes the actual modal
+PASS: Offline first Save remains pending with exact name/country and zero provider operations
+PASS: Actual offline first Save retains its single lazy manager creation contract
+PASS: Exactly one scoped fake manager exists after its explicit fixture creation
+PASS: Immediate_Save: real Save persists the edited profile and closes the actual modal
+OBSERVED: initialized immediate real Save submissions=1
+PASS: One initialized immediate Save sends exactly one score snapshot
+PASS: Accepted immediate Save carries final profile metadata and clears pending
+PASS: Delayed_Older: real Save persists the edited profile and closes the actual modal
+PASS: One delayed Save sends exactly one score snapshot
+PASS: Genuine level and star changes retain their independent submission contract
+PASS: Delayed_Newer: real Save persists the edited profile and closes the actual modal
+PASS: A second edited profile sends one newer snapshot while older work waits
+PASS: Latest pending request captures updated name, country, real level and shared stars
+PASS: Newest accepted request clears pending even while older responses wait
+PASS: Late older failures cannot mark already accepted newer progress pending
+PASS: Late completions do not reopen the closed real profile modal
+PASS: Racing_Older: real Save persists the edited profile and closes the actual modal
+PASS: Racing_Newer: real Save persists the edited profile and closes the actual modal
+PASS: Two distinct delayed Save operations each send exactly once
+PASS: A late older success cannot erase the newest rejected profile's pending state
+PASS: A new explicit refresh retries and accepts the rejected latest profile once
+PASS: Rejected_Save: real Save persists the edited profile and closes the actual modal
+PASS: A rejected Save sends once and retains pending instead of claiming success
+PASS: Offline_Latest: real Save persists the edited profile and closes the actual modal
+PASS: Another offline edit retains the latest pending profile without provider calls
+PASS: Reconnect retries the latest complete profile/progress exactly once and clears pending
+PASS: Fresh_Online: real Save persists the edited profile and closes the actual modal
+OBSERVED: fresh online real Save submissions=1; managerCreated=True
+PASS: Fresh online Save creates its manager and synchronizes the pending profile exactly once
+PASS: Fresh accepted Save carries final name/country and clears pending only after provider acceptance
+PASS: original data object, auto-save and all five data-service preferences restored
+PASS: Exact original player object contents restored
+PASS: Exact original live language preserved
+PASS: Temporary fake manager removed and original lazy factory restored
+PASS: Original profile visibility, scale, draft and sibling restored
+PASS: Exact original random state restored

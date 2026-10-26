@@ -340,10 +340,8 @@ namespace ArrowSwarm.UI
                 DataManager.Instance.SetPlayerProfile(finalName, selectedCode, true);
             }
 
-            if (LeaderboardManager.Instance != null)
-            {
-                LeaderboardManager.Instance.SetPlayerName(finalName);
-            }
+            // SetPlayerProfile owns the score update. A fresh manager retries its pending snapshot once.
+            if (!LeaderboardManager.HasInstance) _ = LeaderboardManager.Instance;
 
             // Save and cleanly close modal (stay on MainMenu)
             Hide();
