@@ -1,0 +1,29 @@
+FAIL: 3 country pointer checks; real left, right and label profile country controls
+PASS: Authored menu uses the actual InputSystemUIInputModule
+PASS: left arrow: actual graphic raycast has a hit
+INPUT ACK: native mouse down; dynamicFrame=13701; settledPlayerFrame=13703; dynamicUpdates=5
+INPUT ACK: native mouse up; dynamicFrame=13704; settledPlayerFrame=13706; dynamicUpdates=8
+OBSERVED: left arrow; hit=Canvas_MainMenu/ProfileSetupModal/Card/Country/CountrySelector/PrevButtonIMG; before=1; after=2; expected=0; callbacks(left/right/label)=0/0/1
+FAIL: left arrow: changes country exactly once in the displayed direction
+FAIL: left arrow: actual pointer invokes its own authored Button rather than its ancestor
+PASS: right arrow: actual graphic raycast has a hit
+INPUT ACK: native mouse down; dynamicFrame=13707; settledPlayerFrame=13709; dynamicUpdates=11
+INPUT ACK: native mouse up; dynamicFrame=13710; settledPlayerFrame=13712; dynamicUpdates=14
+OBSERVED: right arrow; hit=Canvas_MainMenu/ProfileSetupModal/Card/Country/CountrySelector/NextButtonIMG; before=2; after=3; expected=3; callbacks(left/right/label)=0/0/1
+PASS: right arrow: changes country exactly once in the displayed direction
+FAIL: right arrow: actual pointer invokes its own authored Button rather than its ancestor
+PASS: country label: actual graphic raycast has a hit
+INPUT ACK: native mouse down; dynamicFrame=13713; settledPlayerFrame=13715; dynamicUpdates=17
+INPUT ACK: native mouse up; dynamicFrame=13716; settledPlayerFrame=13718; dynamicUpdates=20
+OBSERVED: country label; hit=Canvas_MainMenu/ProfileSetupModal/Card/Country/CountrySelector/Label; before=3; after=4; expected=4; callbacks(left/right/label)=0/0/1
+PASS: country label: changes country exactly once in the displayed direction
+PASS: country label: actual pointer invokes its own authored Button rather than its ancestor
+PASS: Pointer navigation never saves a draft or changes player progress
+PASS: No leaderboard manager, auth, fetch, submission or profile Save was invoked
+PASS: Exact original InputSettings restored
+PASS: Temporary native mouse removed
+PASS: original data object, auto-save and all five data-service preferences restored
+PASS: Exact original player data unchanged
+PASS: Original live language restored
+PASS: Original lazy cloud provider restored
+PASS: Original modal visibility, draft, country and sibling restored

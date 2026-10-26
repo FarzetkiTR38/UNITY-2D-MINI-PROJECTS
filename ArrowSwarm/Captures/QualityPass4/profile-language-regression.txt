@@ -1,0 +1,78 @@
+PASS: actual profile Save preserves all ten explicit language choices
+PASS: Offline fake factory is installed before any leaderboard manager exists
+PASS: en: fixture establishes a genuine explicit saved language choice
+PASS: en: actual profile shows the requested country independently of its language
+OBSERVED: explicit=en; country=TR; live=en; preference=en; data=en; editedNameSaved=True
+PASS: en: actual Save uses the scoped offline manager and never starts auth, rows or score traffic
+PASS: en: actual Save stores the new name and country and closes normally
+PASS: en: profile Save preserves the explicitly selected live language
+PASS: en: profile Save preserves the explicit preference and player-data language
+PASS: tr: fixture establishes a genuine explicit saved language choice
+PASS: tr: actual profile shows the requested country independently of its language
+OBSERVED: explicit=tr; country=US; live=tr; preference=tr; data=tr; editedNameSaved=True
+PASS: tr: actual Save uses the scoped offline manager and never starts auth, rows or score traffic
+PASS: tr: actual Save stores the new name and country and closes normally
+PASS: tr: profile Save preserves the explicitly selected live language
+PASS: tr: profile Save preserves the explicit preference and player-data language
+PASS: es: fixture establishes a genuine explicit saved language choice
+PASS: es: actual profile shows the requested country independently of its language
+OBSERVED: explicit=es; country=TR; live=es; preference=es; data=es; editedNameSaved=True
+PASS: es: actual Save uses the scoped offline manager and never starts auth, rows or score traffic
+PASS: es: actual Save stores the new name and country and closes normally
+PASS: es: profile Save preserves the explicitly selected live language
+PASS: es: profile Save preserves the explicit preference and player-data language
+PASS: de: fixture establishes a genuine explicit saved language choice
+PASS: de: actual profile shows the requested country independently of its language
+OBSERVED: explicit=de; country=TR; live=de; preference=de; data=de; editedNameSaved=True
+PASS: de: actual Save uses the scoped offline manager and never starts auth, rows or score traffic
+PASS: de: actual Save stores the new name and country and closes normally
+PASS: de: profile Save preserves the explicitly selected live language
+PASS: de: profile Save preserves the explicit preference and player-data language
+PASS: fr: fixture establishes a genuine explicit saved language choice
+PASS: fr: actual profile shows the requested country independently of its language
+OBSERVED: explicit=fr; country=TR; live=fr; preference=fr; data=fr; editedNameSaved=True
+PASS: fr: actual Save uses the scoped offline manager and never starts auth, rows or score traffic
+PASS: fr: actual Save stores the new name and country and closes normally
+PASS: fr: profile Save preserves the explicitly selected live language
+PASS: fr: profile Save preserves the explicit preference and player-data language
+PASS: pt: fixture establishes a genuine explicit saved language choice
+PASS: pt: actual profile shows the requested country independently of its language
+OBSERVED: explicit=pt; country=TR; live=pt; preference=pt; data=pt; editedNameSaved=True
+PASS: pt: actual Save uses the scoped offline manager and never starts auth, rows or score traffic
+PASS: pt: actual Save stores the new name and country and closes normally
+PASS: pt: profile Save preserves the explicitly selected live language
+PASS: pt: profile Save preserves the explicit preference and player-data language
+PASS: it: fixture establishes a genuine explicit saved language choice
+PASS: it: actual profile shows the requested country independently of its language
+OBSERVED: explicit=it; country=TR; live=it; preference=it; data=it; editedNameSaved=True
+PASS: it: actual Save uses the scoped offline manager and never starts auth, rows or score traffic
+PASS: it: actual Save stores the new name and country and closes normally
+PASS: it: profile Save preserves the explicitly selected live language
+PASS: it: profile Save preserves the explicit preference and player-data language
+PASS: ru: fixture establishes a genuine explicit saved language choice
+PASS: ru: actual profile shows the requested country independently of its language
+OBSERVED: explicit=ru; country=TR; live=ru; preference=ru; data=ru; editedNameSaved=True
+PASS: ru: actual Save uses the scoped offline manager and never starts auth, rows or score traffic
+PASS: ru: actual Save stores the new name and country and closes normally
+PASS: ru: profile Save preserves the explicitly selected live language
+PASS: ru: profile Save preserves the explicit preference and player-data language
+PASS: ja: fixture establishes a genuine explicit saved language choice
+PASS: ja: actual profile shows the requested country independently of its language
+OBSERVED: explicit=ja; country=TR; live=ja; preference=ja; data=ja; editedNameSaved=True
+PASS: ja: actual Save uses the scoped offline manager and never starts auth, rows or score traffic
+PASS: ja: actual Save stores the new name and country and closes normally
+PASS: ja: profile Save preserves the explicitly selected live language
+PASS: ja: profile Save preserves the explicit preference and player-data language
+PASS: ko: fixture establishes a genuine explicit saved language choice
+PASS: ko: actual profile shows the requested country independently of its language
+OBSERVED: explicit=ko; country=TR; live=ko; preference=ko; data=ko; editedNameSaved=True
+PASS: ko: actual Save uses the scoped offline manager and never starts auth, rows or score traffic
+PASS: ko: actual Save stores the new name and country and closes normally
+PASS: ko: profile Save preserves the explicitly selected live language
+PASS: ko: profile Save preserves the explicit preference and player-data language
+PASS: Default English and absent explicit preference remain unchanged after saving a Turkish country
+PASS: Default-language Save still persists the edited profile through the scoped offline manager
+PASS: original data object, auto-save and all five data-service preferences restored
+PASS: Exact original live language restored after success or expected regression failure
+PASS: Temporary offline manager removed and exact original provider factory restored
+PASS: Original profile visibility and draft restored
