@@ -21,6 +21,14 @@ Shader "UI/SwarmIrisWipe"
         _PatternSize ("Motif Size Within Cell", Range(0.1, 0.9)) = 0.5
         _PatternDensity ("Motif Density", Range(0, 1)) = 0.45
         _PatternOpacity ("Motif Opacity", Range(0, 0.4)) = 0.12
+        _BrandTex ("Transparent Swarm Artwork", 2D) = "black" {}
+        _BrandRect ("Artwork Source UV", Vector) = (0.08,0.52,0.94,0.89)
+        _BrandCenter ("Artwork Screen Center", Vector) = (0.5,0.54,0,0)
+        _BrandWidth ("Artwork Width / Screen", Range(0.2,1)) = 0.82
+        _BrandOpacity ("Artwork Opacity", Range(0,1)) = 0
+        _BrandFeather ("Artwork Edge Feather", Range(0.001,0.1)) = 0.04
+        _BackdropGlow ("Soft Blue Backlight", Range(0,0.3)) = 0.12
+        _OrbitOpacity ("Fine Orbit Lines", Range(0,0.3)) = 0.1
         [HideInInspector] _StencilComp ("Stencil Comparison", Float) = 8
         [HideInInspector] _Stencil ("Stencil ID", Float) = 0
         [HideInInspector] _StencilOp ("Stencil Operation", Float) = 0
@@ -87,36 +95,14 @@ Shader "UI/SwarmIrisWipe"
                 return frac(sin(dot(cell, float2(127.1, 311.7))) * 43758.5453);
             }
 
-            fixed3 Background(float2 screenUV)
-            {
-                // Stationary sparse motifs: the iris supplies all motion.
-                float2 tiled = screenUV / max(_PatternSpacing, 0.001);
-                float2 cell = floor(tiled);
-                float choice = Hash(cell);
-                float orientation = Hash(cell + 31.3);
-                float2 p = (frac(tiled) - 0.5) / max(_PatternSize, 0.01);
-                if (orientation > 0.5) p = p.yx;
-                p.x *= orientation > 0.75 ? -1 : 1;
-                p.y *= orientation > 0.25 ? -1 : 1;
-                float stem = length(max(abs(p - float2(0, -0.16)) - float2(0.065, 0.2), 0)) - 0.025;
-                float head = max(abs(p.x) + 0.8 * p.y - 0.32, -0.02 - p.y);
-                float arrow = min(stem, head);
-                float angle = atan2(p.x, p.y);
-                float star = length(p) - (0.2 + 0.2 * pow(0.5 + 0.5 * cos(angle * 5), 5));
-                float isStar = step(0.73, Hash(cell + 19.7));
-                float shape = lerp(arrow, star, isStar);
-                float aa = max(fwidth(shape), 0.003);
-                float motif = (1 - smoothstep(-aa, aa, shape)) * step(choice, _PatternDensity);
-                fixed4 ink = lerp(_PatternColor, _StarColor, isStar);
-                return lerp(_Color.rgb, ink.rgb, motif * _PatternOpacity * ink.a);
-            }
+            #include "SwarmWipeArtwork.cginc"
 
             fixed4 frag(v2f i) : SV_Target
             {
                 if (_Progress <= 0) return fixed4(0, 0, 0, 0);
                 float aspect = max(_AspectRatio, 0.001);
                 float2 screenUV = i.uv * float2(aspect, 1);
-                fixed3 color = Background(screenUV);
+                fixed3 color = Background(screenUV, aspect);
                 float alpha = 1;
                 if (_Progress < 1)
                 {

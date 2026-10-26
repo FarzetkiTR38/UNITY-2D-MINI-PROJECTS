@@ -1,0 +1,24 @@
+PASS: 22 paired Dark HUD GPU checks; failures=0
+Authored alpha252/253 is retained rather than forced to 255. Reference readback alpha follows sourceAlpha squared. Only the intended rounded exterior may differ from the full-bounds reference.
+PASS: Trophy uses the capsule artwork shader
+PASS: Trophy disables shader hue/saturation recoloring
+PASS: Trophy clips all four opaque source corners outside the capsule
+PASS: Trophy Light-hidden vertex alpha0 makes the entire plaque transparent
+PASS: Trophy Dark-visible vertex alpha1 shows the authored plaque
+PASS: Trophy icon and text interiors retain source alpha
+PASS: Trophy retains inner source alpha independently of the rounded exterior (5589 samples)
+PASS: Trophy capsule has continuous high-coverage horizontal and vertical interiors without holes
+PASS: Trophy retains all high-coverage authored RGB where the capsule mask is fully open (75210 pixels)
+PASS: Trophy preserves actual gold icon colors against the source reference (3923 samples)
+PASS: Trophy preserves actual white icon highlights against the source reference (191 samples)
+PASS: Star uses the capsule artwork shader
+PASS: Star disables shader hue/saturation recoloring
+PASS: Star clips all four opaque source corners outside the capsule
+PASS: Star Light-hidden vertex alpha0 makes the entire plaque transparent
+PASS: Star Dark-visible vertex alpha1 shows the authored plaque
+PASS: Star icon and text interiors retain source alpha
+PASS: Star retains inner source alpha independently of the rounded exterior (5589 samples)
+PASS: Star capsule has continuous high-coverage horizontal and vertical interiors without holes
+PASS: Star retains all high-coverage authored RGB where the capsule mask is fully open (73853 pixels)
+PASS: Star preserves actual gold icon colors against the source reference (3516 samples)
+PASS: Star preserves actual white icon highlights against the source reference (155 samples)

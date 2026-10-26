@@ -1,0 +1,44 @@
+PASS: 42 paired Dark card GPU checks; failures=0
+Authored PNG alpha is preserved, not forced to 255. Reference readback alpha follows sourceAlpha squared; disabled readback alpha follows normalAlpha * vertexAlpha squared.
+PASS: Defense retains the rounded UI artwork shader
+PASS: Defense disables destructive hue/saturation recoloring
+PASS: Defense normal outer corners are transparent
+PASS: Defense held outer corners stay transparent
+PASS: Defense disabled outer corners stay transparent
+PASS: Defense artwork and selection pill retain their authored high-coverage alpha
+PASS: Defense pressing preserves the normal artwork alpha everywhere
+PASS: Defense disabled alpha follows authored source coverage and vertex opacity
+PASS: Defense authored selection pill visibly dims while held
+PASS: Defense preserves all high-coverage authored pixel RGB away from rounded-mask edges (88554 pixels)
+PASS: Defense preserves authored white paths/highlights without recoloring (7880 pixels)
+PASS: Defense preserves saturated icon/rim colors (38641 pixels)
+PASS: Defense preserves reference source alpha across the inner artwork (6237 samples)
+PASS: Defense upper-left title region remains dark and readable for localized light TMP
+PASS: Shapes retains the rounded UI artwork shader
+PASS: Shapes disables destructive hue/saturation recoloring
+PASS: Shapes normal outer corners are transparent
+PASS: Shapes held outer corners stay transparent
+PASS: Shapes disabled outer corners stay transparent
+PASS: Shapes artwork and selection pill retain their authored high-coverage alpha
+PASS: Shapes pressing preserves the normal artwork alpha everywhere
+PASS: Shapes disabled alpha follows authored source coverage and vertex opacity
+PASS: Shapes authored selection pill visibly dims while held
+PASS: Shapes preserves all high-coverage authored pixel RGB away from rounded-mask edges (88554 pixels)
+PASS: Shapes preserves authored white paths/highlights without recoloring (851 pixels)
+PASS: Shapes preserves saturated icon/rim colors (56182 pixels)
+PASS: Shapes preserves reference source alpha across the inner artwork (6237 samples)
+PASS: Shapes upper-left title region remains dark and readable for localized light TMP
+PASS: ColorShift retains the rounded UI artwork shader
+PASS: ColorShift disables destructive hue/saturation recoloring
+PASS: ColorShift normal outer corners are transparent
+PASS: ColorShift held outer corners stay transparent
+PASS: ColorShift disabled outer corners stay transparent
+PASS: ColorShift artwork and selection pill retain their authored high-coverage alpha
+PASS: ColorShift pressing preserves the normal artwork alpha everywhere
+PASS: ColorShift disabled alpha follows authored source coverage and vertex opacity
+PASS: ColorShift authored selection pill visibly dims while held
+PASS: ColorShift preserves all high-coverage authored pixel RGB away from rounded-mask edges (88554 pixels)
+PASS: ColorShift preserves authored white paths/highlights without recoloring (1815 pixels)
+PASS: ColorShift preserves saturated icon/rim colors (34883 pixels)
+PASS: ColorShift preserves reference source alpha across the inner artwork (6237 samples)
+PASS: ColorShift upper-left title region remains dark and readable for localized light TMP

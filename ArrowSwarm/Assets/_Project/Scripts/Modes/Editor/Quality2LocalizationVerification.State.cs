@@ -70,7 +70,16 @@ namespace ArrowSwarm.Modes.Editor
 
         private static void RecordFit(TMP_Text label, string context)
         {
+            var authoring = new TextStyle(label);
             label.ForceMeshUpdate(true, true);
+            Check(authoring.Matches(label), context + ": actual mesh rebuild preserves authored text styling and sizing policy");
+            if (label.enableAutoSizing)
+            {
+                var bounds = label.textBounds; var rect = label.rectTransform.rect; var margin = label.margin;
+                Check(!label.isTextOverflowing && bounds.size.x <= rect.width - margin.x - margin.z + 1f &&
+                    bounds.size.y <= rect.height - margin.y - margin.w + 1f,
+                    context + ": autosized text fits its authored bounds after an actual mesh rebuild");
+            }
             Results.Add("FIT: " + context + "; preferred=" + label.preferredWidth.ToString("F1") + "x" + label.preferredHeight.ToString("F1") +
                 "; rect=" + label.rectTransform.rect.width.ToString("F1") + "x" + label.rectTransform.rect.height.ToString("F1") +
                 "; overflow=" + label.isTextOverflowing);
@@ -85,21 +94,5 @@ namespace ArrowSwarm.Modes.Editor
             Results.Add("CAPTURE: " + path + "; frame=" + frame + "->" + Time.frameCount + "; bytes=" + new FileInfo(path).Length);
         }
 
-        private readonly struct TextStyle
-        {
-            private readonly TMP_FontAsset _font;
-            private readonly Material _material;
-            private readonly Color _color;
-            private readonly float _size;
-            private readonly Vector2 _bounds;
-
-            /// <summary>Captures Inspector-owned text styling for a label.</summary>
-            public TextStyle(TMP_Text text)
-            { _font = text.font; _material = text.fontSharedMaterial; _color = text.color; _size = text.fontSize; _bounds = text.rectTransform.sizeDelta; }
-
-            /// <summary>Whether localization preserved all captured authoring values.</summary>
-            public bool Matches(TMP_Text text) => text.font == _font && text.fontSharedMaterial == _material &&
-                text.color == _color && Mathf.Approximately(text.fontSize, _size) && text.rectTransform.sizeDelta == _bounds;
-        }
     }
 }

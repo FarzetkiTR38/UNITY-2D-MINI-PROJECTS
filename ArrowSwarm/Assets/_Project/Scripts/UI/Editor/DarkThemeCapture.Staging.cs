@@ -50,8 +50,15 @@ namespace ArrowSwarm.UI.Editor
                     if(!panel.name.EndsWith("Panel"))continue;
                     bool show=screen=="Pause"&&panel.name=="PausePanel";
                     foreach(var behaviour in panel.GetComponents<MonoBehaviour>())behaviour.StopAllCoroutines();
-                    panel.gameObject.SetActive(show);var group=panel.GetComponent<CanvasGroup>();
-                    if(group!=null){group.alpha=show?1:0;group.blocksRaycasts=group.interactable=false;}
+                    if(show)
+                    {
+                        var pause=panel.GetComponent<PauseMenuUI>();
+                        if(pause==null)throw new InvalidOperationException("Map preview pause needs its authored controller.");
+                        pause.Show(); // Own the initial Show before Start can hide an unrequested popup.
+                    }
+                    else panel.gameObject.SetActive(false);
+                    var group=panel.GetComponent<CanvasGroup>();
+                    if(group!=null&&!show){group.alpha=0;group.blocksRaycasts=group.interactable=false;}
                 }
                 return;
             }

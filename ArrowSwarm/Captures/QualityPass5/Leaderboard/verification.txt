@@ -1,0 +1,1164 @@
+PASS: leaderboard states, failures=0
+PASS: first offline opening creates only the scoped fake and performs zero fetches
+PASS: uncached offline state has no successful timestamp or invented world rank
+PASS: uncached offline panel has zero global player rows rather than ten invented accounts
+PASS: uncached panel shows the authored empty explanation
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: offline initial has an actual visible TMP status
+PASS: offline initial _statusText stays inside its authored text container
+PASS: offline initial _updatedText stays inside its authored text container
+PASS: offline initial _emptyText stays inside its authored text container
+PASS: offline initial _retryText stays inside its authored text container
+PASS: offline initial _playerSummaryText stays inside its authored text container
+CAPTURE: Captures/QualityPass5/Leaderboard/offline-empty-light.png
+PASS: Retry is available while offline
+INPUT ACK: actual native Retry mouse up; playerFrame=4304
+INPUT ACK: actual native Retry mouse down; playerFrame=4354
+PASS: native Retry press visibly squeezes authored feedback without fetching before release
+INPUT ACK: actual native Retry mouse up; playerFrame=4380
+PASS: native Retry release invokes exactly one real refresh callback
+PASS: native release restores Retry scale even as Loading disables its button
+INPUT ACK: actual native Retry mouse down; playerFrame=4437
+INPUT ACK: actual native Retry mouse up; playerFrame=4458
+PASS: second native click on busy Retry cannot start another provider fetch
+INPUT ACK: actual native Retry mouse up; playerFrame=4513
+PASS: busy click and pointer exit leave no persistent Retry scale drift
+PASS: native Retry restores original InputSettings and removes its owned mouse
+PASS: native Retry restores the original current mouse and pointer
+PASS: actual Retry callback publishes visible Loading and disables repeated requests
+PASS: loading has an actual visible TMP status
+PASS: loading _statusText stays inside its authored text container
+PASS: loading _updatedText stays inside its authored text container
+PASS: loading _emptyText stays inside its authored text container
+PASS: loading _retryText stays inside its authored text container
+PASS: loading _playerSummaryText stays inside its authored text container
+CAPTURE: Captures/QualityPass5/Leaderboard/loading-light.png
+PASS: an additional refresh during the held request starts no overlapping fetch
+PASS: Hide and Reopen during Loading reuse one manager and the same pending fetch
+PASS: completed delayed request publishes Ready and authoritative rank 27
+PASS: held request fetches global rows and personal rank once
+PASS: actual global row count is exactly 2 with no invented empty accounts
+PASS: actual global row 1 shows the provider name in provider order
+PASS: actual global row 1 displays its snapshot rank
+PASS: actual global row 2 shows the provider name in provider order
+PASS: actual global row 2 displays its snapshot rank
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: successful refresh exposes its timestamp in the actual authored TMP field
+PASS: real rows hide the empty explanation
+CAPTURE: Captures/QualityPass5/Leaderboard/ready-two-light.png
+PASS: global rows preserve provider order and exclude the high-scoring offline local account
+PASS: returned ranked entries are detached and cannot poison later displays
+PASS: ranked row limits handle one, zero and negative counts
+PASS: offline refresh retains cache and successful time without presenting a stale rank as verified
+PASS: actual global row count is exactly 2 with no invented empty accounts
+PASS: actual global row 1 shows the provider name in provider order
+PASS: actual global row 1 displays its snapshot rank
+PASS: actual global row 2 shows the provider name in provider order
+PASS: actual global row 2 displays its snapshot rank
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+CAPTURE: Captures/QualityPass5/Leaderboard/offline-cached-light.png
+PASS: null response is Failed and retains the last good cache and time
+PASS: actual global row count is exactly 2 with no invented empty accounts
+PASS: actual global row 1 shows the provider name in provider order
+PASS: actual global row 1 displays its snapshot rank
+PASS: actual global row 2 shows the provider name in provider order
+PASS: actual global row 2 displays its snapshot rank
+PASS: null failure has an actual visible TMP status
+PASS: null failure _statusText stays inside its authored text container
+PASS: null failure _updatedText stays inside its authored text container
+PASS: null failure _retryText stays inside its authored text container
+PASS: null failure _playerSummaryText stays inside its authored text container
+CAPTURE: Captures/QualityPass5/Leaderboard/failed-cached-light.png
+PASS: throwing response preserves the same cache and timestamp
+PASS: Retry becomes usable again after a thrown request
+PASS: valid one-row result preserves account identity while rank remains unknown
+PASS: actual global row count is exactly 1 with no invented empty accounts
+PASS: actual global row 1 shows the provider name in provider order
+PASS: actual global row 1 displays its snapshot rank
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: real provider row renders valid markup-looking nickname literally with a visible '<' and no overflow
+PASS: provider row uses actual authored TMP components
+PASS: actual global row count is exactly 10 with no invented empty accounts
+PASS: actual global row 1 shows the provider name in provider order
+PASS: actual global row 1 displays its snapshot rank
+PASS: actual global row 2 shows the provider name in provider order
+PASS: actual global row 2 displays its snapshot rank
+PASS: actual global row 3 shows the provider name in provider order
+PASS: actual global row 3 displays its snapshot rank
+PASS: actual global row 4 shows the provider name in provider order
+PASS: actual global row 4 displays its snapshot rank
+PASS: actual global row 5 shows the provider name in provider order
+PASS: actual global row 5 displays its snapshot rank
+PASS: actual global row 6 shows the provider name in provider order
+PASS: actual global row 6 displays its snapshot rank
+PASS: actual global row 7 shows the provider name in provider order
+PASS: actual global row 7 displays its snapshot rank
+PASS: actual global row 8 shows the provider name in provider order
+PASS: actual global row 8 displays its snapshot rank
+PASS: actual global row 9 shows the provider name in provider order
+PASS: actual global row 9 displays its snapshot rank
+PASS: actual global row 10 shows the provider name in provider order
+PASS: actual global row 10 displays its snapshot rank
+PASS: ten global rows coexist with world rank outside the top ten
+CAPTURE: Captures/QualityPass5/Leaderboard/ready-ten-light.png
+PASS: new offline manager reloads all cached rows and the exact successful UTC timestamp
+PASS: recreated offline manager does not invent a verified rank from cached rows
+PASS: actual global row count is exactly 10 with no invented empty accounts
+PASS: actual global row 1 shows the provider name in provider order
+PASS: actual global row 1 displays its snapshot rank
+PASS: actual global row 2 shows the provider name in provider order
+PASS: actual global row 2 displays its snapshot rank
+PASS: actual global row 3 shows the provider name in provider order
+PASS: actual global row 3 displays its snapshot rank
+PASS: actual global row 4 shows the provider name in provider order
+PASS: actual global row 4 displays its snapshot rank
+PASS: actual global row 5 shows the provider name in provider order
+PASS: actual global row 5 displays its snapshot rank
+PASS: actual global row 6 shows the provider name in provider order
+PASS: actual global row 6 displays its snapshot rank
+PASS: actual global row 7 shows the provider name in provider order
+PASS: actual global row 7 displays its snapshot rank
+PASS: actual global row 8 shows the provider name in provider order
+PASS: actual global row 8 displays its snapshot rank
+PASS: actual global row 9 shows the provider name in provider order
+PASS: actual global row 9 displays its snapshot rank
+PASS: actual global row 10 shows the provider name in provider order
+PASS: actual global row 10 displays its snapshot rank
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: successful empty response clears stale global rows and records a successful refresh
+PASS: actual global row count is exactly 0 with no invented empty accounts
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: successful empty panel explicitly explains the absence of global results
+CAPTURE: Captures/QualityPass5/Leaderboard/ready-empty-light.png
+PASS: controlled provider response stages real Loading view before its language/theme matrix
+PASS: actual global row count is exactly 0 with no invented empty accounts
+PASS: Loading view shows or hides the empty explanation according to real cached results
+PASS: Loading / en Light has an actual visible TMP status
+PASS: Loading / en Light _statusText stays inside its authored text container
+PASS: Loading / en Light _updatedText stays inside its authored text container
+PASS: Loading / en Light _emptyText stays inside its authored text container
+PASS: Loading / en Light _retryText stays inside its authored text container
+PASS: Loading / en Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Light-restoration checker rejects a deliberate reversible graphic color defect
+PASS: Loading / en Dark has an actual visible TMP status
+PASS: Loading / en Dark _statusText stays inside its authored text container
+PASS: Loading / en Dark _updatedText stays inside its authored text container
+PASS: Loading / en Dark _emptyText stays inside its authored text container
+PASS: Loading / en Dark _retryText stays inside its authored text container
+PASS: Loading / en Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / en includes authored themed graphics
+PASS: Loading / en restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Loading updates actual status live when language changes to Turkish
+PASS: Loading / tr Light has an actual visible TMP status
+PASS: Loading / tr Light _statusText stays inside its authored text container
+PASS: Loading / tr Light _updatedText stays inside its authored text container
+PASS: Loading / tr Light _emptyText stays inside its authored text container
+PASS: Loading / tr Light _retryText stays inside its authored text container
+PASS: Loading / tr Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / tr Dark has an actual visible TMP status
+PASS: Loading / tr Dark _statusText stays inside its authored text container
+PASS: Loading / tr Dark _updatedText stays inside its authored text container
+PASS: Loading / tr Dark _emptyText stays inside its authored text container
+PASS: Loading / tr Dark _retryText stays inside its authored text container
+PASS: Loading / tr Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / tr includes authored themed graphics
+PASS: Loading / tr restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Loading / es Light has an actual visible TMP status
+PASS: Loading / es Light _statusText stays inside its authored text container
+PASS: Loading / es Light _updatedText stays inside its authored text container
+PASS: Loading / es Light _emptyText stays inside its authored text container
+PASS: Loading / es Light _retryText stays inside its authored text container
+PASS: Loading / es Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / es Dark has an actual visible TMP status
+PASS: Loading / es Dark _statusText stays inside its authored text container
+PASS: Loading / es Dark _updatedText stays inside its authored text container
+PASS: Loading / es Dark _emptyText stays inside its authored text container
+PASS: Loading / es Dark _retryText stays inside its authored text container
+PASS: Loading / es Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / es includes authored themed graphics
+PASS: Loading / es restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Loading / de Light has an actual visible TMP status
+PASS: Loading / de Light _statusText stays inside its authored text container
+PASS: Loading / de Light _updatedText stays inside its authored text container
+PASS: Loading / de Light _emptyText stays inside its authored text container
+PASS: Loading / de Light _retryText stays inside its authored text container
+PASS: Loading / de Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / de Dark has an actual visible TMP status
+PASS: Loading / de Dark _statusText stays inside its authored text container
+PASS: Loading / de Dark _updatedText stays inside its authored text container
+PASS: Loading / de Dark _emptyText stays inside its authored text container
+PASS: Loading / de Dark _retryText stays inside its authored text container
+PASS: Loading / de Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / de includes authored themed graphics
+PASS: Loading / de restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Loading / fr Light has an actual visible TMP status
+PASS: Loading / fr Light _statusText stays inside its authored text container
+PASS: Loading / fr Light _updatedText stays inside its authored text container
+PASS: Loading / fr Light _emptyText stays inside its authored text container
+PASS: Loading / fr Light _retryText stays inside its authored text container
+PASS: Loading / fr Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / fr Dark has an actual visible TMP status
+PASS: Loading / fr Dark _statusText stays inside its authored text container
+PASS: Loading / fr Dark _updatedText stays inside its authored text container
+PASS: Loading / fr Dark _emptyText stays inside its authored text container
+PASS: Loading / fr Dark _retryText stays inside its authored text container
+PASS: Loading / fr Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / fr includes authored themed graphics
+PASS: Loading / fr restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Loading / pt Light has an actual visible TMP status
+PASS: Loading / pt Light _statusText stays inside its authored text container
+PASS: Loading / pt Light _updatedText stays inside its authored text container
+PASS: Loading / pt Light _emptyText stays inside its authored text container
+PASS: Loading / pt Light _retryText stays inside its authored text container
+PASS: Loading / pt Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / pt Dark has an actual visible TMP status
+PASS: Loading / pt Dark _statusText stays inside its authored text container
+PASS: Loading / pt Dark _updatedText stays inside its authored text container
+PASS: Loading / pt Dark _emptyText stays inside its authored text container
+PASS: Loading / pt Dark _retryText stays inside its authored text container
+PASS: Loading / pt Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / pt includes authored themed graphics
+PASS: Loading / pt restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Loading / it Light has an actual visible TMP status
+PASS: Loading / it Light _statusText stays inside its authored text container
+PASS: Loading / it Light _updatedText stays inside its authored text container
+PASS: Loading / it Light _emptyText stays inside its authored text container
+PASS: Loading / it Light _retryText stays inside its authored text container
+PASS: Loading / it Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / it Dark has an actual visible TMP status
+PASS: Loading / it Dark _statusText stays inside its authored text container
+PASS: Loading / it Dark _updatedText stays inside its authored text container
+PASS: Loading / it Dark _emptyText stays inside its authored text container
+PASS: Loading / it Dark _retryText stays inside its authored text container
+PASS: Loading / it Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / it includes authored themed graphics
+PASS: Loading / it restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Loading / ru Light has an actual visible TMP status
+PASS: Loading / ru Light _statusText stays inside its authored text container
+PASS: Loading / ru Light _updatedText stays inside its authored text container
+PASS: Loading / ru Light _emptyText stays inside its authored text container
+PASS: Loading / ru Light _retryText stays inside its authored text container
+PASS: Loading / ru Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / ru Dark has an actual visible TMP status
+PASS: Loading / ru Dark _statusText stays inside its authored text container
+PASS: Loading / ru Dark _updatedText stays inside its authored text container
+PASS: Loading / ru Dark _emptyText stays inside its authored text container
+PASS: Loading / ru Dark _retryText stays inside its authored text container
+PASS: Loading / ru Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / ru includes authored themed graphics
+PASS: Loading / ru restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Loading / ja Light has an actual visible TMP status
+PASS: Loading / ja Light _statusText stays inside its authored text container
+PASS: Loading / ja Light _updatedText stays inside its authored text container
+PASS: Loading / ja Light _emptyText stays inside its authored text container
+PASS: Loading / ja Light _retryText stays inside its authored text container
+PASS: Loading / ja Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / ja Dark has an actual visible TMP status
+PASS: Loading / ja Dark _statusText stays inside its authored text container
+PASS: Loading / ja Dark _updatedText stays inside its authored text container
+PASS: Loading / ja Dark _emptyText stays inside its authored text container
+PASS: Loading / ja Dark _retryText stays inside its authored text container
+PASS: Loading / ja Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / ja includes authored themed graphics
+PASS: Loading / ja restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Loading / ko Light has an actual visible TMP status
+PASS: Loading / ko Light _statusText stays inside its authored text container
+PASS: Loading / ko Light _updatedText stays inside its authored text container
+PASS: Loading / ko Light _emptyText stays inside its authored text container
+PASS: Loading / ko Light _retryText stays inside its authored text container
+PASS: Loading / ko Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / ko Dark has an actual visible TMP status
+PASS: Loading / ko Dark _statusText stays inside its authored text container
+PASS: Loading / ko Dark _updatedText stays inside its authored text container
+PASS: Loading / ko Dark _emptyText stays inside its authored text container
+PASS: Loading / ko Dark _retryText stays inside its authored text container
+PASS: Loading / ko Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Loading / ko includes authored themed graphics
+PASS: Loading / ko restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: controlled provider response stages real Ready view before its language/theme matrix
+PASS: actual global row count is exactly 2 with no invented empty accounts
+PASS: actual global row 1 shows the provider name in provider order
+PASS: actual global row 1 displays its snapshot rank
+PASS: actual global row 2 shows the provider name in provider order
+PASS: actual global row 2 displays its snapshot rank
+PASS: Ready view shows or hides the empty explanation according to real cached results
+PASS: Ready / en Light has an actual visible TMP status
+PASS: Ready / en Light _statusText stays inside its authored text container
+PASS: Ready / en Light _updatedText stays inside its authored text container
+PASS: Ready / en Light _retryText stays inside its authored text container
+PASS: Ready / en Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / en Dark has an actual visible TMP status
+PASS: Ready / en Dark _statusText stays inside its authored text container
+PASS: Ready / en Dark _updatedText stays inside its authored text container
+PASS: Ready / en Dark _retryText stays inside its authored text container
+PASS: Ready / en Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / en includes authored themed graphics
+PASS: Ready / en restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Ready updates actual status live when language changes to Turkish
+PASS: Ready / tr Light has an actual visible TMP status
+PASS: Ready / tr Light _statusText stays inside its authored text container
+PASS: Ready / tr Light _updatedText stays inside its authored text container
+PASS: Ready / tr Light _retryText stays inside its authored text container
+PASS: Ready / tr Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / tr Dark has an actual visible TMP status
+PASS: Ready / tr Dark _statusText stays inside its authored text container
+PASS: Ready / tr Dark _updatedText stays inside its authored text container
+PASS: Ready / tr Dark _retryText stays inside its authored text container
+PASS: Ready / tr Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / tr includes authored themed graphics
+PASS: Ready / tr restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Ready / es Light has an actual visible TMP status
+PASS: Ready / es Light _statusText stays inside its authored text container
+PASS: Ready / es Light _updatedText stays inside its authored text container
+PASS: Ready / es Light _retryText stays inside its authored text container
+PASS: Ready / es Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / es Dark has an actual visible TMP status
+PASS: Ready / es Dark _statusText stays inside its authored text container
+PASS: Ready / es Dark _updatedText stays inside its authored text container
+PASS: Ready / es Dark _retryText stays inside its authored text container
+PASS: Ready / es Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / es includes authored themed graphics
+PASS: Ready / es restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Ready / de Light has an actual visible TMP status
+PASS: Ready / de Light _statusText stays inside its authored text container
+PASS: Ready / de Light _updatedText stays inside its authored text container
+PASS: Ready / de Light _retryText stays inside its authored text container
+PASS: Ready / de Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / de Dark has an actual visible TMP status
+PASS: Ready / de Dark _statusText stays inside its authored text container
+PASS: Ready / de Dark _updatedText stays inside its authored text container
+PASS: Ready / de Dark _retryText stays inside its authored text container
+PASS: Ready / de Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / de includes authored themed graphics
+PASS: Ready / de restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Ready / fr Light has an actual visible TMP status
+PASS: Ready / fr Light _statusText stays inside its authored text container
+PASS: Ready / fr Light _updatedText stays inside its authored text container
+PASS: Ready / fr Light _retryText stays inside its authored text container
+PASS: Ready / fr Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / fr Dark has an actual visible TMP status
+PASS: Ready / fr Dark _statusText stays inside its authored text container
+PASS: Ready / fr Dark _updatedText stays inside its authored text container
+PASS: Ready / fr Dark _retryText stays inside its authored text container
+PASS: Ready / fr Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / fr includes authored themed graphics
+PASS: Ready / fr restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Ready / pt Light has an actual visible TMP status
+PASS: Ready / pt Light _statusText stays inside its authored text container
+PASS: Ready / pt Light _updatedText stays inside its authored text container
+PASS: Ready / pt Light _retryText stays inside its authored text container
+PASS: Ready / pt Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / pt Dark has an actual visible TMP status
+PASS: Ready / pt Dark _statusText stays inside its authored text container
+PASS: Ready / pt Dark _updatedText stays inside its authored text container
+PASS: Ready / pt Dark _retryText stays inside its authored text container
+PASS: Ready / pt Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / pt includes authored themed graphics
+PASS: Ready / pt restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Ready / it Light has an actual visible TMP status
+PASS: Ready / it Light _statusText stays inside its authored text container
+PASS: Ready / it Light _updatedText stays inside its authored text container
+PASS: Ready / it Light _retryText stays inside its authored text container
+PASS: Ready / it Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / it Dark has an actual visible TMP status
+PASS: Ready / it Dark _statusText stays inside its authored text container
+PASS: Ready / it Dark _updatedText stays inside its authored text container
+PASS: Ready / it Dark _retryText stays inside its authored text container
+PASS: Ready / it Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / it includes authored themed graphics
+PASS: Ready / it restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Ready / ru Light has an actual visible TMP status
+PASS: Ready / ru Light _statusText stays inside its authored text container
+PASS: Ready / ru Light _updatedText stays inside its authored text container
+PASS: Ready / ru Light _retryText stays inside its authored text container
+PASS: Ready / ru Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / ru Dark has an actual visible TMP status
+PASS: Ready / ru Dark _statusText stays inside its authored text container
+PASS: Ready / ru Dark _updatedText stays inside its authored text container
+PASS: Ready / ru Dark _retryText stays inside its authored text container
+PASS: Ready / ru Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / ru includes authored themed graphics
+PASS: Ready / ru restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Ready / ja Light has an actual visible TMP status
+PASS: Ready / ja Light _statusText stays inside its authored text container
+PASS: Ready / ja Light _updatedText stays inside its authored text container
+PASS: Ready / ja Light _retryText stays inside its authored text container
+PASS: Ready / ja Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / ja Dark has an actual visible TMP status
+PASS: Ready / ja Dark _statusText stays inside its authored text container
+PASS: Ready / ja Dark _updatedText stays inside its authored text container
+PASS: Ready / ja Dark _retryText stays inside its authored text container
+PASS: Ready / ja Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / ja includes authored themed graphics
+PASS: Ready / ja restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Ready / ko Light has an actual visible TMP status
+PASS: Ready / ko Light _statusText stays inside its authored text container
+PASS: Ready / ko Light _updatedText stays inside its authored text container
+PASS: Ready / ko Light _retryText stays inside its authored text container
+PASS: Ready / ko Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / ko Dark has an actual visible TMP status
+PASS: Ready / ko Dark _statusText stays inside its authored text container
+PASS: Ready / ko Dark _updatedText stays inside its authored text container
+PASS: Ready / ko Dark _retryText stays inside its authored text container
+PASS: Ready / ko Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary displays authoritative world rank 27
+PASS: authored local summary treats nicknames as literal text
+PASS: Ready / ko includes authored themed graphics
+PASS: Ready / ko restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: controlled provider response stages real Offline view before its language/theme matrix
+PASS: actual global row count is exactly 2 with no invented empty accounts
+PASS: actual global row 1 shows the provider name in provider order
+PASS: actual global row 1 displays its snapshot rank
+PASS: actual global row 2 shows the provider name in provider order
+PASS: actual global row 2 displays its snapshot rank
+PASS: Offline view shows or hides the empty explanation according to real cached results
+PASS: Offline / en Light has an actual visible TMP status
+PASS: Offline / en Light _statusText stays inside its authored text container
+PASS: Offline / en Light _updatedText stays inside its authored text container
+PASS: Offline / en Light _retryText stays inside its authored text container
+PASS: Offline / en Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / en Dark has an actual visible TMP status
+PASS: Offline / en Dark _statusText stays inside its authored text container
+PASS: Offline / en Dark _updatedText stays inside its authored text container
+PASS: Offline / en Dark _retryText stays inside its authored text container
+PASS: Offline / en Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / en includes authored themed graphics
+PASS: Offline / en restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Offline updates actual status live when language changes to Turkish
+PASS: Offline / tr Light has an actual visible TMP status
+PASS: Offline / tr Light _statusText stays inside its authored text container
+PASS: Offline / tr Light _updatedText stays inside its authored text container
+PASS: Offline / tr Light _retryText stays inside its authored text container
+PASS: Offline / tr Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / tr Dark has an actual visible TMP status
+PASS: Offline / tr Dark _statusText stays inside its authored text container
+PASS: Offline / tr Dark _updatedText stays inside its authored text container
+PASS: Offline / tr Dark _retryText stays inside its authored text container
+PASS: Offline / tr Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / tr includes authored themed graphics
+PASS: Offline / tr restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Offline / es Light has an actual visible TMP status
+PASS: Offline / es Light _statusText stays inside its authored text container
+PASS: Offline / es Light _updatedText stays inside its authored text container
+PASS: Offline / es Light _retryText stays inside its authored text container
+PASS: Offline / es Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / es Dark has an actual visible TMP status
+PASS: Offline / es Dark _statusText stays inside its authored text container
+PASS: Offline / es Dark _updatedText stays inside its authored text container
+PASS: Offline / es Dark _retryText stays inside its authored text container
+PASS: Offline / es Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / es includes authored themed graphics
+PASS: Offline / es restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Offline / de Light has an actual visible TMP status
+PASS: Offline / de Light _statusText stays inside its authored text container
+PASS: Offline / de Light _updatedText stays inside its authored text container
+PASS: Offline / de Light _retryText stays inside its authored text container
+PASS: Offline / de Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / de Dark has an actual visible TMP status
+PASS: Offline / de Dark _statusText stays inside its authored text container
+PASS: Offline / de Dark _updatedText stays inside its authored text container
+PASS: Offline / de Dark _retryText stays inside its authored text container
+PASS: Offline / de Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / de includes authored themed graphics
+PASS: Offline / de restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Offline / fr Light has an actual visible TMP status
+PASS: Offline / fr Light _statusText stays inside its authored text container
+PASS: Offline / fr Light _updatedText stays inside its authored text container
+PASS: Offline / fr Light _retryText stays inside its authored text container
+PASS: Offline / fr Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / fr Dark has an actual visible TMP status
+PASS: Offline / fr Dark _statusText stays inside its authored text container
+PASS: Offline / fr Dark _updatedText stays inside its authored text container
+PASS: Offline / fr Dark _retryText stays inside its authored text container
+PASS: Offline / fr Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / fr includes authored themed graphics
+PASS: Offline / fr restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Offline / pt Light has an actual visible TMP status
+PASS: Offline / pt Light _statusText stays inside its authored text container
+PASS: Offline / pt Light _updatedText stays inside its authored text container
+PASS: Offline / pt Light _retryText stays inside its authored text container
+PASS: Offline / pt Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / pt Dark has an actual visible TMP status
+PASS: Offline / pt Dark _statusText stays inside its authored text container
+PASS: Offline / pt Dark _updatedText stays inside its authored text container
+PASS: Offline / pt Dark _retryText stays inside its authored text container
+PASS: Offline / pt Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / pt includes authored themed graphics
+PASS: Offline / pt restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Offline / it Light has an actual visible TMP status
+PASS: Offline / it Light _statusText stays inside its authored text container
+PASS: Offline / it Light _updatedText stays inside its authored text container
+PASS: Offline / it Light _retryText stays inside its authored text container
+PASS: Offline / it Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / it Dark has an actual visible TMP status
+PASS: Offline / it Dark _statusText stays inside its authored text container
+PASS: Offline / it Dark _updatedText stays inside its authored text container
+PASS: Offline / it Dark _retryText stays inside its authored text container
+PASS: Offline / it Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / it includes authored themed graphics
+PASS: Offline / it restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Offline / ru Light has an actual visible TMP status
+PASS: Offline / ru Light _statusText stays inside its authored text container
+PASS: Offline / ru Light _updatedText stays inside its authored text container
+PASS: Offline / ru Light _retryText stays inside its authored text container
+PASS: Offline / ru Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / ru Dark has an actual visible TMP status
+PASS: Offline / ru Dark _statusText stays inside its authored text container
+PASS: Offline / ru Dark _updatedText stays inside its authored text container
+PASS: Offline / ru Dark _retryText stays inside its authored text container
+PASS: Offline / ru Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / ru includes authored themed graphics
+PASS: Offline / ru restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Offline / ja Light has an actual visible TMP status
+PASS: Offline / ja Light _statusText stays inside its authored text container
+PASS: Offline / ja Light _updatedText stays inside its authored text container
+PASS: Offline / ja Light _retryText stays inside its authored text container
+PASS: Offline / ja Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / ja Dark has an actual visible TMP status
+PASS: Offline / ja Dark _statusText stays inside its authored text container
+PASS: Offline / ja Dark _updatedText stays inside its authored text container
+PASS: Offline / ja Dark _retryText stays inside its authored text container
+PASS: Offline / ja Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / ja includes authored themed graphics
+PASS: Offline / ja restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Offline / ko Light has an actual visible TMP status
+PASS: Offline / ko Light _statusText stays inside its authored text container
+PASS: Offline / ko Light _updatedText stays inside its authored text container
+PASS: Offline / ko Light _retryText stays inside its authored text container
+PASS: Offline / ko Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / ko Dark has an actual visible TMP status
+PASS: Offline / ko Dark _statusText stays inside its authored text container
+PASS: Offline / ko Dark _updatedText stays inside its authored text container
+PASS: Offline / ko Dark _retryText stays inside its authored text container
+PASS: Offline / ko Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Offline / ko includes authored themed graphics
+PASS: Offline / ko restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: controlled provider response stages real Failed view before its language/theme matrix
+PASS: actual global row count is exactly 2 with no invented empty accounts
+PASS: actual global row 1 shows the provider name in provider order
+PASS: actual global row 1 displays its snapshot rank
+PASS: actual global row 2 shows the provider name in provider order
+PASS: actual global row 2 displays its snapshot rank
+PASS: Failed view shows or hides the empty explanation according to real cached results
+PASS: Failed / en Light has an actual visible TMP status
+PASS: Failed / en Light _statusText stays inside its authored text container
+PASS: Failed / en Light _updatedText stays inside its authored text container
+PASS: Failed / en Light _retryText stays inside its authored text container
+PASS: Failed / en Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / en Dark has an actual visible TMP status
+PASS: Failed / en Dark _statusText stays inside its authored text container
+PASS: Failed / en Dark _updatedText stays inside its authored text container
+PASS: Failed / en Dark _retryText stays inside its authored text container
+PASS: Failed / en Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / en includes authored themed graphics
+PASS: Failed / en restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Failed updates actual status live when language changes to Turkish
+PASS: Failed / tr Light has an actual visible TMP status
+PASS: Failed / tr Light _statusText stays inside its authored text container
+PASS: Failed / tr Light _updatedText stays inside its authored text container
+PASS: Failed / tr Light _retryText stays inside its authored text container
+PASS: Failed / tr Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / tr Dark has an actual visible TMP status
+PASS: Failed / tr Dark _statusText stays inside its authored text container
+PASS: Failed / tr Dark _updatedText stays inside its authored text container
+PASS: Failed / tr Dark _retryText stays inside its authored text container
+PASS: Failed / tr Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / tr includes authored themed graphics
+PASS: Failed / tr restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Failed / es Light has an actual visible TMP status
+PASS: Failed / es Light _statusText stays inside its authored text container
+PASS: Failed / es Light _updatedText stays inside its authored text container
+PASS: Failed / es Light _retryText stays inside its authored text container
+PASS: Failed / es Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / es Dark has an actual visible TMP status
+PASS: Failed / es Dark _statusText stays inside its authored text container
+PASS: Failed / es Dark _updatedText stays inside its authored text container
+PASS: Failed / es Dark _retryText stays inside its authored text container
+PASS: Failed / es Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / es includes authored themed graphics
+PASS: Failed / es restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Failed / de Light has an actual visible TMP status
+PASS: Failed / de Light _statusText stays inside its authored text container
+PASS: Failed / de Light _updatedText stays inside its authored text container
+PASS: Failed / de Light _retryText stays inside its authored text container
+PASS: Failed / de Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / de Dark has an actual visible TMP status
+PASS: Failed / de Dark _statusText stays inside its authored text container
+PASS: Failed / de Dark _updatedText stays inside its authored text container
+PASS: Failed / de Dark _retryText stays inside its authored text container
+PASS: Failed / de Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / de includes authored themed graphics
+PASS: Failed / de restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Failed / fr Light has an actual visible TMP status
+PASS: Failed / fr Light _statusText stays inside its authored text container
+PASS: Failed / fr Light _updatedText stays inside its authored text container
+PASS: Failed / fr Light _retryText stays inside its authored text container
+PASS: Failed / fr Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / fr Dark has an actual visible TMP status
+PASS: Failed / fr Dark _statusText stays inside its authored text container
+PASS: Failed / fr Dark _updatedText stays inside its authored text container
+PASS: Failed / fr Dark _retryText stays inside its authored text container
+PASS: Failed / fr Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / fr includes authored themed graphics
+PASS: Failed / fr restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Failed / pt Light has an actual visible TMP status
+PASS: Failed / pt Light _statusText stays inside its authored text container
+PASS: Failed / pt Light _updatedText stays inside its authored text container
+PASS: Failed / pt Light _retryText stays inside its authored text container
+PASS: Failed / pt Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / pt Dark has an actual visible TMP status
+PASS: Failed / pt Dark _statusText stays inside its authored text container
+PASS: Failed / pt Dark _updatedText stays inside its authored text container
+PASS: Failed / pt Dark _retryText stays inside its authored text container
+PASS: Failed / pt Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / pt includes authored themed graphics
+PASS: Failed / pt restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Failed / it Light has an actual visible TMP status
+PASS: Failed / it Light _statusText stays inside its authored text container
+PASS: Failed / it Light _updatedText stays inside its authored text container
+PASS: Failed / it Light _retryText stays inside its authored text container
+PASS: Failed / it Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / it Dark has an actual visible TMP status
+PASS: Failed / it Dark _statusText stays inside its authored text container
+PASS: Failed / it Dark _updatedText stays inside its authored text container
+PASS: Failed / it Dark _retryText stays inside its authored text container
+PASS: Failed / it Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / it includes authored themed graphics
+PASS: Failed / it restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Failed / ru Light has an actual visible TMP status
+PASS: Failed / ru Light _statusText stays inside its authored text container
+PASS: Failed / ru Light _updatedText stays inside its authored text container
+PASS: Failed / ru Light _retryText stays inside its authored text container
+PASS: Failed / ru Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / ru Dark has an actual visible TMP status
+PASS: Failed / ru Dark _statusText stays inside its authored text container
+PASS: Failed / ru Dark _updatedText stays inside its authored text container
+PASS: Failed / ru Dark _retryText stays inside its authored text container
+PASS: Failed / ru Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / ru includes authored themed graphics
+PASS: Failed / ru restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Failed / ja Light has an actual visible TMP status
+PASS: Failed / ja Light _statusText stays inside its authored text container
+PASS: Failed / ja Light _updatedText stays inside its authored text container
+PASS: Failed / ja Light _retryText stays inside its authored text container
+PASS: Failed / ja Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / ja Dark has an actual visible TMP status
+PASS: Failed / ja Dark _statusText stays inside its authored text container
+PASS: Failed / ja Dark _updatedText stays inside its authored text container
+PASS: Failed / ja Dark _retryText stays inside its authored text container
+PASS: Failed / ja Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / ja includes authored themed graphics
+PASS: Failed / ja restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Failed / ko Light has an actual visible TMP status
+PASS: Failed / ko Light _statusText stays inside its authored text container
+PASS: Failed / ko Light _updatedText stays inside its authored text container
+PASS: Failed / ko Light _retryText stays inside its authored text container
+PASS: Failed / ko Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / ko Dark has an actual visible TMP status
+PASS: Failed / ko Dark _statusText stays inside its authored text container
+PASS: Failed / ko Dark _updatedText stays inside its authored text container
+PASS: Failed / ko Dark _retryText stays inside its authored text container
+PASS: Failed / ko Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Failed / ko includes authored themed graphics
+PASS: Failed / ko restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: controlled provider response stages real Empty view before its language/theme matrix
+PASS: actual global row count is exactly 0 with no invented empty accounts
+PASS: Empty view shows or hides the empty explanation according to real cached results
+PASS: Empty / en Light has an actual visible TMP status
+PASS: Empty / en Light _statusText stays inside its authored text container
+PASS: Empty / en Light _updatedText stays inside its authored text container
+PASS: Empty / en Light _emptyText stays inside its authored text container
+PASS: Empty / en Light _retryText stays inside its authored text container
+PASS: Empty / en Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / en Dark has an actual visible TMP status
+PASS: Empty / en Dark _statusText stays inside its authored text container
+PASS: Empty / en Dark _updatedText stays inside its authored text container
+PASS: Empty / en Dark _emptyText stays inside its authored text container
+PASS: Empty / en Dark _retryText stays inside its authored text container
+PASS: Empty / en Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / en includes authored themed graphics
+PASS: Empty / en restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Empty updates actual status live when language changes to Turkish
+PASS: Empty / tr Light has an actual visible TMP status
+PASS: Empty / tr Light _statusText stays inside its authored text container
+PASS: Empty / tr Light _updatedText stays inside its authored text container
+PASS: Empty / tr Light _emptyText stays inside its authored text container
+PASS: Empty / tr Light _retryText stays inside its authored text container
+PASS: Empty / tr Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / tr Dark has an actual visible TMP status
+PASS: Empty / tr Dark _statusText stays inside its authored text container
+PASS: Empty / tr Dark _updatedText stays inside its authored text container
+PASS: Empty / tr Dark _emptyText stays inside its authored text container
+PASS: Empty / tr Dark _retryText stays inside its authored text container
+PASS: Empty / tr Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / tr includes authored themed graphics
+PASS: Empty / tr restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Empty / es Light has an actual visible TMP status
+PASS: Empty / es Light _statusText stays inside its authored text container
+PASS: Empty / es Light _updatedText stays inside its authored text container
+PASS: Empty / es Light _emptyText stays inside its authored text container
+PASS: Empty / es Light _retryText stays inside its authored text container
+PASS: Empty / es Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / es Dark has an actual visible TMP status
+PASS: Empty / es Dark _statusText stays inside its authored text container
+PASS: Empty / es Dark _updatedText stays inside its authored text container
+PASS: Empty / es Dark _emptyText stays inside its authored text container
+PASS: Empty / es Dark _retryText stays inside its authored text container
+PASS: Empty / es Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / es includes authored themed graphics
+PASS: Empty / es restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Empty / de Light has an actual visible TMP status
+PASS: Empty / de Light _statusText stays inside its authored text container
+PASS: Empty / de Light _updatedText stays inside its authored text container
+PASS: Empty / de Light _emptyText stays inside its authored text container
+PASS: Empty / de Light _retryText stays inside its authored text container
+PASS: Empty / de Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / de Dark has an actual visible TMP status
+PASS: Empty / de Dark _statusText stays inside its authored text container
+PASS: Empty / de Dark _updatedText stays inside its authored text container
+PASS: Empty / de Dark _emptyText stays inside its authored text container
+PASS: Empty / de Dark _retryText stays inside its authored text container
+PASS: Empty / de Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / de includes authored themed graphics
+PASS: Empty / de restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Empty / fr Light has an actual visible TMP status
+PASS: Empty / fr Light _statusText stays inside its authored text container
+PASS: Empty / fr Light _updatedText stays inside its authored text container
+PASS: Empty / fr Light _emptyText stays inside its authored text container
+PASS: Empty / fr Light _retryText stays inside its authored text container
+PASS: Empty / fr Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / fr Dark has an actual visible TMP status
+PASS: Empty / fr Dark _statusText stays inside its authored text container
+PASS: Empty / fr Dark _updatedText stays inside its authored text container
+PASS: Empty / fr Dark _emptyText stays inside its authored text container
+PASS: Empty / fr Dark _retryText stays inside its authored text container
+PASS: Empty / fr Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / fr includes authored themed graphics
+PASS: Empty / fr restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Empty / pt Light has an actual visible TMP status
+PASS: Empty / pt Light _statusText stays inside its authored text container
+PASS: Empty / pt Light _updatedText stays inside its authored text container
+PASS: Empty / pt Light _emptyText stays inside its authored text container
+PASS: Empty / pt Light _retryText stays inside its authored text container
+PASS: Empty / pt Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / pt Dark has an actual visible TMP status
+PASS: Empty / pt Dark _statusText stays inside its authored text container
+PASS: Empty / pt Dark _updatedText stays inside its authored text container
+PASS: Empty / pt Dark _emptyText stays inside its authored text container
+PASS: Empty / pt Dark _retryText stays inside its authored text container
+PASS: Empty / pt Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / pt includes authored themed graphics
+PASS: Empty / pt restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Empty / it Light has an actual visible TMP status
+PASS: Empty / it Light _statusText stays inside its authored text container
+PASS: Empty / it Light _updatedText stays inside its authored text container
+PASS: Empty / it Light _emptyText stays inside its authored text container
+PASS: Empty / it Light _retryText stays inside its authored text container
+PASS: Empty / it Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / it Dark has an actual visible TMP status
+PASS: Empty / it Dark _statusText stays inside its authored text container
+PASS: Empty / it Dark _updatedText stays inside its authored text container
+PASS: Empty / it Dark _emptyText stays inside its authored text container
+PASS: Empty / it Dark _retryText stays inside its authored text container
+PASS: Empty / it Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / it includes authored themed graphics
+PASS: Empty / it restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Empty / ru Light has an actual visible TMP status
+PASS: Empty / ru Light _statusText stays inside its authored text container
+PASS: Empty / ru Light _updatedText stays inside its authored text container
+PASS: Empty / ru Light _emptyText stays inside its authored text container
+PASS: Empty / ru Light _retryText stays inside its authored text container
+PASS: Empty / ru Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / ru Dark has an actual visible TMP status
+PASS: Empty / ru Dark _statusText stays inside its authored text container
+PASS: Empty / ru Dark _updatedText stays inside its authored text container
+PASS: Empty / ru Dark _emptyText stays inside its authored text container
+PASS: Empty / ru Dark _retryText stays inside its authored text container
+PASS: Empty / ru Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / ru includes authored themed graphics
+PASS: Empty / ru restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Empty / ja Light has an actual visible TMP status
+PASS: Empty / ja Light _statusText stays inside its authored text container
+PASS: Empty / ja Light _updatedText stays inside its authored text container
+PASS: Empty / ja Light _emptyText stays inside its authored text container
+PASS: Empty / ja Light _retryText stays inside its authored text container
+PASS: Empty / ja Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / ja Dark has an actual visible TMP status
+PASS: Empty / ja Dark _statusText stays inside its authored text container
+PASS: Empty / ja Dark _updatedText stays inside its authored text container
+PASS: Empty / ja Dark _emptyText stays inside its authored text container
+PASS: Empty / ja Dark _retryText stays inside its authored text container
+PASS: Empty / ja Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / ja includes authored themed graphics
+PASS: Empty / ja restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: Empty / ko Light has an actual visible TMP status
+PASS: Empty / ko Light _statusText stays inside its authored text container
+PASS: Empty / ko Light _updatedText stays inside its authored text container
+PASS: Empty / ko Light _emptyText stays inside its authored text container
+PASS: Empty / ko Light _retryText stays inside its authored text container
+PASS: Empty / ko Light _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / ko Dark has an actual visible TMP status
+PASS: Empty / ko Dark _statusText stays inside its authored text container
+PASS: Empty / ko Dark _updatedText stays inside its authored text container
+PASS: Empty / ko Dark _emptyText stays inside its authored text container
+PASS: Empty / ko Dark _retryText stays inside its authored text container
+PASS: Empty / ko Dark _playerSummaryText stays inside its authored text container
+PASS: local player name, actual level and stars stay visible separately from global rows
+PASS: local summary uses a dash for an unverified world rank
+PASS: authored local summary treats nicknames as literal text
+PASS: Empty / ko includes authored themed graphics
+PASS: Empty / ko restores exactly 79 authored Light graphic materials/colors/sprites after Dark
+PASS: all five connection views passed ten actual languages and both themes: 100 rendered combinations
+CAPTURE: Captures/QualityPass5/Leaderboard/offline-empty-dark-tr.png
+PASS: controlled provider response stages real Ready view before its language/theme matrix
+PASS: actual global row count is exactly 2 with no invented empty accounts
+PASS: actual global row 1 shows the provider name in provider order
+PASS: actual global row 1 displays its snapshot rank
+PASS: actual global row 2 shows the provider name in provider order
+PASS: actual global row 2 displays its snapshot rank
+PASS: Ready view shows or hides the empty explanation according to real cached results
+PASS: Turkish Ready Dark has an actual visible TMP status
+PASS: Turkish Ready Dark _statusText stays inside its authored text container
+PASS: Turkish Ready Dark _updatedText stays inside its authored text container
+PASS: Turkish Ready Dark _retryText stays inside its authored text container
+PASS: Turkish Ready Dark _playerSummaryText stays inside its authored text container
+CAPTURE: Captures/QualityPass5/Leaderboard/ready-two-dark-tr.png
+PASS: controlled provider response stages real Offline view before its language/theme matrix
+PASS: actual global row count is exactly 2 with no invented empty accounts
+PASS: actual global row 1 shows the provider name in provider order
+PASS: actual global row 1 displays its snapshot rank
+PASS: actual global row 2 shows the provider name in provider order
+PASS: actual global row 2 displays its snapshot rank
+PASS: Offline view shows or hides the empty explanation according to real cached results
+PASS: Turkish Offline cached Dark has an actual visible TMP status
+PASS: Turkish Offline cached Dark _statusText stays inside its authored text container
+PASS: Turkish Offline cached Dark _updatedText stays inside its authored text container
+PASS: Turkish Offline cached Dark _retryText stays inside its authored text container
+PASS: Turkish Offline cached Dark _playerSummaryText stays inside its authored text container
+CAPTURE: Captures/QualityPass5/Leaderboard/offline-cached-dark-tr.png
+PASS: controlled provider response stages real Failed view before its language/theme matrix
+PASS: actual global row count is exactly 2 with no invented empty accounts
+PASS: actual global row 1 shows the provider name in provider order
+PASS: actual global row 1 displays its snapshot rank
+PASS: actual global row 2 shows the provider name in provider order
+PASS: actual global row 2 displays its snapshot rank
+PASS: Failed view shows or hides the empty explanation according to real cached results
+PASS: Turkish Failed cached Dark has an actual visible TMP status
+PASS: Turkish Failed cached Dark _statusText stays inside its authored text container
+PASS: Turkish Failed cached Dark _updatedText stays inside its authored text container
+PASS: Turkish Failed cached Dark _retryText stays inside its authored text container
+PASS: Turkish Failed cached Dark _playerSummaryText stays inside its authored text container
+CAPTURE: Captures/QualityPass5/Leaderboard/failed-cached-dark-tr.png
+PASS: all fixture views and Retry actions performed zero score/name writes and zero real network operations
+PASS: original data object, auto-save and all five data-service preferences restored
+PASS: owned fake singleton removed and exact original provider factory restored
+PASS: exact original live language restored
+PASS: exact original Unity random state restored after actual UI activation
+PASS: exact original EventSystem selection restored after native Retry input

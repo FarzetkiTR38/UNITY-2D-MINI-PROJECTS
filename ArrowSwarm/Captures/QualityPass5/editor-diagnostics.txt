@@ -1,0 +1,7 @@
+Observed during verification:
+- The deliberately throwing fake provider emitted its expected recovery-test warning. Real UGS was never used.
+- TMP NativeFormatImporter emitted a consistency warning for pre-existing Dynamic/multi-atlas NotoSansJP_SDF while ten-language rendering scheduled a package Editor reimport, and again during explicit forced reimport.
+- Read-only investigation traced the render-triggered path to TMP_EditorResourceManager.DoPostRenderUpdates. Project CJK asset creation is a manual menu action; source and fallback references are valid.
+- No runtime font failure was reproduced. Exact original font bytes were restored; no font regeneration, package patch or Library deletion was performed. This Editor import warning is recorded rather than claimed repaired.
+- After recording these diagnostics, Console history was cleared and an ordinary asset refresh was observed separately. Final counts are in final-editor-state.json; they do not certify that another forced dynamic-font reimport cannot reproduce the warning.
+- Full scene-reference enumeration exceeded the MCP response timeout but finished its native report; subsequent MCP calls confirmed Boot/Edit readiness.

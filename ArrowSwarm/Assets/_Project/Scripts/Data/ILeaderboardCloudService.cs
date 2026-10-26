@@ -14,7 +14,7 @@ namespace ArrowSwarm.Data
         Task<bool> UpdatePlayerNameAsync(string playerName);
         /// <summary>Stores the current score and profile metadata.</summary>
         Task<bool> SubmitScoreAsync(int highestLevel, int totalStars, string playerName, string countryCode);
-        /// <summary>Fetches ordered global rows with authoritative player identity flags.</summary>
+        /// <summary>Fetches ordered global rows; empty means success with no scores, null means unavailable.</summary>
         Task<List<LeaderboardEntry>> FetchTopScoresAsync(int limit = 10);
         /// <summary>Fetches the authenticated player's rank, or a negative value when unavailable.</summary>
         Task<int> FetchPlayerRankAsync();

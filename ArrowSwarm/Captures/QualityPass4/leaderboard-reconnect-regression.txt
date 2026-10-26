@@ -1,0 +1,27 @@
+PASS: offline-first leaderboard reconnect
+PASS: fresh main menu leaves the leaderboard lazy until the real panel opens
+PASS: offline first opening creates exactly one manager using only the scoped fake provider
+PASS: offline startup performs no provider initialization, fetch or upload
+PASS: real offline progress changes remain pending without provider uploads
+PASS: latest fixture includes independent puzzle stars in the shared score
+PASS: online reopening reuses the existing offline-created manager
+PASS: online reopening reaches the actual refresh path and obtains provider rows
+PASS: online reopening submits the pending latest progress exactly once
+PASS: reconnect upload uses the latest level, all campaign stars and current profile metadata
+PASS: accepted reconnect submission clears the pending flag
+PASS: reopening after successful synchronization does not upload unchanged progress again
+PASS: an additional real offline save queues progress without contacting the provider
+PASS: failed online refresh attempts one pending upload and retains the flag
+PASS: failed score upload still refreshes global rows without recursion
+PASS: a later refresh retries the still-pending score exactly once
+PASS: explicit failed synchronization fetches once without immediately resubmitting its failed score
+PASS: the next actual reopening accepts the latest pending score and clears its flag
+PASS: an additional real offline save queues progress without contacting the provider
+PASS: a controlled delayed pending upload holds the first refresh open
+PASS: an overlapping refresh cannot launch a duplicate pending upload
+PASS: explicit synchronization joins the same active score snapshot
+PASS: shared failed synchronization leaves pending work without a duplicate retry
+PASS: a later independent refresh successfully retries after the shared failure
+PASS: explicit successful synchronization sends once and does not duplicate its upload during refresh
+PASS: original data object, auto-save and all five data-service preferences restored
+PASS: temporary fake singleton removed and exact original provider factory restored

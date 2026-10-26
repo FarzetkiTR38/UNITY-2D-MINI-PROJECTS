@@ -1,7 +1,6 @@
 namespace ArrowSwarm.UI
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using ArrowSwarm.Core;
     using ArrowSwarm.Data;
@@ -13,7 +12,7 @@ namespace ArrowSwarm.UI
     /// <summary>
     /// Modal dialog shown after the Tutorial / on first Main Menu entrance
     /// allowing players to choose their Leaderboard username and country.
-    /// Features random nickname generator, clean country stepper, and direct Save &amp; Play transition.
+    /// Features a random nickname generator, country stepper, and profile saving without leaving the menu.
     /// </summary>
     public partial class ProfileSetupModalUI : MonoBehaviour
     {
@@ -283,14 +282,12 @@ namespace ArrowSwarm.UI
         {
             _currentCountryIndex--;
             UpdateCountryDisplay();
-            if (_prevCountryButton != null) StartCoroutine(PunchTransformRoutine(_prevCountryButton.transform));
         }
 
         private void OnNextCountryClicked()
         {
             _currentCountryIndex++;
             UpdateCountryDisplay();
-            if (_nextCountryButton != null) StartCoroutine(PunchTransformRoutine(_nextCountryButton.transform));
         }
 
         private int GetInitialCountryIndex()
@@ -322,15 +319,11 @@ namespace ArrowSwarm.UI
                 _nameInput.text = GenerateRandomNickname();
             }
 
-            if (_diceButton != null)
-            {
-                StartCoroutine(PunchTransformRoutine(_diceButton.transform));
-            }
         }
 
         private void OnSaveClicked()
         {
-            Debug.Log("[ArrowSwarm] ProfileSetupModalUI: Save & Play button clicked!");
+            Debug.Log("[ArrowSwarm] ProfileSetupModalUI: Save profile button clicked!");
 
             string finalName = _nameInput != null ? _nameInput.text.Trim() : "";
             if (string.IsNullOrEmpty(finalName))
@@ -347,10 +340,8 @@ namespace ArrowSwarm.UI
                 DataManager.Instance.SetPlayerProfile(finalName, selectedCode, true);
             }
 
-            if (LeaderboardManager.Instance != null)
-            {
-                LeaderboardManager.Instance.SetPlayerName(finalName);
-            }
+            // SetPlayerProfile owns the score update. A fresh manager retries its pending snapshot once.
+            if (!LeaderboardManager.HasInstance) _ = LeaderboardManager.Instance;
 
             // Save and cleanly close modal (stay on MainMenu)
             Hide();
@@ -373,17 +364,6 @@ namespace ArrowSwarm.UI
             }
 
             Hide();
-        }
-
-
-
-        private IEnumerator PunchTransformRoutine(Transform target)
-        {
-            if (target == null) yield break;
-            Vector3 origScale = target.localScale;
-            target.localScale = origScale * 1.25f;
-            yield return new WaitForSecondsRealtime(0.08f);
-            target.localScale = origScale;
         }
     }
 }

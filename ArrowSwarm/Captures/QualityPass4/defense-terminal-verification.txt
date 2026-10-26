@@ -1,0 +1,140 @@
+PASS
+SETUP: last-flight final-life loss: real living mob and three lives
+SETUP: Real generated Defense board has another previously unmarked blocked arrow
+SETUP: Blocked production click starts its normal bounce
+SETUP: Real generated Defense board has another previously unmarked blocked arrow
+SETUP: Blocked production click starts its normal bounce
+SETUP: Two real blocked-arrow clicks leave exactly one life
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Generated board retains a legal clearing sequence
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Generated board retains a legal clearing sequence
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Generated board retains a legal clearing sequence
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Generated board retains a legal clearing sequence
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Generated board retains a legal clearing sequence
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Generated board retains a legal clearing sequence
+SETUP: All real pooled arrows launched; final arrow is outstanding before any completion
+SETUP: Actual PathFollower end -> MobMovement -> Mob -> GameManager consumes the final life and emits Lose
+SETUP: Actual loss event captures the last real arrow still in flight
+SETUP: The authored Game Over overlay exists
+SETUP: Actual loss callback completes the authored Game Over entrance animation
+PASS: Late real arrow completions preserve Lose and never publish Win
+PASS: Late flight does not open the success overlay on top of Game Over
+PASS: A lost Defense board cannot unlock another level or change its stars
+PASS: Repeated public completion callbacks preserve an actual Lose without another terminal event
+OBSERVED: last-flight final-life loss; completed=45; exits=1; losses=1; wins=0; terminal=Lose
+SETUP: normal successful final flight: real living mob and three lives
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Generated board retains a legal clearing sequence
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Generated board retains a legal clearing sequence
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Generated board retains a legal clearing sequence
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Generated board retains a legal clearing sequence
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Generated board retains a legal clearing sequence
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Generated board retains a legal clearing sequence
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Generated board retains a legal clearing sequence
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Generated board retains a legal clearing sequence
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Legal production click launches a pooled Defense arrow
+SETUP: Generated board retains a legal clearing sequence
+SETUP: All real pooled arrows launched; final arrow is outstanding before any completion
+PASS: Positive control: real legal last flight still wins exactly once
+PASS: Positive control: successful three-life Defense flight retains its normal three-star result
+PASS: Repeated public completion callbacks preserve an actual Win without publishing or rewarding it again
+OBSERVED: normal successful final flight; completed=55; exits=0; losses=0; wins=1; terminal=Win
+PASS: Public completion callbacks cannot replace the actual Menu state or publish a win
+PASS: Original data, preferences, provider, debug and config restored
