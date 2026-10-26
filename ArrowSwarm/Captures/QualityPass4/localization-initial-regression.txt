@@ -1,0 +1,184 @@
+FAIL: Defense/tr: localized range retains Inspector-owned text styling
+PASS: Actual GameScene HUD is present
+PASS: All ten configured languages are available
+PASS: en: language-only HUD refresh does not restart count feedback
+PASS: en: actual Defense level label uses the existing translated prefix
+PASS: en: actual Defense arrow count translates without resetting its values
+PASS: en: a real legal arrow remains available
+PASS: en: real gameplay shot updates the level counter once
+PASS: en: gameplay count update preserves the selected language
+PASS: en: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: en/Defense/Level; preferred=261,4x93,8; rect=318,1x200,0; overflow=False
+FIT: en/Defense/Arrows; preferred=395,7x70,3; rect=800,0x80,0; overflow=False
+PASS: tr: language-only HUD refresh does not restart count feedback
+PASS: tr: actual Defense level label uses the existing translated prefix
+PASS: tr: actual Defense arrow count translates without resetting its values
+PASS: tr: a real legal arrow remains available
+PASS: tr: real gameplay shot updates the level counter once
+PASS: tr: gameplay count update preserves the selected language
+PASS: tr: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: tr/Defense/Level; preferred=312,1x93,8; rect=318,1x200,0; overflow=False
+FIT: tr/Defense/Arrows; preferred=343,0x70,3; rect=800,0x80,0; overflow=False
+PASS: es: language-only HUD refresh does not restart count feedback
+PASS: es: actual Defense level label uses the existing translated prefix
+PASS: es: actual Defense arrow count translates without resetting its values
+PASS: es: a real legal arrow remains available
+PASS: es: real gameplay shot updates the level counter once
+PASS: es: gameplay count update preserves the selected language
+PASS: es: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: es/Defense/Level; preferred=279,3x93,8; rect=318,1x200,0; overflow=False
+FIT: es/Defense/Arrows; preferred=417,1x70,3; rect=800,0x80,0; overflow=False
+PASS: de: language-only HUD refresh does not restart count feedback
+PASS: de: actual Defense level label uses the existing translated prefix
+PASS: de: actual Defense arrow count translates without resetting its values
+PASS: de: a real legal arrow remains available
+PASS: de: real gameplay shot updates the level counter once
+PASS: de: gameplay count update preserves the selected language
+PASS: de: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: de/Defense/Level; preferred=261,4x93,8; rect=318,1x200,0; overflow=False
+FIT: de/Defense/Arrows; preferred=359,9x70,3; rect=800,0x80,0; overflow=False
+PASS: fr: language-only HUD refresh does not restart count feedback
+PASS: fr: actual Defense level label uses the existing translated prefix
+PASS: fr: actual Defense arrow count translates without resetting its values
+PASS: fr: a real legal arrow remains available
+PASS: fr: real gameplay shot updates the level counter once
+PASS: fr: gameplay count update preserves the selected language
+PASS: fr: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: fr/Defense/Level; preferred=306,2x93,8; rect=318,1x200,0; overflow=False
+FIT: fr/Defense/Arrows; preferred=417,3x70,3; rect=800,0x80,0; overflow=False
+PASS: pt: language-only HUD refresh does not restart count feedback
+PASS: pt: actual Defense level label uses the existing translated prefix
+PASS: pt: actual Defense arrow count translates without resetting its values
+PASS: pt: a real legal arrow remains available
+PASS: pt: real gameplay shot updates the level counter once
+PASS: pt: gameplay count update preserves the selected language
+PASS: pt: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: pt/Defense/Level; preferred=279,3x93,8; rect=318,1x200,0; overflow=False
+FIT: pt/Defense/Arrows; preferred=417,1x70,3; rect=800,0x80,0; overflow=False
+PASS: it: language-only HUD refresh does not restart count feedback
+PASS: it: actual Defense level label uses the existing translated prefix
+PASS: it: actual Defense arrow count translates without resetting its values
+PASS: it: a real legal arrow remains available
+PASS: it: real gameplay shot updates the level counter once
+PASS: it: gameplay count update preserves the selected language
+PASS: it: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: it/Defense/Level; preferred=293,0x93,8; rect=318,1x200,0; overflow=False
+FIT: it/Defense/Arrows; preferred=384,7x70,3; rect=800,0x80,0; overflow=False
+PASS: ru: language-only HUD refresh does not restart count feedback
+PASS: ru: actual Defense level label uses the existing translated prefix
+PASS: ru: actual Defense arrow count translates without resetting its values
+PASS: ru: a real legal arrow remains available
+PASS: ru: real gameplay shot updates the level counter once
+PASS: ru: gameplay count update preserves the selected language
+PASS: ru: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: ru/Defense/Level; preferred=281,3x93,8; rect=318,1x200,0; overflow=False
+FIT: ru/Defense/Arrows; preferred=423,6x70,3; rect=800,0x80,0; overflow=False
+PASS: ja: language-only HUD refresh does not restart count feedback
+PASS: ja: actual Defense level label uses the existing translated prefix
+PASS: ja: actual Defense arrow count translates without resetting its values
+PASS: ja: a real legal arrow remains available
+PASS: ja: real gameplay shot updates the level counter once
+PASS: ja: gameplay count update preserves the selected language
+PASS: ja: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: ja/Defense/Level; preferred=261,4x93,8; rect=318,1x200,0; overflow=False
+FIT: ja/Defense/Arrows; preferred=242,8x86,9; rect=800,0x80,0; overflow=True
+CAPTURE: Captures/QualityPass2\defense-ja-639285913933598477.png; frame=20281->20282; bytes=577460
+PASS: ko: language-only HUD refresh does not restart count feedback
+PASS: ko: actual Defense level label uses the existing translated prefix
+PASS: ko: actual Defense arrow count translates without resetting its values
+PASS: ko: a real legal arrow remains available
+PASS: ko: real gameplay shot updates the level counter once
+PASS: ko: gameplay count update preserves the selected language
+PASS: ko: HUD fonts, colors, materials, size and authored bounds stay unchanged
+FIT: ko/Defense/Level; preferred=261,4x93,8; rect=318,1x200,0; overflow=False
+FIT: ko/Defense/Arrows; preferred=336,0x86,9; rect=800,0x80,0; overflow=True
+PASS: Language changes and legal-shot fixture do not alter lives or saved stars
+PASS: Actual authored main menu and profile modal are present
+PASS: en: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: en: switching language preserves the typed name and country draft
+PASS: en: switching language does not restart the profile opening animation
+PASS: en: restoring the selected language preserves authored button text styling
+FIT: en/Profile/Save; preferred=401,5x175,8; rect=1392,3x458,2; overflow=False
+FIT: en/Profile/Skip; preferred=109,3x58,6; rect=394,0x49,5; overflow=True
+PASS: en: modal closes normally before reopening
+PASS: tr: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: tr: switching language preserves the typed name and country draft
+PASS: tr: switching language does not restart the profile opening animation
+PASS: tr: restoring the selected language preserves authored button text styling
+FIT: tr/Profile/Save; preferred=606,5x175,8; rect=1392,3x458,2; overflow=False
+FIT: tr/Profile/Skip; preferred=94,9x58,6; rect=394,0x49,5; overflow=True
+PASS: tr: modal closes normally before reopening
+PASS: es: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: es: switching language preserves the typed name and country draft
+PASS: es: switching language does not restart the profile opening animation
+PASS: es: restoring the selected language preserves authored button text styling
+FIT: es/Profile/Save; preferred=751,6x175,8; rect=1392,3x458,2; overflow=False
+FIT: es/Profile/Skip; preferred=180,0x58,6; rect=394,0x49,5; overflow=True
+PASS: es: modal closes normally before reopening
+PASS: de: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: de: switching language preserves the typed name and country draft
+PASS: de: switching language does not restart the profile opening animation
+PASS: de: restoring the selected language preserves authored button text styling
+FIT: de/Profile/Save; preferred=891,2x175,8; rect=1392,3x458,2; overflow=False
+FIT: de/Profile/Skip; preferred=367,1x58,6; rect=394,0x49,5; overflow=True
+PASS: German profile opening completed with visible CanvasGroup ancestors before capture
+PASS: Profile modal is above the active reference main menu in the authored Canvas hierarchy
+PASS: Every visible modal graphic renders above the active sibling menu graphics
+CAPTURE: Captures/QualityPass2\profile-de-639285913974768325.png; frame=20654->20655; bytes=709287
+PASS: de: modal closes normally before reopening
+PASS: fr: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: fr: switching language preserves the typed name and country draft
+PASS: fr: switching language does not restart the profile opening animation
+PASS: fr: restoring the selected language preserves authored button text styling
+FIT: fr/Profile/Save; preferred=1082,1x175,8; rect=1392,3x458,2; overflow=False
+FIT: fr/Profile/Skip; preferred=183,1x58,6; rect=394,0x49,5; overflow=True
+PASS: fr: modal closes normally before reopening
+PASS: pt: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: pt: switching language preserves the typed name and country draft
+PASS: pt: switching language does not restart the profile opening animation
+PASS: pt: restoring the selected language preserves authored button text styling
+FIT: pt/Profile/Save; preferred=601,0x175,8; rect=1392,3x458,2; overflow=False
+FIT: pt/Profile/Skip; preferred=158,3x58,6; rect=394,0x49,5; overflow=True
+PASS: pt: modal closes normally before reopening
+PASS: it: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: it: switching language preserves the typed name and country draft
+PASS: it: switching language does not restart the profile opening animation
+PASS: it: restoring the selected language preserves authored button text styling
+FIT: it/Profile/Save; preferred=494,8x175,8; rect=1392,3x458,2; overflow=False
+FIT: it/Profile/Skip; preferred=148,1x58,6; rect=394,0x49,5; overflow=True
+PASS: it: modal closes normally before reopening
+PASS: ru: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: ru: switching language preserves the typed name and country draft
+PASS: ru: switching language does not restart the profile opening animation
+PASS: ru: restoring the selected language preserves authored button text styling
+FIT: ru/Profile/Save; preferred=976,3x175,8; rect=1392,3x458,2; overflow=False
+FIT: ru/Profile/Skip; preferred=328,7x58,6; rect=394,0x49,5; overflow=True
+PASS: ru: modal closes normally before reopening
+PASS: ja: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: ja: switching language preserves the typed name and country draft
+PASS: ja: switching language does not restart the profile opening animation
+PASS: ja: restoring the selected language preserves authored button text styling
+FIT: ja/Profile/Save; preferred=310,5x217,2; rect=1392,3x458,2; overflow=False
+FIT: ja/Profile/Skip; preferred=200,0x72,4; rect=394,0x49,5; overflow=True
+PASS: ja: modal closes normally before reopening
+PASS: ko: actual reopened Save and Skip labels match their existing dictionary keys
+PASS: ko: switching language preserves the typed name and country draft
+PASS: ko: switching language does not restart the profile opening animation
+PASS: ko: restoring the selected language preserves authored button text styling
+FIT: ko/Profile/Save; preferred=286,5x217,2; rect=1392,3x458,2; overflow=False
+FIT: ko/Profile/Skip; preferred=184,0x72,4; rect=394,0x49,5; overflow=True
+PASS: ko: modal closes normally before reopening
+PASS: Defense: authored Levels opens on the independent highest page
+PASS: Defense/en: actual Previous button moves to page two
+PASS: Defense/en: language change translates the range without resetting pagination
+PASS: Defense/en: actual Next button shows the correct independent campaign edge
+PASS: Defense/en: last-page navigation stays correct
+PASS: Defense/en: catalog ends keep the correct number of authored level controls visible
+PASS: Defense/en: localized range retains Inspector-owned text styling
+FIT: Defense/en/Levels/LastPage; preferred=358,9x58,6; rect=480,0x70,0; overflow=False
+PASS: Defense/tr: actual Previous button moves to page two
+PASS: Defense/tr: language change translates the range without resetting pagination
+PASS: Defense/tr: actual Next button shows the correct independent campaign edge
+PASS: Defense/tr: last-page navigation stays correct
+PASS: Defense/tr: catalog ends keep the correct number of authored level controls visible
+FAIL: Defense/tr: localized range retains Inspector-owned text styling

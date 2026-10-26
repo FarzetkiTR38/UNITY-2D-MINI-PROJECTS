@@ -23,6 +23,7 @@ namespace ArrowSwarm.Modes.Editor
             {
                 data.SelectMode(mode); menu.OpenLevels(); yield return .25f;
                 var label = Field<TextMeshProUGUI>(levels, "_pageText"); var style = new TextStyle(label);
+                if (mode == GameModeId.Defense) CheckTextStyleNegativeControls(label);
                 var previous = Field<Button>(levels, "_prevPageButton"); var next = Field<Button>(levels, "_nextPageButton");
                 Check(Field<int>(levels, "_currentPage") == 3, mode + ": authored Levels opens on the independent highest page");
                 foreach (var language in localization.AvailableLanguages)
