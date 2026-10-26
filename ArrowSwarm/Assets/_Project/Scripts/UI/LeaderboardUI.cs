@@ -10,7 +10,7 @@ namespace ArrowSwarm.UI
     /// Leaderboard screen showing top 10 players matching the popup dialog visual design.
     /// Handles animated transitions, data loading, username display/editing, and back/close buttons.
     /// </summary>
-    public class LeaderboardUI : MonoBehaviour
+    public partial class LeaderboardUI : MonoBehaviour
     {
         [Header("UI References")]
         [SerializeField] private CanvasGroup _canvasGroup;
@@ -39,17 +39,23 @@ namespace ArrowSwarm.UI
         private void OnEnable()
         {
             LeaderboardManager.OnLeaderboardUpdated += HandleLeaderboardUpdated;
+            ArrowSwarm.Localization.LocalizationManager.OnLanguageChanged += RefreshLeaderboardData;
+            DataManager.OnPlayerDataChanged += HandlePlayerDataChanged;
         }
 
         private void OnDisable()
         {
             LeaderboardManager.OnLeaderboardUpdated -= HandleLeaderboardUpdated;
+            ArrowSwarm.Localization.LocalizationManager.OnLanguageChanged -= RefreshLeaderboardData;
+            DataManager.OnPlayerDataChanged -= HandlePlayerDataChanged;
         }
 
         private void HandleLeaderboardUpdated()
         {
             RefreshLeaderboardData();
         }
+
+        private void HandlePlayerDataChanged(PlayerData data) => RefreshLeaderboardData();
 
         private void Awake()
         {
@@ -62,95 +68,11 @@ namespace ArrowSwarm.UI
             _closeButton?.onClick.AddListener(Hide);
             _nameInputField?.onEndEdit.AddListener(OnNameInputEndEdit);
             _saveNameButton?.onClick.AddListener(OnSaveNameClicked);
+            _retryButton?.onClick.AddListener(Retry);
 
             if (_titleText != null && string.IsNullOrEmpty(_titleText.text))
             {
                 _titleText.text = "LEADERBOARD";
-            }
-        }
-
-        /// <summary>
-        /// Automatically discovers and connects required UI references.
-        /// </summary>
-        public void AutoWire()
-        {
-            if (_canvasGroup == null)
-                _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
-
-            if (_dialogBox == null)
-            {
-                var b = transform.Find("BoardFrame") ?? transform.Find("DialogBox");
-                if (b != null) _dialogBox = b.GetComponent<RectTransform>();
-            }
-
-            if (_backButton == null)
-            {
-                var btn = transform.Find("BoardFrame/Header/BackButton") ?? transform.Find("BackButton");
-                if (btn != null) _backButton = btn.GetComponent<Button>();
-            }
-
-            if (_closeButton == null)
-            {
-                var btn = transform.Find("BoardFrame/Header/CloseButton") ?? transform.Find("CloseBtn") ?? transform.Find("CloseButton");
-                if (btn != null) _closeButton = btn.GetComponent<Button>();
-            }
-
-            if (_titleText == null)
-            {
-                var txt = transform.Find("BoardFrame/Header/TitleText") ?? transform.Find("TitleText");
-                if (txt != null) _titleText = txt.GetComponent<TextMeshProUGUI>();
-            }
-
-            if (_entriesContainer == null)
-            {
-                _entriesContainer = transform.Find("BoardFrame/EntriesContainer") ?? transform.Find("EntriesContainer");
-            }
-
-            if (_entryRows == null || _entryRows.Length == 0 || _entryRows[0] == null)
-            {
-                _entryRows = GetComponentsInChildren<LeaderboardEntryUI>(true);
-            }
-
-            if (_boardImage == null)
-            {
-                var b = transform.Find("BoardFrame");
-                if (b != null) _boardImage = b.GetComponent<Image>();
-            }
-
-            if (_footerTrophyImage == null)
-            {
-                var f = transform.Find("BoardFrame/Footer") ?? transform.Find("BoardFrame/FooterArea/TrophyBadge") ?? transform.Find("FooterArea/TrophyBadge");
-                if (f != null) _footerTrophyImage = f.GetComponent<Image>();
-            }
-
-            // AutoWire Current Player bar if present
-            if (_currentPlayerNameText == null)
-            {
-                var t = transform.Find("BoardFrame/PlayerBar/NameText") 
-                     ?? transform.Find("BoardFrame/Footer/PlayerNameText")
-                     ?? transform.Find("PlayerNameText");
-                if (t != null) _currentPlayerNameText = t.GetComponent<TextMeshProUGUI>();
-            }
-
-            if (_currentPlayerRankText == null)
-            {
-                var t = transform.Find("BoardFrame/PlayerBar/RankText")
-                     ?? transform.Find("BoardFrame/Footer/RankText");
-                if (t != null) _currentPlayerRankText = t.GetComponent<TextMeshProUGUI>();
-            }
-
-            if (_nameInputField == null)
-            {
-                var input = transform.Find("BoardFrame/PlayerBar/NameInputField")
-                         ?? transform.Find("NameInputField");
-                if (input != null) _nameInputField = input.GetComponent<TMP_InputField>();
-            }
-
-            if (_saveNameButton == null)
-            {
-                var btn = transform.Find("BoardFrame/PlayerBar/SaveNameButton")
-                       ?? transform.Find("SaveNameButton");
-                if (btn != null) _saveNameButton = btn.GetComponent<Button>();
             }
         }
 
@@ -199,109 +121,6 @@ namespace ArrowSwarm.UI
         }
 
         /// <summary>
-        /// Loads and displays top player entries from LeaderboardManager or local player.
-        /// </summary>
-        public void RefreshLeaderboardData()
-        {
-            AutoWire();
-
-            int rowCount = _entryRows != null && _entryRows.Length > 0 ? _entryRows.Length : 10;
-            List<LeaderboardEntry> entries = null;
-
-            if (LeaderboardManager.HasInstance)
-            {
-                entries = LeaderboardManager.Instance.GetTopPlayers(rowCount);
-            }
-            else
-            {
-                var currentData = DataManager.HasInstance ? DataManager.Instance.PlayerData : null;
-                int playerLevel = currentData?.highestLevel ?? 1;
-                int playerStars = currentData?.GetTotalStars() ?? 0;
-                string playerName = currentData?.playerName ?? "Player";
-                string country = currentData?.playerCountry ?? "TR";
-
-                entries = new List<LeaderboardEntry>
-                {
-                    new LeaderboardEntry
-                    {
-                        PlayerName = playerName,
-                        HighestLevel = playerLevel,
-                        TotalStars = playerStars,
-                        IsPlayer = true,
-                        CountryCode = country
-                    }
-                };
-            }
-
-            if (_entryRows != null)
-            {
-                for (int i = 0; i < _entryRows.Length; i++)
-                {
-                    if (_entryRows[i] == null) continue;
-
-                    int rank = i + 1;
-                    _entryRows[i].gameObject.SetActive(true);
-
-                    if (entries != null && i < entries.Count)
-                    {
-                        var entry = entries[i];
-                        _entryRows[i].Setup(
-                            rank: rank,
-                            playerName: entry.PlayerName,
-                            level: entry.HighestLevel,
-                            stars: entry.TotalStars,
-                            isPlayer: entry.IsPlayer,
-                            countryCode: entry.CountryCode
-                        );
-                    }
-                    else
-                    {
-                        // Active empty slot: Lv.1, 0 Stars, blank username
-                        _entryRows[i].Setup(
-                            rank: rank,
-                            playerName: "",
-                            level: 1,
-                            stars: 0,
-                            isPlayer: false,
-                            countryCode: ""
-                        );
-                    }
-                }
-            }
-
-            // Update current player info bar if assigned
-            var playerData = DataManager.Instance?.PlayerData;
-            if (playerData != null)
-            {
-                if (_currentPlayerNameText != null)
-                {
-                    string tag = GetCountryTag(playerData.playerCountry);
-                    _currentPlayerNameText.text = string.IsNullOrEmpty(tag) ? playerData.playerName : $"{tag} {playerData.playerName}";
-                }
-
-                if (_currentPlayerRankText != null && LeaderboardManager.Instance != null)
-                {
-                    _currentPlayerRankText.text = $"#{LeaderboardManager.Instance.GetPlayerRank()}";
-                }
-
-                if (_currentPlayerLevelText != null)
-                {
-                    _currentPlayerLevelText.text = $"Lv.{playerData.highestLevel}";
-                }
-
-                if (_currentPlayerStarsText != null)
-                {
-                    _currentPlayerStarsText.text = playerData.GetTotalStars().ToString();
-                }
-
-                if (_nameInputField != null && !_nameInputField.isFocused)
-                {
-                    _nameInputField.text = playerData.playerName;
-                }
-            }
-        }
-
-        /// <summary>
         /// Updates player username and refreshes ranking.
         /// </summary>
         public void SetPlayerName(string newName)
@@ -339,6 +158,7 @@ namespace ArrowSwarm.UI
             _closeButton?.onClick.RemoveListener(Hide);
             _nameInputField?.onEndEdit.RemoveListener(OnNameInputEndEdit);
             _saveNameButton?.onClick.RemoveListener(OnSaveNameClicked);
+            _retryButton?.onClick.RemoveListener(Retry);
         }
     }
 }
