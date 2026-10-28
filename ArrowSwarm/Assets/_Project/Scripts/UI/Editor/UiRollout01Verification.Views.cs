@@ -32,6 +32,7 @@ namespace ArrowSwarm.UI.Editor
             {
                 DataManager.Instance.SetTheme(theme); yield return Settled();
                 VerifyTypography(root, "Boot / " + theme);
+                VerifyCloudFooter(root, "Boot / " + theme);
                 var credit = root.Find("BootDesign/StudioBrand").GetComponent<TextMeshProUGUI>();
                 Check(Visible(credit) && credit.text == "FARZETKI GAMES", "Complete studio name is live visible TMP / " + theme);
                 var creditCorners = new Vector3[4]; credit.rectTransform.GetWorldCorners(creditCorners);
@@ -61,6 +62,7 @@ namespace ArrowSwarm.UI.Editor
             {
                 Status = "Home / " + theme; DataManager.Instance.SetTheme(theme); yield return Settled();
                 VerifyTypography(home.transform, Status); VerifyHomeBindings(menu);
+                VerifyCloudFooter(home.transform, Status);
                 bool shared = false;
                 foreach (var image in home.GetComponentsInChildren<Image>(true)) if (Visible(image) && image.sprite == _bootCrest) shared = true;
                 Check(shared, "Home reuses Boot's exact shared crest Sprite / " + theme);

@@ -2,6 +2,7 @@ namespace ArrowSwarm.UI.Editor
 {
     using System.IO;
     using UnityEngine;
+    using UnityEngine.UI;
 
     /// <summary>Reuses a procedural palette, sparse kit motifs and one shared cloud cutout in both scenes.</summary>
     internal static partial class UiRollout01Kit
@@ -28,13 +29,24 @@ namespace ArrowSwarm.UI.Editor
                 star.rectTransform.anchorMin = star.rectTransform.anchorMax = new Vector2(i % 2 == 0 ? .05f : .96f, .08f + i * .145f);
                 Theme(star, new Color(1, .86f, .55f, .35f), new Color(1, .87f, .59f, .42f));
             }
-            if (File.Exists(ArtFolder + "/cloud_footer.png"))
-            {
-                var clouds = Image(rect, "SharedCloudFooter", Sprite("cloud_footer"), new Vector2(0, 80), new Vector2(1260, 410));
-                clouds.rectTransform.anchorMin = clouds.rectTransform.anchorMax = new Vector2(.5f, 0);
-                clouds.preserveAspect = true;
-                Theme(clouds, Color.white, new Color(.12f, .30f, .59f, 1));
-            }
+            if (File.Exists(ArtFolder + "/cloud_footer.png")) CloudFooter(rect);
+        }
+
+        private static void CloudFooter(Transform parent)
+        {
+            var old = parent.Find("SharedCloudFooter");
+            if (old != null) Object.DestroyImmediate(old.gameObject);
+            var clouds = Image(parent, "SharedCloudFooter", Sprite("cloud_footer"), Vector2.zero, Vector2.zero);
+            var rect = clouds.rectTransform;
+            rect.anchorMin = Vector2.zero; rect.anchorMax = new Vector2(1, 0);
+            rect.pivot = new Vector2(.5f, 0); rect.anchoredPosition = rect.sizeDelta = Vector2.zero;
+            // Keep the complete illustration above the screen bottom, including its dense lower clouds.
+            // Native width controls height, so the same artwork fits every portrait aspect ratio.
+            var aspect = clouds.gameObject.AddComponent<AspectRatioFitter>();
+            aspect.aspectMode = AspectRatioFitter.AspectMode.WidthControlsHeight;
+            aspect.aspectRatio = clouds.sprite.rect.width / clouds.sprite.rect.height;
+            clouds.preserveAspect = true;
+            Theme(clouds, Color.white, new Color(.12f, .30f, .59f, 1));
         }
     }
 }

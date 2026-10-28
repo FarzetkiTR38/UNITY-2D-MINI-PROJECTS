@@ -86,5 +86,25 @@ namespace ArrowSwarm.UI.Editor
             foreach (var point in corners) Check(safe.Contains(RectTransformUtility.WorldToScreenPoint(camera, point)),
                 "Interactive corner stays inside native safe area: " + label);
         }
+
+        private static void VerifyCloudFooter(Transform root, string label)
+        {
+            Image cloud = null;
+            foreach (var image in root.GetComponentsInChildren<Image>(true))
+                if (image.name == "SharedCloudFooter") { cloud = image; break; }
+            Check(Visible(cloud) && cloud.sprite != null, label + ": shared cloud artwork is active");
+            if (_cloudFooter == null) _cloudFooter = cloud.sprite;
+            Check(cloud.sprite == _cloudFooter, label + ": Boot and Home reuse the identical cloud Sprite");
+            var rect = cloud.rectTransform;
+            Check(Mathf.Abs(rect.rect.width / rect.rect.height - cloud.sprite.rect.width / cloud.sprite.rect.height) < .01f,
+                label + ": cloud artwork retains its full native aspect ratio");
+            var corners = new Vector3[4]; rect.GetWorldCorners(corners);
+            var screen = new Rect(-1, -1, Screen.width + 2, Screen.height + 2);
+            foreach (var corner in corners)
+                Check(screen.Contains(RectTransformUtility.WorldToScreenPoint(null, corner)),
+                    label + ": whole cloud drawing, including dense lower pixels, is inside the viewport");
+            Check(Mathf.Abs(RectTransformUtility.WorldToScreenPoint(null, corners[0]).y) < 1,
+                label + ": cloud illustration starts at the screen bottom without clipping");
+        }
     }
 }
