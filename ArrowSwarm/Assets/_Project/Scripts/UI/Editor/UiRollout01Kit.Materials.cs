@@ -40,13 +40,15 @@ namespace ArrowSwarm.UI.Editor
             track.SetColor("_TopColor", new Color(.08f, .20f, .40f));
             track.SetColor("_BottomColor", new Color(.015f, .06f, .18f));
             track.SetColor("_RimColor", new Color(.12f, .70f, 1));
-            track.SetFloat("_RimPixels", 3); track.SetFloat("_Gloss", .10f); track.SetFloat("_Flow", 0); Save(track);
+            track.SetFloat("_RimPixels", 3); track.SetFloat("_Gloss", .10f); track.SetFloat("_Flow", 0);
+            track.SetFloat("_Frame", 1); track.SetFloat("_Chevrons", 0); Save(track);
             var fill = NewMaterial("LoadingFill", shader);
             fill.SetColor("_Color", Color.white);
             fill.SetColor("_TopColor", new Color(.10f, .90f, 1));
             fill.SetColor("_BottomColor", new Color(.015f, .24f, .94f));
             fill.SetColor("_RimColor", new Color(.48f, .98f, 1));
-            fill.SetFloat("_RimPixels", 1.5f); fill.SetFloat("_Gloss", .27f); fill.SetFloat("_Flow", .075f); Save(fill);
+            fill.SetFloat("_RimPixels", 1.5f); fill.SetFloat("_Gloss", .27f); fill.SetFloat("_Flow", .075f);
+            fill.SetFloat("_Frame", 0); fill.SetFloat("_Chevrons", .18f); Save(fill);
         }
 
         private static void ConfigureBackdrop(string name, Shader shader, Color top, Color bottom)

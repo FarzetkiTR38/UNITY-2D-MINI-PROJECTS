@@ -42,12 +42,15 @@ namespace ArrowSwarm.UI.Editor
                     Check(Screen.safeArea.Contains(RectTransformUtility.WorldToScreenPoint(null, corner)),
                         "Complete illustrated Boot logo remains inside safe area / " + theme);
                 VerifyCloudFooter(root, "Boot / " + theme);
-                var credit = root.Find("BootDesign/StudioBrand").GetComponent<TextMeshProUGUI>();
-                Check(Visible(credit) && credit.text == "FARZETKI GAMES", "Complete studio name is live visible TMP / " + theme);
-                var creditCorners = new Vector3[4]; credit.rectTransform.GetWorldCorners(creditCorners);
-                foreach (var corner in creditCorners)
-                    Check(Screen.safeArea.Contains(RectTransformUtility.WorldToScreenPoint(null, corner)),
-                        "Studio credit remains inside native safe area / " + theme);
+                foreach (var pair in new[] { new[] { "StudioBrand", "FARZETKI" }, new[] { "StudioGames", "GAMES" } })
+                {
+                    var credit = root.Find("BootDesign/" + pair[0]).GetComponent<TextMeshProUGUI>();
+                    Check(Visible(credit) && credit.text == pair[1], "Complete two-line studio name is live visible TMP / " + pair[0] + " / " + theme);
+                    var creditCorners = new Vector3[4]; credit.rectTransform.GetWorldCorners(creditCorners);
+                    foreach (var corner in creditCorners)
+                        Check(Screen.safeArea.Contains(RectTransformUtility.WorldToScreenPoint(null, corner)),
+                            "Studio credit remains inside native safe area / " + pair[0] + " / " + theme);
+                }
                 Check(Field<TextMeshProUGUI>(boot, "_percentText").text == "65%", "Live Boot progress remains TMP at 65% / " + theme);
                 Check(Mathf.Abs(Field<Slider>(boot, "_progressSlider").value - .65f) < .001f, "Live progress fill stays bound / " + theme);
                 yield return Capture("boot-" + theme.ToString().ToLowerInvariant());
@@ -57,12 +60,13 @@ namespace ArrowSwarm.UI.Editor
             float last = -1; int liveFrames = 0; bool liveValid = true, sawPartial = false, creditVisible = true;
             var liveSlider = Field<Slider>(boot, "_progressSlider");
             var liveCredit = root.Find("BootDesign/StudioBrand").GetComponent<TextMeshProUGUI>();
+            var liveGames = root.Find("BootDesign/StudioGames").GetComponent<TextMeshProUGUI>();
             while (SceneManager.GetActiveScene().name == "BootScene" && boot != null)
             {
                 float value = liveSlider.value;
                 var fill = liveSlider.fillRect; var area = (RectTransform)fill.parent;
                 liveValid &= value >= last && fill.rect.width >= 0 && Mathf.Abs(fill.rect.width - area.rect.width * value) < .1f;
-                creditVisible &= Visible(liveCredit); sawPartial |= value > 0 && value < 1;
+                creditVisible &= Visible(liveCredit) && Visible(liveGames); sawPartial |= value > 0 && value < 1;
                 last = value; liveFrames++; yield return null;
             }
             Check(liveValid && sawPartial && liveFrames > 3, "Real timed loading animation grows monotonically with correct inner fill geometry");

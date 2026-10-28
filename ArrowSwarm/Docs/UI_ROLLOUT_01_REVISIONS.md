@@ -41,3 +41,14 @@ R4 completed: native full check1686PASS/0FAIL at1080x1920 and responsive1228PASS
 No new game raster asset, importer or runtime gameplay/controller changes. The entire MainMenuScene file still has SHA25633803aacf3fdcad0fac09163289c1dfb28c221ddda029172b19a606d0273449e, exactly matching the R4 baseline. Native current PNGs are under Checks/ and R4-BootLogo/; the initial-layout pair is retained only as an iteration record.
 
 Initial Play/MainMenu state, Turkish language, ColorShift selection, exact runtime player JSON and all five preferences were restored. All eleven pre-existing local files match their initial byte hashes; locked font-cache files were restored atomically with generated caches preserved privately. Native console0errors/0warnings. Original logo PNG/meta remain unchanged. Board02 is still unstarted pending approval.
+## R5 - reference lower Boot and backdrop polish
+
+Baseline0d002e6f. Scope is Boot only; Home and later boards stay unchanged.
+
+- [x] R5a: Taller beveled blue loading frame, animated chevron fill, right-aligned live TMP percentage; compact tip and two-line FARZETKI / GAMES TMP credit with reused gold stars. Verify native low/zero/full progress, layout and original loading callback, then commit.
+- [ ] R5b: Boot-only warm Light and luminous blue Dark backdrop, subtle directional decoration. Preserve shared Home visuals. Verify both themes and both portrait sizes, then commit.
+- [ ] Final: Update native preview/evidence, restore initial player/preferences/local files and Editor state; return board01 for approval before board02.
+
+Private snapshot pointer: `%TEMP%/ArrowSwarm-BootLower-path.txt`. All functional wording remains TMP; only the already-approved combined Boot logo is raster branding. Reuse existing artwork; no additional PNG is needed for the loading/background treatment.
+
+R5a native verification completed:1270PASS/0FAIL at1080x1920, pairedBoot/Home themes,8progressvalues each, actual chevrons moving at fixed65%, fixedrightTMPpercentage, bothcreditlinesvisible/safe, originaltimedcallback intact. NativePNGinspectpassed; MainMenuSHA remains33803aacf3fdcad0fac09163289c1dfb28c221ddda029172b19a606d0273449e. Evidence:Revisions/R5a-BootLower/. Background revision follows separately.

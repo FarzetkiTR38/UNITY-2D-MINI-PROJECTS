@@ -36,7 +36,7 @@ namespace ArrowSwarm.UI.Editor
             var hero = K.Image(content, "OrbitHero", K.Sprite("orbit_hero"), new Vector2(0, -145), new Vector2(930, 700));
             hero.preserveAspect = true;
 
-            var status = K.Text(content, "StatusText", "Initializing systems...", new Vector2(0, -479), new Vector2(920, 48), 29, Ink);
+            var status = K.Text(content, "StatusText", "Initializing systems...", new Vector2(0, -477), new Vector2(920, 48), 25, Ink);
             K.Theme(status, Ink, Ice);
             var progress = Progress(content, out Image fill, out TextMeshProUGUI percentage);
             var tip = Tip(content, bulb, out Image icon, out TextMeshProUGUI tipText);

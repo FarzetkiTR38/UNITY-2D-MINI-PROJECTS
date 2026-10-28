@@ -19,6 +19,9 @@ namespace ArrowSwarm.UI.Editor
                 "Loading fill has a dedicated inset area and no stretched sprite caps / " + theme);
             Check(fill.material.shader.name == "ArrowSwarm/UI/SharedLoadingBar", "Shared rounded loading shader is bound / " + theme);
             float previous = -1, left = float.NaN, height = area.rect.height;
+            var percent = Field<TMPro.TextMeshProUGUI>(boot, "_percentText");
+            var labelRect = percent.rectTransform;
+            Vector2 labelPosition = labelRect.anchoredPosition;
             foreach (float value in new[] { 0f, .01f, .05f, .25f, .5f, .65f, .99f, 1f })
             {
                 boot.SetProgress(value); Canvas.ForceUpdateCanvases(); yield return Settled(.04f);
@@ -33,9 +36,42 @@ namespace ArrowSwarm.UI.Editor
                 if (float.IsNaN(left)) left = corners[0].x;
                 Check(Mathf.Abs(corners[0].x - left) < .1f, "Fill left edge stays fixed at " + value + " / " + theme);
                 previous = rect.rect.width;
+                var trackRect = slider.GetComponent<RectTransform>().rect;
+                Check(labelRect.anchorMin.x == 1 && labelRect.anchorMax.x == 1 && labelRect.pivot.x == 1 &&
+                    labelRect.anchoredPosition == labelPosition && labelPosition.x < 0 &&
+                    labelRect.rect.width < trackRect.width * .25f && percent.alignment == TMPro.TextAlignmentOptions.MidlineRight,
+                    "Percentage stays right-aligned inside the track at " + value + " / " + theme);
                 yield return CaptureProgress(slider, area, value, theme);
             }
             boot.SetProgress(.65f); yield return Settled(.04f);
+            yield return VerifyProgressFlow(slider, area, theme);
+        }
+
+        private static IEnumerator VerifyProgressFlow(Slider slider, RectTransform area, ThemeMode theme)
+        {
+            // Static composition captures pause game time. Let the shader's real Boot clock advance for this check.
+            float previousScale = Time.timeScale;
+            var before = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            var after = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            try
+            {
+                Time.timeScale = 1;
+                yield return CaptureProgress(slider, area, .65f, theme);
+                string imagePath = Path.Combine(_folder, "progress-" + theme.ToString().ToLowerInvariant() + "-065.png");
+                byte[] first = File.ReadAllBytes(imagePath);
+                yield return Settled(.25f);
+                yield return CaptureProgress(slider, area, .65f, theme);
+                ImageConversion.LoadImage(before, first); ImageConversion.LoadImage(after, File.ReadAllBytes(imagePath));
+                var a = before.GetPixels32(); var b = after.GetPixels32(); int changed = 0;
+                for (int i = 0; i < a.Length; i++) if (Mathf.Abs(a[i].g - b[i].g) > 5) changed++;
+                Check(a.Length == b.Length && changed > a.Length * .03f && Mathf.Approximately(slider.value, .65f),
+                    "Actual chevrons flow while progress geometry and percentage stay fixed / " + theme);
+            }
+            finally
+            {
+                Time.timeScale = previousScale;
+                UnityEngine.Object.DestroyImmediate(before); UnityEngine.Object.DestroyImmediate(after);
+            }
         }
 
         private static IEnumerator CaptureProgress(Slider slider, RectTransform area, float value, ThemeMode theme)
@@ -74,7 +110,8 @@ namespace ArrowSwarm.UI.Editor
                 }
                 if (value <= .65f)
                 {
-                    var empty = source.GetPixel(Mathf.RoundToInt(end.x - 35), row);
+                    // Beyond the 65% fill, before the dedicated right-hand TMP percentage box.
+                    var empty = source.GetPixel(Mathf.RoundToInt(Mathf.Lerp(start.x, end.x, .70f)), row);
                     Check(empty.g < .3f && empty.b < .65f, "Unfilled part remains dark / " + name);
                 }
                 crop = new Texture2D(width, rows, TextureFormat.RGBA32, false);
