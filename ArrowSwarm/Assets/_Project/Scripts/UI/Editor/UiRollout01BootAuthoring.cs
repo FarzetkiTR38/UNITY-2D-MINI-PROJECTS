@@ -24,7 +24,7 @@ namespace ArrowSwarm.UI.Editor
             if (loading == null) throw new InvalidOperationException("The original Boot canvas/loading component is missing.");
             // The shared kit already contains this glyph; avoid retaining another large texture only for a tip icon.
             Sprite bulb = K.Sprite("icon_bulb");
-            foreach (string asset in new[] { "brand_crest", "orbit_hero", "primary_plate", "light_plate" }) K.Sprite(asset);
+            foreach (string asset in new[] { "boot_logo", "orbit_hero", "primary_plate", "light_plate" }) K.Sprite(asset);
 
             for (int i = canvasObject.transform.childCount - 1; i >= 0; i--)
                 UnityEngine.Object.DestroyImmediate(canvasObject.transform.GetChild(i).gameObject);
@@ -32,10 +32,8 @@ namespace ArrowSwarm.UI.Editor
             var background = canvasObject.GetComponentInChildren<Image>();
             var content = Content(canvasObject.transform);
 
-            var crest = K.Image(content, "BrandCrest", K.Sprite("brand_crest"), new Vector2(0, 640), new Vector2(850, 390));
-            crest.preserveAspect = true;
-            K.Wordmark(content, new Vector2(0, 400), 900);
-            var hero = K.Image(content, "OrbitHero", K.Sprite("orbit_hero"), new Vector2(0, -90), new Vector2(930, 760));
+            var crest = BootLogo(content);
+            var hero = K.Image(content, "OrbitHero", K.Sprite("orbit_hero"), new Vector2(0, -145), new Vector2(930, 700));
             hero.preserveAspect = true;
 
             var status = K.Text(content, "StatusText", "Initializing systems...", new Vector2(0, -479), new Vector2(920, 48), 29, Ink);

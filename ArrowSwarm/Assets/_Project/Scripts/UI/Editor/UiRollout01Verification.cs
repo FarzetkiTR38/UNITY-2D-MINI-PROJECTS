@@ -22,7 +22,6 @@ namespace ArrowSwarm.UI.Editor
         private static string _folder;
         private static double _deadline;
         private static bool _navigation;
-        private static Sprite _bootCrest;
         private static Sprite _cloudFooter;
         private static bool _finishing;
         private static string _finishOutcome;
@@ -46,7 +45,7 @@ namespace ArrowSwarm.UI.Editor
                 !SceneTransitionManager.HasInstance || SceneTransitionManager.Instance.IsTransitioning)
                 throw new InvalidOperationException("Use idle MainMenu Play reached through Boot, before opening the real leaderboard.");
             _folder = folder; _navigation = navigation; Directory.CreateDirectory(folder);
-            Results.Clear(); Steps.Clear(); _wait = null; _bootCrest = null; _cloudFooter = null; _textControlChecked = false;
+            Results.Clear(); Steps.Clear(); _wait = null; _cloudFooter = null; _textControlChecked = false;
             try { _scope = new Scope(); Steps.Push(Run()); }
             catch { _scope?.Dispose(); _scope = null; throw; }
             _deadline = EditorApplication.timeSinceStartup + 300; Status = "Checking real Boot and Home";

@@ -44,7 +44,10 @@ namespace ArrowSwarm.UI.Editor
             }
             int legacy = 0;
             foreach (var text in root.GetComponentsInChildren<Text>(true)) if (Visible(text)) legacy++;
-            Check(count > 5 && arrow && swarm && legacy == 0, label + ": wordmark and visible labels use real TMP, with no legacy Unity Text components");
+            bool boot = root.GetComponent<BootLoadingUI>() != null;
+            Check(count > (boot ? 3 : 5) && (boot ? !arrow && !swarm : arrow && swarm) && legacy == 0,
+                label + (boot ? ": only Boot's illustrated logo uses baked lettering; all functional copy remains TMP" :
+                ": Home wordmark and visible labels still use real TMP, with no legacy Unity Text components"));
         }
 
         private static bool GlyphsFit(TMP_Text text)

@@ -23,8 +23,9 @@ namespace ArrowSwarm.UI.Editor
             var loader = UnityEngine.Object.FindFirstObjectByType<BootLoader>();
             Check(boot != null && loader != null && loader.enabled, "Original BootLoader and BootLoadingUI still own startup");
             boot.StopAllCoroutines(); boot.SetProgress(.65f);
-            _bootCrest = Field<Image>(boot, "_titleLogoImage")?.sprite;
-            Check(_bootCrest != null, "Boot has the shared text-free brand crest");
+            var logo = Field<Image>(boot, "_titleLogoImage");
+            Check(logo != null && logo.sprite == UiRollout01Kit.Sprite("boot_logo") && logo.preserveAspect && !logo.raycastTarget,
+                "Boot reuses the existing combined character-and-wordmark logo without a new texture");
             var pulse = typeof(BootLoadingUI).GetField("_animateCenterHero", Private);
             bool animate = (bool)pulse.GetValue(boot); pulse.SetValue(boot, false);
             var root = boot.GetComponent<Canvas>() != null ? boot.transform : boot.GetComponentInParent<Canvas>().transform;
@@ -33,6 +34,13 @@ namespace ArrowSwarm.UI.Editor
                 DataManager.Instance.SetTheme(theme); yield return Settled();
                 yield return VerifyProgress(boot, theme);
                 VerifyTypography(root, "Boot / " + theme);
+                Check(Visible(logo) && logo.color == Color.white, "Illustrated Boot logo keeps its original glossy colors / " + theme);
+                Check(root.Find("BootDesign/Wordmark") == null && root.Find("BootDesign/BrandCrest") == null,
+                    "Boot has one complete raster logo and no overlapping TMP brand / " + theme);
+                var logoCorners = new Vector3[4]; logo.rectTransform.GetWorldCorners(logoCorners);
+                foreach (var corner in logoCorners)
+                    Check(Screen.safeArea.Contains(RectTransformUtility.WorldToScreenPoint(null, corner)),
+                        "Complete illustrated Boot logo remains inside safe area / " + theme);
                 VerifyCloudFooter(root, "Boot / " + theme);
                 var credit = root.Find("BootDesign/StudioBrand").GetComponent<TextMeshProUGUI>();
                 Check(Visible(credit) && credit.text == "FARZETKI GAMES", "Complete studio name is live visible TMP / " + theme);
@@ -78,8 +86,9 @@ namespace ArrowSwarm.UI.Editor
                 VerifyTypography(home.transform, Status); VerifyHomeBindings(menu);
                 VerifyCloudFooter(home.transform, Status);
                 bool shared = false;
-                foreach (var image in home.GetComponentsInChildren<Image>(true)) if (Visible(image) && image.sprite == _bootCrest) shared = true;
-                Check(shared, "Home reuses Boot's exact shared crest Sprite / " + theme);
+                foreach (var image in home.GetComponentsInChildren<Image>(true))
+                    if (Visible(image) && image.sprite == UiRollout01Kit.Sprite("brand_crest")) shared = true;
+                Check(shared, "Home retains the existing shared text-free crest and TMP wordmark / " + theme);
                 yield return Capture("home-" + theme.ToString().ToLowerInvariant());
             }
             DataManager.Instance.SetTheme(ThemeMode.Light); yield return Settled(); original.Verify();

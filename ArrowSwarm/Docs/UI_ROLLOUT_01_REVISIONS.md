@@ -24,3 +24,20 @@ Original five preferences and all eleven pre-existing dirty files were restored 
 Preview: `Captures/UIRollout/Phase01/index.html`, with native captures under `Checks/`; `Revisions/progress.html` shows the16 native cropped progress images. Both are self-contained local HTML pages with relative image links. The previous localhost8170 preview service stopped answering; automatic approval review blocked restarting/replacing the local HTTP service with only a policy-block reason. No server/process workaround was used; deliver the offline HTML and real PNGs instead. Do not describe a broken browser screenshot as a successful preview.
 
 Board02 remains unstarted, awaiting user approval of revised board01.
+## R4 - illustrated Boot logo (user-approved TMP exception)
+
+Baseline9f0f02e5. The user explicitly requests Boot's four characters and ARROW SWARM lettering as one polished image matching concept01. All other functional wording staysTMP; Home is outside this requested visual change.
+
+Reuse the existing transparent combined logo at `Assets/_Project/Art/_FarzetkiArts/Logos/ChatGPT Image 9 Eyl 2026 18_42_19 (3)-Photoroom.png` (already used by existing UI). Do not add a duplicate PNG or alter its importer. Replace only Boot's previous BrandCrest plus TMP Wordmark hierarchy, retain live TMP credit/status/tip/percentage, and fit the lower orbit illustration below the logo. Original loading, progress mask, cloud footer and startup callbacks remain intact.
+
+- [x] Snapshot initial local files, preferences, active player and Editor state privately (`%TEMP%/ArrowSwarm-BootLogo-path.txt`).
+- [x] Reuse the original sprite in Boot's existing `_titleLogoImage` slot; keep Home source unchanged.
+- [x] Inspect actual paired-theme logo composition and safe bounds at both phone sizes; verify real loading and TMP copy.
+- [x] Restore initial player/preferences/local bytes, update native previews and commit R4.
+
+Verification must require the raster branding only in Boot. Home must still contain its live TMP ARROW/SWARM wordmark; never relax the Home localization checks. Board02 remains behind explicit user approval.
+R4 completed: native full check1686PASS/0FAIL at1080x1920 and responsive1228PASS/0FAIL at1080x2400. Both themed captures inspected. Boot uses the original glossy raster logo at840x840, centered at(0,500); the lower orbit is930x700 at(0,-145). Transparent swirls visually connect the illustrations; the ARROW/SWARM lettering remains separate from the lower arrow body. The studio credit, eight-point loading checks, live timed callback, cloud bounds and Home TMP rules all pass.
+
+No new game raster asset, importer or runtime gameplay/controller changes. The entire MainMenuScene file still has SHA25633803aacf3fdcad0fac09163289c1dfb28c221ddda029172b19a606d0273449e, exactly matching the R4 baseline. Native current PNGs are under Checks/ and R4-BootLogo/; the initial-layout pair is retained only as an iteration record.
+
+Initial Play/MainMenu state, Turkish language, ColorShift selection, exact runtime player JSON and all five preferences were restored. All eleven pre-existing local files match their initial byte hashes; locked font-cache files were restored atomically with generated caches preserved privately. Native console0errors/0warnings. Original logo PNG/meta remain unchanged. Board02 is still unstarted pending approval.

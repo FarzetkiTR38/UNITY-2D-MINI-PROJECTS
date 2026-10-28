@@ -13,6 +13,7 @@ namespace ArrowSwarm.UI.Editor
     {
         internal const string ArtFolder = "Assets/_Project/Art/Sprites/SharedUI";
         internal const string MaterialFolder = "Assets/_Project/Art/Materials/SharedUI";
+        internal const string BootLogoPath = "Assets/_Project/Art/_FarzetkiArts/Logos/ChatGPT Image 9 Eyl 2026 18_42_19 (3)-Photoroom.png";
         private const string FontPath = "Assets/_Project/Fonts/Fazo_Font.asset";
         private const string TitleFontPath = "Assets/_Project/Fonts/LilitaOne_SDF.asset";
         private static readonly Color Ink = new Color(.025f, .16f, .57f);
@@ -22,7 +23,8 @@ namespace ArrowSwarm.UI.Editor
         internal static Sprite Sprite(string name)
         {
             if (name == "star") return StarSprite;
-            string path = name == "profile_avatar" ? ArtFolder + "/profile_avatar.asset" : ArtFolder + "/" + name + ".png";
+            string path = name == "boot_logo" ? BootLogoPath :
+                name == "profile_avatar" ? ArtFolder + "/profile_avatar.asset" : ArtFolder + "/" + name + ".png";
             var direct = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().OrderByDescending(s => s.rect.width * s.rect.height).FirstOrDefault();
             if (direct != null) return direct;
             var slice = AssetDatabase.LoadAllAssetsAtPath(ArtFolder + "/shared_ui_kit.png").OfType<Sprite>().FirstOrDefault(s => s.name == name);

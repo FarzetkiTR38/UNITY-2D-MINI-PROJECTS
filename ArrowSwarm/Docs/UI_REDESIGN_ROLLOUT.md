@@ -6,7 +6,7 @@ Baseline: `ce22ef28`. Current checkpoint: **01 Boot and Home implemented and ver
 
 - Back up before the first integration; preserve the working game and pre-existing local changes.
 - Integrate one numbered concept board, capture actual Unity Light/Dark results, commit it, then request approval.
-- Use live TMP for all wording, including the ARROW / SWARM wordmark, percentages, studio credit, status, tips and labels. Keep existing localization keys and language fallbacks.
+- Use live TMP for all functional wording, including percentages, studio credit, status, tips and labels. User-approved R4 exception: Boot uses the existing illustrated ARROW SWARM logo as a sprite; Home retains its TMP wordmark. Keep existing localization keys and language fallbacks.
 - Separate illustrations, blank sliced plates, icons and text. Reuse shared artwork and materials across screens. Never import a full-screen mockup as a functioning UI.
 - Author appearance in scenes, materials and Inspector fields. Existing controllers own startup, navigation, themes, click feedback and gameplay.
 - Test through Unity MCP. Preserve player progress, preferences, providers, debug state and existing unfinished work. Keep verification isolated from live ads and leaderboard services.
@@ -40,15 +40,15 @@ Baseline: `ce22ef28`. Current checkpoint: **01 Boot and Home implemented and ver
 
 Only BootScene and the Home composition in MainMenuScene are redesigned. Their visual controls are serialized in the scenes. New C# helpers and verification code live under `Scripts/UI/Editor`; the only new player-side code is a small UI background shader. Existing gameplay scripts are unchanged.
 
-The body uses the existing Fazo_Font (Roboto Bold); the two-line TMP wordmark uses existing LilitaOne_SDF. The same crest Sprite is shared between Boot and Home; the avatar shares its texture. Navigation cards share a single plate Sprite. Mode icons, navigation icons, play triangle and tip bulb share one twelve-sprite atlas. Footer and gold star are shared by both scenes. No new font files or runtime image loaders were added.
+The body uses the existing Fazo_Font (Roboto Bold); Home's two-line TMP wordmark uses existing LilitaOne_SDF. Boot now reuses the existing combined raster logo at the user's request. Home and its avatar share the text-free crest texture. Navigation cards share a single plate Sprite. Mode icons, navigation icons, play triangle and tip bulb share one twelve-sprite atlas. Footer and gold star are shared by both scenes. No new font files or runtime image loaders were added.
 
 Five source PNGs total 6,426,922 bytes. Android imports use ASTC 6x6, no mipmaps, Read/Write disabled. Imported texture dimensions produce an estimated 1,704,016-byte ASTC block payload across the five textures. This is a texture estimate, not a measured APK/download size; no device build was performed. Native Editor texture-memory measurements are recorded separately and include Editor/emulation overhead.
 
 ### Native evidence and boundaries
 
-`Captures/UIRollout/Phase01/Checks/verification.txt`: PASS, 1,678 successful assertions, zero failed assertions. Real pointer input verifies press feedback, mode selection, Levels/Leaderboard/Settings/Profile opening and dismissal, and Play entering Defense GameScene, ShapesScene and ColorShiftScene. Defense uses scoped debug level101 to verify routing; this is not a claim of completing its campaign. No stage completes a level or awards a reward.
+`Captures/UIRollout/Phase01/Checks/verification.txt`: PASS, 1,686 successful assertions, zero failed assertions. Real pointer input verifies press feedback, mode selection, Levels/Leaderboard/Settings/Profile opening and dismissal, and Play entering Defense GameScene, ShapesScene and ColorShiftScene. Defense uses scoped debug level101 to verify routing; this is not a claim of completing its campaign. No stage completes a level or awards a reward.
 
-`Responsive1080x2400/verification.txt`: PASS, 1,220 successful assertions, zero failed assertions. This second run repeats actual Boot/Home captures, typography, bindings, twenty language/theme combinations and safe bounds; navigation routes are covered by the primary run. These are Editor Game View checks, not physical notch/device certification.
+`Responsive1080x2400/verification.txt`: PASS, 1,228 successful assertions, zero failed assertions. This second run repeats actual Boot/Home captures, typography, bindings, twenty language/theme combinations and safe bounds; navigation routes are covered by the primary run. These are Editor Game View checks, not physical notch/device certification.
 
 Both runs restore cloned player data, five preferences, original cloud factory/ad provider, language, random state, lives, launch flags and native input devices/settings. External service operation counters remain zero. Original pre-task preferences and all eleven initial dirty-file byte hashes were checked again after leaving Play.
 
@@ -71,3 +71,6 @@ To recheck: enter Play from Boot, wait for idle MainMenu before opening the real
 If asked to resume without stage-01 approval, show this completed preview and request the approval already required by the user. After explicit approval, begin board02 using these same shared resources where suitable. Each later board gets its own implementation notes, native evidence, commit and approval checkpoint.
 
 Board01 requested refinements are complete; see UI_ROLLOUT_01_REVISIONS.md for three revision phases, current validation and the offline preview note. The single-line FARZETKI GAMES credit, full visible cloud footer and rounded inset loading fill supersede the first board01 preview. Await approval before board02.
+
+
+R4 supersedes the Boot brand-only TMP rule at the user's explicit request: the existing combined character/wordmark logo is reused without new PNGs or importer changes. All functional copy and Home branding remain TMP. See UI_ROLLOUT_01_REVISIONS.md for current scope and native checks.

@@ -8,6 +8,27 @@ namespace ArrowSwarm.UI.Editor
     /// <summary>Shared-asset progress and tip card; all copy remains live TMP owned by BootLoadingUI.</summary>
     internal static partial class UiRollout01BootAuthoring
     {
+        private static Image BootLogo(Transform parent)
+        {
+            foreach (string name in new[] { "BrandCrest", "Wordmark", "BootLogo" })
+            {
+                var old = parent.Find(name);
+                if (old != null) UnityEngine.Object.DestroyImmediate(old.gameObject);
+            }
+            // User-approved exception: Boot's complete illustrated brand is a sprite; functional copy stays TMP.
+            var logo = K.Image(parent, "BootLogo", K.Sprite("boot_logo"), new Vector2(0, 500), new Vector2(840, 840));
+            logo.preserveAspect = true;
+            return logo;
+        }
+
+        private static void RefreshBootLogo(Transform parent)
+        {
+            var logo = BootLogo(parent);
+            var hero = (RectTransform)parent.Find("OrbitHero");
+            hero.anchoredPosition = new Vector2(0, -145); hero.sizeDelta = new Vector2(930, 700);
+            Bind(parent.GetComponentInParent<BootLoadingUI>(), "_titleLogoImage", logo);
+        }
+
         private static void StudioCredit(Transform parent)
         {
             foreach (string name in new[] { "StudioBrand", "StudioGames" })
