@@ -28,7 +28,7 @@ namespace ArrowSwarm.UI.Editor
 
             for (int i = canvasObject.transform.childCount - 1; i >= 0; i--)
                 UnityEngine.Object.DestroyImmediate(canvasObject.transform.GetChild(i).gameObject);
-            K.Backdrop(canvasObject.transform);
+            K.BootBackdrop(canvasObject.transform);
             var background = canvasObject.GetComponentInChildren<Image>();
             var content = Content(canvasObject.transform);
 

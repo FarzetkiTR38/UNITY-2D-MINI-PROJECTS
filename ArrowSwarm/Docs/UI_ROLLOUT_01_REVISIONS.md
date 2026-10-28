@@ -43,12 +43,25 @@ No new game raster asset, importer or runtime gameplay/controller changes. The e
 Initial Play/MainMenu state, Turkish language, ColorShift selection, exact runtime player JSON and all five preferences were restored. All eleven pre-existing local files match their initial byte hashes; locked font-cache files were restored atomically with generated caches preserved privately. Native console0errors/0warnings. Original logo PNG/meta remain unchanged. Board02 is still unstarted pending approval.
 ## R5 - reference lower Boot and backdrop polish
 
-Baseline0d002e6f. Scope is Boot only; Home and later boards stay unchanged.
+Baseline `0d002e6f`. Scope is Boot only; Home and later boards remain unchanged. Private snapshot pointer: `%TEMP%/ArrowSwarm-BootLower-path.txt`.
 
-- [x] R5a: Taller beveled blue loading frame, animated chevron fill, right-aligned live TMP percentage; compact tip and two-line FARZETKI / GAMES TMP credit with reused gold stars. Verify native low/zero/full progress, layout and original loading callback, then commit.
-- [ ] R5b: Boot-only warm Light and luminous blue Dark backdrop, subtle directional decoration. Preserve shared Home visuals. Verify both themes and both portrait sizes, then commit.
-- [ ] Final: Update native preview/evidence, restore initial player/preferences/local files and Editor state; return board01 for approval before board02.
+- [x] R5a: Beveled blue loading frame, animated chevrons, right-aligned TMP percentage, compact tip and two-line FARZETKI / GAMES TMP credit with reused gold stars. Native verification passed; committed as `851c52fc`.
+- [x] R5b: Dedicated warm cream Light and saturated navy/cyan Dark atmosphere, real arrow motifs, full cloud footer and clean dark tip material. Existing Home shaders/materials and MainMenuScene source are unchanged.
+- [x] Final: Publish current native captures and preview; restore the original player, preferences, protected files and Editor presentation. Return board01 for approval before board02.
 
-Private snapshot pointer: `%TEMP%/ArrowSwarm-BootLower-path.txt`. All functional wording remains TMP; only the already-approved combined Boot logo is raster branding. Reuse existing artwork; no additional PNG is needed for the loading/background treatment.
+R5 adds no raster artwork or runtime C# controller. Functional wording remains TMP; the already-approved combined Boot logo remains the sole raster branding exception. The studio stars and background arrow reuse existing sprites.
 
-R5a native verification completed:1270PASS/0FAIL at1080x1920, pairedBoot/Home themes,8progressvalues each, actual chevrons moving at fixed65%, fixedrightTMPpercentage, bothcreditlinesvisible/safe, originaltimedcallback intact. NativePNGinspectpassed; MainMenuSHA remains33803aacf3fdcad0fac09163289c1dfb28c221ddda029172b19a606d0273449e. Evidence:Revisions/R5a-BootLower/. Background revision follows separately.
+Native verification:
+
+- R5a: 1,270 PASS / 0 FAIL at 1080x1920, including paired themes, eight progress values, actual flowing chevrons at fixed 65%, fixed right percentage, both credit lines and the original timed Boot callback.
+- Final primary: **1,914 PASS / 0 FAIL at 1080x1920**, including real pointer navigation and all three campaign Play routes.
+- Final responsive: **1,456 PASS / 0 FAIL at 1080x2400**.
+- Both final runs cover every Boot tip/status in every supported language, complete visible TMP lines, actual moving fill decoration, eight fill values, both credit lines, cloud bounds and twenty Home language/theme combinations. Paired screenshots were inspected at both sizes.
+
+The navigation fixture now waits for the newly enabled panel's player updates before measuring buttons. A preview held an old PNG open, so final native checks used fresh R5b evidence folders. The passing results were published atomically to Checks/ and Responsive1080x2400/. The existing Unity MCP service was reconnected through its HTTP session after the tool connection changed; no additional server was started.
+
+Evidence: `Revisions/R5b-BootAtmosphere/`, `Revisions/R5b-Responsive1080x2400/` and `Revisions/boot-r5-light-dark.png`. The portable index opens on the revised Boot Light capture. All 880 older panel documents remain preserved because the complete MainMenuScene SHA256 is still `33803aacf3fdcad0fac09163289c1dfb28c221ddda029172b19a606d0273449e`.
+
+Final state: the original runtime player JSON and all five preferences match; all fourteen protected source files match their private snapshots. Play/MainMenu, ColorShift, Turkish, Game View 18 and background=true are restored. Both revised UI shaders and the Unity console have zero errors. Two Editor-startup helper warnings remain: Aura's .gitignore and an existing Device Simulator .device file were memory-mapped when their helpers attempted to rewrite them. Neither affected the passing Game View tests; these warnings are recorded in verification-summary.json rather than claiming a warning-free final Editor.
+
+**Board02 remains unstarted pending explicit approval.**

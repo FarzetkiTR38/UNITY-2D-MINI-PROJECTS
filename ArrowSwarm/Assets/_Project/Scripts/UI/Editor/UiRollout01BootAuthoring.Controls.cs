@@ -117,6 +117,7 @@ namespace ArrowSwarm.UI.Editor
         {
             var plate = K.Image(parent, "TipCard", K.Sprite("light_plate"), new Vector2(0, -725), new Vector2(920, 140));
             K.RoundedPlate(plate, true);
+            K.Theme(plate, Color.white, Color.white, K.Material("BootTipDark"));
             var group = plate.gameObject.AddComponent<CanvasGroup>();
             group.alpha = 1; group.interactable = group.blocksRaycasts = false;
             icon = K.Image(plate.transform, "TipIcon", bulb, new Vector2(-375, 0), new Vector2(100, 112));

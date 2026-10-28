@@ -32,6 +32,13 @@ namespace ArrowSwarm.UI.Editor
             foreach (var theme in new[] { ThemeMode.Light, ThemeMode.Dark })
             {
                 DataManager.Instance.SetTheme(theme); yield return Settled();
+                var backdrop = Field<Image>(boot, "_backgroundImage");
+                Check(backdrop.material == UiRollout01Kit.Material(theme == ThemeMode.Light ? "BootBackdropLight" : "BootBackdropDark") &&
+                    backdrop.material.shader.name == "ArrowSwarm/UI/BootMenuBackdrop", "Boot uses its dedicated themed atmosphere / " + theme);
+                Check(root.Find("SharedBackdrop/BackdropRoute0").GetComponent<Image>().sprite ==
+                    UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Project/Art/Sprites/Arrows/arrow_placeholder.png"),
+                    "Boot motifs reuse a real arrow sprite instead of a play triangle / " + theme);
+                yield return VerifyBootCopy(boot);
                 yield return VerifyProgress(boot, theme);
                 VerifyTypography(root, "Boot / " + theme);
                 Check(Visible(logo) && logo.color == Color.white, "Illustrated Boot logo keeps its original glossy colors / " + theme);
@@ -89,6 +96,9 @@ namespace ArrowSwarm.UI.Editor
                 Status = "Home / " + theme; DataManager.Instance.SetTheme(theme); yield return Settled();
                 VerifyTypography(home.transform, Status); VerifyHomeBindings(menu);
                 VerifyCloudFooter(home.transform, Status);
+                var backdrop = home.transform.Find("SharedBackdrop").GetComponent<Image>();
+                Check(backdrop.material == UiRollout01Kit.Material(theme == ThemeMode.Light ? "BackdropLight" : "BackdropDark") &&
+                    backdrop.material.shader.name == "ArrowSwarm/UI/SharedMenuBackdrop", "Home retains its original shared atmosphere / " + theme);
                 bool shared = false;
                 foreach (var image in home.GetComponentsInChildren<Image>(true))
                     if (Visible(image) && image.sprite == UiRollout01Kit.Sprite("brand_crest")) shared = true;

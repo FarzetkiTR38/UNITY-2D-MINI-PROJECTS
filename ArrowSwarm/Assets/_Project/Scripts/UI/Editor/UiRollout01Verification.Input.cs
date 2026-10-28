@@ -13,6 +13,9 @@ namespace ArrowSwarm.UI.Editor
     {
         private static IEnumerator Click(NativeMouse mouse, Button button, bool squeeze = false, bool legacyTextAction = false)
         {
+            // Newly re-enabled panels fit their safe-area coordinates on the next player updates.
+            yield return Settled(.10f);
+            Canvas.ForceUpdateCanvases();
             var rect = button != null ? button.GetComponent<RectTransform>() : null;
             if (legacyTextAction)
             {

@@ -38,7 +38,7 @@ Baseline: `ce22ef28`. Current checkpoint: **01 Boot and Home implemented and ver
 
 ### Implementation
 
-Only BootScene and the Home composition in MainMenuScene are redesigned. Their visual controls are serialized in the scenes. New C# helpers and verification code live under `Scripts/UI/Editor`; the only new player-side code is a small UI background shader. Existing gameplay scripts are unchanged.
+Only BootScene and the Home composition in MainMenuScene are redesigned. Their visual controls are serialized in the scenes. New C# helpers and verification code live under `Scripts/UI/Editor`; the added player-side rendering uses small UI shaders. Existing gameplay scripts are unchanged.
 
 The body uses the existing Fazo_Font (Roboto Bold); Home's two-line TMP wordmark uses existing LilitaOne_SDF. Boot now reuses the existing combined raster logo at the user's request. Home and its avatar share the text-free crest texture. Navigation cards share a single plate Sprite. Mode icons, navigation icons, play triangle and tip bulb share one twelve-sprite atlas. Footer and gold star are shared by both scenes. No new font files or runtime image loaders were added.
 
@@ -46,9 +46,9 @@ Five source PNGs total 6,426,922 bytes. Android imports use ASTC 6x6, no mipmaps
 
 ### Native evidence and boundaries
 
-`Captures/UIRollout/Phase01/Checks/verification.txt`: PASS, 1,686 successful assertions, zero failed assertions. Real pointer input verifies press feedback, mode selection, Levels/Leaderboard/Settings/Profile opening and dismissal, and Play entering Defense GameScene, ShapesScene and ColorShiftScene. Defense uses scoped debug level101 to verify routing; this is not a claim of completing its campaign. No stage completes a level or awards a reward.
+`Captures/UIRollout/Phase01/Checks/verification.txt`: PASS, 1,914 successful assertions, zero failed assertions. Real pointer input verifies press feedback, mode selection, Levels/Leaderboard/Settings/Profile opening and dismissal, and Play entering Defense GameScene, ShapesScene and ColorShiftScene. Defense uses scoped debug level101 to verify routing; this is not a claim of completing its campaign. No stage completes a level or awards a reward.
 
-`Responsive1080x2400/verification.txt`: PASS, 1,228 successful assertions, zero failed assertions. This second run repeats actual Boot/Home captures, typography, bindings, twenty language/theme combinations and safe bounds; navigation routes are covered by the primary run. These are Editor Game View checks, not physical notch/device certification.
+`Responsive1080x2400/verification.txt`: PASS, 1,456 successful assertions, zero failed assertions. This second run repeats actual Boot/Home captures, typography, bindings, twenty language/theme combinations and safe bounds; navigation routes are covered by the primary run. These are Editor Game View checks, not physical notch/device certification.
 
 Both runs restore cloned player data, five preferences, original cloud factory/ad provider, language, random state, lives, launch flags and native input devices/settings. External service operation counters remain zero. Original pre-task preferences and all eleven initial dirty-file byte hashes were checked again after leaving Play.
 
@@ -70,7 +70,9 @@ To recheck: enter Play from Boot, wait for idle MainMenu before opening the real
 
 If asked to resume without stage-01 approval, show this completed preview and request the approval already required by the user. After explicit approval, begin board02 using these same shared resources where suitable. Each later board gets its own implementation notes, native evidence, commit and approval checkpoint.
 
-Board01 requested refinements are complete; see UI_ROLLOUT_01_REVISIONS.md for three revision phases, current validation and the offline preview note. The single-line FARZETKI GAMES credit, full visible cloud footer and rounded inset loading fill supersede the first board01 preview. Await approval before board02.
+Board01 requested refinements are complete; see UI_ROLLOUT_01_REVISIONS.md for the requested revision phases, current validation and the offline preview note. The two-line FARZETKI / GAMES credit, full visible cloud footer, right-aligned percentage, flowing chevrons and Boot-only atmosphere supersede the first board01 preview. Await approval before board02.
 
 
 R4 supersedes the Boot brand-only TMP rule at the user's explicit request: the existing combined character/wordmark logo is reused without new PNGs or importer changes. All functional copy and Home branding remain TMP. See UI_ROLLOUT_01_REVISIONS.md for current scope and native checks.
+
+R5 completes the reference lower Boot and dedicated warm/blue atmosphere. Native results are1,914/1,456PASS with zero failures, including every localized Boot tip/status. Home source/materials remain unchanged. Both revisions and final evidence are in UI_ROLLOUT_01_REVISIONS.md; board02 still requires approval.
