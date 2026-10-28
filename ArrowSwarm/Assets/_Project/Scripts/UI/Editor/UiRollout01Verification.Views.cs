@@ -31,6 +31,7 @@ namespace ArrowSwarm.UI.Editor
             foreach (var theme in new[] { ThemeMode.Light, ThemeMode.Dark })
             {
                 DataManager.Instance.SetTheme(theme); yield return Settled();
+                yield return VerifyProgress(boot, theme);
                 VerifyTypography(root, "Boot / " + theme);
                 VerifyCloudFooter(root, "Boot / " + theme);
                 var credit = root.Find("BootDesign/StudioBrand").GetComponent<TextMeshProUGUI>();
@@ -45,6 +46,19 @@ namespace ArrowSwarm.UI.Editor
             }
             pulse.SetValue(boot, animate); Time.timeScale = 1;
             boot.StartLoading(() => typeof(BootLoader).GetMethod("OnLoadingCompleted", Private).Invoke(loader, null));
+            float last = -1; int liveFrames = 0; bool liveValid = true, sawPartial = false, creditVisible = true;
+            var liveSlider = Field<Slider>(boot, "_progressSlider");
+            var liveCredit = root.Find("BootDesign/StudioBrand").GetComponent<TextMeshProUGUI>();
+            while (SceneManager.GetActiveScene().name == "BootScene" && boot != null)
+            {
+                float value = liveSlider.value;
+                var fill = liveSlider.fillRect; var area = (RectTransform)fill.parent;
+                liveValid &= value >= last && fill.rect.width >= 0 && Mathf.Abs(fill.rect.width - area.rect.width * value) < .1f;
+                creditVisible &= Visible(liveCredit); sawPartial |= value > 0 && value < 1;
+                last = value; liveFrames++; yield return null;
+            }
+            Check(liveValid && sawPartial && liveFrames > 3, "Real timed loading animation grows monotonically with correct inner fill geometry");
+            Check(creditVisible, "Full studio credit stays active throughout actual timed Boot loading");
             yield return (Func<bool>)(() => SceneManager.GetActiveScene().name == "MainMenuScene" &&
                 !SceneTransitionManager.Instance.IsTransitioning && GameManager.Instance.CurrentState == GameState.Menu);
             yield return Settled();

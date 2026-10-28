@@ -46,9 +46,9 @@ Five source PNGs total 6,426,922 bytes. Android imports use ASTC 6x6, no mipmaps
 
 ### Native evidence and boundaries
 
-`Captures/UIRollout/Phase01/Checks/verification.txt`: PASS, 1,522 successful assertions, zero failed assertions. Real pointer input verifies press feedback, mode selection, Levels/Leaderboard/Settings/Profile opening and dismissal, and Play entering Defense GameScene, ShapesScene and ColorShiftScene. Defense uses scoped debug level101 to verify routing; this is not a claim of completing its campaign. No stage completes a level or awards a reward.
+`Captures/UIRollout/Phase01/Checks/verification.txt`: PASS, 1,678 successful assertions, zero failed assertions. Real pointer input verifies press feedback, mode selection, Levels/Leaderboard/Settings/Profile opening and dismissal, and Play entering Defense GameScene, ShapesScene and ColorShiftScene. Defense uses scoped debug level101 to verify routing; this is not a claim of completing its campaign. No stage completes a level or awards a reward.
 
-`Responsive1080x2400/verification.txt`: PASS, 1,064 successful assertions, zero failed assertions. This second run repeats actual Boot/Home captures, typography, bindings, twenty language/theme combinations and safe bounds; navigation routes are covered by the primary run. These are Editor Game View checks, not physical notch/device certification.
+`Responsive1080x2400/verification.txt`: PASS, 1,220 successful assertions, zero failed assertions. This second run repeats actual Boot/Home captures, typography, bindings, twenty language/theme combinations and safe bounds; navigation routes are covered by the primary run. These are Editor Game View checks, not physical notch/device certification.
 
 Both runs restore cloned player data, five preferences, original cloud factory/ad provider, language, random state, lives, launch flags and native input devices/settings. External service operation counters remain zero. Original pre-task preferences and all eleven initial dirty-file byte hashes were checked again after leaving Play.
 
@@ -58,7 +58,7 @@ Both runs restore cloned player data, five preferences, original cloud factory/a
 
 ### Preview and rebuilding
 
-Open `Captures/UIRollout/Phase01/index.html` directly, or serve the `Captures` directory and visit `/UIRollout/Phase01/index.html`. The current local preview is `http://127.0.0.1:8170/UIRollout/Phase01/index.html`. It offers Home/Boot Light/Dark, before/after, click-to-enlarge, full-size/fit and Escape close.
+Open `Captures/UIRollout/Phase01/index.html` directly, or serve the `Captures` directory and visit `/UIRollout/Phase01/index.html`. Use the self-contained local HTML directly. The previous localhost8170 server stopped answering; automatic approval review blocked restarting it during the revision pass. Actual native PNGs remain available, and `Revisions/progress.html` adds eight Light/Dark fill checkpoints. It offers Home/Boot Light/Dark, before/after, click-to-enlarge, full-size/fit and Escape close.
 
 To rebuild deliberately in Edit Mode: `UiRollout01Kit.ImportAssets()` first; then open BootScene and invoke `UiRollout01BootAuthoring.Apply()`, save it; open MainMenuScene and invoke `UiRollout01HomeAuthoring.Apply()`, save it. Helpers are Editor-only and do not rebuild the player UI at startup. Avoid reauthoring an already reviewed scene without a reason.
 
@@ -69,3 +69,5 @@ To recheck: enter Play from Boot, wait for idle MainMenu before opening the real
 01 Boot/Home -> 02 mode selection/settings -> 03 profile/leaderboard -> 04 Defense/Shapes levels -> 05 Color Shift levels/transition -> 06 Defense game/pause -> 07 Defense outcomes -> 08 Defense skills -> 09 tutorial -> 10 Shapes game/pause -> 11 Shapes outcomes -> 12 Shapes hint/Color Shift game -> 13 Color Shift pause/win -> 14 Color Shift lose/hint -> 15 map preview/pause.
 
 If asked to resume without stage-01 approval, show this completed preview and request the approval already required by the user. After explicit approval, begin board02 using these same shared resources where suitable. Each later board gets its own implementation notes, native evidence, commit and approval checkpoint.
+
+Board01 requested refinements are complete; see UI_ROLLOUT_01_REVISIONS.md for three revision phases, current validation and the offline preview note. The single-line FARZETKI GAMES credit, full visible cloud footer and rounded inset loading fill supersede the first board01 preview. Await approval before board02.

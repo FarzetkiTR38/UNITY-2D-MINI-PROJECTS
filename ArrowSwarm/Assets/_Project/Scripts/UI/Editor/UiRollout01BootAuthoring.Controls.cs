@@ -24,17 +24,22 @@ namespace ArrowSwarm.UI.Editor
 
         private static Slider Progress(Transform parent, out Image fill, out TextMeshProUGUI percentage)
         {
-            var track = K.Image(parent, "ProgressTrack", K.Sprite("light_plate"), new Vector2(0, -565), new Vector2(920, 96));
-            K.RoundedPlate(track, false);
-            track.material = K.Material("DarkPanel");
-            fill = K.Image(track.transform, "ProgressFill", K.Sprite("primary_plate"), Vector2.zero, new Vector2(896, 72));
-            fill.rectTransform.anchorMin = Vector2.zero;
-            fill.rectTransform.anchorMax = Vector2.one;
-            fill.rectTransform.offsetMin = new Vector2(12, 12);
-            fill.rectTransform.offsetMax = new Vector2(-12, -12);
-            // Slider drives the sliced fill width, retaining rounded ends at every percentage.
-            fill.type = Image.Type.Sliced;
-            fill.pixelsPerUnitMultiplier = 2;
+            var track = K.Image(parent, "ProgressTrack", null, new Vector2(0, -565), new Vector2(920, 78));
+            track.material = K.Material("LoadingTrack");
+            track.gameObject.AddComponent<UIThemeCoordinates>();
+            var area = K.Rect(track.transform, "FillArea", Vector2.zero, Vector2.zero);
+            area.anchorMin = Vector2.zero; area.anchorMax = Vector2.one;
+            area.offsetMin = new Vector2(7, 7); area.offsetMax = new Vector2(-7, -7);
+            // The first few percent must stay inside the slot's rounded left cap as well.
+            var clip = area.gameObject.AddComponent<Image>();
+            clip.material = K.Material("LoadingTrack"); clip.raycastTarget = false;
+            area.gameObject.AddComponent<UIThemeCoordinates>();
+            area.gameObject.AddComponent<Mask>().showMaskGraphic = false;
+            fill = K.Image(area, "ProgressFill", null, Vector2.zero, Vector2.zero);
+            fill.rectTransform.anchorMin = Vector2.zero; fill.rectTransform.anchorMax = Vector2.one;
+            fill.rectTransform.offsetMin = fill.rectTransform.offsetMax = Vector2.zero;
+            fill.material = K.Material("LoadingFill");
+            fill.gameObject.AddComponent<UIThemeCoordinates>();
             var slider = track.gameObject.AddComponent<Slider>();
             slider.interactable = false;
             slider.transition = Selectable.Transition.None;
@@ -44,8 +49,18 @@ namespace ArrowSwarm.UI.Editor
             slider.minValue = 0; slider.maxValue = 1; slider.wholeNumbers = false;
             slider.fillRect = fill.rectTransform;
             slider.value = 0;
-            percentage = K.Text(track.transform, "PercentText", "0%", new Vector2(320, 0), new Vector2(205, 70), 42, Color.white);
+            percentage = K.Text(track.transform, "PercentText", "0%", Vector2.zero, new Vector2(205, 64), 40, Color.white);
             return slider;
+        }
+
+        private static void RefreshProgress(Transform parent)
+        {
+            var old = parent.Find("ProgressTrack");
+            if (old != null) UnityEngine.Object.DestroyImmediate(old.gameObject);
+            var progress = Progress(parent, out Image fill, out TextMeshProUGUI percentage);
+            var loading = parent.GetComponentInParent<BootLoadingUI>();
+            Bind(loading, "_progressSlider", progress); Bind(loading, "_progressFillImage", fill);
+            Bind(loading, "_percentText", percentage);
         }
 
         private static CanvasGroup Tip(Transform parent, Sprite bulb, out Image icon, out TextMeshProUGUI text)

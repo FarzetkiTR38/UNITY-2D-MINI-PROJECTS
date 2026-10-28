@@ -29,6 +29,24 @@ namespace ArrowSwarm.UI.Editor
             ConfigureText("Body", font.material, .045f, .0f, .02f);
             ConfigureText("TitleBlue", titleFont.material, .20f, .13f, .16f);
             ConfigureText("TitleGold", titleFont.material, .20f, .13f, .16f);
+            CreateLoadingMaterials();
+        }
+
+        private static void CreateLoadingMaterials()
+        {
+            var shader = AssetDatabase.LoadAssetAtPath<Shader>("Assets/_Project/Art/Shaders/SharedLoadingBar.shader");
+            var track = NewMaterial("LoadingTrack", shader);
+            track.SetColor("_Color", Color.white);
+            track.SetColor("_TopColor", new Color(.08f, .20f, .40f));
+            track.SetColor("_BottomColor", new Color(.015f, .06f, .18f));
+            track.SetColor("_RimColor", new Color(.12f, .70f, 1));
+            track.SetFloat("_RimPixels", 3); track.SetFloat("_Gloss", .10f); track.SetFloat("_Flow", 0); Save(track);
+            var fill = NewMaterial("LoadingFill", shader);
+            fill.SetColor("_Color", Color.white);
+            fill.SetColor("_TopColor", new Color(.10f, .90f, 1));
+            fill.SetColor("_BottomColor", new Color(.015f, .24f, .94f));
+            fill.SetColor("_RimColor", new Color(.48f, .98f, 1));
+            fill.SetFloat("_RimPixels", 1.5f); fill.SetFloat("_Gloss", .27f); fill.SetFloat("_Flow", .075f); Save(fill);
         }
 
         private static void ConfigureBackdrop(string name, Shader shader, Color top, Color bottom)
