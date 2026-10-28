@@ -32,6 +32,12 @@ namespace ArrowSwarm.UI.Editor
             {
                 DataManager.Instance.SetTheme(theme); yield return Settled();
                 VerifyTypography(root, "Boot / " + theme);
+                var credit = root.Find("BootDesign/StudioBrand").GetComponent<TextMeshProUGUI>();
+                Check(Visible(credit) && credit.text == "FARZETKI GAMES", "Complete studio name is live visible TMP / " + theme);
+                var creditCorners = new Vector3[4]; credit.rectTransform.GetWorldCorners(creditCorners);
+                foreach (var corner in creditCorners)
+                    Check(Screen.safeArea.Contains(RectTransformUtility.WorldToScreenPoint(null, corner)),
+                        "Studio credit remains inside native safe area / " + theme);
                 Check(Field<TextMeshProUGUI>(boot, "_percentText").text == "65%", "Live Boot progress remains TMP at 65% / " + theme);
                 Check(Mathf.Abs(Field<Slider>(boot, "_progressSlider").value - .65f) < .001f, "Live progress fill stays bound / " + theme);
                 yield return Capture("boot-" + theme.ToString().ToLowerInvariant());

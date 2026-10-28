@@ -42,12 +42,7 @@ namespace ArrowSwarm.UI.Editor
             K.Theme(status, Ink, Ice);
             var progress = Progress(content, out Image fill, out TextMeshProUGUI percentage);
             var tip = Tip(content, bulb, out Image icon, out TextMeshProUGUI tipText);
-            var brand = K.Text(content, "StudioBrand", "FARZETKI", new Vector2(0, -837), new Vector2(620, 66), 43, Ink);
-            brand.characterSpacing = 4;
-            K.Theme(brand, Ink, Ice);
-            var games = K.Text(content, "StudioGames", "GAMES", new Vector2(0, -890), new Vector2(500, 35), 23, Ink);
-            games.characterSpacing = 14;
-            K.Theme(games, Ink, Ice);
+            StudioCredit(content);
 
             Bind(loading, "_backgroundImage", background);
             Bind(loading, "_titleLogoImage", crest);

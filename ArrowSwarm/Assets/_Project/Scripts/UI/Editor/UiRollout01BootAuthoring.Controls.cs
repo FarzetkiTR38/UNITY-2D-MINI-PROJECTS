@@ -8,6 +8,20 @@ namespace ArrowSwarm.UI.Editor
     /// <summary>Shared-asset progress and tip card; all copy remains live TMP owned by BootLoadingUI.</summary>
     internal static partial class UiRollout01BootAuthoring
     {
+        private static void StudioCredit(Transform parent)
+        {
+            foreach (string name in new[] { "StudioBrand", "StudioGames" })
+            {
+                var previous = parent.Find(name);
+                if (previous != null) UnityEngine.Object.DestroyImmediate(previous.gameObject);
+            }
+            var credit = K.Text(parent, "StudioBrand", "FARZETKI GAMES", new Vector2(0, -830),
+                new Vector2(870, 90), 50, Ink);
+            credit.characterSpacing = 3;
+            credit.textWrappingMode = TextWrappingModes.NoWrap;
+            K.Theme(credit, Ink, Ice);
+        }
+
         private static Slider Progress(Transform parent, out Image fill, out TextMeshProUGUI percentage)
         {
             var track = K.Image(parent, "ProgressTrack", K.Sprite("light_plate"), new Vector2(0, -565), new Vector2(920, 96));
