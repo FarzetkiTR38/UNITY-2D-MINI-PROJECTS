@@ -56,6 +56,7 @@ namespace ArrowSwarm.UI.Editor
             Bind(loading, "_tipText", tipText);
             Bind(loading, "_tipIcon", icon);
             Bind(loading, "_tipCanvasGroup", tip);
+            UiRolloutResponsiveAuthoring.Boot(canvasObject.transform);
             foreach (var graphic in canvasObject.GetComponentsInChildren<Graphic>(true)) graphic.raycastTarget = false;
             EditorUtility.SetDirty(loading);
             UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());

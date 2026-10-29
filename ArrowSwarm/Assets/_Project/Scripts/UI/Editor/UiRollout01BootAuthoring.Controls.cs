@@ -27,6 +27,7 @@ namespace ArrowSwarm.UI.Editor
             var hero = (RectTransform)parent.Find("OrbitHero");
             hero.anchoredPosition = new Vector2(0, -145); hero.sizeDelta = new Vector2(930, 700);
             Bind(parent.GetComponentInParent<BootLoadingUI>(), "_titleLogoImage", logo);
+            UiRolloutResponsiveAuthoring.Boot(parent.parent);
         }
 
         private static void StudioCredit(Transform parent)
@@ -111,6 +112,7 @@ namespace ArrowSwarm.UI.Editor
             var status = parent.Find("StatusText").GetComponent<TextMeshProUGUI>();
             status.rectTransform.anchoredPosition = new Vector2(0, -477);
             status.fontSize = 25;
+            UiRolloutResponsiveAuthoring.Boot(parent.parent);
         }
 
         private static CanvasGroup Tip(Transform parent, Sprite bulb, out Image icon, out TextMeshProUGUI text)

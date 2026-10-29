@@ -56,6 +56,7 @@ namespace ArrowSwarm.UI.Editor
             Bind(menu, "_levelText", level); Bind(menu, "_starsText", stars);
             // The brand has two authored TMP lines; SetupUI must not replace either with a single label.
             Bind(menu, "_titleText", null);
+            UiRolloutResponsiveAuthoring.Home(panel.transform);
             foreach (var canvas in panel.GetComponentsInParent<Canvas>(true))
                 canvas.additionalShaderChannels |= AdditionalCanvasShaderChannels.TexCoord1;
             EditorUtility.SetDirty(menu); EditorUtility.SetDirty(selector);

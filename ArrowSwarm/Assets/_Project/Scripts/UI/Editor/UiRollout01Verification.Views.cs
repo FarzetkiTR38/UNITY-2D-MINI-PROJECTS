@@ -41,6 +41,7 @@ namespace ArrowSwarm.UI.Editor
                 yield return VerifyBootCopy(boot);
                 yield return VerifyProgress(boot, theme);
                 VerifyTypography(root, "Boot / " + theme);
+                VerifyBootAnchors(root);
                 Check(Visible(logo) && logo.color == Color.white, "Illustrated Boot logo keeps its original glossy colors / " + theme);
                 Check(root.Find("BootDesign/Wordmark") == null && root.Find("BootDesign/BrandCrest") == null,
                     "Boot has one complete raster logo and no overlapping TMP brand / " + theme);
@@ -95,6 +96,7 @@ namespace ArrowSwarm.UI.Editor
             {
                 Status = "Home / " + theme; DataManager.Instance.SetTheme(theme); yield return Settled();
                 VerifyTypography(home.transform, Status); VerifyHomeBindings(menu);
+                VerifyHomeAnchors(home.transform);
                 VerifyCloudFooter(home.transform, Status);
                 var backdrop = home.transform.Find("SharedBackdrop").GetComponent<Image>();
                 Check(backdrop.material == UiRollout01Kit.Material(theme == ThemeMode.Light ? "BackdropLight" : "BackdropDark") &&

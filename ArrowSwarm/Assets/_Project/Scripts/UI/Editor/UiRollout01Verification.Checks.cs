@@ -86,8 +86,12 @@ namespace ArrowSwarm.UI.Editor
             var camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
             var corners = new Vector3[4]; button.GetComponent<RectTransform>().GetWorldCorners(corners);
             Rect safe = Screen.safeArea; safe.xMin -= 2; safe.xMax += 2; safe.yMin -= 2; safe.yMax += 2;
-            foreach (var point in corners) Check(safe.Contains(RectTransformUtility.WorldToScreenPoint(camera, point)),
-                "Interactive corner stays inside native safe area: " + label);
+            foreach (var point in corners)
+            {
+                Vector2 projected = RectTransformUtility.WorldToScreenPoint(camera, point);
+                Check(safe.Contains(projected), "Interactive corner stays inside native safe area: " + label +
+                    " / point=" + projected + " / safe=" + safe + " / screen=" + Screen.width + "x" + Screen.height);
+            }
         }
 
         private static void VerifyCloudFooter(Transform root, string label)

@@ -70,7 +70,8 @@ Shader "ArrowSwarm/UI/SharedLoadingBar"
                 float phase=frac((i.uv.x*pixels.x+abs(i.uv.y-.5)*pixels.y*.65-_Time.y*30)/48);
                 half arrows=smoothstep(.12,.18,phase)*(1-smoothstep(.48,.54,phase));
                 c.rgb+=arrows*_Chevrons*half3(.1,.65,.85);
-                half edge=-distance;
+                // Keep the authored frame inside the Slider's proportional inset on compact screens too.
+                half edge=-distance*132/max(pixels.y,1);
                 half3 bevel=lerp(half3(.005,.04,.40),half3(.03,.34,1),i.uv.y);
                 bevel=lerp(bevel,half3(.08,.87,1),smoothstep(1,2,edge)*(1-smoothstep(4,5,edge)));
                 bevel=lerp(bevel,half3(.80,.98,1),smoothstep(5,6,edge)*(1-smoothstep(7,8,edge)));
