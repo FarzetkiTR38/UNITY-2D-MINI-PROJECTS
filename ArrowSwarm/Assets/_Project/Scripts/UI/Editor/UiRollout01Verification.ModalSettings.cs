@@ -120,25 +120,24 @@ namespace ArrowSwarm.UI.Editor
 
         private static void VerifyThemeSelection(SettingsUI settings, ThemeMode expected)
         {
+            var art = Field<Image>(settings, "_themeSelectorImage");
+            var selected = Field<Sprite>(settings, expected == ThemeMode.Dark ? "_darkThemeSprite" : "_lightThemeSprite");
+            Check(Visible(art) && art.sprite == selected && art.useSpriteMesh && art.sprite.vertices.Length > 4,
+                "Original joined illustrated selector shows its intended selected half / " + expected);
+            Check(art.rectTransform.sizeDelta == new Vector2(350, 150), "Theme choices retain the old compact joined proportions");
             foreach (bool dark in new[] { false, true })
             {
                 var button = Field<Button>(settings, dark ? "_darkThemeButton" : "_lightThemeButton");
-                var image = button.transform.Find("ThemeArtwork").GetComponent<Image>();
-                string name = dark ? (expected == ThemeMode.Dark ? "SettingsMoonRichDark" : "SettingsMoonRichLight") : "SettingsSunRich";
-                Check(Visible(image) && image.sprite != null && image.sprite.name == name && image.useSpriteMesh && image.preserveAspect &&
-                    image.canvasRenderer.GetMesh() != null && image.canvasRenderer.GetMesh().vertexCount > 4,
-                    "Original glossy theme artwork renders its tight sprite geometry / " + name);
+                var label = button.GetComponentInChildren<TextMeshProUGUI>();
+                Check(button.targetGraphic == art && button.transform.parent == art.transform && Visible(label) &&
+                    label.text == LocalizationManager.Instance.GetText(dark ? "settings_theme_dark" : "settings_theme_light"),
+                    "Joined theme choice retains its direct input and live localized TMP caption / " + dark);
+                Check(button.GetComponent<RectTransform>().sizeDelta == new Vector2(175, 150),
+                    "Each illustrated theme half remains independently tappable / " + dark);
             }
             Check(DataManager.Instance.PlayerData.theme == expected, "Native theme button applies its intended real theme / " + expected);
             var highlights = Field<GameObject[]>(settings, "_themeHighlights");
-            Check(highlights != null && highlights.Length == 2, "Both theme buttons have authored selection highlights");
-            int selected = expected == ThemeMode.Dark ? 1 : 0;
-            for (int i = 0; i < highlights.Length; i++)
-            {
-                Check(highlights[i] != null && highlights[i].activeSelf == (i == selected),
-                    "Only the current theme has a visible selection highlight / " + i);
-                if (i == selected) Check(Visible(highlights[i].GetComponent<Image>()), "Current theme outline is actually visible");
-            }
+            Check(highlights != null && highlights.Length == 0, "Original selected-half artwork replaces the added separate gold outlines");
         }
 
         private static void VerifySettingsFooter(SettingsUI settings)
@@ -146,13 +145,20 @@ namespace ArrowSwarm.UI.Editor
             var footer = Field<Image>(settings, "_footerImage");
             var board = Field<Image>(settings, "_boardImage");
             var row = Field<Image>(settings, "_themeRowCard");
-            Check(Visible(footer) && footer.preserveAspect && footer.rectTransform.rect.width >= board.rectTransform.rect.width * .4f,
-                "Settings footer has the original visual weight and preserves its aspect");
+            Check(Visible(footer) && footer.preserveAspect && footer.rectTransform.sizeDelta == new Vector2(337, 166),
+                "Settings footer uses compact reference proportions with its original aspect");
             Check(Mathf.Abs(footer.rectTransform.rect.width / footer.rectTransform.rect.height - footer.sprite.rect.width / footer.sprite.rect.height) < .01f,
                 "Settings footer rect matches its real sprite aspect without squashing");
             var a = new Vector3[4]; var b = new Vector3[4];
             footer.rectTransform.GetWorldCorners(a); row.rectTransform.GetWorldCorners(b);
-            Check(a[1].y <= b[0].y - 4, "Settings footer stays below the theme row");
+            Check(board.transform.InverseTransformPoint(a[1]).y <= board.transform.InverseTransformPoint(b[0]).y - 4,
+                "Settings footer stays below the theme row at every Canvas scale");
+            board.rectTransform.GetWorldCorners(b);
+            Check(Mathf.Abs(a[0].y - b[0].y) <= 2, "Settings ornament sits flush inside the board bottom instead of hanging below it");
+            Check(board.sprite.name == "SettingsCompactFooterFrame" && board.useSpriteMesh && board.sprite.vertices.Length == 24,
+                "Only the obsolete footer socket is flattened in the original frame artwork");
+            if (DataManager.Instance.PlayerData.theme == ThemeMode.Dark)
+                Check(footer.material.name == "DarkFooterSettingsGear", "Settings restores its original masked ornament material");
             var canvas = footer.GetComponentInParent<Canvas>();
             var camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
             foreach (var corner in a) Check(Screen.safeArea.Contains(RectTransformUtility.WorldToScreenPoint(camera, corner)),

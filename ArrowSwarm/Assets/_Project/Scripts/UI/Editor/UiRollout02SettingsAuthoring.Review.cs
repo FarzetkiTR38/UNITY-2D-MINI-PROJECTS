@@ -34,6 +34,7 @@ namespace ArrowSwarm.UI.Editor
             safe.ApplyModifiedPropertiesWithoutUndo();
             ThemeArtwork((Button)fields.FindProperty("_lightThemeButton").objectReferenceValue, false);
             ThemeArtwork((Button)fields.FindProperty("_darkThemeButton").objectReferenceValue, true);
+            ApplyLowerReference();
             EditorUtility.SetDirty(owner);
             UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
         }

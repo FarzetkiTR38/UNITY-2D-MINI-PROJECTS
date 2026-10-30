@@ -34,14 +34,17 @@ namespace ArrowSwarm.UI.Editor
             var camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
             Vector2 center = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center));
             mouse.Send(new Vector2(2, 2), false); yield return mouse.Wait(); yield return Settled(.06f);
-            float baseline = button.transform.localScale.x;
+            var feedback = button.GetComponent<UIButtonFeedback>();
+            var feedbackTarget = feedback != null ? Field<Transform>(feedback, "_targetTransform") : button.transform;
+            if (feedbackTarget == null) feedbackTarget = button.transform;
+            float baseline = feedbackTarget.localScale.x;
             mouse.Send(center, true); yield return mouse.Wait(); yield return Settled(.12f);
             if (squeeze)
             {
                 var hits = new System.Collections.Generic.List<RaycastResult>();
                 EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = center }, hits);
-                Check(button.transform.localScale.x < baseline * .99f, "Real native press squeezes the actual " + button.name +
-                    " / baseline=" + baseline + " / held=" + button.transform.localScale.x + " / pointer=" + center +
+                Check(feedbackTarget.localScale.x < baseline * .99f, "Real native press squeezes the authored target of " + button.name +
+                    " / baseline=" + baseline + " / held=" + feedbackTarget.localScale.x + " / pointer=" + center +
                     " / hit=" + (hits.Count > 0 ? hits[0].gameObject.name : "none"));
             }
             mouse.Send(center, false); yield return mouse.Wait(); yield return Settled(.25f);
