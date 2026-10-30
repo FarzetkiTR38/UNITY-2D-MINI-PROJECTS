@@ -76,3 +76,6 @@ Board01 requested refinements are complete; see UI_ROLLOUT_01_REVISIONS.md for t
 R4 supersedes the Boot brand-only TMP rule at the user's explicit request: the existing combined character/wordmark logo is reused without new PNGs or importer changes. All functional copy and Home branding remain TMP. See UI_ROLLOUT_01_REVISIONS.md for current scope and native checks.
 
 R5 completes the reference lower Boot and dedicated warm/blue atmosphere. Native results are1,914/1,456PASS with zero failures, including every localized Boot tip/status. Home source/materials remain unchanged. Both revisions and final evidence are in UI_ROLLOUT_01_REVISIONS.md; board02 is authorized; approval is required before board03.
+
+Board02 requested visual review is complete; UI_ROLLOUT_02_REVIEW.md supersedes the first board02 composition. Compact illustrated mode selection and established dimensional TMP titles are restored; Settings retains its controls with corrected footer and glossy theme artwork. Four native sizes pass. Current review: Captures/UIRollout/Phase02Review/index.html. Wait for user approval before board03.
+
