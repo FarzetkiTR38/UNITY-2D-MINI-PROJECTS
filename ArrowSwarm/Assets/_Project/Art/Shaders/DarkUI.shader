@@ -16,6 +16,7 @@ Shader "ArrowSwarm/UI/DarkVariant"
         _BevelStrength ("Palette Colored Bevel Shading", Range(0,1)) = 0
         _BevelShade ("Bevel Shadow / Highlight Brightness", Vector) = (0.72,1.10,0,0)
         _OpaqueInterior ("Solid Dark Interior", Range(0,1)) = 0
+        _InteriorAlphaRange ("Opaque Interior Source Alpha Range", Vector) = (0.35,0.65,0,0)
         _ContentBounds ("Medal Content Bounds XYZW", Vector) = (0.187,0.08,0.984,0.714)
         _SolidFill ("Clean Interior Gradient", Range(0,1)) = 0
         [Toggle(FOOTER_PLATE_MASK)] _UsePlateMask ("Illustrated Footer Plaque", Float) = 0
@@ -57,7 +58,7 @@ Shader "ArrowSwarm/UI/DarkVariant"
             float4 _MainTex_ST, _ClipRect;
             float _UIMaskSoftnessX, _UIMaskSoftnessY;
             half _AccentStrength, _SurfaceStrength, _Background, _LiftInk;
-            half4 _SurfaceInset, _Corner, _ContentBounds, _BevelShade;
+            half4 _SurfaceInset, _Corner, _ContentBounds, _BevelShade, _InteriorAlphaRange;
             half _Artwork, _EdgeFill, _OpaqueInterior, _SolidFill, _BevelStrength;
             v2f vert(appdata v)
             {
@@ -148,7 +149,7 @@ Shader "ArrowSwarm/UI/DarkVariant"
                 }
                 dark = lerp(dark, _SurfaceColor.rgb * lerp(0.65,1.2,luminance), _Background);
                 c.rgb = dark;
-                c.a = lerp(c.a,i.color.a,region*(1-protectedArtwork)*_OpaqueInterior*neutralFill*smoothstep(0.35,0.65,texel.a));
+                c.a = lerp(c.a,i.color.a,region*(1-protectedArtwork)*_OpaqueInterior*neutralFill*smoothstep(_InteriorAlphaRange.x,_InteriorAlphaRange.y,texel.a));
                 #endif
                 #ifdef UNITY_UI_CLIP_RECT
                 half2 m = saturate((_ClipRect.zw-_ClipRect.xy-abs(i.mask.xy))*i.mask.zw);
