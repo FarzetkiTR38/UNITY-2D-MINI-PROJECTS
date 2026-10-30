@@ -99,6 +99,14 @@ namespace ArrowSwarm.UI.Editor
             float expected = Field<float>(toggle, toggle.IsOn ? "_onKnobX" : "_offKnobX");
             Check(knob != null && Mathf.Abs(knob.anchoredPosition.x - expected) <= .6f,
                 "Switch knob settles at the authored state position / " + label);
+            text.ForceMeshUpdate();
+            var glyphs = text.textBounds;
+            var left = toggle.transform.InverseTransformPoint(text.transform.TransformPoint(glyphs.min)).x;
+            var right = toggle.transform.InverseTransformPoint(text.transform.TransformPoint(glyphs.max)).x;
+            float halfKnob = knob.rect.width * .5f;
+            Check(toggle.IsOn ? right <= knob.anchoredPosition.x - halfKnob - 2 :
+                left >= knob.anchoredPosition.x + halfKnob + 2,
+                "Localized status glyphs stay clear of the switch knob / " + label);
         }
 
         private static void VerifyLanguageName(SettingsUI settings)
@@ -111,6 +119,10 @@ namespace ArrowSwarm.UI.Editor
 
         private static void VerifyThemeSelection(SettingsUI settings, ThemeMode expected)
         {
+            var moon = Field<Button>(settings, "_darkThemeButton").GetComponentInChildren<UICrescentGraphic>();
+            Check(Visible(moon) && moon.GetComponent<CanvasRenderer>() != null &&
+                moon.canvasRenderer.GetMesh() != null && moon.canvasRenderer.GetMesh().vertexCount > 0,
+                "Theme crescent has a real visible UI mesh without an opaque cutout");
             Check(DataManager.Instance.PlayerData.theme == expected, "Native theme button applies its intended real theme / " + expected);
             var highlights = Field<GameObject[]>(settings, "_themeHighlights");
             Check(highlights != null && highlights.Length == 2, "Both theme buttons have authored selection highlights");

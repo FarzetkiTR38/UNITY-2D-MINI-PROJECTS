@@ -14,8 +14,10 @@ namespace ArrowSwarm.UI
         private Rect _safe;
         private Vector2Int _screen;
         private float _canvasScale;
-        private void OnEnable(){Fit();}
-        private void Update()
+        private void OnEnable(){Canvas.willRenderCanvases+=RefreshIfNeeded;Fit();}
+        private void OnDisable(){Canvas.willRenderCanvases-=RefreshIfNeeded;}
+        private void Update()=>RefreshIfNeeded();
+        private void RefreshIfNeeded()
         {
             if(_canvas==null)_canvas=GetComponentInParent<Canvas>();
             if(_safe!=Screen.safeArea||_screen.x!=Screen.width||_screen.y!=Screen.height||

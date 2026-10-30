@@ -44,6 +44,7 @@ namespace ArrowSwarm.UI
         [SerializeField] private Button _lightThemeButton;
         [Tooltip("Direct button to select Dark theme (optional)")]
         [SerializeField] private Button _darkThemeButton;
+        [SerializeField] private GameObject[] _themeHighlights;
 
         [Header("Decoration & Board")]
         [SerializeField] private Image _boardImage;
@@ -72,6 +73,18 @@ namespace ArrowSwarm.UI
         private void Awake()
         {
             AutoWire();
+        }
+
+        private void OnEnable()
+        {
+            Localization.LocalizationManager.OnLanguageChanged += UpdateLanguageDisplay;
+            ThemeManager.OnThemeChanged += UpdateThemeDisplay;
+        }
+
+        private void OnDisable()
+        {
+            Localization.LocalizationManager.OnLanguageChanged -= UpdateLanguageDisplay;
+            ThemeManager.OnThemeChanged -= UpdateThemeDisplay;
         }
 
         private void Start()
@@ -355,6 +368,9 @@ namespace ArrowSwarm.UI
 
         private void UpdateThemeDisplay(ThemeMode theme)
         {
+            if (_themeHighlights != null)
+                for (int i = 0; i < _themeHighlights.Length; i++)
+                    if (_themeHighlights[i] != null) _themeHighlights[i].SetActive(i == (theme == ThemeMode.Dark ? 1 : 0));
             if (_themeSelectorImage != null)
             {
                 Sprite targetSprite = theme == ThemeMode.Light ? _lightThemeSprite : _darkThemeSprite;

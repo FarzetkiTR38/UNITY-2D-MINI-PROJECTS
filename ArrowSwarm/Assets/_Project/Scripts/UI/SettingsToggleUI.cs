@@ -3,6 +3,7 @@ namespace ArrowSwarm.UI
     using System;
     using System.Collections;
     using TMPro;
+    using ArrowSwarm.Localization;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -37,6 +38,8 @@ namespace ArrowSwarm.UI
         [SerializeField] private float _offTextX = 35f;
         [SerializeField] private string _onText = "ON";
         [SerializeField] private string _offText = "OFF";
+        [SerializeField] private string _onTextKey;
+        [SerializeField] private string _offTextKey;
         [SerializeField] private float _animSpeed = 1000f;
 
         /// <summary>Current toggle state.</summary>
@@ -56,11 +59,14 @@ namespace ArrowSwarm.UI
         {
             if (_button == null) _button = GetComponent<Button>();
             _button?.onClick.AddListener(OnButtonClicked);
+            LocalizationManager.OnLanguageChanged += RefreshStatusText;
+            RefreshStatusText();
         }
 
         private void OnDisable()
         {
             _button?.onClick.RemoveListener(OnButtonClicked);
+            LocalizationManager.OnLanguageChanged -= RefreshStatusText;
         }
 
         /// <summary>
@@ -118,7 +124,7 @@ namespace ArrowSwarm.UI
             // 2. Status text update (if present)
             if (_statusText != null && _statusText.gameObject.activeInHierarchy)
             {
-                _statusText.text = isOn ? _onText : _offText;
+                RefreshStatusText();
                 var textRT = _statusText.GetComponent<RectTransform>();
                 if (textRT != null)
                 {
@@ -159,6 +165,15 @@ namespace ArrowSwarm.UI
             _onSprite = onSprite;
             _offSprite = offSprite;
             SetIsOn(IsOn, false);
+        }
+
+        private void RefreshStatusText()
+        {
+            if (_statusText == null) return;
+            string key = IsOn ? _onTextKey : _offTextKey;
+            string fallback = IsOn ? _onText : _offText;
+            _statusText.text = LocalizationManager.HasInstance && !string.IsNullOrEmpty(key)
+                ? LocalizationManager.Instance.GetText(key, fallback) : fallback;
         }
 
         private void OnButtonClicked()
