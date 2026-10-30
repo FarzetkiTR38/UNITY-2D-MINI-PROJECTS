@@ -79,6 +79,7 @@ namespace ArrowSwarm.UI.Editor
                 string prefix = "_" + rowNames[i].ToLowerInvariant();
                 U.Bind(owner, prefix + "RowCard", rowCards[i]); U.Bind(owner, prefix + "Icon", rowIcons[i]);
             }
+            ApplyReview();
             EditorUtility.SetDirty(owner);
             UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
         }

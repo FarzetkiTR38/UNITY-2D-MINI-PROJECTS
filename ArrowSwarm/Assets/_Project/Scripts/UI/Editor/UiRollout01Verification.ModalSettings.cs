@@ -50,6 +50,7 @@ namespace ArrowSwarm.UI.Editor
             VerifyThemeSelection(settings, theme == ThemeMode.Light ? ThemeMode.Dark : ThemeMode.Light);
             yield return Click(mouse, theme == ThemeMode.Light ? light : dark, true);
             VerifyThemeSelection(settings, theme);
+            VerifySettingsFooter(settings);
             VerifyModalCopy(panel.transform, Status);
             yield return Capture("settings-" + theme.ToString().ToLowerInvariant());
             foreach (var entry in manager.AvailableLanguages)
@@ -119,10 +120,15 @@ namespace ArrowSwarm.UI.Editor
 
         private static void VerifyThemeSelection(SettingsUI settings, ThemeMode expected)
         {
-            var moon = Field<Button>(settings, "_darkThemeButton").GetComponentInChildren<UICrescentGraphic>();
-            Check(Visible(moon) && moon.GetComponent<CanvasRenderer>() != null &&
-                moon.canvasRenderer.GetMesh() != null && moon.canvasRenderer.GetMesh().vertexCount > 0,
-                "Theme crescent has a real visible UI mesh without an opaque cutout");
+            foreach (bool dark in new[] { false, true })
+            {
+                var button = Field<Button>(settings, dark ? "_darkThemeButton" : "_lightThemeButton");
+                var image = button.transform.Find("ThemeArtwork").GetComponent<Image>();
+                string name = dark ? (expected == ThemeMode.Dark ? "SettingsMoonRichDark" : "SettingsMoonRichLight") : "SettingsSunRich";
+                Check(Visible(image) && image.sprite != null && image.sprite.name == name && image.useSpriteMesh && image.preserveAspect &&
+                    image.canvasRenderer.GetMesh() != null && image.canvasRenderer.GetMesh().vertexCount > 4,
+                    "Original glossy theme artwork renders its tight sprite geometry / " + name);
+            }
             Check(DataManager.Instance.PlayerData.theme == expected, "Native theme button applies its intended real theme / " + expected);
             var highlights = Field<GameObject[]>(settings, "_themeHighlights");
             Check(highlights != null && highlights.Length == 2, "Both theme buttons have authored selection highlights");
@@ -133,6 +139,24 @@ namespace ArrowSwarm.UI.Editor
                     "Only the current theme has a visible selection highlight / " + i);
                 if (i == selected) Check(Visible(highlights[i].GetComponent<Image>()), "Current theme outline is actually visible");
             }
+        }
+
+        private static void VerifySettingsFooter(SettingsUI settings)
+        {
+            var footer = Field<Image>(settings, "_footerImage");
+            var board = Field<Image>(settings, "_boardImage");
+            var row = Field<Image>(settings, "_themeRowCard");
+            Check(Visible(footer) && footer.preserveAspect && footer.rectTransform.rect.width >= board.rectTransform.rect.width * .4f,
+                "Settings footer has the original visual weight and preserves its aspect");
+            Check(Mathf.Abs(footer.rectTransform.rect.width / footer.rectTransform.rect.height - footer.sprite.rect.width / footer.sprite.rect.height) < .01f,
+                "Settings footer rect matches its real sprite aspect without squashing");
+            var a = new Vector3[4]; var b = new Vector3[4];
+            footer.rectTransform.GetWorldCorners(a); row.rectTransform.GetWorldCorners(b);
+            Check(a[1].y <= b[0].y - 4, "Settings footer stays below the theme row");
+            var canvas = footer.GetComponentInParent<Canvas>();
+            var camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+            foreach (var corner in a) Check(Screen.safeArea.Contains(RectTransformUtility.WorldToScreenPoint(camera, corner)),
+                "Settings footer stays completely inside the native safe area");
         }
     }
 }
