@@ -79,3 +79,5 @@ R5 completes the reference lower Boot and dedicated warm/blue atmosphere. Native
 
 Board02 requested visual review is complete; UI_ROLLOUT_02_REVIEW.md supersedes the first board02 composition. Compact illustrated mode selection and established dimensional TMP titles are restored; Settings retains its controls with corrected footer and glossy theme artwork. Four native sizes pass. Current review: Captures/UIRollout/Phase02Review/index.html. Wait for user approval before board03.
 
+
+Settings reference follow-up is complete: original joined theme pill, compact masked gear and straight lower frame restored. See UI_ROLLOUT_02_SETTINGS_REFERENCE.md; current evidence is Captures/UIRollout/Phase02SettingsReference/index.html. Next gate remains user approval before board03.

@@ -21,3 +21,5 @@ Portable preview: Captures/UIRollout/Phase02Review/index.html. Before is the pre
 Cleanup: all 14 protected files plus ProjectSettings byte-match the fresh private snapshot. All five preferences and original Edit Boot scene, Game View index 18 and run-in-background setting restored. Pre-existing 11 dirty tracked files and unrelated untracked work remain untouched. Three small geometry-only Sprite assets add 43,702 serialized bytes, reuse original textures and preserve native reimport/domain reload. No new texture/font/importer/gameplay changes. Known pre-existing duplicate AudioListener warning remains outside this UI scope.
 
 NEXT: Wait for the user to review and approve board02 before implementing board03. If asked to resume without approval, read this document and show the current preview/checkpoint; do not automatically start a later board.
+
+Latest narrow Settings follow-up: UI_ROLLOUT_02_SETTINGS_REFERENCE.md and Captures/UIRollout/Phase02SettingsReference/index.html supersede only the joined theme control and lower ornament. All other board02 work remains approved/preserved. Board03 still awaits approval.
