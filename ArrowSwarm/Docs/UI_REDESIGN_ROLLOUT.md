@@ -34,7 +34,7 @@ Baseline: `ce22ef28`. Current checkpoint: **01 Boot and Home implemented and ver
 - [x] Verify all 880 existing later-panel object documents remain unchanged.
 - [x] Restore the original five preferences, eleven dirty files, original Game View selection, Boot Edit scene and run-in-background setting.
 - [x] Prepare the actual before/after browser preview and stage-01 commit.
-- [ ] **User approval of stage 01. Board 02 is not started.**
+- [x] **The user approved continuing to board02 with the responsive-layout request. See UI_ROLLOUT_02.md.**
 
 ### Implementation
 
@@ -68,11 +68,11 @@ To recheck: enter Play from Boot, wait for idle MainMenu before opening the real
 
 01 Boot/Home -> 02 mode selection/settings -> 03 profile/leaderboard -> 04 Defense/Shapes levels -> 05 Color Shift levels/transition -> 06 Defense game/pause -> 07 Defense outcomes -> 08 Defense skills -> 09 tutorial -> 10 Shapes game/pause -> 11 Shapes outcomes -> 12 Shapes hint/Color Shift game -> 13 Color Shift pause/win -> 14 Color Shift lose/hint -> 15 map preview/pause.
 
-If asked to resume without stage-01 approval, show this completed preview and request the approval already required by the user. After explicit approval, begin board02 using these same shared resources where suitable. Each later board gets its own implementation notes, native evidence, commit and approval checkpoint.
+The user authorized board02 in the responsive-layout request. Current work is documented in UI_ROLLOUT_02.md. Do not proceed to board03 until the user approves the completed board02 preview. Each later board gets its own implementation notes, native evidence, commit and approval checkpoint.
 
-Board01 requested refinements are complete; see UI_ROLLOUT_01_REVISIONS.md for the requested revision phases, current validation and the offline preview note. The two-line FARZETKI / GAMES credit, full visible cloud footer, right-aligned percentage, flowing chevrons and Boot-only atmosphere supersede the first board01 preview. Await approval before board02.
+Board01 requested refinements are complete; see UI_ROLLOUT_01_REVISIONS.md for the requested revision phases, current validation and the offline preview note. The two-line FARZETKI / GAMES credit, full visible cloud footer, right-aligned percentage, flowing chevrons and Boot-only atmosphere supersede the first board01 preview. Board02 is authorized; its next approval gate is before board03.
 
 
 R4 supersedes the Boot brand-only TMP rule at the user's explicit request: the existing combined character/wordmark logo is reused without new PNGs or importer changes. All functional copy and Home branding remain TMP. See UI_ROLLOUT_01_REVISIONS.md for current scope and native checks.
 
-R5 completes the reference lower Boot and dedicated warm/blue atmosphere. Native results are1,914/1,456PASS with zero failures, including every localized Boot tip/status. Home source/materials remain unchanged. Both revisions and final evidence are in UI_ROLLOUT_01_REVISIONS.md; board02 still requires approval.
+R5 completes the reference lower Boot and dedicated warm/blue atmosphere. Native results are1,914/1,456PASS with zero failures, including every localized Boot tip/status. Home source/materials remain unchanged. Both revisions and final evidence are in UI_ROLLOUT_01_REVISIONS.md; board02 is authorized; approval is required before board03.

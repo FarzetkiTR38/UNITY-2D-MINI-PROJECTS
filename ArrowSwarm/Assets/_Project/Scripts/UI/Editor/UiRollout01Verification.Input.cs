@@ -36,7 +36,14 @@ namespace ArrowSwarm.UI.Editor
             mouse.Send(new Vector2(2, 2), false); yield return mouse.Wait(); yield return Settled(.06f);
             float baseline = button.transform.localScale.x;
             mouse.Send(center, true); yield return mouse.Wait(); yield return Settled(.12f);
-            if (squeeze) Check(button.transform.localScale.x < baseline * .99f, "Real native press squeezes the actual " + button.name);
+            if (squeeze)
+            {
+                var hits = new System.Collections.Generic.List<RaycastResult>();
+                EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = center }, hits);
+                Check(button.transform.localScale.x < baseline * .99f, "Real native press squeezes the actual " + button.name +
+                    " / baseline=" + baseline + " / held=" + button.transform.localScale.x + " / pointer=" + center +
+                    " / hit=" + (hits.Count > 0 ? hits[0].gameObject.name : "none"));
+            }
             mouse.Send(center, false); yield return mouse.Wait(); yield return Settled(.25f);
         }
 
@@ -45,6 +52,8 @@ namespace ArrowSwarm.UI.Editor
             private readonly Mouse _previousMouse, _mouse;
             private readonly InputDevice _previousPointer;
             private readonly InputSettings _original, _temporary;
+            private readonly InputActionAsset _uiActions;
+            private readonly UnityEngine.InputSystem.Utilities.ReadOnlyArray<InputDevice>? _uiDevices;
             private readonly GameObject _selection;
             private Vector2 _position;
             private bool _pressed, _pending, _acknowledged, _disposed;
@@ -60,6 +69,15 @@ namespace ArrowSwarm.UI.Editor
                     _temporary.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
                     _temporary.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
                     InputSystem.settings = _temporary; _mouse = InputSystem.AddDevice<Mouse>("UiRollout01Mouse");
+                    var module = EventSystem.current != null ? EventSystem.current.currentInputModule as UnityEngine.InputSystem.UI.InputSystemUIInputModule : null;
+                    _uiActions = module != null ? module.actionsAsset : null;
+                    if (_uiActions != null)
+                    {
+                        var devices = _uiActions.devices;
+                        _uiDevices = devices.HasValue ? new UnityEngine.InputSystem.Utilities.ReadOnlyArray<InputDevice>(devices.Value.ToArray()) :
+                            (UnityEngine.InputSystem.Utilities.ReadOnlyArray<InputDevice>?)null;
+                        _uiActions.devices = new InputDevice[] { _mouse };
+                    }
                     InputSystem.onAfterUpdate += AfterUpdate;
                 }
                 catch { Dispose(); throw; }
@@ -85,6 +103,7 @@ namespace ArrowSwarm.UI.Editor
             {
                 if (_disposed) return; _disposed = true; InputSystem.onAfterUpdate -= AfterUpdate;
                 var failures = new System.Collections.Generic.List<Exception>();
+                RestoreAttempt(failures, () => { if (_uiActions != null) _uiActions.devices = _uiDevices; }, "original UI action device filter");
                 RestoreAttempt(failures, () => { if (_mouse != null && _mouse.added) InputSystem.RemoveDevice(_mouse); }, "temporary input device");
                 RestoreAttempt(failures, () => InputSystem.settings = _original, "original InputSettings");
                 RestoreAttempt(failures, () => { if (_temporary != null) UnityEngine.Object.DestroyImmediate(_temporary); }, "temporary InputSettings copy");
@@ -97,6 +116,19 @@ namespace ArrowSwarm.UI.Editor
                 }, "original pointer selection");
                 if (failures.Count > 0) throw new AggregateException("Native pointer restoration failed.", failures);
                 Check(ReferenceEquals(InputSystem.settings, _original) && (_mouse == null || !_mouse.added), "Native pointer settings and temporary device restored");
+                bool filterMatches = true;
+                if (_uiActions != null)
+                {
+                    var devices = _uiActions.devices;
+                    filterMatches = devices.HasValue == _uiDevices.HasValue;
+                    if (filterMatches && devices.HasValue)
+                    {
+                        filterMatches = devices.Value.Count == _uiDevices.Value.Count;
+                        for (int i = 0; filterMatches && i < devices.Value.Count; i++)
+                            filterMatches = ReferenceEquals(devices.Value[i], _uiDevices.Value[i]);
+                    }
+                }
+                Check(filterMatches, "Original UI action device filter restored");
                 Check((_previousMouse == null || !_previousMouse.added || Mouse.current == _previousMouse) &&
                     (_previousPointer == null || !_previousPointer.added || Pointer.current == _previousPointer), "Original current mouse/pointer restored");
             }

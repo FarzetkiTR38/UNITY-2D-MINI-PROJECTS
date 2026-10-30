@@ -18,6 +18,7 @@ namespace ArrowSwarm.UI.Editor
         private static readonly Stack<IEnumerator> Steps = new Stack<IEnumerator>();
         private static readonly List<string> Results = new List<string>();
         private static Scope _scope;
+        private static UiRollout01NativeFrameRunner _frameRunner;
         private static Func<bool> _wait;
         private static string _folder;
         private static double _deadline;
@@ -47,10 +48,10 @@ namespace ArrowSwarm.UI.Editor
             _folder = folder; _navigation = navigation; Directory.CreateDirectory(folder);
             _modalScreens = _nextModalScreens;
             Results.Clear(); Steps.Clear(); _wait = null; _cloudFooter = null; _textControlChecked = false;
-            try { _scope = new Scope(); Steps.Push(Run()); }
+            try { _scope = new Scope(); Steps.Push(Run()); _frameRunner = UiRollout01NativeFrameRunner.Begin(Tick); }
             catch { _scope?.Dispose(); _scope = null; throw; }
             _deadline = EditorApplication.timeSinceStartup + 300; Status = "Checking real Boot and Home";
-            EditorApplication.update += Tick; AssemblyReloadEvents.beforeAssemblyReload += BeforeReload;
+            EditorApplication.update += Watchdog; AssemblyReloadEvents.beforeAssemblyReload += BeforeReload;
             EditorApplication.playModeStateChanged += ModeChanged;
         }
 
@@ -68,6 +69,14 @@ namespace ArrowSwarm.UI.Editor
 
         private static void BeforeReload()
         { if (_scope != null) Finish("ABORT: Boot/Home script reload", false); }
+
+        // Screen/safe-area and Canvas assertions belong to the native player frame. In an Editor
+        // update Unity can temporarily report a docked editor viewport instead of the Game View.
+        private static void Watchdog()
+        {
+            if (_scope != null && !_finishing && (!Application.isPlaying || _frameRunner == null || EditorApplication.timeSinceStartup > _deadline))
+                Finish("FAIL: Native verification stopped or timed out / " + Status, Application.isPlaying);
+        }
 
         private static void Tick()
         {
@@ -95,7 +104,8 @@ namespace ArrowSwarm.UI.Editor
         private static void Finish(string result, bool allowDeferred = true)
         {
             if (_finishing) { CompleteFinish(result, false); return; }
-            EditorApplication.update -= Tick; AssemblyReloadEvents.beforeAssemblyReload -= BeforeReload;
+            EditorApplication.update -= Watchdog; AssemblyReloadEvents.beforeAssemblyReload -= BeforeReload;
+            if (_frameRunner != null) { _frameRunner.End(!allowDeferred); _frameRunner = null; }
             EditorApplication.playModeStateChanged -= ModeChanged;
             var failures = new List<Exception>();
             try
