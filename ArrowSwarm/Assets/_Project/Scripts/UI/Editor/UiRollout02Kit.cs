@@ -9,6 +9,31 @@ namespace ArrowSwarm.UI.Editor
     /// <summary>Shared text, interaction, chrome and safe wrappers for approved modal screens.</summary>
     internal static class UiRollout02Kit
     {
+        /// <summary>Reuses the game's authored four-layer TMP title, including its original gradients and extrusion.</summary>
+        internal static TextMeshProUGUI Title(Transform parent, string name, string fallback, Vector2 position,
+            Vector2 size, float font, string key)
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/UI/Casual3DTitle.prefab");
+            if (prefab == null) throw new System.InvalidOperationException("Existing Casual3DTitle prefab is missing.");
+            var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+            instance.name = name;
+            var rect = instance.GetComponent<RectTransform>();
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(.5f, .5f);
+            rect.localScale = Vector3.one; rect.anchoredPosition = position; rect.sizeDelta = size;
+            var title = instance.GetComponent<Casual3DTitle>();
+            var fields = new SerializedObject(title);
+            fields.FindProperty("_text").stringValue = fallback;
+            fields.FindProperty("_localizationKey").stringValue = key;
+            fields.FindProperty("_fontSize").floatValue = font;
+            fields.FindProperty("_fitToRect").boolValue = true;
+            fields.FindProperty("_horizontalFitPadding").floatValue = 12;
+            fields.ApplyModifiedPropertiesWithoutUndo();
+            foreach (var layer in instance.GetComponentsInChildren<TMP_Text>(true)) layer.raycastTarget = false;
+            title.ApplyAll();
+            PrefabUtility.RecordPrefabInstancePropertyModifications(title);
+            return fields.FindProperty("_frontText").objectReferenceValue as TextMeshProUGUI;
+        }
+
         internal static Image PopupCrest(Transform parent, Vector2 position, Vector2 size)
         {
             var image = K.Image(parent, "BrandCrest", K.Sprite("popup_header_crest"), position, size);

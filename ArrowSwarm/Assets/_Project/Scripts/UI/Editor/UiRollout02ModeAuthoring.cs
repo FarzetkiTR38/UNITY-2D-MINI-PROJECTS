@@ -9,7 +9,7 @@ namespace ArrowSwarm.UI.Editor
     using K = UiRollout01Kit;
     using U = UiRollout02Kit;
 
-    /// <summary>Authors board02's localized mode modal while retaining the existing Home and mode controller.</summary>
+    /// <summary>Restores the compact illustrated mode modal while retaining Home, localization and its existing controller.</summary>
     internal static partial class UiRollout02ModeAuthoring
     {
         private const string Art = "Assets/_Project/Art/Sprites/ModeMenu/";
@@ -19,7 +19,8 @@ namespace ArrowSwarm.UI.Editor
 
         internal static void Apply()
         {
-            if (Application.isPlaying || SceneManager.GetActiveScene().path != "Assets/_Project/Scenes/MainMenuScene.unity")
+            if (Application.isPlaying || EditorApplication.isPlayingOrWillChangePlaymode ||
+                SceneManager.GetActiveScene().path != "Assets/_Project/Scenes/MainMenuScene.unity")
                 throw new InvalidOperationException("Open MainMenuScene in Edit Mode before authoring board02 modes.");
             var menu = UnityEngine.Object.FindFirstObjectByType<MainMenuUI>(FindObjectsInactive.Include);
             if (menu == null) throw new InvalidOperationException("Existing MainMenuUI is missing.");
@@ -41,6 +42,9 @@ namespace ArrowSwarm.UI.Editor
                 dark[i] = RequiredSprite(Art + "ModalNightSlices/Card" + i + ".asset");
             }
             var closeSprite = RequiredSprite(Art + "LocalizedSlices/Close.asset");
+            var frameSprite = RequiredSprite(Art + "LocalizedSlices/ModalFrame.asset");
+            var frameDark = AssetDatabase.LoadAssetAtPath<Material>("Assets/_Project/Art/Materials/Theme/DarkSurface.mat")
+                ?? throw new InvalidOperationException("The existing DarkSurface material is missing.");
             var ring = SelectionMaterial();
             var overlay = group.transform;
             var previous = new GameObject[overlay.childCount];
@@ -52,22 +56,21 @@ namespace ArrowSwarm.UI.Editor
             dim.color = new Color(.015f, .035f, .08f, .58f); dim.raycastTarget = true;
             var fit = U.SafeWrapper(overlay, "ModeSafeFit", new Vector2(1060, 1900));
             var motion = K.Rect(fit, "ModeDialogMotion", Vector2.zero, new Vector2(1060, 1900));
-            U.PopupCrest(motion, new Vector2(0, 795), new Vector2(790, 290));
-            var frame = K.Image(motion, "ModalFrame", K.Sprite("light_plate"), new Vector2(0, -70), new Vector2(1000, 1590));
-            U.Plate(frame);
-            var title = U.Text(motion, "Title", "GAME MODES", new Vector2(-35, 614), new Vector2(780, 132), 94, "modes_title");
-            title.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/_Project/Fonts/LilitaOne_SDF.asset");
-            title.fontSharedMaterial = K.Material("TitleBlue");
-            K.Theme(title, Color.white, Color.white);
-            var star = K.Image(motion, "HeaderStar", K.Sprite("star"), new Vector2(-438, 614), new Vector2(52, 58));
-            star.preserveAspect = true;
-            var close = U.Button(motion, "Close", closeSprite, new Vector2(425, 619), new Vector2(112, 112), closeSource, false);
+            // Preserve the old full-frame sprite's native reference coordinates and transparent
+            // margins under one uniform design scale. Only the outer wrapper fits the safe area.
+            var design = K.Rect(motion, "ModalDesign", Vector2.zero, new Vector2(941, 1672));
+            design.localScale = Vector3.one * (1060f / 941f);
+            var frame = K.Image(design, "ModalFrame", frameSprite, Vector2.zero, new Vector2(941, 1672));
+            frame.preserveAspect = true;
+            K.Theme(frame, Color.white, Color.white, frameDark);
+            U.Title(design, "Title", "GAME MODES", new Vector2(-33.5f, 460.5f), new Vector2(654, 220), 110, "modes_title");
+            var close = U.Button(design, "Close", closeSprite, new Vector2(365, 474.5f), new Vector2(99, 99), closeSource, false);
             close.GetComponent<Image>().material = AssetDatabase.LoadAssetAtPath<Material>("Assets/_Project/Art/Materials/Theme/DarkCloseArtwork.mat");
             close.gameObject.AddComponent<UIThemeCoordinates>();
             var choices = new UnityEngine.Object[3]; var labels = new UnityEngine.Object[3]; var highlights = new UnityEngine.Object[3];
             for (int i = 0; i < 3; i++)
             {
-                var card = Card(motion, i, light[i], dark[i], sources[i], ring, out TMP_Text label, out GameObject selected);
+                var card = Card(design, i, light[i], dark[i], sources[i], ring, out TMP_Text label, out GameObject selected);
                 choices[i] = card; labels[i] = label; highlights[i] = selected;
             }
             U.Bind(selector, "_group", group); U.Bind(selector, "_dialog", motion); U.Bind(selector, "_close", close);

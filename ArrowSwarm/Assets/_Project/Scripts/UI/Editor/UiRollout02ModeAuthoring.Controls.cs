@@ -1,5 +1,6 @@
 namespace ArrowSwarm.UI.Editor
 {
+    using System;
     using TMPro;
     using UnityEditor;
     using UnityEngine;
@@ -7,45 +8,49 @@ namespace ArrowSwarm.UI.Editor
     using K = UiRollout01Kit;
     using U = UiRollout02Kit;
 
-    /// <summary>Independent TMP and selection layers keep reused illustrations text-free and proportionate.</summary>
+    /// <summary>Uses the original illustrated cards directly, with live inline TMP and a separate selected outline.</summary>
     internal static partial class UiRollout02ModeAuthoring
     {
         private static Button Card(Transform parent, int index, Sprite light, Sprite dark, Button feedback,
             Material ring, out TMP_Text label, out GameObject selected)
         {
-            float y = 312 - index * 426;
-            var button = U.Button(parent, Names[index] + "Card", K.Sprite("light_plate"),
-                new Vector2(0, y), new Vector2(920, 400), feedback);
-            var artwork = K.Image(button.transform, "Artwork", light, new Vector2(0, -42), new Vector2(880, 300));
-            artwork.preserveAspect = true;
-            // Keep the painted night colors; the existing artwork shader only masks the original rounded silhouette.
-            artwork.material = AssetDatabase.LoadAssetAtPath<Material>("Assets/_Project/Art/Materials/Theme/Dark" + Names[index] + "Card.mat");
-            if (artwork.material != null) artwork.gameObject.AddComponent<UIThemeCoordinates>();
-            U.Variants(artwork, light, dark);
-            var title = U.Text(button.transform, "ModeTitle", Fallbacks[index], new Vector2(-12, 153),
-                new Vector2(820, 100), 62, Keys[index]);
+            var button = U.Button(parent, Names[index] + "Card", light,
+                new Vector2(1, 234.5f - index * 307), new Vector2(827, 297), feedback, false);
+            var image = (Image)button.targetGraphic;
+            image.preserveAspect = true;
+            // Existing artwork materials mask the rounded silhouette and retain painted night colors.
+            // A second outer plate or artwork rectangle would change the old composition.
+            image.material = AssetDatabase.LoadAssetAtPath<Material>("Assets/_Project/Art/Materials/Theme/Dark" + Names[index] + "Card.mat")
+                ?? throw new InvalidOperationException("Required mode artwork material missing: " + Names[index]);
+            if (image.GetComponent<UIThemeCoordinates>() == null) image.gameObject.AddComponent<UIThemeCoordinates>();
+            U.Variants(image, light, dark);
+            float titleWidth = index == 2 ? 487 : 350;
+            float titleX = index == 2 ? -129 : -197.5f;
+            var title = U.Text(button.transform, "ModeTitle", Fallbacks[index], new Vector2(titleX, 109),
+                new Vector2(titleWidth, 83), 54, Keys[index]);
             title.alignment = TextAlignmentOptions.Left;
             title.textWrappingMode = TextWrappingModes.NoWrap;
-            label = U.Text(button.transform, "SelectionLabel", "SELECT", new Vector2(286, -121),
-                new Vector2(220, 88), 50, "modes_select");
+            title.fontSizeMin = 54 * .45f;
+            label = U.Text(button.transform, "SelectionLabel", index == 0 ? "SELECTED" : "SELECT", new Vector2(252, -68.5f),
+                new Vector2(235, 96), 40, index == 0 ? "modes_selected" : "modes_select");
+            label.fontStyle = FontStyles.Bold;
+            label.margin = new Vector4(12, 0, 12, 0);
+            label.fontSizeMin = 40 * .45f;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.fontSharedMaterial = AssetDatabase.LoadAssetAtPath<Material>(Art + "LocalizedSlices/LocalizedMenuOutline.mat")
+                ?? throw new InvalidOperationException("The original localized action outline material is missing.");
+            label.enableVertexGradient = true;
+            label.colorGradient = new VertexGradient(Color.white, Color.white, new Color(.67f, .88f, 1), new Color(.67f, .88f, 1));
+            label.extraPadding = true;
             K.Theme(label, Color.white, Color.white);
-            var state = K.Rect(button.transform, "SelectionHighlight", Vector2.zero, new Vector2(944, 424));
-            var outline = K.Image(state, "GoldOutline", null, Vector2.zero, new Vector2(944, 424));
+            var state = K.Rect(button.transform, "SelectionHighlight", Vector2.zero, new Vector2(836, 306));
+            var outline = K.Image(state, "GoldOutline", null, Vector2.zero, new Vector2(836, 306));
             outline.material = ring; outline.gameObject.AddComponent<UIThemeCoordinates>();
             K.Theme(outline, Color.white, Color.white);
-            var check = K.Rect(state, "SelectionCheck", new Vector2(148, -121), new Vector2(55, 55));
-            CheckStroke(check, "ShortStroke", new Vector2(-11, -5), new Vector2(9, 23), 43);
-            CheckStroke(check, "LongStroke", new Vector2(6, 1), new Vector2(9, 43), -43);
             selected = state.gameObject;
             selected.SetActive(index == 0);
             return button;
         }
 
-        private static void CheckStroke(Transform parent, string name, Vector2 position, Vector2 size, float angle)
-        {
-            var image = K.Image(parent, name, null, position, size);
-            image.rectTransform.localEulerAngles = new Vector3(0, 0, angle);
-            image.color = new Color(1, .83f, .10f);
-        }
     }
 }

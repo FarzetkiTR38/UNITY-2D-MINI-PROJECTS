@@ -68,11 +68,41 @@ namespace ArrowSwarm.UI.Editor
             foreach (var text in root.GetComponentsInChildren<TMP_Text>(true))
             {
                 if (!Visible(text) || string.IsNullOrWhiteSpace(text.text)) continue;
-                count++; text.ForceMeshUpdate();
+                count++;
+                var dimensional = text.GetComponentInParent<Casual3DTitle>();
+                if (dimensional != null)
+                {
+                    Check(text.font != null && text.text == LocalizationManager.Instance.GetText(dimensional.LocalizationKey),
+                        context + ": each dimensional title layer is live localized TMP");
+                    continue;
+                }
+                text.ForceMeshUpdate();
                 Check(text.font != null && !text.isTextTruncated && GlyphsFit(text) &&
                     text.textInfo.lineCount <= text.maxVisibleLines,
                     context + ": all live TMP glyphs and lines fit " + text.name + " / " + text.text +
                     " / rect=" + text.rectTransform.rect + " / glyphs=" + text.textBounds + " / lines=" + text.textInfo.lineCount);
+            }
+            foreach (var title in root.GetComponentsInChildren<Casual3DTitle>(true))
+            {
+                var front = Field<TextMeshProUGUI>(title, "_frontText");
+                if (!Visible(front)) continue;
+                title.ApplyAll();
+                Bounds bounds;
+                Check(title.TryGetRenderedBounds(out bounds), context + ": dimensional title has rendered geometry");
+                var rect = (RectTransform)title.transform;
+                Check(bounds.min.x >= rect.rect.xMin - 2 && bounds.max.x <= rect.rect.xMax + 2 &&
+                    bounds.min.y >= rect.rect.yMin - 2 && bounds.max.y <= rect.rect.yMax + 2,
+                    context + ": all four warped title layers fit their reserved header / " + bounds);
+                var canvas = title.GetComponentInParent<Canvas>();
+                var camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+                foreach (var corner in new[] { bounds.min, bounds.max,
+                    new Vector3(bounds.min.x, bounds.max.y), new Vector3(bounds.max.x, bounds.min.y) })
+                    Check(Screen.safeArea.Contains(RectTransformUtility.WorldToScreenPoint(camera, title.transform.TransformPoint(corner))),
+                        context + ": dimensional title stays inside the real safe area");
+                Check(Field<bool>(title, "_enableCurve") && front.enableVertexGradient &&
+                    Field<TextMeshProUGUI>(title, "_rimText") != null && Field<TextMeshProUGUI>(title, "_extrusionText") != null &&
+                    Field<TextMeshProUGUI>(title, "_shadowText") != null,
+                    context + ": the established arch, gradient and extrusion layers are retained");
             }
             int legacy = 0;
             foreach (var text in root.GetComponentsInChildren<Text>(true)) if (Visible(text)) legacy++;
