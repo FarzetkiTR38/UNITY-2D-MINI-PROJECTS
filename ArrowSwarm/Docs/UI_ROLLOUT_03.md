@@ -20,7 +20,7 @@ Current next action: **Await user approval of board03. Do not begin board04.** T
 - P2 `a4ed021d`: reference Profile, localized dimensional TMP and native behavior checks.
 - P3 `7887e9e2`: reference Leaderboard, country identity/highlight/materials and native state checks.
 - P4 `87699b6e`: five sizes, all flags/fallback, Back/Close ownership, Home/Mode/Settings and real Play routing to all three scenes.
-- P5: actual before/after preview, source/cleanup proofs and final delivery commit (see Git log).
+- P5 `b960ba75`: actual before/after preview, source/cleanup proofs and final delivery commit.
 
 All 930 unrelated MainMenu scene documents, including the previously approved Mode/Settings and untouched Levels hierarchy, remain byte-identical to the fresh private baseline. BootScene is byte-identical too. One ExecuteAlways mode wrapper preview-scale serialization was restored only after confirming the complete document otherwise matched. `preserved-scene.json` records the final proof.
 
