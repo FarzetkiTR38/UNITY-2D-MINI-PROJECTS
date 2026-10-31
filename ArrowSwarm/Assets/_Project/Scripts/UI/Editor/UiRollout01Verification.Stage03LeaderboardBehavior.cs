@@ -92,6 +92,7 @@ namespace ArrowSwarm.UI.Editor
                     Check(Field<GameObject>(rows[0], "_playerHighlight").activeSelf &&
                         Field<GameObject>(rows[0], "_highlightedValuesRoot").activeSelf && !Field<GameObject>(rows[0], "_normalValuesRoot").activeSelf,
                         "A current-player row selects only its scene-authored highlighted values");
+                    yield return Verify03FlagVariants(rows[0]);
                 }
                 Check(JsonUtility.ToJson(DataManager.Instance.PlayerData) == playerBefore,
                     "Leaderboard refresh, identity and state checks never alter the cloned player's progression");

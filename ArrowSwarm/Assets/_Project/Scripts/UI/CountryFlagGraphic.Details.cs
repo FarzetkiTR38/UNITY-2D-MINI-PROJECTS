@@ -37,10 +37,31 @@ namespace ArrowSwarm.UI
         private void Korea()
         {
             Box(0,0,1,1,Color.white);Disc(.5f,.5f,.255f,Red);
-            var p=new Vector2[19];p[0]=new Vector2(.5f,.5f);
-            for(int i=0;i<=16;i++){float a=Mathf.PI+i*Mathf.PI/16;p[i+1]=new Vector2(.5f+Mathf.Cos(a)*.17f,.5f+Mathf.Sin(a)*.255f);}p[18]=p[1];Poly(Blue,p);
-            Disc(.415f,.5f,.1275f,Red);Disc(.585f,.5f,.1275f,Blue);
-            for(int i=0;i<3;i++){Box(.15f+i*.035f,.71f,.022f,.16f,Color.black);Box(.75f+i*.035f,.13f,.022f,.16f,Color.black);Box(.15f+i*.035f,.13f,.022f,.16f,Color.black);Box(.75f+i*.035f,.71f,.022f,.16f,Color.black);}
+            float aspect=rectTransform.rect.height/Mathf.Max(1,rectTransform.rect.width);
+            var p=new Vector2[18];p[0]=new Vector2(.5f,.5f);
+            for(int i=0;i<=16;i++){float a=Mathf.PI+i*Mathf.PI/16;p[i+1]=new Vector2(.5f+Mathf.Cos(a)*.255f*aspect,.5f+Mathf.Sin(a)*.255f);}Poly(Blue,p);
+            Disc(.5f-.1275f*aspect,.5f,.1275f,Red);Disc(.5f+.1275f*aspect,.5f,.1275f,Blue);
+            // Geon, Gam, Ri and Gon retain their distinct solid/broken bars.
+            float dx=.38f*aspect, angle=Mathf.Atan(1.5f)*Mathf.Rad2Deg;
+            KoreaTrigram(.5f-dx,.7533f,angle,0);KoreaTrigram(.5f+dx,.7533f,-angle,5);
+            KoreaTrigram(.5f-dx,.2467f,-angle,2);KoreaTrigram(.5f+dx,.2467f,angle,7);
+        }
+        private void KoreaTrigram(float x,float y,float angle,int brokenMask)
+        {
+            float aspect=rectTransform.rect.height/Mathf.Max(1,rectTransform.rect.width),a=angle*Mathf.Deg2Rad;
+            var along=new Vector2(Mathf.Cos(a)*aspect,Mathf.Sin(a));
+            var across=new Vector2(-Mathf.Sin(a)*aspect,Mathf.Cos(a));
+            for(int i=0;i<3;i++)
+            {
+                Vector2 centre=new Vector2(x,y)+across*((i-1)*.0625f);
+                if((brokenMask&(1<<i))==0)KoreaBar(centre,along,across,.25f);
+                else{KoreaBar(centre-along*.0729167f,along,across,.1041667f);KoreaBar(centre+along*.0729167f,along,across,.1041667f);}
+            }
+        }
+        private void KoreaBar(Vector2 centre,Vector2 along,Vector2 across,float length)
+        {
+            Vector2 half=along*(length*.5f),thickness=across*(1f/48);
+            Poly(Color.black,centre-half-thickness,centre+half-thickness,centre+half+thickness,centre-half+thickness);
         }
         private void Australia()
         {

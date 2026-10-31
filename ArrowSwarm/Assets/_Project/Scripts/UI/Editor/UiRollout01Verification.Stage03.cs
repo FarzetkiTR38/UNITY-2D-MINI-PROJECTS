@@ -43,7 +43,7 @@ namespace ArrowSwarm.UI.Editor
                     menu.OpenProfileModal(); yield return Settled(.65f);
                     Check(profile.gameObject.activeInHierarchy && Field<CanvasGroup>(profile,"_canvasGroup").alpha>=.99f,"Original Profile controller opens fully / "+theme);
                     Field<TMP_InputField>(profile,"_nameInput").SetTextWithoutNotify("NovaRider");
-                    if (_stage03Revised) VerifyModalCopy(profile.transform,Status);
+                    if (_stage03Revised) { VerifyModalCopy(profile.transform,Status); Verify03Layout(profile); }
                     yield return Capture("profile-"+theme.ToString().ToLowerInvariant());
                     if (_stage03Revised)
                     {
@@ -60,7 +60,7 @@ namespace ArrowSwarm.UI.Editor
                     Field<TextMeshProUGUI>(board,"_statusText").text="ÖRNEK / SAMPLE";
                     yield return Settled(); Status="Board03 Leaderboard / "+theme;
                     Check(Field<LeaderboardEntryUI[]>(board,"_entryRows").Length==10,"All ten original ranking slots are bound");
-                    if(_stage03Revised)VerifyModalCopy(board.transform,Status);
+                    if(_stage03Revised) { VerifyModalCopy(board.transform,Status); Verify03Layout(board); }
                     yield return Capture("leaderboard-"+theme.ToString().ToLowerInvariant());
                     if(_stage03Revised)
                     {
@@ -70,7 +70,15 @@ namespace ArrowSwarm.UI.Editor
                     }
                     if(_stage03Interactions)yield return Verify03LeaderboardInteractions(board,mouse);
                     yield return Click(mouse,Field<Button>(board,"_closeButton"),true);yield return Settled(.55f);
-                    menu.OpenMainPanel();yield return Settled();
+                    Check(!board.gameObject.activeInHierarchy && Field<GameObject>(menu,"_mainPanel").activeInHierarchy &&
+                        Field<GameObject>(menu,"_activeSubPanel")==null,"Native Leaderboard Close restores Home ownership / "+theme);
+                    if(_stage03Interactions)
+                    {
+                        yield return Click(mouse,Field<Button>(menu,"_leaderboardButton"),true);yield return Settled(.6f);
+                        yield return Click(mouse,Field<Button>(board,"_backButton"),true);yield return Settled(.55f);
+                        Check(!board.gameObject.activeInHierarchy && Field<GameObject>(menu,"_mainPanel").activeInHierarchy &&
+                            Field<GameObject>(menu,"_activeSubPanel")==null,"Native Leaderboard Back restores Home ownership / "+theme);
+                    }
                 }
             }
         }
@@ -99,3 +107,4 @@ namespace ArrowSwarm.UI.Editor
 
     }
 }
+
