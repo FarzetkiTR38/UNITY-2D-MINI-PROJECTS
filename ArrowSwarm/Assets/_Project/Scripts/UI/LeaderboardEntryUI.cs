@@ -8,7 +8,7 @@ namespace ArrowSwarm.UI
     /// Represents a single player ranking row in the Leaderboard UI.
     /// Handles rank number, crown/badge graphics, level, and star count display.
     /// </summary>
-    public class LeaderboardEntryUI : MonoBehaviour
+    public partial class LeaderboardEntryUI : MonoBehaviour
     {
         [Header("UI References")]
         [SerializeField] private Image _cardBackground;
@@ -54,7 +54,7 @@ namespace ArrowSwarm.UI
                 }
                 else
                 {
-                    string tag = GetCountryTag(countryCode);
+                    string tag = _countryCodeText == null ? GetCountryTag(countryCode) : "";
                     _playerNameText.text = string.IsNullOrEmpty(tag) ? playerName : $"{tag} {playerName}";
                 }
             }
@@ -63,6 +63,7 @@ namespace ArrowSwarm.UI
             {
                 _crownIcon.gameObject.SetActive(rank <= 3);
             }
+            ApplyIdentity(countryCode, isPlayer);
         }
 
         private static string GetCountryTag(string code)

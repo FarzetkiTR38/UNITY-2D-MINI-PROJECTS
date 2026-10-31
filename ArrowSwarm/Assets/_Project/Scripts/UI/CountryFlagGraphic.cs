@@ -4,6 +4,7 @@ namespace ArrowSwarm.UI
     using UnityEngine.UI;
 
     /// <summary>Draws small country identities without emoji fonts or per-country texture dependencies.</summary>
+    [RequireComponent(typeof(CanvasRenderer))]
     public partial class CountryFlagGraphic : MaskableGraphic
     {
         [SerializeField] private string _countryCode = "TR";
