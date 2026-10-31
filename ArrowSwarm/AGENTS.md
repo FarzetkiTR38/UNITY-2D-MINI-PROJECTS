@@ -16,4 +16,4 @@ Read `.agents/AGENTS.md`, the architecture skill and `Docs/UI_REDESIGN_ROLLOUT.m
 
 ## Current approved scope
 
-Boards 01 and 02 are complete and approved. Board **03 · Profil ve Sıralama** is authorized by the 2026-10-31 user request. Follow `Docs/UI_ROLLOUT_03.md`. Board 04 waits for the user's approval of board 03.
+Boards 01 and 02 are complete and approved. Board **03 · Profil ve Sıralama** is implemented and verified. Delivery preview: `Captures/UIRollout/Phase03/index.html`; checked implementation: `Docs/UI_ROLLOUT_03.md`. Await user approval of board03 before starting board04. Continue applying all standing instructions when the user authorizes later boards.

@@ -1,6 +1,6 @@
 # UI redesign rollout - sequential approval
 
-Baseline: `ce22ef28`. Current checkpoint: **01 Boot and Home implemented and verified; awaiting user approval.** Do not start board 02 until the user explicitly approves this stage.
+Baseline: `ce22ef28`. Current checkpoint: **Boards01/02 approved; board03 Profile and Leaderboard completed and verified; awaiting user approval.** Follow `UI_ROLLOUT_03.md`. Board04 waits for explicit user approval of the board03 delivery. Older checkpoint notes below are history.
 
 ## Rules for every board
 
@@ -81,3 +81,8 @@ Board02 requested visual review is complete; UI_ROLLOUT_02_REVIEW.md supersedes 
 
 
 Settings reference follow-up is complete: original joined theme pill, compact masked gear and straight lower frame restored. See UI_ROLLOUT_02_SETTINGS_REFERENCE.md; current evidence is Captures/UIRollout/Phase02SettingsReference/index.html. Next gate remains user approval before board03.
+
+
+## Stage03 completed — approval gate
+
+The user approved board03 on 2026-10-31. Profile and Leaderboard are integrated from Revision6 AFTER using localized TMP, reused shared art and one new six-symbol atlas. Follow `UI_ROLLOUT_03.md` for the checked implementation, phase commits, native tests and exact cleanup proof. Preview: `Captures/UIRollout/Phase03/index.html`. All five actual screen sizes, both themes/ten languages, connection/data states and approved navigation/three Play routes passed. **Do not start board04 until the user approves this delivery.**
