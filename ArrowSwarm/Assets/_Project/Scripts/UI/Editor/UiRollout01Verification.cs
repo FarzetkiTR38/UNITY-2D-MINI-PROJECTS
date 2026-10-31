@@ -46,6 +46,7 @@ namespace ArrowSwarm.UI.Editor
                 !SceneTransitionManager.HasInstance || SceneTransitionManager.Instance.IsTransitioning)
                 throw new InvalidOperationException("Use idle MainMenu Play reached through Boot, before opening the real leaderboard.");
             _folder = folder; _navigation = navigation; Directory.CreateDirectory(folder);
+            _stage03 = _nextStage03;
             _modalScreens = _nextModalScreens;
             Results.Clear(); Steps.Clear(); _wait = null; _cloudFooter = null; _textControlChecked = false;
             try { _scope = new Scope(); Steps.Push(Run()); _frameRunner = UiRollout01NativeFrameRunner.Begin(Tick); }
@@ -57,10 +58,14 @@ namespace ArrowSwarm.UI.Editor
 
         private static IEnumerator Run()
         {
-            yield return VerifyBoot();
-            yield return VerifyHome();
-            if (_modalScreens) yield return VerifyModals();
-            if (_navigation) { yield return VerifyNavigation(); yield return VerifyPlayRoutes(); }
+            if (_stage03) yield return VerifyStage03();
+            else
+            {
+                yield return VerifyBoot();
+                yield return VerifyHome();
+                if (_modalScreens) yield return VerifyModals();
+                if (_navigation) { yield return VerifyNavigation(); yield return VerifyPlayRoutes(); }
+            }
             Check(_scope.Cloud.Operations == 0 && _scope.Ads.Calls == 0, "No auth, score, profile, fetch or advertisement operation occurred");
         }
 
