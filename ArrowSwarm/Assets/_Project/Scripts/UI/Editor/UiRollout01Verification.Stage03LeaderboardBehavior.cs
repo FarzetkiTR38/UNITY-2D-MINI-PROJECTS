@@ -37,6 +37,18 @@ namespace ArrowSwarm.UI.Editor
                     manager.GetVerifiedPlayerRank() < 0 && Field<TMP_Text>(board, "_playerSummaryText").text.Contains("—"),
                     "Offline refresh preserves cached identities and does not present an unverified world rank");
 
+                var savedTime = manager.LastSuccessfulRefreshUtc;
+                Set03BoardState(manager, LeaderboardRefreshState.Loading); board.RefreshLeaderboardData(); yield return Settled(.08f);
+                Check(rows.All(r => r.gameObject.activeInHierarchy) && !Field<Button>(board, "_retryButton").interactable &&
+                    Field<TMP_Text>(board, "_statusText").text == LocalizationManager.Instance.GetText("leaderboard_loading") &&
+                    manager.LastSuccessfulRefreshUtc == savedTime && manager.GetVerifiedPlayerRank() < 0,
+                    "Explicit Loading presentation retains cached rows/time, disables Refresh and withholds an unverified rank");
+                board.Retry();
+                Check(manager.RefreshState == LeaderboardRefreshState.Loading &&
+                    cached.Select(e => e.PlayerId).SequenceEqual(manager.GetRankedPlayers(10).Select(e => e.PlayerId)),
+                    "Existing Retry guard ignores a running request without replacing cached identities");
+                yield return Verify03BoardStateLanguages(board, "Loading cached");
+
                 Install03Rows(manager, false); board.RefreshLeaderboardData(); yield return Settled(.08f);
                 Check(manager.GetRankedPlayers(10).Count == 10 && manager.GetRankedPlayers(10).All(e => !e.IsPlayer) &&
                     manager.GetVerifiedPlayerRank() == 27 && Field<TMP_Text>(board, "_playerSummaryText").text.Contains("#27"),

@@ -52,6 +52,7 @@ namespace ArrowSwarm.UI.Editor
                     VerifyModalCopy(profile.transform, "Profile draft / " + item.code);
                 }
                 LocalizationManager.Instance.SetLanguage(language, false); yield return Settled(.06f);
+                yield return Verify03ProfileCountryCopy(profile, input);
 
                 input.SetTextWithoutNotify("  NovaRider  ");
                 yield return Click(mouse, Field<Button>(profile, "_saveButton"), true);
