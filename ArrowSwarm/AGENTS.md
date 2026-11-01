@@ -16,4 +16,4 @@ Read `.agents/AGENTS.md`, the architecture skill and `Docs/UI_REDESIGN_ROLLOUT.m
 
 ## Current approved scope
 
-Boards01,02 and03 are complete and approved. The user approved board03 and authorized **04 · Savunma ve Şekiller Bölümleri** on2026-11-01. Follow `Docs/UI_ROLLOUT_04.md`. Integrate only Revision6 board04 now; preserve ColorShift level selection/transition for board05. Await approval of board04 before starting board05. Continue all standing instructions for later boards.
+Boards01–03 are approved. **Board04 · Savunma ve Şekiller Bölümleri is implemented and verified.** Delivery: `Captures/UIRollout/Phase04/index.html`; checked implementation: `Docs/UI_ROLLOUT_04.md`. Await user approval of board04 before starting **05 · ColorShift levels/transition**. ColorShift retains its original level-selection design for that next board. Continue all standing instructions for later boards.

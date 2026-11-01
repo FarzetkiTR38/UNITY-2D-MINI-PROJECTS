@@ -1,6 +1,6 @@
 # UI redesign rollout - sequential approval
 
-Baseline: `ce22ef28`. Current checkpoint: **Boards01–03 approved; board04 Defense/Shapes level selection authorized2026-11-01 and in progress.** Follow `UI_ROLLOUT_04.md`. Board05 waits for approval of the board04 delivery. Earlier checkpoint notes below are history.
+Baseline: `ce22ef28`. Current checkpoint: **Boards01–03 approved; board04 Defense/Shapes levels completed and verified, awaiting delivery approval.** Follow `UI_ROLLOUT_04.md`. Board05 waits for approval of board04. Earlier checkpoint notes below are history.
 
 ## Rules for every board
 
@@ -90,3 +90,7 @@ The user approved board03 on 2026-10-31. Profile and Leaderboard are integrated 
 ## Board04 authorized
 
 The user approved board03 and requested board04 on2026-11-01. Use Revision6 AFTER `04-levels-defense-shapes.png`. The checked phase plan is `UI_ROLLOUT_04.md`. ColorShift level selection and scene transitions remain board05 scope.
+
+## Board04 delivery complete
+
+Reference Defense/Shapes levels are integrated with live TMP, authored mode/card states and shared imagery. The original ColorShift view and all earlier screens remain preserved. Native Light/Dark,10languages,5sizes and approved-screen/route regressions pass. Delivery: `Captures/UIRollout/Phase04/index.html`; checked implementation/evidence: `UI_ROLLOUT_04.md`. **Await approval before board05.**
