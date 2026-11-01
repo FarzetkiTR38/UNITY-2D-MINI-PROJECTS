@@ -1,0 +1,14 @@
+# Board04 — Defense and Shapes level selection
+
+Reference: `Captures/Revision6/Concepts/04-levels-defense-shapes.png`, Revision6 AFTER. Board03 explicitly approved2026-11-01. Standing rules remain in root AGENTS.md.
+
+- [x] P0: Inspect rules/reference/current controllers; checkpoint fresh MainMenu/Boot, ProjectSettings,14 protected files,5 preferences, initial Edit Boot/Game View18/background=false; verify outside-workspace Git bundle. Private pointer `%TEMP%/ArrowSwarm-UI04-path.txt`; baseline `519f9042`.
+- [ ] P1: Capture actual Before Defense/Shapes/ColorShift in both themes using scoped cloned progress/offline services. Inventory/reuse approved art; generate only missing text-free reusable symbols/tile assets if needed. Commit shared assets and baseline evidence.
+- [ ] P2: Add optional authored mode-view bindings and optional scene-authored level-card states; preserve all legacy fallbacks and ColorShift behavior. Handle listener rebinding/pool reuse correctly. Keep numbers visible on revised locked cards and earned/empty star states faithful to real progress. Compile/native compatibility checks and commit.
+- [ ] P3: Author reference composition for Defense/Shapes: shared backdrop/crest/frame, dimensional localized TMP title, mode identity badge, range/pagers,4x5 cards, locks/earned and empty stars, compact footer. Bind real controllers. Repeat native Light/Dark inspection and corrections; verify ColorShift retains its original appearance and commit.
+- [ ] P4: Native behavior and layout matrix:10 languages,2 themes,5 screen sizes, locked/unlocked/cleared states,0–3 stars, highest-page selection, pager bounds, finite Shapes50 last-page range, mode progression isolation, no duplicate callbacks, safe controls and real level-entry routing. Regress approved screens. Correct discovered defects and commit.
+- [ ] P5: Actual before/after page and sheets, source-preservation/reuse/cost reports, exact protected-file/preferences/Editor restoration, final commit. Deliver and await user approval before board05.
+
+Preserve gameplay/generator/catalogues/cloud/ad contracts. Sample progress is temporary Editor-only cloned data; never persist or submit it. Static appearance belongs to scene/Inspector/prefabs. New view bindings only choose already-authored objects and data; ColorShift keeps its legacy view until approved board05. Existing sprites/materials/title prefab are reused; no baked functional text or numbers. Verify native PNG dimensions from file headers, never editor callback Screen guesses. Do not edit scripts during a running native fixture. Restore every original dirty file instead of blanket-staging/resetting.
+
+Current next action: build the reversible board04 native capture branch and record Before. Art/controller audit agents report read-only into `%TEMP%/ArrowSwarm-UI04`.
