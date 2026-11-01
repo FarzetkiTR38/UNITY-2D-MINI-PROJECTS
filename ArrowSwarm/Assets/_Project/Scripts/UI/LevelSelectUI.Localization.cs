@@ -3,7 +3,11 @@ namespace ArrowSwarm.UI
     /// <summary>Translates only the current range so a language switch never changes the selected page.</summary>
     public partial class LevelSelectUI
     {
-        private void OnDisable() => ArrowSwarm.Localization.LocalizationManager.OnLanguageChanged -= RefreshPageLabel;
+        private void OnDisable()
+        {
+            ArrowSwarm.Localization.LocalizationManager.OnLanguageChanged -= RefreshPageLabel;
+            DetachNavigation();
+        }
 
         private void RefreshPageLabel()
         {

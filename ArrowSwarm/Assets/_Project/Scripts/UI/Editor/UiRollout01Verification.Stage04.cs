@@ -13,12 +13,12 @@ namespace ArrowSwarm.UI.Editor
     /// <summary>Captures board04 with temporary progress inside the existing reversible native scope.</summary>
     public static partial class UiRollout01Verification
     {
-        private static bool _nextStage04, _stage04, _stage04Revised, _stage04Interactions;
+        private static bool _nextStage04, _stage04, _stage04Revised, _stage04Interactions, _stage04Compatibility;
 
         /// <summary>Checks level selection without touching real progress or live providers.</summary>
-        public static void Stage04At(string folder, bool revised, bool interactions)
+        public static void Stage04At(string folder, bool revised, bool interactions, bool legacyCompatibility = false)
         {
-            _nextStage04 = true; _stage04Revised = revised; _stage04Interactions = interactions;
+            _nextStage04 = true; _stage04Revised = revised; _stage04Interactions = interactions; _stage04Compatibility = legacyCompatibility;
             try { Start(folder, false); } finally { _nextStage04 = false; }
         }
 
@@ -57,6 +57,7 @@ namespace ArrowSwarm.UI.Editor
                         }
                         LocalizationManager.Instance.SetLanguage("tr", false); yield return Settled(.06f);
                     }
+                    if (_stage04Compatibility) yield return Verify04LegacyCompatibility(levels, mouse);
                     if (_stage04Interactions && mode != GameModeId.ColorShift) yield return Verify04Interactions(levels, menu, mouse, mode);
                     yield return Click(mouse, Field<Button>(levels, "_closeButton"), true); yield return Settled(.55f);
                     Check(!levels.gameObject.activeInHierarchy && Field<GameObject>(menu, "_mainPanel").activeInHierarchy &&
@@ -75,7 +76,5 @@ namespace ArrowSwarm.UI.Editor
             Set03(DataManager.Instance, "_playerData", player);
         }
 
-        private static IEnumerator Verify04Interactions(LevelSelectUI levels, MainMenuUI menu, NativeMouse mouse, GameModeId mode) { yield break; }
-        private static IEnumerator Verify04LevelRoutes() { yield break; }
     }
 }
