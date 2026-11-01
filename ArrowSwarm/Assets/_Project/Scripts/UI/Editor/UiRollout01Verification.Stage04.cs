@@ -24,6 +24,8 @@ namespace ArrowSwarm.UI.Editor
 
         private static IEnumerator VerifyStage04()
         {
+            using (var mouse = new NativeMouse())
+            {
             foreach (var mode in new[] { GameModeId.Defense, GameModeId.Shapes, GameModeId.ColorShift })
             foreach (var theme in new[] { ThemeMode.Light, ThemeMode.Dark })
             {
@@ -33,7 +35,8 @@ namespace ArrowSwarm.UI.Editor
                 var menu = UnityEngine.Object.FindFirstObjectByType<MainMenuUI>();
                 var levels = UnityEngine.Object.FindFirstObjectByType<LevelSelectUI>(FindObjectsInactive.Include);
                 Status = "Board04 Levels / " + mode + " / " + theme;
-                using (var mouse = new NativeMouse())
+                Check(!levels.gameObject.activeInHierarchy && Field<GameObject>(menu,"_mainPanel").activeInHierarchy &&
+                    Field<GameObject>(menu,"_activeSubPanel")==null,"Changing preview mode/theme leaves Levels closed until actual input / "+Status);
                 {
                     yield return Click(mouse, Field<Button>(menu, "_levelsButton"), true);
                     yield return (Func<bool>)(() => levels.gameObject.activeInHierarchy &&
@@ -46,7 +49,7 @@ namespace ArrowSwarm.UI.Editor
                         "Actual mode progress chooses its highest page / " + Status);
                     Check(Field<TMP_Text>(levels, "_pageText").text.Contains(mode == GameModeId.Defense ? "101-120" : "1-20"),
                         "Actual localized range matches the independent campaign / " + Status);
-                    if (_stage04Revised && mode != GameModeId.ColorShift) VerifyModalCopy(levels.transform, Status);
+                    if (_stage04Revised && mode != GameModeId.ColorShift) { VerifyModalCopy(levels.transform, Status); Verify04Layout(levels); }
                     yield return Capture("levels-" + mode.ToString().ToLowerInvariant() + "-" + theme.ToString().ToLowerInvariant());
                     if (_stage04Revised && mode != GameModeId.ColorShift)
                     {
@@ -63,6 +66,7 @@ namespace ArrowSwarm.UI.Editor
                     Check(!levels.gameObject.activeInHierarchy && Field<GameObject>(menu, "_mainPanel").activeInHierarchy &&
                         Field<GameObject>(menu, "_activeSubPanel") == null, "Native Levels Close returns to Home / " + mode + " / " + theme);
                 }
+            }
             }
             if (_stage04Interactions) yield return Verify04LevelRoutes();
         }

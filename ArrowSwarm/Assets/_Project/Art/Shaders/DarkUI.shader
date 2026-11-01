@@ -19,6 +19,7 @@ Shader "ArrowSwarm/UI/DarkVariant"
         _InteriorAlphaRange ("Opaque Interior Source Alpha Range", Vector) = (0.35,0.65,0,0)
         _ContentBounds ("Medal Content Bounds XYZW", Vector) = (0.187,0.08,0.984,0.714)
         _SolidFill ("Clean Interior Gradient", Range(0,1)) = 0
+        _RepaintInterior ("Replace Interior Artwork", Range(0,1)) = 0
         [Toggle(FOOTER_PLATE_MASK)] _UsePlateMask ("Illustrated Footer Plaque", Float) = 0
         _PlateMask ("Footer Plaque Mask", 2D) = "black" {}
         _StencilComp ("Stencil Comparison", Float) = 8
@@ -59,7 +60,7 @@ Shader "ArrowSwarm/UI/DarkVariant"
             float _UIMaskSoftnessX, _UIMaskSoftnessY;
             half _AccentStrength, _SurfaceStrength, _Background, _LiftInk;
             half4 _SurfaceInset, _Corner, _ContentBounds, _BevelShade, _InteriorAlphaRange;
-            half _Artwork, _EdgeFill, _OpaqueInterior, _SolidFill, _BevelStrength;
+            half _Artwork, _EdgeFill, _OpaqueInterior, _SolidFill, _BevelStrength, _RepaintInterior;
             v2f vert(appdata v)
             {
                 v2f o;
@@ -135,6 +136,7 @@ Shader "ArrowSwarm/UI/DarkVariant"
                 half3 bevel=surface*lerp(_BevelShade.x,_BevelShade.y,luminance);
                 dark=lerp(dark,bevel,bevelMask);
                 if (_SolidFill > 0.5) dark=lerp(dark,surface,region*(1-protectedArtwork)*neutralFill);
+                dark=lerp(dark,surface,region*_RepaintInterior);
                 half ink = (1-smoothstep(0.08,0.24,luminance)) * smoothstep(0.25,0.60,saturation);
                 if (_LiftInk > 0.5)
                 {
