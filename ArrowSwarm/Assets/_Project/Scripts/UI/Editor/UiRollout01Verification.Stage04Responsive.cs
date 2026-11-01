@@ -96,8 +96,10 @@ namespace ArrowSwarm.UI.Editor
             Check(title.TryGetRenderedBounds(out Bounds titleBounds), "Levels dimensional title owns real visible geometry");
             Rect titleScreen = Project03(title.transform, titleBounds.min, titleBounds.max);
             Rect close = Native03Rect((RectTransform)Field<Button>(levels, "_closeButton").transform);
-            Check(titleScreen.xMax < close.xMin && titleScreen.yMin > pill.yMax,
-                "Rendered Levels title stays clear of Close and mode badge");
+            float pixelsPerUnit = frame.width / ((RectTransform)card.Find("BoardFrame")).rect.width;
+            Check(titleScreen.xMax < close.xMin && titleScreen.yMin > pill.yMax && titleScreen.yMax < frame.yMax - 12 * pixelsPerUnit,
+                "Rendered Levels title stays below the frame rim and clear of Close and mode badge / title=" + titleScreen +
+                " / frame=" + frame + " / pill=" + pill + " / close=" + close + " / pixelsPerUnit=" + pixelsPerUnit);
             bool shapes = GameModeSelection.Selected == GameModeId.Shapes;
             var identity = card.Find(shapes ? "ShapesIdentity" : "DefenseIdentity");
             Check(identity.gameObject.activeSelf && !card.Find(shapes ? "DefenseIdentity" : "ShapesIdentity").gameObject.activeSelf,

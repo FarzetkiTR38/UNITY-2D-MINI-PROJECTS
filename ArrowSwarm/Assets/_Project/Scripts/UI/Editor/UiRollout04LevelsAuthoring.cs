@@ -49,7 +49,7 @@ namespace ArrowSwarm.UI.Editor
             var frame = K.Image(card, "BoardFrame", K.Sprite("light_plate"), new Vector2(0, -80), new Vector2(1000, 1700));
             U.Plate(frame); frame.pixelsPerUnitMultiplier = .75f;
             K.Theme(frame, Color.white, Color.white, K.Material("Ui04BoardDark"));
-            U.Title(card, "TitleText", "LEVELS", new Vector2(-45, 650), new Vector2(760, 320), 125, "menu_levels");
+            U.Title(card, "TitleText", "LEVELS", new Vector2(-45, 620), new Vector2(760, 320), 125, "menu_levels");
             var close = Control(card, "CloseButton", source.Close, new Vector2(415, 660), new Vector2(105, 105));
             var pill = K.Image(card, "ModePill", K.Sprite("light_plate"), new Vector2(0, 440), new Vector2(700, 150));
             U.Plate(pill);
