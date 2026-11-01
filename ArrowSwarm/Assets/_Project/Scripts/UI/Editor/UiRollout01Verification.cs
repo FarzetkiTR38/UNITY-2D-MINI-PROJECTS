@@ -47,6 +47,7 @@ namespace ArrowSwarm.UI.Editor
                 throw new InvalidOperationException("Use idle MainMenu Play reached through Boot, before opening the real leaderboard.");
             _folder = folder; _navigation = navigation; Directory.CreateDirectory(folder);
             _stage03 = _nextStage03;
+            _stage04 = _nextStage04;
             _modalScreens = _nextModalScreens;
             Results.Clear(); Steps.Clear(); _wait = null; _cloudFooter = null; _textControlChecked = false;
             try { _scope = new Scope(); Steps.Push(Run()); _frameRunner = UiRollout01NativeFrameRunner.Begin(Tick); }
@@ -58,7 +59,8 @@ namespace ArrowSwarm.UI.Editor
 
         private static IEnumerator Run()
         {
-            if (_stage03) yield return VerifyStage03();
+            if (_stage04) yield return VerifyStage04();
+            else if (_stage03) yield return VerifyStage03();
             else
             {
                 yield return VerifyBoot();
