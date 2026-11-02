@@ -12,6 +12,9 @@ namespace ArrowSwarm.UI
             var manager = LeaderboardManager.HasInstance ? LeaderboardManager.Instance : null;
             int count = _entryRows != null ? _entryRows.Length : 0;
             var entries = manager?.GetRankedPlayers(count);
+#if UNITY_EDITOR
+            entries = MixedEditorRows(entries);
+#endif
             if (_entryRows != null)
                 for (int i = 0; i < _entryRows.Length; i++)
                 {
@@ -21,7 +24,15 @@ namespace ArrowSwarm.UI
                     row.gameObject.SetActive(present);
                     if (!present) continue;
                     var entry = entries[i];
-                    row.Setup(i + 1, entry.PlayerName, entry.HighestLevel, entry.TotalStars, entry.IsPlayer, entry.CountryCode);
+                    int displayRank = i + 1;
+#if UNITY_EDITOR
+                    if (_showSampleRivalsInEditor && i == count - 1)
+                    {
+                        int local = entries.FindIndex(value => value.IsPlayer);
+                        if (local >= count) { entry = entries[local]; displayRank = local + 1; }
+                    }
+#endif
+                    row.Setup(displayRank, entry.PlayerName, entry.HighestLevel, entry.TotalStars, entry.IsPlayer, entry.CountryCode);
                 }
 
             var data = DataManager.HasInstance ? DataManager.Instance.PlayerData : null;
@@ -41,6 +52,10 @@ namespace ArrowSwarm.UI
                         name, data.highestLevel, data.GetTotalStars(), rankText);
             }
             RefreshStatus(manager, entries != null && entries.Count > 0);
+#if UNITY_EDITOR
+            if (_showSampleRivalsInEditor && _statusText != null)
+                _statusText.text = "EDITOR / SAMPLE + LIVE";
+#endif
         }
     }
 }
