@@ -64,7 +64,7 @@ namespace ArrowSwarm.UI.Editor
                     yield return Click(mouse,Field<Button>(vibration,"_button"),false);
                     Check(DataManager.Instance.PlayerData.vibrationEnabled!=enabled,"Existing vibration toggle updates scoped setting");
                     yield return Click(mouse,Field<Button>(vibration,"_button"),false);
-                    yield return Click(mouse,Field<Button>(pause,"_continueButton"),false);
+                    yield return Click(mouse,Field<Button>(pause,"_continueButton"),_revised0608);
                     yield return (Func<bool>)(()=>GameManager.Instance.CurrentState==GameState.Playing && Time.timeScale>0);
                     Check(ReferenceEquals(placements,LevelManager.Instance.CurrentLevelData.ArrowPlacements),"Resume retains the exact generated board");
                     Time.timeScale=0;
@@ -81,7 +81,7 @@ namespace ArrowSwarm.UI.Editor
                             LocalizationManager.Instance.SetLanguage("tr",false);
                         }
                         int count=isTip?DataManager.Instance.PlayerData.tipCount:DataManager.Instance.PlayerData.freezeCount;
-                        fake.Success=false;yield return Click(mouse,Field<Button>(modal,"_watchAdButton"),false);
+                        fake.Success=false;yield return Click(mouse,Field<Button>(modal,"_watchAdButton"),_revised0608);
                         Check(count==(isTip?DataManager.Instance.PlayerData.tipCount:DataManager.Instance.PlayerData.freezeCount),"Failed scoped ad grants no skill");
                         fake.Success=true;yield return Click(mouse,Field<Button>(modal,"_watchAdButton"),false);
                         yield return Settled(.6f);
@@ -95,6 +95,7 @@ namespace ArrowSwarm.UI.Editor
                 Check(fake.Requests==8,"Only eight scoped rewarded-ad requests, no live ad SDK calls");
             }
             finally { if(ads!=null)ads.SetAdService(originalAds); }
+            if(_revised0608)yield return Routes0608();
             ReturnToMenu();yield return Settled(.2f);
         }
 

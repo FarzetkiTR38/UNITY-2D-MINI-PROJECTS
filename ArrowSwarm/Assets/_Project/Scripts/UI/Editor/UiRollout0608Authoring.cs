@@ -50,7 +50,7 @@ namespace ArrowSwarm.UI.Editor
         {
             var oldRow=toggle.transform.parent;var icon=oldRow.Find(iconName).GetComponent<Image>().sprite;
             var row=K.Image(card,iconName+"Row",K.Sprite("light_plate"),new Vector2(0,y),new Vector2(850,145));
-            K.RoundedPlate(row,true);
+            K.RoundedPlate(row,true);K.Theme(row,Color.white,Color.white,K.Material("Ui04BoardDark"));
             K.Image(row.transform,iconName,icon,new Vector2(-330,0),new Vector2(120,120)).preserveAspect=true;
             U.Text(row.transform,"Label",fallback,new Vector2(-45,0),new Vector2(380,100),46,key);
             var original=toggle; toggle=UnityEngine.Object.Instantiate(original.gameObject,row.transform).GetComponent<SettingsToggleUI>();toggle.name=original.name;
@@ -97,8 +97,8 @@ namespace ArrowSwarm.UI.Editor
             foreach(var theme in button.GetComponents<ThemedUIElement>())UnityEngine.Object.DestroyImmediate(theme);
             face.material=null;face.color=Color.white;face.sprite=gold?K.Sprite("primary_plate"):sprite;
             face.type=face.sprite.border.sqrMagnitude>0?Image.Type.Sliced:Image.Type.Simple;face.preserveAspect=false;
-            if(icon!=null)K.Image(button.transform,"ActionIcon",icon,new Vector2(-245,0),new Vector2(106,106)).preserveAspect=true;
-            var label=K.Text(button.transform,"ActionText",fallback,new Vector2(icon!=null?50:0,0),new Vector2(icon!=null?540:680,105),52,Color.white,key);
+            if(icon!=null)K.Image(button.transform,"ActionIcon",icon,new Vector2(-size.x/2+95,0),new Vector2(106,106)).preserveAspect=true;
+            var label=K.Text(button.transform,"ActionText",fallback,new Vector2(icon!=null?50:0,0),new Vector2(size.x-(icon!=null?230:80),105),52,Color.white,key);
             label.enableAutoSizing=true;label.fontSizeMin=27;label.fontSizeMax=52;label.textWrappingMode=TextWrappingModes.NoWrap;
             var feedback=button.GetComponent<UIButtonFeedback>()??button.gameObject.AddComponent<UIButtonFeedback>();
             var config=new SerializedObject(feedback);config.FindProperty("_targetTransform").objectReferenceValue=button.transform;
