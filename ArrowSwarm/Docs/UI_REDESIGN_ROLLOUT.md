@@ -1,6 +1,6 @@
 # UI redesign rollout - sequential approval
 
-Baseline: `ce22ef28`. Current checkpoint: **06 Defense pause only and08 Defense hint/freeze UI completed and native-verified;07 explicitly skipped.** Follow `UI_ROLLOUT_06_08.md`; current review is `Captures/UIRollout/Phase06_08/index.html`. Wait for review before another numbered board. Earlier checkpoints below are history.
+Baseline: `ce22ef28`. Current checkpoint: **Boards01–03 approved; board04 Defense/Shapes levels completed and verified, awaiting delivery approval.** Follow `UI_ROLLOUT_04.md`. Board05 waits for approval of board04. Earlier checkpoint notes below are history.
 
 ## Rules for every board
 
@@ -98,7 +98,3 @@ Reference Defense/Shapes levels are integrated with live TMP, authored mode/card
 
 ## Requested follow-up 2026-11-02
 Boot credit, three shared campaign selectors including ColorShift, classic lock tiles/compact stars and Editor mixed sample/live leaderboard refinement are delivered in UI_ROLLOUT_04_REVISIONS.md. Preview: Captures/UIRollout/Phase04Revisions/index.html. Board05 transition work remains behind approval.
-
-## Boards06/08 UI-only delivery
-
-The user explicitly authorized06 pause only, skipped07, then08 hint/freeze UI. Both are implemented in GameScene with original gameplay/HUD/controllers and shared prefab preserved. Native Light/Dark,10 languages,1080x1920/1080x2400, actual control routes and scoped reward callbacks pass. Current implementation and next action: UI_ROLLOUT_06_08.md. Delivery: Captures/UIRollout/Phase06_08/index.html. Review approval precedes any later board.
