@@ -15,7 +15,7 @@ namespace ArrowSwarm.UI.Editor
     /// <summary>Verifies original Pause artwork and real pause/resume input across all four gameplay scenes.</summary>
     public static partial class Revision6PauseVerification
     {
-        private const string Folder = "Captures/Revision6/Checks/Pause";
+        private static string Folder = "Captures/Revision6/Checks/Pause";
         private const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
         private static readonly List<string> Results = new List<string>();
         private static readonly Stack<IEnumerator> Steps = new Stack<IEnumerator>();
@@ -49,6 +49,7 @@ namespace ArrowSwarm.UI.Editor
 
         private static IEnumerator Run()
         {
+            if (_rollout0608) { yield return Run0608(); yield break; }
             VerifyPixels();
             foreach (string scene in new[] { "GameScene", "ShapesScene", "ColorShiftScene", "MapTestScene" })
                 yield return VerifyScene(scene);
@@ -71,7 +72,7 @@ namespace ArrowSwarm.UI.Editor
                     if (step.Current is IEnumerator nested) { Steps.Push(nested); continue; }
                     _wait = step.Current as Func<bool>; return;
                 }
-                Finish("PASS: original Pause artwork, native input and resume in all four gameplay scenes");
+                Finish(_rollout0608 ? "PASS: Defense pause and skill modal native checks" : "PASS: original Pause artwork, native input and resume in all four gameplay scenes");
             }
             catch (Exception error) { Results.Add(error.ToString()); Finish("FAIL: " + error.Message); }
         }
