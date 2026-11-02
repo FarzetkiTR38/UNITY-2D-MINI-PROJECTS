@@ -5,12 +5,10 @@ namespace ArrowSwarm.UI.Editor
     using UnityEditor.U2D.Sprites;
     using UnityEngine;
 
-    /// <summary>Imports only two reusable text-free skill heroes; no mipmaps or readable texture copies.</summary>
+    /// <summary>Imports only the missing floating cloud ornaments; skill heroes reuse their original sprites.</summary>
     internal static class UiRollout0608Art
     {
-        internal const string Path = UiRollout01Kit.ArtFolder + "/defense_skill_heroes.png";
         internal const string CloudPath=UiRollout01Kit.ArtFolder+"/popup_cloud_corners.png";
-        internal static void Import()=>Import(Path,"hint_hero","freeze_hero",1024);
         internal static void ImportClouds()=>Import(CloudPath,"cloud_left","cloud_right",512);
         private static void Import(string path,string first,string second,int maximum)
         {
@@ -38,6 +36,6 @@ namespace ArrowSwarm.UI.Editor
             provider.SetSpriteRects(rects);provider.GetDataProvider<ISpriteNameFileIdDataProvider>().SetNameFileIdPairs(pairs);
             provider.Apply();importer.SaveAndReimport();
         }
-        internal static Sprite Sprite(string name)=>AssetDatabase.LoadAllAssetsAtPath(name.StartsWith("cloud_")?CloudPath:Path).OfType<Sprite>().First(s=>s.name==name);
+        internal static Sprite Sprite(string name)=>AssetDatabase.LoadAllAssetsAtPath(CloudPath).OfType<Sprite>().First(s=>s.name==name);
     }
 }

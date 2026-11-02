@@ -6,19 +6,23 @@ namespace ArrowSwarm.UI.Editor
     using K=UiRollout01Kit;
     using U=UiRollout02Kit;
 
-    /// <summary>Shared hint/freeze card authoring with localized TMP, two reused actions and one hero atlas.</summary>
+    /// <summary>Shared hint/freeze card authoring with localized TMP, two reused actions and existing hero sprites.</summary>
     public static partial class UiRollout0608Authoring
     {
         /// <summary>Applies board08 to only the existing Defense hint/freeze owners in GameScene.</summary>
         public static void Skills()
         {
-            RequireEdit();UiRollout0608Art.Import();
+            RequireEdit();
             Skill(UnityEngine.Object.FindFirstObjectByType<TipPopupUI>(FindObjectsInactive.Include),true);
             Skill(UnityEngine.Object.FindFirstObjectByType<FreezePopupUI>(FindObjectsInactive.Include),false);Save();
         }
         private static void Skill(MonoBehaviour owner,bool hint)
         {
             if(owner.transform.Find("Ui08SafeArea")!=null)throw new System.InvalidOperationException("Skills already authored; edit existing composition.");
+            Sprite hero=null;
+            foreach(var image in owner.transform.Find("DialogBox").GetComponentsInChildren<Image>(true))
+                if(image.name=="SkillIcon")hero=image.sprite;
+            if(hero==null)throw new System.InvalidOperationException("Reuse the existing skill hero sprite.");
             var fields=new SerializedObject(owner);
             var watch=(Button)fields.FindProperty("_watchAdButton").objectReferenceValue;
             var close=(Button)fields.FindProperty("_closeButton").objectReferenceValue;
@@ -30,9 +34,8 @@ namespace ArrowSwarm.UI.Editor
             var card=Card(owner,"Ui08SafeArea",new Vector2(1000,1750));
             Frame(card,new Vector2(800,1300),Vector2.zero);
             string prefix=hint?"tip_popup_":"freeze_popup_";
-            U.Title(card,"TitleLine1",hint?"HINTS":"FREEZES",new Vector2(0,480),new Vector2(700,205),110,prefix+"title_line1");
-            U.Title(card,"TitleLine2","FINISHED",new Vector2(0,310),new Vector2(650,205),110,prefix+"title_line2");
-            K.Image(card,"SkillHero",UiRollout0608Art.Sprite(hint?"hint_hero":"freeze_hero"),new Vector2(0,-10),new Vector2(520,520)).preserveAspect=true;
+            ReuseTitle(owner,card,true);
+            K.Image(card,"SkillHero",hero,new Vector2(0,-10),new Vector2(520,520)).preserveAspect=true;
             var message=U.Text(card,"Message",hint?"Watch an ad to get 1 hint":"Watch an ad to get 1 freeze",new Vector2(0,-300),new Vector2(710,105),46,prefix+"subtitle");
             ReskinButton(watch,card,new Vector2(0,-420),new Vector2(700,155),"tip_popup_watch_ad","WATCH AD",icon,true);
             ReskinButton(close,card,new Vector2(0,-570),new Vector2(640,125),"tip_popup_close","CLOSE",null,false);

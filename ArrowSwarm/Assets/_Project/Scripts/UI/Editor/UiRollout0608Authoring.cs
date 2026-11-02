@@ -24,7 +24,7 @@ namespace ArrowSwarm.UI.Editor
             var card=Card(owner,"Ui06SafeArea",new Vector2(1000,2050));
             var frame=Frame(card,new Vector2(1000,1500),new Vector2(0,-60));
             U.PopupCrest(card,new Vector2(0,790),new Vector2(730,330));
-            var title=U.Title(card,"TitleText","PAUSED",new Vector2(0,510),new Vector2(940,240),126,"pause_title");
+            var title=ReuseTitle(owner,card,false);
             K.Image(card,"HeaderStar",K.Sprite("star"),new Vector2(0,365),new Vector2(72,72)).preserveAspect=true;
             U.Bind(owner,"_soundToggle",ToggleRow(card,sound,265,"settings_sfx","SOUND","SoundIcon"));
             U.Bind(owner,"_vibrationToggle",ToggleRow(card,vibration,100,"settings_vibration","VIBRATION","VibrationIcon"));
@@ -75,6 +75,24 @@ namespace ArrowSwarm.UI.Editor
             state.FindProperty("_offTextKey").stringValue="settings_off";
             state.ApplyModifiedPropertiesWithoutUndo();
             return toggle;
+        }
+
+        private static TextMeshProUGUI ReuseTitle(MonoBehaviour owner,Transform card,bool skill)
+        {
+            var source=owner.transform.Find("DialogBox/HeaderTitle");
+            var copy=UnityEngine.Object.Instantiate(source.gameObject,card);copy.name="LocalizedTitle";
+            Normalize((RectTransform)copy.transform,new Vector2(0,skill?430:510),skill?new Vector2(700,260):new Vector2(940,240));
+            TextMeshProUGUI front=null;int line=0;
+            foreach(var title in copy.GetComponentsInChildren<Casual3DTitle>(true))
+            {
+                if(!skill)Normalize((RectTransform)title.transform,Vector2.zero,new Vector2(940,240));
+                else ((RectTransform)title.transform).anchoredPosition=new Vector2(0,line++==0?90:-90);
+                var config=new SerializedObject(title);config.FindProperty("_fontStyle").intValue=(int)FontStyles.Normal;var shadow=(TextMeshProUGUI)config.FindProperty("_shadowText").objectReferenceValue;
+                if(shadow!=null)shadow.gameObject.SetActive(false);
+                config.FindProperty("_shadowText").objectReferenceValue=null;config.ApplyModifiedPropertiesWithoutUndo();
+                title.ApplyAll();front=(TextMeshProUGUI)new SerializedObject(title).FindProperty("_frontText").objectReferenceValue;
+            }
+            return front;
         }
 
         private static RectTransform Card(MonoBehaviour owner,string name,Vector2 extent)
