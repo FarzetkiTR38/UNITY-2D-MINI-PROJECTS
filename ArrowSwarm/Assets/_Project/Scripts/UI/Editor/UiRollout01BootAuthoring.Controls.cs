@@ -48,10 +48,10 @@ namespace ArrowSwarm.UI.Editor
             foreach (int side in new[] { -1, 1 })
             {
                 var star = K.Image(parent, side < 0 ? "StudioStarLeft" : "StudioStarRight", K.Sprite("star"),
-                    new Vector2(side * 212, -838), new Vector2(43, 43));
+                    new Vector2(side * 164, -838), new Vector2(43, 43));
                 star.preserveAspect = true;
                 var rule = K.Image(parent, side < 0 ? "StudioRuleLeft" : "StudioRuleRight", null,
-                    new Vector2(side * 143, -884), new Vector2(21, 2));
+                    new Vector2(side * 109, -884), new Vector2(21, 2));
                 K.Theme(rule, new Color(.13f, .65f, .92f), new Color(.08f, .85f, 1));
             }
         }
