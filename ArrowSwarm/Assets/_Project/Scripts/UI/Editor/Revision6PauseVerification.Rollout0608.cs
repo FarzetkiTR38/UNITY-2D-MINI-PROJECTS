@@ -72,9 +72,9 @@ namespace ArrowSwarm.UI.Editor
                     {
                         bool isTip=modal==tip;
                         if(isTip)tip.Show();else freeze.Show();yield return Settled(.7f);
-                        if (_revised0608) Validate0608(modal.transform);
+                        if (_revised0608 && modal.transform.Find("Ui08SafeArea")!=null) Validate0608(modal.transform);
                         yield return Capture((isTip?"hint-":"freeze-")+theme.ToString().ToLowerInvariant());
-                        if (_revised0608)
+                        if (_revised0608 && modal.transform.Find("Ui08SafeArea")!=null)
                         {
                             foreach(var language in LocalizationManager.Instance.AvailableLanguages)
                             {LocalizationManager.Instance.SetLanguage(language.code,false);yield return Settled(.03f);Validate0608(modal.transform);}

@@ -90,6 +90,7 @@ namespace ArrowSwarm.UI.Editor
             _scope = null; _wait = null; Status = outcome;
             File.WriteAllText(Folder + "/verification.txt", outcome + "\n" + string.Join("\n", Results) + "\n");
             UnityEngine.Debug.Log("[ArrowSwarm] " + outcome);
+            _rollout0608=false;Folder="Captures/Revision6/Checks/Pause";
         }
 
         private static Func<bool> Settled(float seconds = .4f)
