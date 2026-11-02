@@ -94,3 +94,7 @@ The user approved board03 and requested board04 on2026-11-01. Use Revision6 AFTE
 ## Board04 delivery complete
 
 Reference Defense/Shapes levels are integrated with live TMP, authored mode/card states and shared imagery. The original ColorShift view and all earlier screens remain preserved. Native Light/Dark,10languages,5sizes and approved-screen/route regressions pass. Delivery: `Captures/UIRollout/Phase04/index.html`; checked implementation/evidence: `UI_ROLLOUT_04.md`. **Await approval before board05.**
+
+
+## Requested follow-up 2026-11-02
+Boot credit, three shared campaign selectors including ColorShift, classic lock tiles/compact stars and Editor mixed sample/live leaderboard refinement are delivered in UI_ROLLOUT_04_REVISIONS.md. Preview: Captures/UIRollout/Phase04Revisions/index.html. Board05 transition work remains behind approval.
