@@ -2,6 +2,8 @@
 
 Current explicit request (2026-11-06): **board08 exhausted Hint/Freeze popups only**, tracked in `UI_ROLLOUT_08_SKILLS.md`. Board06/Pause was reverted and is not authorized by this request. Gameplay, backdrop and HUD are preserved.
 
+Board08 narrow delivery is complete: actual before/after preview at `Captures/UIRollout/Phase08Skills/index.html`; four native sizes, both themes and10 languages pass. Only the two exhausted-skill popup subtrees are changed. Source guard and private-state restoration pass. Wait for user review; do not resume board06 or begin another board automatically.
+
 Baseline: `ce22ef28`. Current checkpoint: **Boards01–03 approved; board04 Defense/Shapes levels completed and verified, awaiting delivery approval.** Follow `UI_ROLLOUT_04.md`. Board05 waits for approval of board04. Earlier checkpoint notes below are history.
 
 ## Rules for every board

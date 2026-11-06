@@ -13,11 +13,11 @@ The backdrop, gameplay, HUD, Pause, outcomes, other modes, rewards and advertise
 - [x] Inspect and refine actual Light/Dark captures against the reference.
 - [x] Verify exhausted-skill opening, Close and scoped rewarded success/failure through real pointer input; verify localization and responsive safe bounds.
 - [x] Verify unchanged source outside the two popup subtrees; restore private state and original dirty files.
-- [ ] Commit tested implementation and deliver actual before/after preview.
+- [x] Commit tested implementation and deliver actual before/after preview.
 
 ## Resume
 
-Next action: commit the verified isolated implementation and evidence, then wait for user review. Do not replay the reverted board06/Pause work or begin another numbered board.
+Complete. Next action: user review of `Captures/UIRollout/Phase08Skills/index.html`. Do not replay the reverted board06/Pause work or begin another numbered board without a new request.
 
 ## Baseline and isolation
 
@@ -42,3 +42,5 @@ All five original PlayerPrefs keys were compared against the private pre-Play sn
 The last tablet bootstrap was restarted after an in-flight script reload interrupted Boot's coroutine; the clean compiled Play run passed. Boot source and startup logic were not modified.
 
 Review: `Captures/UIRollout/Phase08Skills/index.html`, served at `http://127.0.0.1:8170/UIRollout/Phase08Skills/index.html`. Original Revision6 gallery remains on8168.
+
+Commits: plan `7cda5e58`; isolated tested implementation `9367619a`; final evidence/checklist are committed separately with this delivery.
