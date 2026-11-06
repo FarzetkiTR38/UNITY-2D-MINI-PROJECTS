@@ -6,6 +6,7 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
 BASELINE = "44dcb361"
+FONT_PHASE = "57faf8d5"
 OLD = "f4d1b940dffc18642ab5a68d8b7a8502"
 ENTRIES = dict(line.split("=", 1) for line in Path(__file__).with_name("title-asset-map.txt").read_text().splitlines())
 
@@ -28,10 +29,13 @@ def check():
     for record in records:
         path = record["path"]
         before = subprocess.check_output(["git", "show", BASELINE + ":" + prefix + path], cwd=ROOT)
-        actual = (ROOT / path).read_bytes()
+        actual = subprocess.check_output(["git", "show", FONT_PHASE + ":" + prefix + path], cwd=ROOT)
         assert mapped(before).replace(b"\r\n", b"\n") == actual.replace(b"\r\n", b"\n"), path
+        if path != "Assets/_Project/Scenes/GameScene.unity":
+            assert actual.replace(b"\r\n", b"\n") == (ROOT / path).read_bytes().replace(b"\r\n", b"\n"), path
     report = {"status": "PASS", "baseline": BASELINE, "referenceOnlyAssets": len(records),
-              "paths": [r["path"] for r in records], "no_layout_or_gameplay_changes": True}
+              "font_phase": FONT_PHASE, "paths": [r["path"] for r in records], "no_layout_or_gameplay_changes": True,
+              "later_GameScene_scope": "Check Phase08Revisions/Tools/check_scope.py for the separately owned popup accents"}
     out = ROOT / "Captures/UIRollout/Phase08Revisions/FontProof/title-source-scope.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, indent=2) + "\n")

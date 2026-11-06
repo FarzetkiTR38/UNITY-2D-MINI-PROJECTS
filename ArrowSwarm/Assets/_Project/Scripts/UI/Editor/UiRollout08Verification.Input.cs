@@ -13,6 +13,7 @@ namespace ArrowSwarm.UI.Editor
     {
         private static IEnumerator Click(NativeMouse mouse, Button button, bool checkSqueeze)
         {
+            yield return Settled(.1f);
             Check(button != null && button.interactable && button.gameObject.activeInHierarchy,
                 "Actual target button is active and interactable");
             Canvas.ForceUpdateCanvases();
@@ -20,6 +21,14 @@ namespace ArrowSwarm.UI.Editor
             var camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
             Vector2 center = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center));
             mouse.Send(new Vector2(2, 2), false); yield return mouse.Wait(); yield return Settled(.08f);
+            Canvas.ForceUpdateCanvases();
+            center = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center));
+            var hits = new System.Collections.Generic.List<RaycastResult>();
+            EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = center }, hits);
+            string hit = hits.Count > 0 ? hits[0].gameObject.name : "none";
+            Check(hits.Count > 0 && ExecuteEvents.GetEventHandler<IPointerClickHandler>(hits[0].gameObject) == button.gameObject,
+                "Native target raycast resolves to " + button.name + "; screen=" + Screen.width + "x" + Screen.height +
+                "; center=" + center + "; firstHit=" + hit);
             Vector3 baseline = button.transform.localScale;
             mouse.Send(center, true); yield return mouse.Wait(); yield return Settled(.12f);
             if (checkSqueeze) Check(button.transform.localScale.x < baseline.x * .99f,
@@ -33,6 +42,8 @@ namespace ArrowSwarm.UI.Editor
             private readonly Mouse _previousMouse, _mouse;
             private readonly InputDevice _previousPointer;
             private readonly InputSettings _original, _temporary;
+            private readonly UnityEngine.InputSystem.InputActionAsset _uiActions;
+            private readonly UnityEngine.InputSystem.Utilities.ReadOnlyArray<InputDevice>? _uiDevices;
             private readonly GameObject _selection;
             private Vector2 _position;
             private bool _pressed, _pending, _acknowledged, _disposed;
@@ -47,6 +58,15 @@ namespace ArrowSwarm.UI.Editor
                 _temporary.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
                 _temporary.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
                 InputSystem.settings = _temporary; _mouse = InputSystem.AddDevice<Mouse>("UiRollout08Mouse");
+                var module = EventSystem.current != null ? EventSystem.current.currentInputModule as UnityEngine.InputSystem.UI.InputSystemUIInputModule : null;
+                _uiActions = module != null ? module.actionsAsset : null;
+                if (_uiActions != null)
+                {
+                    var devices = _uiActions.devices;
+                    _uiDevices = devices.HasValue ? new UnityEngine.InputSystem.Utilities.ReadOnlyArray<InputDevice>(devices.Value.ToArray()) :
+                        (UnityEngine.InputSystem.Utilities.ReadOnlyArray<InputDevice>?)null;
+                    _uiActions.devices = new InputDevice[] { _mouse };
+                }
                 InputSystem.onAfterUpdate += AfterUpdate;
             }
 
@@ -76,6 +96,7 @@ namespace ArrowSwarm.UI.Editor
             {
                 if (_disposed) return; _disposed = true;
                 InputSystem.onAfterUpdate -= AfterUpdate;
+                if (_uiActions != null) _uiActions.devices = _uiDevices;
                 if (_mouse != null && _mouse.added) InputSystem.RemoveDevice(_mouse);
                 InputSystem.settings = _original;
                 if (_temporary != null) UnityEngine.Object.DestroyImmediate(_temporary);
@@ -84,6 +105,7 @@ namespace ArrowSwarm.UI.Editor
                 if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(_selection != null && _selection.activeInHierarchy ? _selection : null);
                 Check(ReferenceEquals(InputSystem.settings, _original) && (_mouse == null || !_mouse.added),
                     "Native board08 input restores original InputSettings and removes its owned mouse");
+                Check(_uiActions == null || _uiActions.devices.Equals(_uiDevices), "Original UI action device filter restored");
                 Check((_previousMouse == null || !_previousMouse.added || Mouse.current == _previousMouse) &&
                     (_previousPointer == null || !_previousPointer.added || Pointer.current == _previousPointer),
                     "Native board08 input restores original current mouse and pointer");

@@ -40,13 +40,15 @@ namespace ArrowSwarm.UI.Editor
                     var skillButton = Field<Button>(hud, isTip ? "_skill1TipButton" : "_skill2FreezeButton");
                     yield return Click(mouse, skillButton, false);
                     Check(_scope.Ads.Requests == requests + 1 && Count(isTip) == 0 && !modal.gameObject.activeSelf,
-                        "Existing zero-count HUD route remains direct rewarded ad; scoped failure grants nothing");
+                        "Existing zero-count HUD route remains direct rewarded ad; scoped failure grants nothing; before=" + requests +
+                        "; after=" + _scope.Ads.Requests + "; charges=" + Count(isTip) + "; modalActive=" + modal.gameObject.activeSelf);
                     Exhaust(isTip); yield return Settled(.7f);
                     Check(modal.gameObject.activeInHierarchy && Field<CanvasGroup>(modal, "_canvasGroup").blocksRaycasts,
                         "Original manager exhaustion event opens modal and blocks gameplay input");
                     Check(GameManager.Instance.CurrentState == GameState.Playing && Time.timeScale == 0,
                         "Only fixture world clock is frozen; production game state remains Playing");
                     if (_revised) Validate(modal.transform);
+                    if (_revised) yield return VerifyAccents(modal, isTip);
                     yield return Capture((isTip ? "hint-" : "freeze-") + theme.ToString().ToLowerInvariant());
                     if (_revised)
                     {
