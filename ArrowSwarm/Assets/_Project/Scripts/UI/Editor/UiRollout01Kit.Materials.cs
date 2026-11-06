@@ -73,11 +73,11 @@ namespace ArrowSwarm.UI.Editor
         private static Material NewMaterial(string name, Shader shader)
         {
             if (shader == null) throw new InvalidOperationException("Shared UI shader missing: " + name);
-            var material = AssetDatabase.LoadAssetAtPath<Material>(MaterialFolder + "/" + name + ".mat");
+            var material = AssetDatabase.LoadAssetAtPath<Material>(MaterialPath(name));
             if (material == null)
             {
                 material = new Material(shader) { name = name };
-                AssetDatabase.CreateAsset(material, MaterialFolder + "/" + name + ".mat");
+                AssetDatabase.CreateAsset(material, MaterialPath(name));
             }
             else material.shader = shader;
             return material;

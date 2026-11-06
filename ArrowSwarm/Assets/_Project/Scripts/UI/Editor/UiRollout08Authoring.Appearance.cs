@@ -73,7 +73,7 @@ namespace ArrowSwarm.UI.Editor
 
         private static void Typography(TextMeshProUGUI label)
         {
-            label.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/_Project/Fonts/LilitaOne_SDF.asset");
+            label.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/_Project/Fonts/Farzetki_Title_Font_H1_SDF.asset");
             label.fontSharedMaterial = label.font.material;
         }
 

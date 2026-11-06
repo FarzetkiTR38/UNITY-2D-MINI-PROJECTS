@@ -39,7 +39,7 @@ namespace ArrowSwarm.UI.Editor
             Control(header, "BackButton", source.Back, new Vector2(-390, 0), new Vector2(110, 110), source.Feedback, false);
             var close = Control(header, "CloseButton", source.Close, new Vector2(390, 0), new Vector2(110, 110), source.Feedback, false);
             var title = U.Text(header, "TitleText", "SETTINGS", Vector2.zero, new Vector2(630, 122), 105, "settings_title");
-            title.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/_Project/Fonts/LilitaOne_SDF.asset");
+            title.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/_Project/Fonts/Farzetki_Title_Font_H1_SDF.asset");
             title.fontSharedMaterial = K.Material("TitleBlue");
             K.Theme(title, Color.white, Color.white);
             var rows = K.Rect(board.transform, "SettingsContainer", Vector2.zero, new Vector2(950, 1200));

@@ -15,7 +15,7 @@ namespace ArrowSwarm.UI.Editor
         internal const string MaterialFolder = "Assets/_Project/Art/Materials/SharedUI";
         internal const string BootLogoPath = "Assets/_Project/Art/_FarzetkiArts/Logos/ChatGPT Image 9 Eyl 2026 18_42_19 (3)-Photoroom.png";
         private const string FontPath = "Assets/_Project/Fonts/Fazo_Font.asset";
-        private const string TitleFontPath = "Assets/_Project/Fonts/LilitaOne_SDF.asset";
+        private const string TitleFontPath = "Assets/_Project/Fonts/Farzetki_Title_Font_H1_SDF.asset";
         private static readonly Color Ink = new Color(.025f, .16f, .57f);
         private static readonly Color Ice = new Color(.82f, .93f, 1f);
 
@@ -98,7 +98,10 @@ namespace ArrowSwarm.UI.Editor
             Theme(image, Color.white, Color.white, darkSurface ? Material("DarkPanel") : null);
         }
 
-        internal static Material Material(string name) => AssetDatabase.LoadAssetAtPath<Material>(MaterialFolder + "/" + name + ".mat")
+        internal static string MaterialPath(string name) =>
+            (name == "TitleBlue" || name == "TitleGold" ? "Assets/_Project/Fonts/Farzetki_Title_H1" : MaterialFolder) + "/" + name + ".mat";
+
+        internal static Material Material(string name) => AssetDatabase.LoadAssetAtPath<Material>(MaterialPath(name))
             ?? throw new InvalidOperationException("Import shared UI materials before authoring: " + name);
     }
 }
