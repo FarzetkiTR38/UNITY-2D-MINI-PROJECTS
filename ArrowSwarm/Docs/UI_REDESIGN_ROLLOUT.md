@@ -2,7 +2,7 @@
 
 Current explicit request (2026-11-06): **board08 exhausted Hint/Freeze popups only**, tracked in `UI_ROLLOUT_08_SKILLS.md`. Board06/Pause was reverted and is not authorized by this request. Gameplay, backdrop and HUD are preserved.
 
-Board08 follow-up is authorized: Turkish title glyph corrections and subtle hero accents only; tracked in `UI_ROLLOUT_08_REVISIONS.md`.
+Board08 follow-up is complete: `Farzetki_Title_Font_H1` retains the title family and supplies native-weight Turkish glyphs; the two exhausted-skill heroes gain subtle themed mesh accents. Four native sizes, both themes, ten languages and original controls/rewards pass. Actual Before/After: `Captures/UIRollout/Phase08Revisions/index.html`; checked implementation: `UI_ROLLOUT_08_REVISIONS.md`. Wait for user review before further numbered boards.
 
 Board08 narrow delivery is complete: actual before/after preview at `Captures/UIRollout/Phase08Skills/index.html`; four native sizes, both themes and10 languages pass. Only the two exhausted-skill popup subtrees are changed. Source guard and private-state restoration pass. Wait for user review; do not resume board06 or begin another board automatically.
 

@@ -11,11 +11,11 @@ Active request 2026-11-06. Baseline `44dcb361`. Preserve the established title f
 - [x] Check glyph provenance, unchanged Latin outlines/metrics, real localized headings and responsive bounds in Unity MCP; commit font phase.
 - [x] Add subtle texture-free rays/sparkles/snowflakes around the two popup heroes, with gentle unscaled animation and no input interception.
 - [x] Inspect/refine both themes at four native sizes, check all languages and real popup controls; commit effect phase.
-- [ ] Restore private state/dirty files, update before/after preview and commit evidence.
+- [x] Restore private state/dirty files, update before/after preview and commit evidence.
 
 ## Resume
 
-Font and effect phases verified. Next: finish private-state restoration and evidence commit, then deliver the comparison for user review. Do not begin another numbered board.
+Complete. Preview: `Captures/UIRollout/Phase08Revisions/index.html` (localhost8170 `/UIRollout/Phase08Revisions/index.html`). Next action: wait for the user's review of these two revisions. Do not begin another numbered board.
 
 ## Title implementation
 
@@ -46,3 +46,11 @@ The Editor input fixture now temporarily binds its UI actions only to its owned 
 Additional shared-font regression: Boot/Home/Mode/Settings and the three existing Play routes pass in MenuFontChecks. Profile/Leaderboard headings are checked in their current approved Editor sample presentation. An attempted older full leaderboard state verifier failed because it expects an exact Loading label while current Editor sample mode deliberately shows EDITOR / SAMPLE + LIVE; the diagnostic report is retained in Diagnostics. No leaderboard production behavior was changed to satisfy that unrelated legacy assertion.
 
 These are native Unity Editor Game View checks with isolated provider seams, not physical-device or live-ad SDK certification. Original player preferences, provider ownership, data, language, random state and lives are restored by the scoped fixtures. The final source guard separately proves 280 of 282 original GameScene documents unchanged, only two Card child-list edits and 108 added documents confined to four local decorative roots.
+
+## Delivery
+
+- Plan: `724dc757`; native Turkish title font: `57faf8d5`; tested popup accents: `300aeb33`; final captures/checklist are the following evidence commit.
+- `index.html` compares actual Before/After captures, switches both themes/four sizes and opens native-resolution detail. Its displayed font comparison is a temporary native Unity canvas, not an AI mockup. Browser controls and rendered images were visually checked; `preview-page.png` records the review page.
+- `verification-summary.json` records exact report counts, native PNG dimensions/hashes, the documented unrelated legacy-verifier attempt and acceptance boundaries.
+- Final cleanup restores all13 initially dirty files byte-for-byte, resets two test-populated font caches to their committed contents, verifies all five private preference values already match the original snapshot, and leaves MainMenuScene in Edit Mode at original Game View index18/background=true. No player data or preference contents are published. Pre-existing recovery files and .codex work remain untracked.
+- Final Unity console inspection: 0 errors, 0 warnings; compilation idle. The strict independent source/restoration guard passes.
