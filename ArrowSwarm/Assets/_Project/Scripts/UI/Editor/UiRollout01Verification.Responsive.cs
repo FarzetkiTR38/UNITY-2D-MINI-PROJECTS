@@ -43,7 +43,9 @@ namespace ArrowSwarm.UI.Editor
             var profile = ScreenRect((RectTransform)root.Find("ProfileButton"));
             Check(Mathf.Abs(Screen.safeArea.yMax - profile.yMax - 74 * scale) < 1,
                 "Home top HUD keeps its actual top safe-area inset on every aspect ratio");
-            var wordmark = ScreenRect((RectTransform)root.Find("Wordmark"));
+            var logo = root.Find("BrandLogo");
+            var wordmark = logo != null ? Drawn03Rect(logo.GetComponent<UnityEngine.UI.Image>(), false) :
+                ScreenRect((RectTransform)root.Find("Wordmark"));
             var play = ScreenRect((RectTransform)root.Find("PlayButton"));
             Check(wordmark.yMin >= play.yMax + 10 * scale,
                 "Home branding stays clear of the center-anchored Play control after resize");

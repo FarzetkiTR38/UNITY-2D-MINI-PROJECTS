@@ -11,7 +11,8 @@ namespace ArrowSwarm.UI.Editor
         {
             var root = panel.Find("MenuArt"); Expand(root);
             foreach (string name in new[] { "LevelCounter", "StarCounter", "ProfileButton" }) Anchor(root, name, 1, 822);
-            Anchor(root, "BrandCrest", .70f, 470); Anchor(root, "Wordmark", .70f, 115);
+            if (root.Find("BrandLogo") != null) Anchor(root, "BrandLogo", .70f, 330);
+            else { Anchor(root, "BrandCrest", .70f, 470); Anchor(root, "Wordmark", .70f, 115); }
             Anchor(root, "PlayButton", .5f, -215); Anchor(root, "GameModeButton", .5f, -435);
             foreach (string name in new[] { "LevelsButton", "LeaderboardButton", "SettingsButton" }) Anchor(root, name, .5f, -730);
         }

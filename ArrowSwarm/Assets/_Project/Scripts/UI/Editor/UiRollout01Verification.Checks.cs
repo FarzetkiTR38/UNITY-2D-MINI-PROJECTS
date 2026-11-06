@@ -45,9 +45,10 @@ namespace ArrowSwarm.UI.Editor
             int legacy = 0;
             foreach (var text in root.GetComponentsInChildren<Text>(true)) if (Visible(text)) legacy++;
             bool boot = root.GetComponent<BootLoadingUI>() != null;
-            Check(count > (boot ? 3 : 5) && (boot ? !arrow && !swarm : arrow && swarm) && legacy == 0,
-                label + (boot ? ": only Boot's illustrated logo uses baked lettering; all functional copy remains TMP" :
-                ": Home wordmark and visible labels still use real TMP, with no legacy Unity Text components"));
+            bool illustratedHome = root.Find("MenuArt/BrandLogo") != null;
+            Check(count > (boot ? 3 : 5) && (boot || illustratedHome ? !arrow && !swarm : arrow && swarm) && legacy == 0,
+                label + (boot || illustratedHome ? ": approved illustrated branding carries its lettering; all functional copy remains TMP" :
+                ": original Home wordmark and functional labels use TMP, without legacy Unity Text"));
         }
 
         private static bool GlyphsFit(TMP_Text text)

@@ -102,9 +102,12 @@ namespace ArrowSwarm.UI.Editor
                 Check(backdrop.material == UiRollout01Kit.Material(theme == ThemeMode.Light ? "BackdropLight" : "BackdropDark") &&
                     backdrop.material.shader.name == "ArrowSwarm/UI/SharedMenuBackdrop", "Home retains its original shared atmosphere / " + theme);
                 bool shared = false;
+                bool illustrated = home.transform.Find("MenuArt/BrandLogo") != null;
                 foreach (var image in home.GetComponentsInChildren<Image>(true))
-                    if (Visible(image) && image.sprite == UiRollout01Kit.Sprite("brand_crest")) shared = true;
-                Check(shared, "Home retains the existing shared text-free crest and TMP wordmark / " + theme);
+                    if (Visible(image) && image.sprite == UiRollout01Kit.Sprite(illustrated ? "boot_logo" : "brand_crest")) shared = true;
+                Check(shared, "Home retains its authored shared branding artwork / " + theme);
+                if (illustrated) Check(home.transform.Find("MenuArt/Wordmark") == null &&
+                    home.transform.Find("MenuArt/BrandCrest") == null, "Home has one shared illustrated logo without duplicate flat lettering");
                 yield return Capture("home-" + theme.ToString().ToLowerInvariant());
             }
             DataManager.Instance.SetTheme(ThemeMode.Light); yield return Settled(); original.Verify();

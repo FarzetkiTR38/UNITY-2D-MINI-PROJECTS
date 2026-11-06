@@ -25,7 +25,7 @@ namespace ArrowSwarm.UI.Editor
             var selector = panel.GetComponent<GameModeSelectUI>();
             if (selector == null || panel.transform.Find("MenuArt") == null)
                 throw new InvalidOperationException("Existing Home and mode modal bindings must be present.");
-            foreach (string key in new[] { "brand_crest", "primary_plate", "light_plate", "nav_tile", "profile_avatar", "star" }) K.Sprite(key);
+            foreach (string key in new[] { "boot_logo", "primary_plate", "light_plate", "nav_tile", "profile_avatar", "star" }) K.Sprite(key);
             var oldPlay = (Button)settings.FindProperty("_playButton").objectReferenceValue;
             var oldLevels = (Button)settings.FindProperty("_levelsButton").objectReferenceValue;
             var oldBoard = (Button)settings.FindProperty("_leaderboardButton").objectReferenceValue;
@@ -39,9 +39,7 @@ namespace ArrowSwarm.UI.Editor
             K.Backdrop(panel.transform);
             var art = Content(panel.transform);
             Header(art, menu, out TextMeshProUGUI level, out TextMeshProUGUI stars);
-            var crest = K.Image(art, "BrandCrest", K.Sprite("brand_crest"), new Vector2(0, 470), new Vector2(970, 610));
-            crest.preserveAspect = true;
-            K.Wordmark(art, new Vector2(0, 115), 1010);
+            UiNovemberBrandAuthoring.Apply();
             var play = Button(art, "PlayButton", "primary_plate", new Vector2(0, -215), new Vector2(930, 235), feedback[0], colors);
             var triangle = K.Image(play.transform, "PlayIcon", K.Sprite("icon_play"), new Vector2(-307, 0), new Vector2(150, 160));
             triangle.preserveAspect = true;
@@ -54,7 +52,7 @@ namespace ArrowSwarm.UI.Editor
             Bind(menu, "_playButton", play); Bind(menu, "_levelsButton", levels);
             Bind(menu, "_leaderboardButton", board); Bind(menu, "_settingsButton", options);
             Bind(menu, "_levelText", level); Bind(menu, "_starsText", stars);
-            // The brand has two authored TMP lines; SetupUI must not replace either with a single label.
+            // Home shares the approved illustrated Boot logo; all functional labels remain live TMP.
             Bind(menu, "_titleText", null);
             UiRolloutResponsiveAuthoring.Home(panel.transform);
             foreach (var canvas in panel.GetComponentsInParent<Canvas>(true))
