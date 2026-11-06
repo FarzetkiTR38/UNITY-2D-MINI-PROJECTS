@@ -5,9 +5,9 @@ User-authorized scope: preserve the approved composition while correcting the fi
 ## Continuing checklist / intended checkpoints
 
 - [x] Read project rules; snapshot source, initially dirty files, original private preferences and Editor state.
-- [ ] Capture the original Home/Profile/Leaderboard and zero-Rocket behavior through Unity MCP.
-- [ ] Home: replace the flat TMP wordmark/crest with the existing approved illustrated Boot logo, retaining responsive anchors and other controls. Commit.
-- [ ] Profile: correct the avatar backing/alignment in the real editable name field. Commit.
+- [x] Capture the original Home/Profile/Leaderboard through Unity MCP; inspect the original disabled zero-Rocket source behavior.
+- [x] Home: replace the flat TMP wordmark/crest with the existing approved illustrated Boot logo, retaining responsive anchors and other controls. Commit `2a3ae738`.
+- [x] Profile: correct the avatar backing/alignment in the real editable name field. Commit `77934503`.
 - [ ] Profile: refine the dice and country navigation using existing sprites/feedback. Commit.
 - [ ] Leaderboard: remove the tiny top-three star decorations while retaining rank medals. Commit.
 - [ ] Leaderboard: refine the status and Refresh plates into rounded controls; preserve rows and data behavior. Commit.
@@ -31,4 +31,8 @@ The user requested approximately ten meaningful commits rather than one combined
 
 ## Resume
 
-Initial snapshot ready at the private temporary pointer `ArrowSwarm-Nov07-path.txt`. Original Editor was running ColorShiftScene at Game View index18 with background=true; its private player payload and five preferences were captured before stopping Play. Next: capture the unchanged menu presentation, implement the narrowly scoped checkpoints, and update this checklist with evidence/commits as each passes.
+Initial snapshot ready at the private temporary pointer `ArrowSwarm-Nov07-path.txt`. Original Editor was running ColorShiftScene at Game View index18 with background=true; its private player payload and five preferences were captured before stopping Play. Home logo and Profile avatar are delivered and verified. Profile dice/country controls are authored and awaiting native interaction checks; leaderboard helpers, Rocket runtime/authoring and all three hint guards/test stages are implemented but not yet committed/tested. Next: native Profile control run, then separate leaderboard stages, then skill checks. Keep unrelated dirty files out of staging.
+
+## Completed evidence
+
+`BeforeHome` and `BeforeMenus` are native captures from unchanged scene appearance. `Logo` and `Avatar` pass paired theme/ten-language layout checks. Home reuses the exact Boot sprite/texture (no raster addition) and its visible mesh stays clear of Play including the existing breathing animation. Avatar inspection found and removed a separate legacy `NameInput/Image` backing; the real input, caret and label remain bound. The two mask materials use existing shaders and no extra texture.
