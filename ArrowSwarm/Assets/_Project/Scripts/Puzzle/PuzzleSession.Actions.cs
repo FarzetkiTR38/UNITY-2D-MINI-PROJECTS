@@ -29,7 +29,9 @@ namespace ArrowSwarm.Puzzle
         {
             if (!Ready || index < 0 || index >= _removed.Length || _removed[index] || _inFlight[index]) return;
             RocketArmed = false;
+            ConsumeHintArrow(index);
             for (int i = 0; i < _views.Length; i++) if (!_removed[i] && !_inFlight[i]) _views[i].Highlight(false);
+            RestoreHintHighlight();
             _inFlight[index] = true; _activeShots++;
             StartCoroutine(Shot(index));
             Notify();
@@ -71,6 +73,7 @@ namespace ArrowSwarm.Puzzle
         public void Rotate(int direction)
         {
             if (!Ready || _mode != GameModeId.ColorShift || Turns <= 0) return;
+            ConsumeHintRotation();
             RocketArmed = false;
             _busy = true; Turns--; Orientation ^= 1; Notify();
             StartCoroutine(Turn(direction));
@@ -95,6 +98,7 @@ namespace ArrowSwarm.Puzzle
         private void End(bool won)
         {
             if (Won || Lost) return;
+            ResetHintSuggestion();
             Won = won; Lost = !won;
             if (won)
             {
@@ -110,6 +114,7 @@ namespace ArrowSwarm.Puzzle
         public void Hint()
         {
             if (!Idle) return;
+            if (RepeatHintSuggestion()) return;
             RocketArmed = false;
             if (RocketNeeded)
             {
@@ -122,8 +127,9 @@ namespace ArrowSwarm.Puzzle
             if (!solution.Solvable || solution.Steps.Count == 0) { SetMessage("puzzle_restart_hint"); Notify(); return; }
             if (!Preview && DataManager.Instance.PlayerData.tipCount <= 0)
             { HintPromptOpen = true; Notify(); return; }
-            if (!Preview) DataManager.Instance.ModifyTipCount(-1);
             int action = solution.Steps[0];
+            RememberHintSuggestion(action);
+            if (!Preview) DataManager.Instance.ModifyTipCount(-1);
             SetMessage(action < 0 ? "puzzle_hint_rotate" : "puzzle_hint_arrow");
             if (action >= 0) _views[action].Highlight(true);
             AudioManager.Instance?.PlaySkillTips(); Notify();

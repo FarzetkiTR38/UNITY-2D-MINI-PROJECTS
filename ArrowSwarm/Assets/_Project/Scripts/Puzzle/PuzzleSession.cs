@@ -62,6 +62,7 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Loads catalog data, restores three lives and resets all transient actions.</summary>
         public void LoadLevel(int number)
         {
+            ResetHintSuggestion();
             StopAllCoroutines(); _activeShots = 0; _version++; Time.timeScale = 1f;
             if (_views != null) foreach (var view in _views) if (view != null && view.gameObject.activeSelf) _pool.Release(view);
             LevelNumber = number; Level = _catalog.Get(number);
@@ -96,6 +97,7 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Returns to menu, cancelling all outstanding callbacks and preview state.</summary>
         public void Menu()
         {
+            ResetHintSuggestion();
             StopAllCoroutines(); _activeShots = 0; _busy = true;
             if (_inFlight != null) Array.Clear(_inFlight, 0, _inFlight.Length);
             ResetRocket();
@@ -124,6 +126,7 @@ namespace ArrowSwarm.Puzzle
         private void SetMessage(string key, string fallback = "") { _messageKey = key; _messageFallback = fallback; }
         private void OnDestroy()
         {
+            ResetHintSuggestion();
             _version++; Time.timeScale = 1f;
             if (Active == this) Active = null;
         }
