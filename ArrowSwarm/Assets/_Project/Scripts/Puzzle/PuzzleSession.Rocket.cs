@@ -15,7 +15,8 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Arms or cancels selection without consuming a charge.</summary>
         public void ToggleRocket()
         {
-            if (!Idle || RocketCharges <= 0) return;
+            if (!Idle) return;
+            if (RocketCharges <= 0) { OpenRocketPrompt(); return; }
             RocketArmed = !RocketArmed;
             for (int i = 0; i < _views.Length; i++) if (!_removed[i]) _views[i].Highlight(false);
             RestoreHintHighlight();
@@ -24,6 +25,7 @@ namespace ArrowSwarm.Puzzle
 
         private void ResetRocket()
         {
+            ResetRocketPrompt();
             RocketArmed = RocketNeeded = false; RocketCharges = _config.RocketCharges;
             if (_rocketEffect != null) _rocketEffect.Hide();
         }

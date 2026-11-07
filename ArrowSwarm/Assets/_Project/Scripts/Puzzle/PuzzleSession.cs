@@ -34,7 +34,7 @@ namespace ArrowSwarm.Puzzle
         public bool Lost { get; private set; }
         public bool Paused { get; private set; }
         public bool Preview { get; private set; }
-        public bool Ready => Level != null && Lives > 0 && !_busy && !Won && !Lost && !Paused && !HintPromptOpen &&
+        public bool Ready => Level != null && Lives > 0 && !_busy && !Won && !Lost && !Paused && !HintPromptOpen && !RocketPromptOpen &&
             (_mode == GameModeId.Shapes || !HasActiveShots);
         /// <summary>Whether normal arrows are still escaping or returning from a collision.</summary>
         public bool HasActiveShots => _activeShots > 0;
