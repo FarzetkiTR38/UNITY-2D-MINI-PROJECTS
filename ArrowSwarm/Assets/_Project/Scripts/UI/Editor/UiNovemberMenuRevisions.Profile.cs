@@ -38,7 +38,7 @@ namespace ArrowSwarm.UI.Editor
             var dice = Bound<Button>(owner,"_diceButton");
             var previous = Bound<Button>(owner,"_prevCountryButton");
             var next = Bound<Button>(owner,"_nextCountryButton");
-            Surface(dice.image,K.Material("Ui03LeaderboardRimBlue"));
+            GlossyControl(dice.image);
             Center(dice.GetComponent<RectTransform>(),new Vector2(370,145),new Vector2(132,132));
             var art = Child(dice.transform,"DiceArtwork").GetComponent<Image>();
             art.material = ArtworkMask("ProfileDice",new Vector4(.02f,.02f,.98f,.98f));
@@ -50,7 +50,7 @@ namespace ArrowSwarm.UI.Editor
 
         private static void Arrow(Button button, bool previous)
         {
-            Surface(button.image,K.Material("Ui03LeaderboardRimBlue"));
+            GlossyControl(button.image);
             var root = button.GetComponent<RectTransform>();
             Center(root,root.anchoredPosition,new Vector2(112,112));
             var arrow = Child(button.transform,"Arrow").GetComponent<Image>();
@@ -59,6 +59,15 @@ namespace ArrowSwarm.UI.Editor
             Center(arrow.rectTransform,Vector2.zero,new Vector2(52,64));
             arrow.rectTransform.localEulerAngles = new Vector3(0,0,previous ? 180 : 0);
             EditorUtility.SetDirty(button); EditorUtility.SetDirty(arrow);
+        }
+
+        private static void GlossyControl(Image image)
+        {
+            image.sprite = K.Sprite("profile_tile"); image.type = Image.Type.Simple;
+            image.preserveAspect = true;
+            image.material = ArtworkMask("ProfileDice",new Vector4(.02f,.02f,.98f,.98f));
+            K.Theme(image,Color.white,Color.white,image.material);
+            Coordinates(image); EditorUtility.SetDirty(image);
         }
     }
 }
