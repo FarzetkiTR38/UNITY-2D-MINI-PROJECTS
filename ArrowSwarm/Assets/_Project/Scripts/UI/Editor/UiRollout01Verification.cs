@@ -49,6 +49,8 @@ namespace ArrowSwarm.UI.Editor
             _stage03 = _nextStage03;
             _stage04 = _nextStage04;
             _modalScreens = _nextModalScreens;
+            _rocketStage = _nextRocketStage;
+            _hintStage = _nextHintStage;
             Results.Clear(); Steps.Clear(); _wait = null; _cloudFooter = null; _textControlChecked = false;
             try { _scope = new Scope(); Steps.Push(Run()); _frameRunner = UiRollout01NativeFrameRunner.Begin(Tick); }
             catch { _scope?.Dispose(); _scope = null; throw; }
@@ -59,7 +61,9 @@ namespace ArrowSwarm.UI.Editor
 
         private static IEnumerator Run()
         {
-            if (_stage04) yield return VerifyStage04();
+            if (_hintStage) yield return VerifyHintStage();
+            else if (_rocketStage) yield return VerifyRocketStage();
+            else if (_stage04) yield return VerifyStage04();
             else if (_stage03) yield return VerifyStage03();
             else
             {
@@ -100,7 +104,9 @@ namespace ArrowSwarm.UI.Editor
                     if (step.Current is IEnumerator nested) { Steps.Push(nested); continue; }
                     _wait = step.Current as Func<bool>; return;
                 }
-                Finish("PASS: native Boot/Home, paired themes, TMP layout and scoped navigation");
+                Finish(_hintStage ? "PASS: all three hint guards, native last-charge HUD input and scoped restoration" :
+                    _rocketStage ? "PASS: native puzzle Rocket modal, reward ownership, localized themes and unchanged gameplay" :
+                    "PASS: native Boot/Home, paired themes, TMP layout and scoped navigation");
             }
             catch (Exception error) { Results.Add(error.ToString()); Finish("FAIL: " + error.Message); }
         }
