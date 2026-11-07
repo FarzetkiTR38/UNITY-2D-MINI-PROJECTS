@@ -385,6 +385,11 @@ namespace ArrowSwarm.UI
 
         private void OnTipClicked()
         {
+            if (TipManager.HasInstance && TipManager.Instance.HasPendingSuggestion)
+            {
+                TipManager.Instance.UseTip();
+                return;
+            }
             int tips = DataManager.Instance?.PlayerData?.tipCount ?? 0;
             if (tips > 0)
             {
