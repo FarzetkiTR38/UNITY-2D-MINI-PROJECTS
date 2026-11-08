@@ -69,6 +69,7 @@ namespace ArrowSwarm.UI
 
         private static readonly string[] SUPPORTED_LANGUAGES = { "ENGLISH", "TURKISH", "GERMAN", "SPANISH", "FRENCH" };
         private int _currentLanguageIndex = 0;
+        private readonly MenuPanelTransition _transition = new MenuPanelTransition();
 
         private void Awake()
         {
@@ -83,6 +84,7 @@ namespace ArrowSwarm.UI
 
         private void OnDisable()
         {
+            _transition.Reset(this);
             Localization.LocalizationManager.OnLanguageChanged -= UpdateLanguageDisplay;
             ThemeManager.OnThemeChanged -= UpdateThemeDisplay;
         }
@@ -243,31 +245,14 @@ namespace ArrowSwarm.UI
             AutoWire();
             LoadSettings();
 
-            if (_canvasGroup != null)
-            {
-                _canvasGroup.interactable = true;
-                _canvasGroup.blocksRaycasts = true;
-                StopAllCoroutines();
-                StartCoroutine(UIPopupAnimator.AnimateOpen(_dialogBox, _canvasGroup));
-            }
+            _transition.Open(this, _dialogBox, _canvasGroup);
         }
 
         /// <summary>Hides the settings panel with elastic pop-out.</summary>
-        public void Hide()
-        {
-            if (!gameObject.activeInHierarchy) return;
+        public void Hide() => _transition.RequestClose(this, _dialogBox, _canvasGroup);
 
-            if (_canvasGroup != null)
-            {
-                _canvasGroup.interactable = false;
-                StopAllCoroutines();
-                StartCoroutine(UIPopupAnimator.AnimateClose(_dialogBox, _canvasGroup, onComplete: () => gameObject.SetActive(false)));
-            }
-            else
-            {
-                gameObject.SetActive(false);
-            }
-        }
+        internal bool CloseAnimated(System.Action onClosed)
+            => _transition.Close(this, _dialogBox, _canvasGroup, onClosed);
 
         private void LoadSettings()
         {

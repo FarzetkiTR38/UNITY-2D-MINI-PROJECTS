@@ -266,9 +266,12 @@ namespace ArrowSwarm.UI
             foreach (var panel in allSubPanels)
             {
                 if (panel == null) continue;
+                bool ownsExit = panel.GetComponent<SettingsUI>() != null ||
+                    panel.GetComponent<LeaderboardUI>() != null || panel.GetComponent<LevelSelectUI>() != null;
                 foreach (var btn in panel.GetComponentsInChildren<Button>(true))
                 {
                     EnsureButtonFeedback(btn);
+                    if (ownsExit) continue;
                     string btnName = btn.gameObject.name.ToLower();
                     if (btnName.Contains("back") || btnName.Contains("exit") || btnName.Contains("close") || btnName.Contains("return"))
                     {
@@ -288,39 +291,71 @@ namespace ArrowSwarm.UI
             if (targetPanel == null) return;
 
             AudioManager.Instance?.PlayPopupOpen();
-            SetPanelState(_mainPanel, false);
+            HidePanelImmediately(_mainPanel);
 
             if (_activeSubPanel != null && _activeSubPanel != targetPanel)
             {
-                SetPanelState(_activeSubPanel, false);
+                HidePanelImmediately(_activeSubPanel);
             }
 
-            SetPanelState(targetPanel, true);
             _activeSubPanel = targetPanel;
+            ShowPanel(targetPanel);
         }
 
         /// <summary>
-        /// Closes all active sub-panels and brings the main panel back into view.
+        /// Resets navigation to the main panel immediately, such as during startup.
         /// </summary>
         public void OpenMainPanel()
         {
             var subPanels = GetAllSubPanels();
             foreach (var panel in subPanels)
             {
-                SetPanelState(panel, false);
+                HidePanelImmediately(panel);
             }
 
-            SetPanelState(_mainPanel, true);
+            ShowPanel(_mainPanel);
             _activeSubPanel = null;
         }
 
         /// <summary>
-        /// Alias for OpenMainPanel to bind to Back/Exit buttons.
+        /// Plays the active panel's exit before revealing the main panel.
         /// </summary>
         public void BackToMain()
         {
-            AudioManager.Instance?.PlayPopupClose();
-            OpenMainPanel();
+            var panel = _activeSubPanel;
+            if (panel == null || !panel.activeInHierarchy)
+            {
+                OpenMainPanel();
+                return;
+            }
+
+            // Home draws in front of these panels. Reveal it only when the exit is done.
+            void ReturnHome()
+            {
+                if (_activeSubPanel == panel) OpenMainPanel();
+            }
+
+            bool started;
+            if (panel.TryGetComponent<SettingsUI>(out var settings))
+                started = settings.CloseAnimated(ReturnHome);
+            else if (panel.TryGetComponent<LeaderboardUI>(out var leaderboard))
+                started = leaderboard.CloseAnimated(ReturnHome);
+            else if (panel.TryGetComponent<LevelSelectUI>(out var levels))
+                started = levels.CloseAnimated(ReturnHome);
+            else
+            {
+                ReturnHome();
+                started = true;
+            }
+
+            if (started) AudioManager.Instance?.PlayPopupClose();
+        }
+
+        internal bool TryCloseActivePanel(GameObject panel)
+        {
+            if (_activeSubPanel != panel) return false;
+            BackToMain();
+            return true;
         }
 
         /// <summary>Opens the Leaderboard panel.</summary>
@@ -332,48 +367,39 @@ namespace ArrowSwarm.UI
         /// <summary>Opens the Settings panel.</summary>
         public void OpenSettings() => OpenPanel(_settingsPanel);
 
-        private void SetPanelState(GameObject panel, bool isVisible)
+        private static void ShowPanel(GameObject panel)
         {
             if (panel == null) return;
 
-            if (isVisible)
-            {
-                if (panel.TryGetComponent<SettingsUI>(out var settings))
-                    settings.Show();
-                else if (panel.TryGetComponent<LeaderboardUI>(out var leaderboard))
-                    leaderboard.Show();
-                else if (panel.TryGetComponent<LevelSelectUI>(out var levelSelect))
-                    levelSelect.Show();
-                else
-                {
-                    panel.SetActive(true);
-                    if (panel.TryGetComponent<CanvasGroup>(out var cg))
-                    {
-                        cg.alpha = 1f;
-                        cg.interactable = true;
-                        cg.blocksRaycasts = true;
-                    }
-                }
-            }
+            if (panel.TryGetComponent<SettingsUI>(out var settings))
+                settings.Show();
+            else if (panel.TryGetComponent<LeaderboardUI>(out var leaderboard))
+                leaderboard.Show();
+            else if (panel.TryGetComponent<LevelSelectUI>(out var levels))
+                levels.Show();
             else
             {
-                if (panel.TryGetComponent<SettingsUI>(out var settings))
-                    settings.Hide();
-                else if (panel.TryGetComponent<LeaderboardUI>(out var leaderboard))
-                    leaderboard.Hide();
-                else if (panel.TryGetComponent<LevelSelectUI>(out var levelSelect))
-                    levelSelect.Close();
-                else
+                panel.SetActive(true);
+                if (panel.TryGetComponent<CanvasGroup>(out var group))
                 {
-                    if (panel.TryGetComponent<CanvasGroup>(out var cg))
-                    {
-                        cg.alpha = 0f;
-                        cg.interactable = false;
-                        cg.blocksRaycasts = false;
-                    }
-                    panel.SetActive(false);
+                    group.alpha = 1f;
+                    group.interactable = true;
+                    group.blocksRaycasts = true;
                 }
             }
+        }
+
+        private static void HidePanelImmediately(GameObject panel)
+        {
+            if (panel == null) return;
+
+            if (panel.TryGetComponent<CanvasGroup>(out var group))
+            {
+                group.alpha = 0f;
+                group.interactable = false;
+                group.blocksRaycasts = false;
+            }
+            panel.SetActive(false);
         }
 
         private List<GameObject> GetAllSubPanels()

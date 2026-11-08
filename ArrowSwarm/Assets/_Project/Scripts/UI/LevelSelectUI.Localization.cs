@@ -5,6 +5,7 @@ namespace ArrowSwarm.UI
     {
         private void OnDisable()
         {
+            _transition.Reset(this);
             ArrowSwarm.Localization.LocalizationManager.OnLanguageChanged -= RefreshPageLabel;
             DetachNavigation();
         }

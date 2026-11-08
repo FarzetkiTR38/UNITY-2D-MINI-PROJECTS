@@ -37,6 +37,7 @@ namespace ArrowSwarm.UI
 
         private int _currentPage = 1;
         private readonly List<LevelButtonUI> _buttonPool = new List<LevelButtonUI>();
+        private readonly MenuPanelTransition _transition = new MenuPanelTransition();
 
         private void Awake()
         {
@@ -112,31 +113,14 @@ namespace ArrowSwarm.UI
             AutoWire();
             UpdatePageToHighest();
 
-            if (_canvasGroup != null)
-            {
-                _canvasGroup.interactable = true;
-                _canvasGroup.blocksRaycasts = true;
-                StopAllCoroutines();
-                StartCoroutine(UIPopupAnimator.AnimateOpen(_dialogBox, _canvasGroup));
-            }
+            _transition.Open(this, _dialogBox, _canvasGroup);
         }
 
         /// <summary>Closes the level select panel with elastic pop-out.</summary>
-        public void Close()
-        {
-            if (!gameObject.activeInHierarchy) return;
+        public void Close() => _transition.RequestClose(this, _dialogBox, _canvasGroup);
 
-            if (_canvasGroup != null)
-            {
-                _canvasGroup.interactable = false;
-                StopAllCoroutines();
-                StartCoroutine(UIPopupAnimator.AnimateClose(_dialogBox, _canvasGroup, onComplete: () => gameObject.SetActive(false)));
-            }
-            else
-            {
-                gameObject.SetActive(false);
-            }
-        }
+        internal bool CloseAnimated(System.Action onClosed)
+            => _transition.Close(this, _dialogBox, _canvasGroup, onClosed);
 
         private void OnDestroy() => DetachNavigation();
     }

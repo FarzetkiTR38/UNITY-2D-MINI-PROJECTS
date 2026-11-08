@@ -10,7 +10,7 @@ namespace ArrowSwarm.UI
     /// </summary>
     public static class UIPopupAnimator
     {
-        private const float DefaultOpenDuration = 0.24f;
+        internal const float DefaultOpenDuration = 0.24f;
         private const float DefaultCloseDuration = 0.16f;
 
         /// <summary>
@@ -40,25 +40,7 @@ namespace ArrowSwarm.UI
             while (elapsed < duration)
             {
                 elapsed += Time.unscaledDeltaTime;
-                float t = Mathf.Clamp01(elapsed / duration);
-
-                // Alpha fade
-                if (canvasGroup != null)
-                {
-                    canvasGroup.alpha = Mathf.Min(1f, t * 1.6f);
-                }
-
-                // Elastic Back.Out scale: 0.75 -> 1.05 -> 1.0
-                if (dialogBox != null)
-                {
-                    float p = t - 1f;
-                    float c1 = 1.6f;
-                    float c3 = c1 + 1f;
-                    float easeBackOut = 1f + c3 * p * p * p + c1 * p * p;
-                    float scaleMult = Mathf.LerpUnclamped(0.75f, 1f, easeBackOut);
-                    dialogBox.localScale = baseScale * scaleMult;
-                }
-
+                ApplyOpenProgress(dialogBox, canvasGroup, baseScale, Mathf.Clamp01(elapsed / duration));
                 yield return null;
             }
 
@@ -75,6 +57,18 @@ namespace ArrowSwarm.UI
             }
 
             onComplete?.Invoke();
+        }
+
+        internal static void ApplyOpenProgress(RectTransform dialogBox, CanvasGroup canvasGroup, Vector3 baseScale, float progress)
+        {
+            if (canvasGroup != null) canvasGroup.alpha = Mathf.Min(1f, progress * 1.6f);
+            if (dialogBox == null) return;
+
+            // Back.Out: expand from 75%, overshoot slightly, and settle at rest.
+            float p = progress - 1f;
+            const float overshoot = 1.6f;
+            float easeBackOut = 1f + (overshoot + 1f) * p * p * p + overshoot * p * p;
+            dialogBox.localScale = baseScale * Mathf.LerpUnclamped(0.75f, 1f, easeBackOut);
         }
 
         /// <summary>
