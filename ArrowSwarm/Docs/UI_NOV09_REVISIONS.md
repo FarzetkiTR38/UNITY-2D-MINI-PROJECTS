@@ -6,7 +6,7 @@ Baseline: `1ae61974`. Scope: Home profile button, Levels/Leaderboard/Settings ex
 - [x] Capture the original Home and Shapes boards from Unity. Baseline: native 1080×1920, both themes, Shapes levels 1 and 15.
 - [x] Match the three menu exits to their entry animation, retaining modal input ownership until the exit completes. Native pointer, repeat, interruption and paused-clock checks passed at 1080×1920.
 - [x] Generate and integrate one compact transparent profile sprite with the original button and navigation. Unity checked both themes, real press feedback and Profile navigation.
-- [ ] Let the fatal rejected arrow return home before the loss popup, with inputs protected while the outcome is pending.
+- [x] Let the fatal rejected arrow return home before the loss popup, with inputs protected while the outcome is pending. Native runtime passed in Defense, Shapes and Color Shift.
 - [ ] Refine the Shapes playfield and arrows without changing the HUD, level content or shot rules.
 - [ ] Check real menu navigation, loss timing and Shapes play in Unity; record themed before/after evidence and restore the original local files and editor state.
 
