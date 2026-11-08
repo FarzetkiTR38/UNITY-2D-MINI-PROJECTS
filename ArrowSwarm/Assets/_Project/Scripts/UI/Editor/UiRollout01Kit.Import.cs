@@ -19,6 +19,7 @@ namespace ArrowSwarm.UI.Editor
             foreach (string name in new[] { "brand_crest", "orbit_hero", "cloud_footer" })
                 if (File.Exists(ArtFolder + "/" + name + ".png")) ConfigureTexture(ArtFolder + "/" + name + ".png", false, 1024);
             ConfigureTexture(ArtFolder + "/star_gold.png", false, 256);
+            ConfigureTexture(ArtFolder + "/profile_player.png", false, 256);
             ImportAtlas(); CreateProfileAvatar(); CreateMaterials();
         }
 

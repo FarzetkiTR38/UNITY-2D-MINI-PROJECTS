@@ -44,7 +44,7 @@ namespace ArrowSwarm.UI.Editor
             UnityEventTools.AddPersistentListener(profile.onClick, menu.OpenProfileModal);
             var mask = K.Image(profile.transform, "AvatarMask", K.Sprite("profile_tile"), Vector2.zero, new Vector2(94, 94));
             mask.gameObject.AddComponent<Mask>().showMaskGraphic = false;
-            var avatar = K.Image(mask.transform, "StarAvatar", K.Sprite("profile_avatar"), Vector2.zero, new Vector2(100, 100)); avatar.preserveAspect = true;
+            var avatar = K.Image(mask.transform, "PlayerAvatar", K.Sprite("profile_player"), Vector2.zero, new Vector2(83, 83)); avatar.preserveAspect = true;
         }
 
         private static void ModeCard(Transform parent, GameModeSelectUI selector, TMP_Text level, string feedback, ColorBlock colors)
