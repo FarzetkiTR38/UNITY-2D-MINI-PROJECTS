@@ -362,11 +362,11 @@ namespace ArrowSwarm.UI
             }
 
             // HUD visibility based on state using CanvasGroup
-            bool visible = (state == GameState.Playing || state == GameState.Paused);
-            SetHUDVisible(visible);
+            bool visible = state == GameState.Playing || state == GameState.Paused || state == GameState.ResolvingLoss;
+            SetHUDVisible(visible, state != GameState.ResolvingLoss);
         }
 
-        private void SetHUDVisible(bool visible)
+        private void SetHUDVisible(bool visible, bool allowInteraction)
         {
             if (_canvasGroup == null)
             {
@@ -374,7 +374,7 @@ namespace ArrowSwarm.UI
             }
 
             _canvasGroup.alpha = visible ? 1f : 0f;
-            _canvasGroup.interactable = visible;
+            _canvasGroup.interactable = visible && allowInteraction;
             _canvasGroup.blocksRaycasts = visible;
         }
 
