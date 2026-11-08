@@ -1412,10 +1412,11 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Puzzle.PuzzleBoardSurface
   _innerCard: {fileID: 1646556344}
-  _innerGridColor: {r: 0.99, g: 0.98, b: 0.97, a: 1}
-  _darkInnerGridColor: {r: 0.1254902, g: 0.19607843, b: 0.30980393, a: 1}
-  _cardMargin: 0.5
-  _innerCornerRadius: 28
+  _innerGridColor: {r: 0.97, g: 0.985, b: 1, a: 1}
+  _darkInnerGridColor: {r: 0.102, g: 0.16, b: 0.255, a: 1}
+  _cardMargin: 1.18
+  _innerCornerRadius: 125
+  _useInlaidCard: 1
   _spriteResolution: 256
 --- !u!4 &819811621
 Transform:
@@ -3417,7 +3418,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9d09e83b100b91c439eb1007484b4251, type: 2}
+  - {fileID: 2100000, guid: 86f323c384dd406992d14ccad7824865, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3548,7 +3549,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Camera.CameraController
   _puzzleSurface: {fileID: 819811620}
-  _puzzleWidthCoverage: 0.95
+  _puzzleWidthCoverage: 0.94
   _puzzleVerticalInset: 0.015
   _zoomSpeed: 0.5
   _smoothTime: 0.1
