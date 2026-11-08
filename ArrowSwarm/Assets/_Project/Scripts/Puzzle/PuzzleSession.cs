@@ -88,7 +88,7 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Pauses both movement and frame animation.</summary>
         public void Pause(bool value)
         {
-            if (Won || Lost) return;
+            if (Won || Lost || (value && Lives <= 0)) return;
             RocketArmed = false;
             Paused = value; Time.timeScale = value ? 0f : 1f;
             GameManager.Instance.SetState(value ? GameState.Paused : GameState.Playing); Notify();

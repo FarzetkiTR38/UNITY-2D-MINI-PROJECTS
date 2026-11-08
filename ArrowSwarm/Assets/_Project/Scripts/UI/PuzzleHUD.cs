@@ -61,7 +61,7 @@ namespace ArrowSwarm.UI
             _hintCount.transform.parent.gameObject.SetActive(count > 0);
             _hintAdBadge.SetActive(count <= 0 && !s.Preview);
             _hint.interactable = s.Idle;
-            _pause.interactable = !s.Won && !s.Lost && !s.HintPromptOpen && !s.RocketPromptOpen;
+            _pause.interactable = s.Lives > 0 && !s.Won && !s.Lost && !s.HintPromptOpen && !s.RocketPromptOpen;
             _rotationBar.SetActive(s.Mode == GameModeId.ColorShift);
             _turns.text = s.Turns.ToString();
             if (_rocket != null) _rocket.interactable = s.Idle && (s.RocketCharges > 0 || !s.Preview);
