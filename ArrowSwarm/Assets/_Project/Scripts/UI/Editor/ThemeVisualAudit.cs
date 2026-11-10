@@ -72,7 +72,7 @@ namespace ArrowSwarm.UI.Editor
                     for (int i=0;i<3;i++)
                     {
                         var star = box.Find("StarsContainer/Star_"+i);
-                        if (star != null) { star.gameObject.SetActive(true); star.localScale=Vector3.one; }
+                        if (star != null) { OutcomeStarSlot.SetEarned(star.gameObject, true); star.localScale=Vector3.one; }
                     }
             }
             var tutorial = Object.FindFirstObjectByType<ArrowSwarm.Tutorial.TutorialOverlayUI>(FindObjectsInactive.Include);

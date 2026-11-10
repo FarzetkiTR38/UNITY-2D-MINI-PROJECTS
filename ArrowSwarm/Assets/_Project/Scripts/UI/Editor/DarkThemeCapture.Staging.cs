@@ -72,7 +72,7 @@ namespace ArrowSwarm.UI.Editor
             if(chosen==1)
             {
                 var stars=(GameObject[])typeof(PuzzlePopups).GetField("_winStars",Flags).GetValue(popups);
-                foreach(var star in stars){star.SetActive(true);star.transform.localScale=Vector3.one;}
+                foreach(var star in stars){OutcomeStarSlot.SetEarned(star,true);star.transform.localScale=Vector3.one;}
             }
         }
 

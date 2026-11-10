@@ -131,7 +131,7 @@ namespace ArrowSwarm.UI
                 if (_stars[i] != null)
                 {
                     _stars[i].transform.localScale = Vector3.zero;
-                    _stars[i].SetActive(false);
+                    OutcomeStarSlot.SetEarned(_stars[i], false);
                 }
             }
 
@@ -141,7 +141,7 @@ namespace ArrowSwarm.UI
             {
                 if (_stars[i] != null)
                 {
-                    _stars[i].SetActive(true);
+                    OutcomeStarSlot.SetEarned(_stars[i], true);
                     AudioManager.Instance?.PlayStarEarn(i);
 
                     float elapsed = 0f;

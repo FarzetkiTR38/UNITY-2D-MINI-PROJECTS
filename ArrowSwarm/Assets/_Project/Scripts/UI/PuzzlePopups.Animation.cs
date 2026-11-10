@@ -45,7 +45,7 @@ namespace ArrowSwarm.UI
             for (int i = 0; _winStars != null && i < _winStars.Length; i++)
                 if (_winStars[i] != null)
                 {
-                    _winStars[i].SetActive(false);
+                    OutcomeStarSlot.SetEarned(_winStars[i], false);
                     _winStars[i].transform.localScale = _starScales[i];
                 }
         }
@@ -87,13 +87,14 @@ namespace ArrowSwarm.UI
         private IEnumerator WinStars(int stars)
         {
             for (int i = 0; _winStars != null && i < _winStars.Length; i++)
-                if (_winStars[i] != null) _winStars[i].SetActive(false);
+                OutcomeStarSlot.SetEarned(_winStars[i], false);
             yield return new WaitForSecondsRealtime(.2f);
             for (int i = 0; _winStars != null && i < stars && i < _winStars.Length; i++)
             {
                 var star = _winStars[i];
                 if (star == null) continue;
-                star.SetActive(true); AudioManager.Instance?.PlayStarEarn(i);
+                OutcomeStarSlot.SetEarned(star, true);
+                AudioManager.Instance?.PlayStarEarn(i);
                 float elapsed = 0f;
                 while (elapsed < .22f)
                 {
