@@ -18,7 +18,7 @@ namespace ArrowSwarm.UI.Editor
             var label = Field<TMP_Text>(profile, "_countryText");
             string language = LocalizationManager.Instance.CurrentLanguage, draft = input.text;
             int selected = Field<int>(profile, "_currentCountryIndex");
-            Check(countries.Length == 15 && update != null, "Country fit matrix uses all fifteen existing controller countries");
+            Check(countries.Length == 10 && update != null, "Country fit matrix uses all ten unified controller countries");
             try
             {
                 foreach (var item in LocalizationManager.Instance.AvailableLanguages)

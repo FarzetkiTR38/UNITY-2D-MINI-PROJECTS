@@ -68,16 +68,19 @@ namespace ArrowSwarm.UI
         [SerializeField] private float _fadeSpeed = 5f;
 
         private readonly MenuPanelTransition _transition = new MenuPanelTransition();
+        private bool _listenersBound;
 
         private void Awake()
         {
             AutoWire();
+            EnsureListeners();
         }
 
         private void OnEnable()
         {
             Localization.LocalizationManager.OnLanguageChanged += UpdateLanguageDisplay;
             ThemeManager.OnThemeChanged += UpdateThemeDisplay;
+            UpdateLanguageDisplay();
         }
 
         private void OnDisable()
@@ -89,6 +92,19 @@ namespace ArrowSwarm.UI
 
         private void Start()
         {
+            EnsureListeners();
+
+            if (_titleText != null && string.IsNullOrEmpty(_titleText.text))
+                _titleText.text = "SETTINGS";
+
+            LoadSettings();
+        }
+
+        private void EnsureListeners()
+        {
+            if (_listenersBound) return;
+            _listenersBound = true;
+
             _closeButton?.onClick.AddListener(Hide);
 
             if (_sfxToggle != null)
@@ -107,11 +123,6 @@ namespace ArrowSwarm.UI
             _themeToggleButton?.onClick.AddListener(ToggleTheme);
             _lightThemeButton?.onClick.AddListener(OnSelectLightTheme);
             _darkThemeButton?.onClick.AddListener(OnSelectDarkTheme);
-
-            if (_titleText != null && string.IsNullOrEmpty(_titleText.text))
-                _titleText.text = "SETTINGS";
-
-            LoadSettings();
         }
 
         /// <summary>
@@ -241,6 +252,7 @@ namespace ArrowSwarm.UI
         {
             gameObject.SetActive(true);
             AutoWire();
+            EnsureListeners();
             LoadSettings();
 
             _transition.Open(this, _dialogBox, _canvasGroup);

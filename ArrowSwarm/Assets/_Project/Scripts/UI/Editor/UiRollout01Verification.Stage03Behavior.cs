@@ -30,37 +30,38 @@ namespace ArrowSwarm.UI.Editor
 
                 Set03(profile, "_currentCountryIndex", 0);
                 yield return Click(mouse, Field<Button>(profile, "_prevCountryButton"), true);
-                Check(Field<int>(profile, "_currentCountryIndex") == 14 && Field<TMP_Text>(profile, "_countryText").text.Contains("GL"),
-                    "Actual country Previous wraps TR to the final Global country exactly once");
+                Check(Field<int>(profile, "_currentCountryIndex") == 9 && Field<TMP_Text>(profile, "_countryText").text.Contains("KR"),
+                    "Actual country Previous wraps US to the final KR country/language exactly once");
                 yield return Click(mouse, Field<Button>(profile, "_nextCountryButton"), true);
-                Check(Field<int>(profile, "_currentCountryIndex") == 0 && Field<TMP_Text>(profile, "_countryText").text.Contains("TR"),
-                    "Actual country Next wraps the final Global country back to TR exactly once");
+                Check(Field<int>(profile, "_currentCountryIndex") == 0 && Field<TMP_Text>(profile, "_countryText").text.Contains("US"),
+                    "Actual country Next wraps the final KR country/language back to US/en exactly once");
                 var country = Field<Button>(profile, "_countryButton");
                 if (country != null)
                 {
                     yield return Click(mouse, country, true);
-                    Check(Field<int>(profile, "_currentCountryIndex") == 1, "Actual country label advances once without an arrow double callback");
-                    yield return Click(mouse, Field<Button>(profile, "_prevCountryButton"), true);
-                    Check(Field<int>(profile, "_currentCountryIndex") == 0, "Country returns to TR for Profile Save checks");
+                    Check(Field<int>(profile, "_currentCountryIndex") == 1 && Field<TMP_Text>(profile, "_countryText").text.Contains("TR"),
+                        "Actual country label advances once to TR/tr without an arrow double callback");
                 }
                 input.SetTextWithoutNotify("DraftKeep_03");
                 foreach (var item in LocalizationManager.Instance.AvailableLanguages)
                 {
                     LocalizationManager.Instance.SetLanguage(item.code, false); yield return Settled(.04f);
-                    Check(input.text == "DraftKeep_03" && Field<int>(profile, "_currentCountryIndex") == 0,
-                        "Changing live language preserves the draft and country / " + item.code);
+                    Check(input.text == "DraftKeep_03" &&
+                        Field<TMP_Text>(profile, "_countryText").text == LocalizationManager.GetCountryDisplayName(item.code),
+                        "Changing live language preserves the draft and syncs Profile country / " + item.code);
                     VerifyModalCopy(profile.transform, "Profile draft / " + item.code);
                 }
-                LocalizationManager.Instance.SetLanguage(language, false); yield return Settled(.06f);
+                LocalizationManager.Instance.SetLanguage("tr", false); yield return Settled(.06f);
                 yield return Verify03ProfileCountryCopy(profile, input);
 
+                Set03(profile, "_currentCountryIndex", 1);
                 input.SetTextWithoutNotify("  NovaRider  ");
                 yield return Click(mouse, Field<Button>(profile, "_saveButton"), true);
                 yield return (Func<bool>)(() => !profile.gameObject.activeInHierarchy);
-                Check(player.playerName == "NovaRider" && player.playerCountry == "TR" && player.isProfileSetupCompleted,
-                    "Actual Profile Save trims the draft, saves country and completes the cloned profile");
-                Check(LocalizationManager.Instance.CurrentLanguage == language,
-                    "Saving a country does not replace the independently chosen live language");
+                Check(player.playerName == "NovaRider" && player.playerCountry == "TR" && player.selectedLanguage == "tr" && player.isProfileSetupCompleted,
+                    "Actual Profile Save trims the draft, saves country/language and completes the cloned profile");
+                Check(LocalizationManager.Instance.CurrentLanguage == "tr",
+                    "Saving a country synchronizes the active live language");
                 Verify03ProfileProgress(before, player);
 
                 menu.OpenProfileModal(); yield return Profile03Ready(profile);
@@ -73,11 +74,12 @@ namespace ArrowSwarm.UI.Editor
 
                 menu.OpenProfileModal(); yield return Profile03Ready(profile);
                 input.SetTextWithoutNotify("DraftSkip_03");
-                yield return Click(mouse, Field<Button>(profile, "_nextCountryButton"), true);
+                Set03(profile, "_currentCountryIndex", 1);
+                yield return Click(mouse, Field<Button>(profile, "_prevCountryButton"), true);
                 yield return Click(mouse, Field<Button>(profile, "_skipButton"), true);
                 yield return (Func<bool>)(() => !profile.gameObject.activeInHierarchy);
-                Check(player.playerName == "DraftSkip_03" && player.playerCountry == "US" && player.isProfileSetupCompleted,
-                    "Actual Skip preserves the existing save-draft-and-country behavior");
+                Check(player.playerName == "DraftSkip_03" && player.playerCountry == "US" && player.selectedLanguage == "en" && player.isProfileSetupCompleted,
+                    "Actual Skip preserves the save-draft-and-country/language behavior");
                 Verify03ProfileProgress(before, player);
                 Check(LeaderboardManager.HasInstance && !Field<ILeaderboardCloudService>(LeaderboardManager.Instance, "_cloudService").IsOnline(),
                     "Profile callbacks stay on the outer fixture's offline leaderboard provider");
@@ -104,7 +106,7 @@ namespace ArrowSwarm.UI.Editor
         private static void Verify03ProfileProgress(string before, PlayerData player)
         {
             var a = JObject.Parse(before); var b = JObject.Parse(JsonUtility.ToJson(player));
-            foreach (string key in new[] { "playerName", "playerCountry", "isProfileSetupCompleted" }) { a.Remove(key); b.Remove(key); }
+            foreach (string key in new[] { "playerName", "playerCountry", "selectedLanguage", "isProfileSetupCompleted" }) { a.Remove(key); b.Remove(key); }
             Check(JToken.DeepEquals(a, b), "Profile callbacks preserve every other progress, inventory, mode and language field");
         }
     }

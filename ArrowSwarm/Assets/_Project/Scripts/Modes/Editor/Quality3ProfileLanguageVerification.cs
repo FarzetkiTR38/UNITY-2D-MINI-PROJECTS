@@ -53,21 +53,22 @@ namespace ArrowSwarm.Modes.Editor
             foreach (var language in LocalizationManager.Instance.AvailableLanguages)
             {
                 string code = language.code;
-                string country = code == "tr" ? "US" : "TR";
-                Status = "Running actual profile Save: explicit " + code + ", country " + country;
+                string expectedCountry = LocalizationManager.GetCountryCodeForLanguage(code);
+                Status = "Running actual profile Save & language sync: " + code + " <-> " + expectedCountry;
                 var data = JsonUtility.FromJson<PlayerData>(_scope.OriginalJson);
-                data.playerName = "ProfileFixture"; data.playerCountry = country; data.isProfileSetupCompleted = true;
+                data.playerName = "ProfileFixture"; data.playerCountry = "US"; data.isProfileSetupCompleted = true;
                 _scope.Data.SetData(data);
                 LocalizationManager.Instance.SetLanguage(code, true);
                 Check(PlayerPrefs.HasKey(LanguagePreference) && PlayerPrefs.GetString(LanguagePreference) == code &&
-                    data.selectedLanguage == code, code + ": fixture establishes a genuine explicit saved language choice");
+                    data.selectedLanguage == code && data.playerCountry == expectedCountry,
+                    code + ": setting language synchronizes playerCountry (" + expectedCountry + ") and selectedLanguage");
                 _scope.Menu.OpenProfileModal();
                 yield return (Func<bool>)(() => _scope.Profile.gameObject.activeInHierarchy &&
                     _scope.Profile.GetComponent<CanvasGroup>().alpha >= .99f && _scope.Profile.GetComponent<CanvasGroup>().interactable);
                 var input = Field<TMP_InputField>(_scope.Profile, "_nameInput");
                 string name = "Lang_" + code; input.text = name;
-                Check(Field<TextMeshProUGUI>(_scope.Profile, "_countryText").text.StartsWith("[" + country + "]"),
-                    code + ": actual profile shows the requested country independently of its language");
+                Check(Field<TextMeshProUGUI>(_scope.Profile, "_countryText").text.StartsWith("[" + expectedCountry + "]"),
+                    code + ": actual profile shows the synchronized country for the selected language");
                 Field<Button>(_scope.Profile, "_saveButton").onClick.Invoke();
                 yield return (Func<bool>)(() => !_scope.Profile.gameObject.activeSelf);
                 Results.Add("OBSERVED: explicit=" + code + "; country=" + data.playerCountry + "; live=" +
@@ -75,27 +76,13 @@ namespace ArrowSwarm.Modes.Editor
                     "; data=" + data.selectedLanguage + "; editedNameSaved=" + (data.playerName == name));
                 Check(_scope.Cloud.FactoryCalls == 1 && LeaderboardManager.HasInstance && _scope.Cloud.NetworkOperations == 0,
                     code + ": actual Save uses the scoped offline manager and never starts auth, rows or score traffic");
-                Check(data.playerName == name && data.playerCountry == country && data.isProfileSetupCompleted,
-                    code + ": actual Save stores the new name and country and closes normally");
+                Check(data.playerName == name && data.playerCountry == expectedCountry && data.isProfileSetupCompleted,
+                    code + ": actual Save stores the new name and synchronized country and closes normally");
                 Check(LocalizationManager.Instance.CurrentLanguage == code,
-                    code + ": profile Save preserves the explicitly selected live language");
+                    code + ": profile Save keeps the synchronized live language");
                 Check(PlayerPrefs.GetString(LanguagePreference) == code && data.selectedLanguage == code,
-                    code + ": profile Save preserves the explicit preference and player-data language");
+                    code + ": profile Save keeps the synchronized preference and player-data language");
             }
-            Status = "Running profile Save with startup default and no explicit language preference";
-            var defaultData = JsonUtility.FromJson<PlayerData>(_scope.OriginalJson);
-            defaultData.playerName = "DefaultFixture"; defaultData.playerCountry = "TR"; defaultData.selectedLanguage = "en";
-            _scope.Data.SetData(defaultData); PlayerPrefs.DeleteKey(LanguagePreference);
-            LocalizationManager.Instance.SetLanguage("en", false); _scope.Menu.OpenProfileModal();
-            yield return (Func<bool>)(() => _scope.Profile.gameObject.activeInHierarchy &&
-                _scope.Profile.GetComponent<CanvasGroup>().alpha >= .99f && _scope.Profile.GetComponent<CanvasGroup>().interactable);
-            Field<TMP_InputField>(_scope.Profile, "_nameInput").text = "Lang_Default";
-            Field<Button>(_scope.Profile, "_saveButton").onClick.Invoke();
-            yield return (Func<bool>)(() => !_scope.Profile.gameObject.activeSelf);
-            Check(LocalizationManager.Instance.CurrentLanguage == "en" && defaultData.selectedLanguage == "en" &&
-                !PlayerPrefs.HasKey(LanguagePreference), "Default English and absent explicit preference remain unchanged after saving a Turkish country");
-            Check(defaultData.playerName == "Lang_Default" && defaultData.playerCountry == "TR" &&
-                _scope.Cloud.NetworkOperations == 0, "Default-language Save still persists the edited profile through the scoped offline manager");
         }
 
         private static void Tick()

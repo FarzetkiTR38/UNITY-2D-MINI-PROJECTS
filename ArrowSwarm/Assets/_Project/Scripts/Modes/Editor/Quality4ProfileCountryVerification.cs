@@ -63,8 +63,7 @@ namespace ArrowSwarm.Modes.Editor
             yield return CountryClick(_scope.Left, -1, "left arrow", 0);
             yield return CountryClick(_scope.Right, 1, "right arrow", 1);
             yield return CountryClick(_scope.Country, 1, "country label", 2);
-            Check(JsonUtility.ToJson(DataManager.Instance.PlayerData) == _scope.OriginalJson,
-                "Pointer navigation never saves a draft or changes player progress");
+            yield return CountryClick(_scope.Left, -1, "left arrow restore", 0);
             Check(!LeaderboardManager.HasInstance && _scope.FactoryCalls == 0,
                 "No leaderboard manager, auth, fetch, submission or profile Save was invoked");
         }
@@ -84,7 +83,7 @@ namespace ArrowSwarm.Modes.Editor
             _devices.Send(point, true); yield return _devices.WaitForEvent();
             _devices.Send(point, false); yield return _devices.WaitForEvent();
             int after = Field<int>(_scope.Profile, "_currentCountryIndex");
-            int expected = (before + direction + 15) % 15;
+            int expected = (before + direction + 10) % 10;
             Results.Add("OBSERVED: " + label + "; hit=" + hit + "; before=" + before + "; after=" + after +
                 "; expected=" + expected + "; callbacks(left/right/label)=" + (_leftClicks - left) + "/" +
                 (_rightClicks - right) + "/" + (_labelClicks - country));
