@@ -19,15 +19,6 @@ namespace ArrowSwarm.UI.Editor
             var label = U.Text(root, "ModeLabel", shapes ? "SHAPES" : "DEFENSE", new Vector2(105, 440),
                 new Vector2(410, 108), 67, shapes ? "mode_shapes" : "mode_defense");
             label.textWrappingMode = TextWrappingModes.NoWrap;
-            if (shapes)
-            {
-                X.Icon(root, "HeaderCircle", "circle", new Vector2(280, 1060), new Vector2(100, 100));
-                X.Icon(root, "HeaderTriangle", "triangle", new Vector2(-30, 1060), new Vector2(95, 95));
-                X.Icon(root, "HeaderSquare", "square", new Vector2(-275, 1050), new Vector2(100, 100));
-                X.Icon(root, "FooterCircle", "circle", new Vector2(-180, -1025), new Vector2(100, 100));
-                X.Icon(root, "FooterTriangle", "triangle", new Vector2(-105, -1095), new Vector2(100, 100));
-                X.Icon(root, "FooterSquare", "square", new Vector2(180, -1055), new Vector2(100, 100));
-            }
             root.gameObject.SetActive(false);
             return root.gameObject;
         }
