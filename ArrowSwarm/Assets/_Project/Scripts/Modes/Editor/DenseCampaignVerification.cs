@@ -28,9 +28,12 @@ namespace ArrowSwarm.Modes.Editor
         public static PuzzleSolution AssertLevel(PuzzleLevel level, int index)
         {
             var mask = new bool[level.Width, level.Height];
+            bool compactShape = level.Mode == GameModeId.Shapes &&
+                Mathf.Max(level.Width, level.Height) <= ShapesCompactGeneration.MaximumSide;
             for (int y = 0; y < level.Height; y++) for (int x = 0; x < level.Width; x++)
                 mask[x, y] = level.Mode == GameModeId.ColorShift ||
-                    DenseCampaignGeneration.SampleShape(index, x, y, level.Width, level.Height).a > .5f;
+                    (compactShape ? ShapesCompactGeneration.Sample(index, x, y, level.Width, level.Height) :
+                        DenseCampaignGeneration.SampleShape(index, x, y, level.Width, level.Height)).a > .5f;
             AssertCoverage(level.Arrows, level.Width, level.Height, mask);
             var solution = PuzzleSolver.Solve(level);
             Require(solution.Solvable, level.Title + ": " + solution.Error);
