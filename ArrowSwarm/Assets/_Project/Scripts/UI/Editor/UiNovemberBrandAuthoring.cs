@@ -6,10 +6,10 @@ namespace ArrowSwarm.UI.Editor
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;
 
-    /// <summary>Shares the approved glossy Boot logo with Home, preserving all other authored controls.</summary>
+    /// <summary>Authors the illustrated logo on Home.</summary>
     public static class UiNovemberBrandAuthoring
     {
-        /// <summary>Replaces only the separate Home crest and flat wordmark, without adding a texture.</summary>
+        /// <summary>Replaces the Home branding with the dedicated simplified sprite.</summary>
         public static void Apply()
         {
             if (Application.isPlaying || SceneManager.GetActiveScene().name != "MainMenuScene")
@@ -23,8 +23,8 @@ namespace ArrowSwarm.UI.Editor
                 var old = root.Find(name);
                 if (old != null) UnityEngine.Object.DestroyImmediate(old.gameObject);
             }
-            var logo = UiRollout01Kit.Image(root, "BrandLogo", UiRollout01Kit.Sprite("boot_logo"),
-                new Vector2(0, -54), new Vector2(940, 940));
+            var logo = UiRollout01Kit.Image(root, "BrandLogo", UiRollout01Kit.Sprite("home_logo"),
+                new Vector2(0, -29), new Vector2(880, 880));
             logo.rectTransform.anchorMin = logo.rectTransform.anchorMax = new Vector2(.5f, .70f);
             logo.preserveAspect = true; logo.useSpriteMesh = true; logo.raycastTarget = false;
             data.FindProperty("_titleText").objectReferenceValue = null;

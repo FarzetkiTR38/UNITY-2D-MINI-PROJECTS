@@ -20,10 +20,12 @@ namespace ArrowSwarm.UI.Editor
                 if (File.Exists(ArtFolder + "/" + name + ".png")) ConfigureTexture(ArtFolder + "/" + name + ".png", false, 1024);
             ConfigureTexture(ArtFolder + "/star_gold.png", false, 256);
             ConfigureTexture(ArtFolder + "/profile_player.png", false, 256);
+            ConfigureTexture(ArtFolder + "/home_logo.png", false, 1024, SpriteMeshType.Tight);
             ImportAtlas(); CreateProfileAvatar(); CreateMaterials();
         }
 
-        private static TextureImporter ConfigureTexture(string path, bool multiple, int maximum)
+        private static TextureImporter ConfigureTexture(string path, bool multiple, int maximum,
+            SpriteMeshType meshType = SpriteMeshType.FullRect)
         {
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
             var importer = AssetImporter.GetAtPath(path) as TextureImporter;
@@ -35,7 +37,7 @@ namespace ArrowSwarm.UI.Editor
             importer.wrapMode = TextureWrapMode.Clamp; importer.npotScale = TextureImporterNPOTScale.None;
             importer.maxTextureSize = maximum; importer.textureCompression = TextureImporterCompression.CompressedHQ;
             var settings = new TextureImporterSettings(); importer.ReadTextureSettings(settings);
-            settings.spriteMeshType = SpriteMeshType.FullRect; settings.spriteGenerateFallbackPhysicsShape = false;
+            settings.spriteMeshType = meshType; settings.spriteGenerateFallbackPhysicsShape = false;
             importer.SetTextureSettings(settings);
             importer.SetPlatformTextureSettings(new TextureImporterPlatformSettings
             {

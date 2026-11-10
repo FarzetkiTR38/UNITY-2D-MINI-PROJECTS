@@ -25,7 +25,7 @@ namespace ArrowSwarm.UI.Editor
             var selector = panel.GetComponent<GameModeSelectUI>();
             if (selector == null || panel.transform.Find("MenuArt") == null)
                 throw new InvalidOperationException("Existing Home and mode modal bindings must be present.");
-            foreach (string key in new[] { "boot_logo", "primary_plate", "light_plate", "nav_tile", "profile_avatar", "star" }) K.Sprite(key);
+            foreach (string key in new[] { "home_logo", "primary_plate", "light_plate", "nav_tile", "profile_avatar", "star" }) K.Sprite(key);
             var oldPlay = (Button)settings.FindProperty("_playButton").objectReferenceValue;
             var oldLevels = (Button)settings.FindProperty("_levelsButton").objectReferenceValue;
             var oldBoard = (Button)settings.FindProperty("_leaderboardButton").objectReferenceValue;
@@ -52,7 +52,7 @@ namespace ArrowSwarm.UI.Editor
             Bind(menu, "_playButton", play); Bind(menu, "_levelsButton", levels);
             Bind(menu, "_leaderboardButton", board); Bind(menu, "_settingsButton", options);
             Bind(menu, "_levelText", level); Bind(menu, "_starsText", stars);
-            // Home shares the approved illustrated Boot logo; all functional labels remain live TMP.
+            // Only the illustrated brand uses a sprite. Functional labels remain live TMP.
             Bind(menu, "_titleText", null);
             UiRolloutResponsiveAuthoring.Home(panel.transform);
             foreach (var canvas in panel.GetComponentsInParent<Canvas>(true))
