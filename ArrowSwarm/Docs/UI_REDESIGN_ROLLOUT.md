@@ -106,3 +106,5 @@ Reference Defense/Shapes levels are integrated with live TMP, authored mode/card
 Boot credit, three shared campaign selectors including ColorShift, classic lock tiles/compact stars and Editor mixed sample/live leaderboard refinement are delivered in UI_ROLLOUT_04_REVISIONS.md. Preview: Captures/UIRollout/Phase04Revisions/index.html. Board05 transition work remains behind approval.
 
 November 9 follow-up: the menu exit animations, Home player avatar, final rejected shot timing and Shapes-only board polish are complete. See Docs/UI_NOV09_REVISIONS.md and Captures/UIRollout/Nov09/index.html for the checked implementation and actual Unity preview. No additional numbered board was started.
+
+The November 10 follow-up simplifies the Home logo and compacts all 50 Shapes boards. See Docs/UI_NOV10_REVISIONS.md for the checked implementation and Captures/UIRollout/Nov10/index.html for the Unity comparisons and per-level gallery.
