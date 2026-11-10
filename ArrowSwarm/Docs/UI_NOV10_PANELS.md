@@ -27,3 +27,10 @@ The selected **07 · Oyun Kartları** concept supplies the star display for all 
 - [x] Restore the original player preferences, Game View size and all fifteen pre-existing dirty files after verification.
 
 Review from disk at `Captures/OutcomeStarStage/index.html`. Its before/after Defense panels are staged in the native Game View without awarding progress. The puzzle examples are captured after real shots and rotations. This is a focused follow-up, with the numbered rollout review gate still in place.
+
+### Star display follow-up
+
+- [x] Switch each gray placeholder off when its gold star begins to pop. Restore gray slots before the next reveal and on puzzle retry.
+- [x] Raise the shared star container by 14 canvas units in both results across all three modes.
+- [x] Verify one, two and three stars frame by frame in Unity MCP at 1080×2400 and 720×1280, using both themes for each mode. Check retry and the three gray loss stars. The visible win pedestal clears the first button by about 22 and 15 screen pixels, respectively.
+- [x] Add the updated native captures to the top of the existing preview and verify that local player preferences and pre-existing modified files match their starting state.
