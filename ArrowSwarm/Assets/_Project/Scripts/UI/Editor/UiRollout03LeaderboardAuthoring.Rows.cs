@@ -53,13 +53,9 @@ namespace ArrowSwarm.UI.Editor
         private static Values RowValues(Transform parent, string name, int rank, bool local)
         {
             var values = new Values { Root = K.Rect(parent, name, Vector2.zero, new Vector2(960, 112)) };
-            values.Rank = RowLabel(values.Root, "RankText", rank.ToString(), -415, 112, 54, local);
-            if (rank <= 3)
-            {
-                values.Rank.font = UnityEditor.AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/_Project/Fonts/Fazo_Font_Settings.asset");
-                values.Rank.fontSharedMaterial = values.Rank.font.material;
-                K.Theme(values.Rank, Color.white, Color.white);
-            }
+            values.Rank = RowLabel(values.Root, "RankText", rank.ToString(), -415, 112, rank <= 3 ? 70 : 54, local);
+            // Metallic badges stay bright in both themes, so their numerals use the same deep ink.
+            if (rank <= 3 && !local) K.Theme(values.Rank, Ink, Ink);
             values.Country = RowLabel(values.Root, "CountryCodeText", "TR", -231, 66, 30, local);
             values.Name = RowLabel(values.Root, "PlayerNameText", "Player", -58, 245, 34, local);
             values.Name.alignment = TextAlignmentOptions.MidlineLeft;
