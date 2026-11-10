@@ -67,8 +67,6 @@ namespace ArrowSwarm.UI
         [Header("Animation")]
         [SerializeField] private float _fadeSpeed = 5f;
 
-        private static readonly string[] SUPPORTED_LANGUAGES = { "ENGLISH", "TURKISH", "GERMAN", "SPANISH", "FRENCH" };
-        private int _currentLanguageIndex = 0;
         private readonly MenuPanelTransition _transition = new MenuPanelTransition();
 
         private void Awake()

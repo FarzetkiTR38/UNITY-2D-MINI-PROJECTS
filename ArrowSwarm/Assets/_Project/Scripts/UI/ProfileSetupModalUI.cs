@@ -67,27 +67,28 @@ namespace ArrowSwarm.UI
         private struct CountryItem
         {
             public string Code;
+            public string LanguageCode;
             public string DisplayName;
-            public CountryItem(string code, string name) { Code = code; DisplayName = name; }
+            public CountryItem(string code, string languageCode, string name)
+            {
+                Code = code;
+                LanguageCode = languageCode;
+                DisplayName = name;
+            }
         }
 
         private static readonly CountryItem[] COUNTRIES =
         {
-            new CountryItem("TR", "[TR] Türkiye"),
-            new CountryItem("US", "[US] United States"),
-            new CountryItem("GB", "[GB] United Kingdom"),
-            new CountryItem("DE", "[DE] Germany"),
-            new CountryItem("FR", "[FR] France"),
-            new CountryItem("ES", "[ES] Spain"),
-            new CountryItem("IT", "[IT] Italy"),
-            new CountryItem("BR", "[BR] Brazil"),
-            new CountryItem("JP", "[JP] Japan"),
-            new CountryItem("KR", "[KR] South Korea"),
-            new CountryItem("RU", "[RU] Russia"),
-            new CountryItem("CA", "[CA] Canada"),
-            new CountryItem("AU", "[AU] Australia"),
-            new CountryItem("NL", "[NL] Netherlands"),
-            new CountryItem("GL", "[GL] Global")
+            new CountryItem("US", "en", "[US] United States"),
+            new CountryItem("TR", "tr", "[TR] Türkiye"),
+            new CountryItem("ES", "es", "[ES] Spain"),
+            new CountryItem("DE", "de", "[DE] Germany"),
+            new CountryItem("FR", "fr", "[FR] France"),
+            new CountryItem("BR", "pt", "[BR] Brazil"),
+            new CountryItem("IT", "it", "[IT] Italy"),
+            new CountryItem("RU", "ru", "[RU] Russia"),
+            new CountryItem("JP", "ja", "[JP] Japan"),
+            new CountryItem("KR", "ko", "[KR] South Korea")
         };
 
         private void Awake()
@@ -280,28 +281,47 @@ namespace ArrowSwarm.UI
 
         private void OnPrevCountryClicked()
         {
+            Audio.AudioManager.Instance?.PlayToggle();
             _currentCountryIndex--;
             UpdateCountryDisplay();
+            ApplySelectedLanguage();
         }
 
         private void OnNextCountryClicked()
         {
+            Audio.AudioManager.Instance?.PlayToggle();
             _currentCountryIndex++;
             UpdateCountryDisplay();
+            ApplySelectedLanguage();
         }
 
         private int GetInitialCountryIndex()
         {
-            string savedCountry = DataManager.Instance?.PlayerData?.playerCountry;
-            if (!string.IsNullOrEmpty(savedCountry))
+            string targetLang = null;
+            if (Localization.LocalizationManager.HasInstance)
             {
-                for (int i = 0; i < COUNTRIES.Length; i++)
+                targetLang = Localization.LocalizationManager.Instance.CurrentLanguage;
+            }
+
+            if (string.IsNullOrEmpty(targetLang))
+            {
+                var pd = DataManager.Instance?.PlayerData;
+                if (pd != null)
                 {
-                    if (COUNTRIES[i].Code.Equals(savedCountry, StringComparison.OrdinalIgnoreCase)) return i;
+                    targetLang = !string.IsNullOrEmpty(pd.selectedLanguage) ? pd.selectedLanguage : pd.playerCountry;
                 }
             }
 
-            return 1; // Default: US (English)
+            string normalizedLang = Localization.LocalizationManager.NormalizeLanguageCode(targetLang);
+            for (int i = 0; i < COUNTRIES.Length; i++)
+            {
+                if (COUNTRIES[i].LanguageCode.Equals(normalizedLang, StringComparison.OrdinalIgnoreCase))
+                {
+                    return i;
+                }
+            }
+
+            return 0; // Default: US (English)
         }
 
         private string GenerateRandomNickname()
@@ -331,13 +351,18 @@ namespace ArrowSwarm.UI
                 finalName = GenerateRandomNickname();
             }
 
-            string selectedCode = (_currentCountryIndex >= 0 && _currentCountryIndex < COUNTRIES.Length)
-                ? COUNTRIES[_currentCountryIndex].Code
-                : "TR";
+            bool validIndex = _currentCountryIndex >= 0 && _currentCountryIndex < COUNTRIES.Length;
+            string selectedCode = validIndex ? COUNTRIES[_currentCountryIndex].Code : "US";
+            string selectedLang = validIndex ? COUNTRIES[_currentCountryIndex].LanguageCode : "en";
 
             if (DataManager.Instance != null)
             {
                 DataManager.Instance.SetPlayerProfile(finalName, selectedCode, true);
+            }
+
+            if (Localization.LocalizationManager.HasInstance)
+            {
+                Localization.LocalizationManager.Instance.SetLanguage(selectedLang, saveToPrefs: true);
             }
 
             // SetPlayerProfile owns the score update. A fresh manager retries its pending snapshot once.
@@ -354,13 +379,18 @@ namespace ArrowSwarm.UI
             string currentName = _nameInput != null ? _nameInput.text.Trim() : "";
             if (string.IsNullOrEmpty(currentName)) currentName = GenerateRandomNickname();
 
-            string selectedCode = (_currentCountryIndex >= 0 && _currentCountryIndex < COUNTRIES.Length)
-                ? COUNTRIES[_currentCountryIndex].Code
-                : "US";
+            bool validIndex = _currentCountryIndex >= 0 && _currentCountryIndex < COUNTRIES.Length;
+            string selectedCode = validIndex ? COUNTRIES[_currentCountryIndex].Code : "US";
+            string selectedLang = validIndex ? COUNTRIES[_currentCountryIndex].LanguageCode : "en";
 
             if (DataManager.Instance != null)
             {
                 DataManager.Instance.SetPlayerProfile(currentName, selectedCode, true);
+            }
+
+            if (Localization.LocalizationManager.HasInstance)
+            {
+                Localization.LocalizationManager.Instance.SetLanguage(selectedLang, saveToPrefs: true);
             }
 
             Hide();
