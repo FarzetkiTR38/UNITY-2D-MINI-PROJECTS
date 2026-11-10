@@ -5,10 +5,14 @@ namespace ArrowSwarm.Modes.Editor
 
     public static partial class ShapesBalancedPaths
     {
-        private static void JoinPackets(List<PuzzleArrowData> arrows, int width, int height, System.Random random)
+        private static void JoinPackets(List<PuzzleArrowData> arrows, int width, int height, System.Random random, int target)
         {
-            int cells = 0; foreach (var a in arrows) cells += a.Points.Count;
-            int target = Mathf.Clamp(cells / 25, 55, 105);
+            if (target <= 0)
+            {
+                int cells = 0;
+                foreach (var arrow in arrows) cells += arrow.Points.Count;
+                target = Mathf.Clamp(cells / 25, 55, 105);
+            }
             bool changed = true;
             while (changed && arrows.Count > target)
             {

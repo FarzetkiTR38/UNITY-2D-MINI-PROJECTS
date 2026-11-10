@@ -8,6 +8,10 @@ namespace ArrowSwarm.Modes.Editor
     {
         /// <summary>Partitions complete 2x2 tiles without changing occupancy or their published color key.</summary>
         public static List<PuzzleArrowData> Generate(Color[,] tiles, int seed, int index)
+            => Generate(tiles, seed, index, 0, 0);
+
+        /// <summary>Packs the same tile geometry to an explicit arrow budget and packet length limit.</summary>
+        internal static List<PuzzleArrowData> Generate(Color[,] tiles, int seed, int index, int target, int packetLimit)
         {
             int tw = tiles.GetLength(0), th = tiles.GetLength(1), remaining = 0;
             var free = new bool[tw, th]; var arrows = new List<PuzzleArrowData>(); var random = new System.Random(seed);
@@ -24,7 +28,9 @@ namespace ArrowSwarm.Modes.Editor
                     float score = Mathf.Abs(x - cx) * wx + Mathf.Abs(y - cy) * wy;
                     if (score > rank) { rank = score; tile = new Vector2Int(x, y); }
                 }
-                int sx = tile.x >= cx ? 1 : -1, sy = tile.y >= cy ? 1 : -1, maximum = random.Next(3, 8);
+                int sx = tile.x >= cx ? 1 : -1, sy = tile.y >= cy ? 1 : -1;
+                int maximum = target > 0 ? Mathf.Min(random.Next(1, packetLimit + 1),
+                    Mathf.Max(1, remaining - (target - arrows.Count - 1))) : random.Next(3, 8);
                 int horizontal = Packet(free, tiles, tile, new Vector2Int(-sx, 0), maximum);
                 int vertical = Packet(free, tiles, tile, new Vector2Int(0, -sy), maximum);
                 bool alongX = horizontal + random.NextDouble() * 3 > vertical + random.NextDouble() * 3;
@@ -39,7 +45,7 @@ namespace ArrowSwarm.Modes.Editor
                 for (int i = 0; i < count; i++) { var p = tile + step * i; free[p.x, p.y] = false; remaining--; }
                 arrows.Add(new PuzzleArrowData(points, points[0] - points[1], tiles[tile.x, tile.y]));
             }
-            JoinPackets(arrows, tw * 2, th * 2, random);
+            JoinPackets(arrows, tw * 2, th * 2, random, target);
             Orient(arrows, tw * 2, th * 2, random, index);
             return arrows;
         }
