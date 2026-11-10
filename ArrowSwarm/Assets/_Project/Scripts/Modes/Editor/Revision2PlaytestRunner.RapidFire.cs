@@ -78,8 +78,15 @@ namespace ArrowSwarm.Modes.Editor
             yield return (Func<bool>)(() => session.Idle);
             Check(session.Lives == 2 && !Removed(session)[blocked] && Views(session)[blocked].gameObject.activeSelf,
                 "Shapes: duplicate collision taps cost exactly one life and restore the blocked arrow");
-            session.Fire(blocked); yield return (Func<bool>)(() => session.Idle);
-            Check(session.Lives == 1, "Shapes: a returned arrow becomes selectable for the next attempt");
+            // The concurrent legal shot may have removed this arrow's blocker.
+            bool stillBlocked = !PuzzleRules.CanRemove(session.Level, Removed(session), blocked, session.Orientation);
+            int expectedLives = session.Lives - (stillBlocked ? 1 : 0);
+            int expectedRemaining = session.Remaining - (stillBlocked ? 0 : 1);
+            session.Fire(blocked);
+            Check(ActiveShots(session) == 1, "Shapes: a returned arrow becomes selectable for the next attempt");
+            yield return (Func<bool>)(() => session.Idle);
+            Check(session.Lives == expectedLives && session.Remaining == expectedRemaining &&
+                Removed(session)[blocked] != stillBlocked, "Shapes: the retried shot uses current board occupancy");
             session.Retry(); session.Fire(blocked); session.Fire(FirstLegal(session));
             Check(ActiveShots(session) == 2, "Shapes: retry fixture contains two active shots");
             session.Retry(); yield return .8f;
