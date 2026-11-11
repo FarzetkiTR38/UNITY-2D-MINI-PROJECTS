@@ -1,6 +1,6 @@
 # FarzetkiGames native launch splash
 
-- [x] Generate one branded image using the supplied neon cat logo and a dark navy field, with blue, pink and gold Arrow Swarm stars and arrows distributed across the background.
+- [x] Generate one branded image using the supplied neon cat logo and a dark navy field, with the original tiny blue, pink and gold light points distributed across the background.
 - [x] Preserve the reference's 841 × 1870 output resolution with proportional scaling and a centered crop. The logo and developer credit remain inside the frame.
 - [x] Import the full image as one Sprite with no mipmaps, CPU copy or alpha channel, and Android ASTC 6×6 compression.
 - [x] Assign the Sprite in Player Settings → Splash Image with Unity branding disabled and a static, unblurred presentation.
@@ -14,7 +14,7 @@ Unity's native splash uses the same Sprite for its background and alternate port
 
 The Editor Boot smoke check reached MainMenuScene in Menu state. These checks cover Unity's native splash preview and the Boot scene separately. A new APK was not built. Original player preferences, the Game View size and pre-existing modified files were preserved. The existing runInBackground preference in ProjectSettings remains outside the splash commit.
 
-The source PNG is 2,281,865 bytes. Android ASTC 6×6 at 841×1870 uses an estimated 703,872 bytes of texture blocks, excluding container overhead. This is not an APK download-size measurement.
+The source PNG is 1,868,693 bytes. Android ASTC 6×6 at 841×1870 uses an estimated 703,872 bytes of texture blocks, excluding container overhead. This is not an APK download-size measurement.
 
 Actual Unity previews are in `Captures/FarzetkiSplash/index.html`, with the focused checks in `verification.txt`. The design and integration complete this request. The numbered UI rollout gate remains in place.
 
@@ -29,7 +29,7 @@ Art direction: polished high-end mobile puzzle-game launch screen. Midnight navy
 This is one theme-neutral branded splash shared by Light and Dark players. Make the logo and author credit very readable, with tasteful saturated colors against the calm deep navy field.
 ```
 
-## Full-background decoration revision
+## Full-background decoration revision, superseded
 
 - [x] Extend the decoration into the upper and lower portions, with recognizable cyan blue, magenta pink and golden yellow stars and side arrows.
 - [x] Inspect the revised native splash at all three recorded screen ratios and refresh the preview gallery.
@@ -41,4 +41,22 @@ Use case: precise-object-edit. Edit the supplied existing 841x1870 FarzetkiGames
 The requested change is to decorate the ENTIRE background from the very top to the very bottom, rather than only the middle. The top quarter and bottom quarter currently look empty. Fill both of these regions, as well as the side margins, with a harmonious airy distribution of glossy CYAN BLUE stars, MAGENTA PINK stars and GOLDEN YELLOW stars, plus smaller four-point sparkles and a few graceful cyan or pink arrow motifs with short curved trails along both sides. Use recognizably shaped little five-point game stars in all three colors, not only tiny colored dots. Place some larger stars near the top left, upper right, lower left and lower right, with smaller stars between. Continue the decorations across all vertical zones, including within the uppermost 10% and lowermost 10%. Balance the pattern with varied size and spacing, approximately 20 colorful stars total and several smaller twinkles. Keep the dark midnight navy backdrop, luminous cyan/magenta brand palette and polished playful mobile puzzle-game feel. Richer and more festive, but clean and readable.
 Preserve the center logo exactly: the neon cat face and ears, cyan FARZETKI, magenta GAMES, angular plaque, its proportions, size and position. Preserve the exact credit line "Developed By Samet Yalçın", its spelling including ç and dotless ı, its size, white color and location below the logo. Leave clear space immediately around the lettering. Do not overlap any new decoration with the logo or the credit. No other text, no border, no buttons, no extra logos.
 Keep the existing portrait composition and aspect ratio. The source/final design resolution is 841x1870. Make one finished production splash artwork, not a mockup or a sheet of alternatives.
+```
+
+## Approved decoration interpretation
+
+The user clarified that decoration means the original pinhead-sized cyan, pink and gold specks and thin gold four-point glints. The large glossy five-point stars in the previous revision were rejected.
+
+- [x] Edit the first artwork directly, extending its tiny lights into the upper and lower background.
+- [x] Export at 841×1870 using the existing Sprite reference.
+- [x] Inspect the updated native splash at the three recorded screen ratios and refresh the preview gallery.
+
+The built-in image generator used the following correction prompt.
+
+```text
+Use case: precise-object-edit. The attached image is the ORIGINAL APPROVED FarzetkiGames splash and is the exact edit target.
+Make one restrained change: extend its existing tiny dot-like sky sparkles upward into the empty top and downward into the empty bottom, so these same tiny decorations are spread throughout the background. Match the original image's subtle luminous cyan blue and magenta pink specks, just 2–6 pixels across at this source width, with a few tiny warm gold specks and delicate thin four-point twinkles 10–20 pixels across including glow. Keep this as a finely sprinkled starry night background with sparse airy spacing. Top and bottom should have the same light point density as the side background surrounding the cat. Place the points in every vertical region, including near the top and bottom margins, without forming bands. Most dots should be tiny and dim, with occasional brighter pinpoints.
+Preserve EXACTLY the existing neon cat logo and FARZETKI / GAMES plaque, their geometry, lettering, proportions, size, colors and position. Preserve the existing exact white credit line "Developed By Samet Yalçın" and its typography, scale and position. Preserve the original three cyan arrow motifs and their subtle trails. Keep the dark navy background and all existing glow characteristics. Keep clear reading space around the logo and the credit.
+Do not create any large star objects. No five-point stars, no faceted gems, no glossy star icons, no confetti, no additional arrow types, no swirls, no new text or decorative objects. Only the original pinhead-sized light dots and a few thin little four-point glints are to be extended into the empty top and bottom.
+Maintain the existing portrait aspect and composition, destined for an 841 × 1870 pixel launch splash. One finished flat artwork, not a mockup.
 ```
