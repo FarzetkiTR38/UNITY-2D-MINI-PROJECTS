@@ -8,13 +8,14 @@ Bu istek, geçişte kesilen görseli düzeltmek ve mevcut sesleri alternatifleri
 - [x] Geçişte kullanılan atlas alanını ve kesilmenin kaynağını Unity MCP ile incele.
 - [x] Mevcut tam bağımsız logoyu malzemeye bağla; yeni görsel veya runtime kodu ekleme.
 - [x] Açık/koyu temada 1080×1920 ve 1080×2400 gerçek geçişleri denetle; önce/sonra kanıtını hazırla.
-- [x] Geçiş düzeltmesini ve teslim sayfasını ilk tamamlanmış aşama olarak hazırla.
+- [x] Geçiş düzeltmesini ve teslim sayfasını commit et: `7122ebd4`.
 - [x] Gerçek aktif SFXLibrary referansından 19 rolü ve 58 kaynak dosyayı çıkar.
 - [x] 58 klibin Unity importunu denetle; Unity'nin çözdüğü PCM üzerinden teknik ölçüm ve puanları hesapla.
 - [x] Bağımsız ajanlarla ölçüm yöntemi, kodda kullanım ve editoryal yorum sınırlarını incele.
 - [x] Ses seviyesi, mute, pause yenilemesi ve can kaybı tetiklenmesini Unity MCP ile sınayıp raporla.
 - [x] Aktif ve alternatif klipler için kaynaklardan çalma kontrolleri, çok kategorili puanlar ve A/B karşılaştırma sayfasını hazırla.
-- [ ] Kaynak bütünlüğü, rapor bağlantıları ve önceden değişmiş dosyaların korunmasını son kez doğrula; ses raporunu commit et.
+- [x] 58 kaynak dosyasının SHA256 değerlerini, rapor bağlantılarını ve önceden değişmiş 16 dosyanın birebir korunmasını doğrula.
+- [x] Ses raporunu ayrı tamamlanmış aşama olarak hazırla; bu belgeyle aynı committe teslim edilir.
 - [ ] İşitsel estetik değerlendirme: bu oturum ses girdisini işitemediğinden tamamlanamadı. Tını, melodi, yoruculuk ve oyuna estetik uyum için puan uydurulmadı.
 
 ## Geçişte uygulanan değişiklik
@@ -33,7 +34,7 @@ Aktif kaynak `Assets/_Project/Data/SFXLibrary.asset` ve onu kullanan CoreManager
 
 Teknik puan = %40 sinyal bütünlüğü + %25 seviye payı + %35 dosya sınır düzenlemesi. Oyun içi kullanım puanı ayrıca kod yollarına göre verilmiştir. Bunlar estetik puan değildir. Alternatifte yüksek teknik puan otomatik değiştirme kararı oluşturmaz.
 
-Teslim sayfası: `Captures/AudioReview/index.html`. Tam ölçümler, Unity import envanteri, kod incelemesi, yöntem, dinleme planı ve native çalışma gözlemleri aynı klasördedir.
+Teslim sayfası: `Captures/AudioReview/index.html`. Statik 19 rol tablosu `summary.md` içindedir. Tam ölçümler, Unity import envanteri, kod incelemesi, yöntem, dinleme planı ve native çalışma gözlemleri aynı klasördedir.
 
 Unity'de gözlenenler:
 
