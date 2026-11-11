@@ -34,3 +34,9 @@ Review from disk at `Captures/OutcomeStarStage/index.html`. Its before/after Def
 - [x] Raise the shared star container by 14 canvas units in both results across all three modes.
 - [x] Verify one, two and three stars frame by frame in Unity MCP at 1080×2400 and 720×1280, using both themes for each mode. Check retry and the three gray loss stars. The visible win pedestal clears the first button by about 22 and 15 screen pixels, respectively.
 - [x] Add the updated native captures to the top of the existing preview and verify that local player preferences and pre-existing modified files match their starting state.
+
+### Result HUD visibility experiment
+
+- [x] Keep the Defense HUD visible in Win and Lose states, with HUD interaction disabled behind the result modal.
+- [x] Check the real Defense win/loss gameplay fixture through Unity MCP. Inspect both bars during the actual loss entrance and a separately staged, time-frozen Win entrance.
+- [x] Restore all sixteen pre-existing dirty files and the original GameScene editor view. Native captures and focused verification are in `Captures/ResultHud/`.
