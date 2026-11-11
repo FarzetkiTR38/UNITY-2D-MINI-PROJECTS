@@ -1,24 +1,25 @@
 # FarzetkiGames native launch splash
 
-- [x] Generate one branded image using the supplied neon cat logo and a dark navy field, with the original tiny blue, pink and gold light points distributed across the background.
-- [x] Preserve the reference's 841 × 1870 output resolution with proportional scaling and a centered crop. The logo and developer credit remain inside the frame.
-- [x] Import the full image as one Sprite with no mipmaps, CPU copy or alpha channel, and Android ASTC 6×6 compression.
-- [x] Assign the Sprite in Player Settings → Splash Image with Unity branding disabled and a static, unblurred presentation.
-- [x] Inspect the native Unity preview at phone aspect ratios, check Boot handoff and commit the integration.
+- [x] Separate the approved artwork into its tiny-sparkle background and a transparent cat/plaque/developer-credit group.
+- [x] Keep the background at 841 × 1870 and export the foreground at 1024 × 1024 with true alpha.
+- [x] Import both as Single Sprites with Full Rect geometry, no mipmaps and no CPU copy. Use Android ASTC 6×6 for the background and ASTC 4×4 for the foreground.
+- [x] Assign the background to both native Background Image slots and the transparent group to the real Logos entry. Use a static, unblurred 2.5-second splash with Unity branding disabled.
+- [x] Compare native 1080×1920 and 1080×2400 foreground dimensions, and check 720×1280 and 1536×2048.
+- [x] Deliver updated native captures and commit the responsive layer integration.
 
 Native splash appears before the saved game theme is loaded. One theme-neutral dark navy composition is shared by both game themes.
 
-The built-in image generator produced the artwork from the user's logo. The final source asset is `Assets/_Project/Art/Sprites/SharedUI/FarzetkiGamesSplash.png`.
+The built-in image generator extracted the two layers from the approved combined artwork. The source assets are `Assets/_Project/Art/Sprites/SharedUI/FarzetkiGamesSplash.png` for the background and `Assets/_Project/Art/Sprites/SharedUI/FarzetkiGamesSplashLogo.png` for the foreground.
 
-Unity's native splash uses the same Sprite for its background and alternate portrait image, with blur and overlay opacity disabled. One 2.5-second empty logo interval displays the complete background artwork. Preview captures at 1080×2400, 720×1280 and 1536×2048 confirm that the logo and credit remain inside the actual native crop. The readback applies Unity Game View's vertical orientation on the Direct3D backend.
+Unity fills the screen with the background and independently centers the transparent native logo. A 2.5-second real logo entry replaces the previous empty interval. Native background-subtraction checks measured the visible foreground at exactly 742×753 pixels in both 1080×1920 and 1080×2400. The visible ink center moves from (542.5, 971) to (542.5, 1211), a 240-pixel vertical shift matching half the 480-pixel screen-height increase. The readback applies Unity Game View's vertical orientation on the Direct3D backend.
 
 The Editor Boot smoke check reached MainMenuScene in Menu state. These checks cover Unity's native splash preview and the Boot scene separately. A new APK was not built. Original player preferences, the Game View size and pre-existing modified files were preserved. The existing runInBackground preference in ProjectSettings remains outside the splash commit.
 
-The source PNG is 1,868,693 bytes. Android ASTC 6×6 at 841×1870 uses an estimated 703,872 bytes of texture blocks, excluding container overhead. This is not an APK download-size measurement.
+The background source PNG is 1,394,144 bytes and the foreground source PNG is 1,158,334 bytes. Android texture-block estimates are 703,872 bytes for the background and 1,048,576 bytes for the alpha foreground, excluding container overhead. These are not APK download-size measurements.
 
 Actual Unity previews are in `Captures/FarzetkiSplash/index.html`, with the focused checks in `verification.txt`. The design and integration complete this request. The numbered UI rollout gate remains in place.
 
-## Generation prompt
+## Original combined-image generation prompt
 
 ```text
 Use case: logo-brand.
@@ -59,4 +60,25 @@ Make one restrained change: extend its existing tiny dot-like sky sparkles upwar
 Preserve EXACTLY the existing neon cat logo and FARZETKI / GAMES plaque, their geometry, lettering, proportions, size, colors and position. Preserve the existing exact white credit line "Developed By Samet Yalçın" and its typography, scale and position. Preserve the original three cyan arrow motifs and their subtle trails. Keep the dark navy background and all existing glow characteristics. Keep clear reading space around the logo and the credit.
 Do not create any large star objects. No five-point stars, no faceted gems, no glossy star icons, no confetti, no additional arrow types, no swirls, no new text or decorative objects. Only the original pinhead-sized light dots and a few thin little four-point glints are to be extended into the empty top and bottom.
 Maintain the existing portrait aspect and composition, destined for an 841 × 1870 pixel launch splash. One finished flat artwork, not a mockup.
+```
+
+## Responsive layer extraction prompts
+
+Background generation uses the built-in image generator.
+
+```text
+Use case: precise-object-edit.
+Edit the supplied approved FarzetkiGames splash to produce ONLY its separate background layer.
+Remove the entire central neon cat logo, FARZETKI/GAMES plaque, and the entire "Developed By Samet Yalçın" credit line. Inpaint those regions with a smooth continuation of the original deep midnight navy backdrop and subtle cobalt radial light. Keep the original distribution and tiny size of the cyan/pink/gold point-like sparkles across the entire height, and the three existing cyan arrow motifs on the side edges with their narrow trails. Where the logo was, leave a quiet subtly glowing navy area suitable to overlay that logo again.
+The ornaments must be only tiny light dots 2–6 pixels wide with a few very thin four-point gold glints, exactly as the source. No five-point star icons, no large stars, no additional objects, no text and no remaining pieces of the cat or wordmark.
+Maintain full-bleed portrait composition and original aspect ratio, target final export 841×1870 pixels. Opaque background. One production image.
+```
+
+Foreground extraction uses the built-in image generator with transparent output.
+
+```text
+Use case: background-extraction.
+Extract the EXACT central FarzetkiGames branding group from the supplied approved splash as a standalone transparent PNG. Keep the neon cat head with its cyan eyes and pink/cyan ear and fur outlines, the angular FARZETKI / GAMES plaque directly underneath, and the exact white developer credit "Developed By Samet Yalçın" below that. Faithfully preserve the original art, proportions, letter shapes, spacing, colors and Turkish ç and dotless ı. Preserve the cat's dark navy face/interior and the dark navy interior behind the plaque letters; those belong to the logo.
+Remove all surrounding midnight sky, stars, light dots, four-point sparkles and all three cyan arrows/trails. Outside the cat/plaque/credit outlines and their restrained neon glow, the alpha must be completely transparent. No dark rectangle, no backdrop, no checkerboard drawn into the pixels.
+Use a square 1024×1024 transparent canvas. Center the entire group, fitted proportionally, with about 6–8% transparent margin on each side. Arrange the same cat over the same plaque, with the same developer credit centered below, exactly as the source. Keep the group as one coordinated image that will be Unity's native splash logo. No additional text or changes.
 ```
