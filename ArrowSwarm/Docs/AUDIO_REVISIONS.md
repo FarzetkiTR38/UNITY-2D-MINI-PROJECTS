@@ -8,14 +8,14 @@ Profile controls need the same SFX coverage as the other menus. Remove the win f
 
 - [x] Inspect project rules, previous audio report and actual Unity editor context. Back up all 17 initially modified tracked files and private preferences outside the project. Initial Editor scene is unsaved MainMenuScene; preserve it.
 - [x] Profile avatar/opening/dismissal, dice and country controls produce one appropriate UI sound; native `profile-checks.txt` passes including repeated Show/Hide guards. Save/skip/close final regression follows isolated provider setup.
-- [ ] Remove automatic and explicit result confetti from Defense, Shapes and ColorShift; preserve other particles and star animation.
-- [ ] Add serialized three-track gameplay playlist using GameBGM, GameBGM_alt1, GameBGM_alt2.
-- [ ] New attempts/retry/next advance once; pause/resume, setting changes and clip loops never advance.
+- [x] Remove automatic and explicit result confetti from Defense, Shapes and ColorShift; native result checks find no playing confetti/fireworks. Other particle APIs and star animations are preserved.
+- [x] Add serialized three-track gameplay playlist using GameBGM, GameBGM_alt1, GameBGM_alt2.
+- [x] Real Next/Retry buttons in all three scenes advance 0→1→2→0; pause/resume, setting changes and clip-end loop retain their current track. `playlist-checks.txt` passes.
 - [ ] Accept exact zero volumes, respect mute everywhere, and retain pause/result gain after data refresh.
 - [ ] Own each life-loss sound once; wire Defense hint and distinguish surviving/fatal enemy damage.
 - [ ] Bound overlapping effects without changing the pitch of earlier tails; keep high-priority UI/feedback usable during bursts.
 - [ ] Complete Defense popup/action SFX coverage without double clicks.
-- [ ] Repair objectively measurable source boundaries/silent tails only; retain aesthetic choices unless there is supporting evidence.
+- [x] Lossless edits to ArrowWrong/ToggleSwitch silent tails and MobDie_alt1 3/4ms edge fades; GUIDs, rates, PCM encoding and RIFF metadata retained. Native re-import/decode checks pass; source report and reproducible hash-guarded script provided.
 - [ ] Configure existing music import/mix costs and per-track levels for three-track operation.
 - [ ] Native Unity MCP regression across all modes, Light/Dark, real controls, retry/next/pause/mute and original state restoration.
 - [ ] Deliver reviewable evidence, updated audio report status and phase commit list.

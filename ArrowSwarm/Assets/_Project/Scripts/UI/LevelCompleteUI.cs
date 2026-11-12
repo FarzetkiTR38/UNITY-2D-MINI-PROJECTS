@@ -4,14 +4,13 @@ namespace ArrowSwarm.UI
     using ArrowSwarm.Audio;
     using ArrowSwarm.Core;
     using ArrowSwarm.Data;
-    using ArrowSwarm.Effects;
     using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
 
     /// <summary>
     /// Win screen overlay displayed when the player completes a level.
-    /// Features sequential star popping, celebratory confetti, and navigation buttons.
+    /// Features sequential star popping and navigation buttons.
     /// </summary>
     public class LevelCompleteUI : MonoBehaviour
     {
@@ -107,9 +106,6 @@ namespace ArrowSwarm.UI
 
             DataManager.Instance?.SetLevelStars(level, starsEarned);
             DataManager.Instance?.UnlockNextLevel(level);
-
-            // Trigger celebratory confetti shower
-            ParticleManager.Instance?.SpawnConfetti();
 
             // Animate popup open and sequence stars pop-in
             if (_canvasGroup != null)

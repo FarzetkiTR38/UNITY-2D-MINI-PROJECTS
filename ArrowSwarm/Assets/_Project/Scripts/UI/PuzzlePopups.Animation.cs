@@ -80,8 +80,6 @@ namespace ArrowSwarm.UI
         {
             if (_starsRoutine != null) StopCoroutine(_starsRoutine);
             _starsRoutine = StartCoroutine(WinStars(stars));
-            if (ArrowSwarm.Effects.ParticleManager.HasInstance)
-                ArrowSwarm.Effects.ParticleManager.Instance.SpawnConfetti();
         }
 
         private IEnumerator WinStars(int stars)

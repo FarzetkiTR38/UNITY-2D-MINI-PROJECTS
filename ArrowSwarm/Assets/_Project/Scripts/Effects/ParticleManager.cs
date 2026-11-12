@@ -2,7 +2,6 @@ namespace ArrowSwarm.Effects
 {
     using System.Collections.Generic;
     using ArrowSwarm.Arrow;
-    using ArrowSwarm.Core;
     using ArrowSwarm.Mob;
     using ArrowSwarm.Utils;
     using UnityEngine;
@@ -23,16 +22,6 @@ namespace ArrowSwarm.Effects
         [SerializeField] private ParticleSystem _fireworkBasicPrefab;
 
         private readonly Dictionary<string, Queue<ParticleSystem>> _pools = new();
-
-        private void OnEnable()
-        {
-            GameManager.OnLevelWon += HandleLevelWon;
-        }
-
-        private void OnDisable()
-        {
-            GameManager.OnLevelWon -= HandleLevelWon;
-        }
 
         /// <summary>
         /// Spawns a particle effect at the given position.
@@ -140,11 +129,6 @@ namespace ArrowSwarm.Effects
             pos.z = 0f;
 
             SpawnEffect(_confettiPrefab, pos);
-        }
-
-        private void HandleLevelWon()
-        {
-            SpawnConfetti();
         }
 
         private ParticleSystem GetFromPool(ParticleSystem prefab)
