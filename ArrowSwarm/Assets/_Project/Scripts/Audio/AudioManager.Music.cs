@@ -31,6 +31,15 @@ namespace ArrowSwarm.Audio
                 return;
             }
             if (_bgmFade != null) { StopCoroutine(_bgmFade); _bgmFade = null; }
+            if (_outgoingBgmSource.clip == clip && _outgoingBgmSource.isPlaying)
+            {
+                // Reverse a rapid A -> B -> A transition without restarting either already playing clip.
+                var incoming = _bgmSource; _bgmSource = _outgoingBgmSource; _outgoingBgmSource = incoming;
+                float envelope = _incomingBgmEnvelope;
+                _incomingBgmEnvelope = _outgoingBgmEnvelope; _outgoingBgmEnvelope = envelope;
+                BeginMusicCrossfade();
+                return;
+            }
             // During a rapid navigation change, retain the louder existing source as the outgoing tail.
             if (_outgoingBgmEnvelope > _incomingBgmEnvelope)
             {
@@ -46,6 +55,12 @@ namespace ArrowSwarm.Audio
             _bgmSource.clip = clip;
             RefreshMusicMix();
             _bgmSource.Play();
+            BeginMusicCrossfade();
+        }
+
+        private void BeginMusicCrossfade()
+        {
+            RefreshMusicMix();
             float duration = _sfxLibrary != null ? _sfxLibrary.MusicCrossfadeSeconds : 0f;
             if (duration > 0f && isActiveAndEnabled) _bgmFade = StartCoroutine(CrossfadeMusic(duration));
             else CompleteMusicCrossfade();
@@ -62,12 +77,12 @@ namespace ArrowSwarm.Audio
 
         private IEnumerator CrossfadeMusic(float duration)
         {
-            float elapsed = 0f, outgoingStart = _outgoingBgmEnvelope;
+            float elapsed = 0f, incomingStart = _incomingBgmEnvelope, outgoingStart = _outgoingBgmEnvelope;
             while (elapsed < duration)
             {
                 elapsed = Mathf.Min(duration, elapsed + Time.unscaledDeltaTime);
                 float t = Mathf.SmoothStep(0f, 1f, elapsed / duration);
-                _incomingBgmEnvelope = t; _outgoingBgmEnvelope = outgoingStart * (1f - t);
+                _incomingBgmEnvelope = Mathf.Lerp(incomingStart, 1f, t); _outgoingBgmEnvelope = outgoingStart * (1f - t);
                 RefreshMusicMix();
                 yield return null;
             }

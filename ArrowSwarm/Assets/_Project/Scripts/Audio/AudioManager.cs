@@ -1,9 +1,7 @@
 namespace ArrowSwarm.Audio
 {
-    using ArrowSwarm.Arrow;
     using ArrowSwarm.Core;
     using ArrowSwarm.Data;
-    using ArrowSwarm.Mob;
     using ArrowSwarm.Utils;
     using UnityEngine;
 
@@ -16,15 +14,14 @@ namespace ArrowSwarm.Audio
         [SerializeField] private SFXLibrary _sfxLibrary;
         [SerializeField] private AudioSource[] _sfxSources;
 
-        private const int SfxChannelCount = 6;
-        private int _currentSfxIndex;
         private float _musicVolume = 0.7f, _sfxVolume = 1f;
 
+        /// <summary>Assigned clips and Inspector-authored playback controls.</summary>
         public SFXLibrary Library => _sfxLibrary;
         protected override void OnSingletonAwake()
         {
-            EnsureAudioSources();
             AutoLinkLibrary();
+            EnsureAudioSources();
             LoadVolumeSettings();
         }
 
@@ -60,37 +57,37 @@ namespace ArrowSwarm.Audio
             UnsubscribeAttemptEvents();
         }
 
-        /// <summary>Plays a sound effect on an available channel with pitch modulation.</summary>
-        public void PlaySFX(AudioClip clip, float pitch = 1f, float volumeScale = 1f, bool ignoreMute = false)
-        {
-            if (clip == null || _sfxSources == null || _sfxSources.Length == 0) return;
-            if (AudioMuted || _sfxVolume == 0f) return;
-
-            var src = _sfxSources[_currentSfxIndex];
-            _currentSfxIndex = (_currentSfxIndex + 1) % _sfxSources.Length;
-            if (src == null) return;
-            src.pitch = pitch;
-            float vol = _sfxVolume * volumeScale;
-            src.PlayOneShot(clip, vol);
-        }
-
-        public void PlayButtonClick() => PlaySFX(_sfxLibrary?.ButtonClick, Random.Range(0.96f, 1.04f));
+        /// <summary>Plays one control activation cue.</summary>
+        public void PlayButtonClick() => PlaySFX(_sfxLibrary?.ButtonClick);
+        /// <summary>Plays the opening cue for an actual popup transition.</summary>
         public void PlayPopupOpen() => PlaySFX(_sfxLibrary?.PopupOpen);
+        /// <summary>Plays the closing cue for an actual popup transition.</summary>
         public void PlayPopupClose() => PlaySFX(_sfxLibrary?.PopupClose);
+        /// <summary>Plays a settings toggle cue while respecting the global sound preference.</summary>
         public void PlayToggle() => PlaySFX(_sfxLibrary?.ToggleSwitch);
-        public void PlayStarEarn(int idx) => PlaySFX(_sfxLibrary?.StarEarn, 1.0f + (idx * 0.15f));
-        public void PlayArrowFire(bool rainbow) => PlaySFX(rainbow ? _sfxLibrary?.RainbowArrow : _sfxLibrary?.ArrowFire, Random.Range(0.95f, 1.05f));
+        /// <summary>Plays an earned star with the configured ascending pitch step.</summary>
+        public void PlayStarEarn(int idx) => PlaySFX(_sfxLibrary?.StarEarn, 1f + Mathf.Max(0, idx) * (_sfxLibrary != null ? _sfxLibrary.StarPitchStep : 0f));
+        /// <summary>Plays the configured normal or rainbow launch cue.</summary>
+        public void PlayArrowFire(bool rainbow) => PlaySFX(rainbow ? _sfxLibrary?.RainbowArrow : _sfxLibrary?.ArrowFire);
+        /// <summary>Plays a blocked-arrow impact and return cue.</summary>
         public void PlayArrowWrong() => PlaySFX(_sfxLibrary?.ArrowWrong);
         /// <summary>Legacy explicit collision cue; normal mob damage uses one hurt or death cue instead.</summary>
-        public void PlayArrowHit() => PlaySFX(_sfxLibrary?.ArrowHitEnemy, Random.Range(0.93f, 1.07f));
+        public void PlayArrowHit() => PlaySFX(_sfxLibrary?.ArrowHitEnemy);
         /// <summary>Plays the hurt cue for a mob that survived its damage.</summary>
         public void PlayMobHit() => PlaySFX(_sfxLibrary?.MobHit);
-        public void PlayMobDie() => PlaySFX(_sfxLibrary?.MobDie, Random.Range(0.95f, 1.05f));
+        /// <summary>Plays the terminal mob cue without an additional hurt cue.</summary>
+        public void PlayMobDie() => PlaySFX(_sfxLibrary?.MobDie);
+        /// <summary>Plays the portal escape cue.</summary>
         public void PlayMobFinish() => PlaySFX(_sfxLibrary?.MobFinish);
+        /// <summary>Plays the freeze activation cue.</summary>
         public void PlaySkillFreeze() => PlaySFX(_sfxLibrary?.SkillFreeze);
+        /// <summary>Plays the cue for an actually used hint.</summary>
         public void PlaySkillTips() => PlaySFX(_sfxLibrary?.SkillTips);
+        /// <summary>Plays the victory cue using critical feedback capacity.</summary>
         public void PlayLevelWin() => PlaySFX(_sfxLibrary?.LevelWin);
+        /// <summary>Plays the loss cue using critical feedback capacity.</summary>
         public void PlayLevelLose() => PlaySFX(_sfxLibrary?.LevelLose);
+        /// <summary>Plays one life-loss cue; independent life changes are not time-coalesced.</summary>
         public void PlayHeartBreak() => PlaySFX(_sfxLibrary?.HeartBreak);
 
         private void HandleSceneLoaded(UnityEngine.SceneManagement.Scene s, UnityEngine.SceneManagement.LoadSceneMode m) => SyncBGMForCurrentScene();
@@ -128,14 +125,7 @@ namespace ArrowSwarm.Audio
         {
             EnsureAudioListener();
             EnsureBgmSources();
-            if (_sfxSources != null && _sfxSources.Length != 0) return;
-            _sfxSources = new AudioSource[SfxChannelCount];
-            for (int i = 0; i < SfxChannelCount; i++)
-            {
-                _sfxSources[i] = gameObject.AddComponent<AudioSource>();
-                _sfxSources[i].playOnAwake = false;
-                _sfxSources[i].spatialBlend = 0f;
-            }
+            EnsureSfxSources();
         }
 
         private void AutoLinkLibrary()

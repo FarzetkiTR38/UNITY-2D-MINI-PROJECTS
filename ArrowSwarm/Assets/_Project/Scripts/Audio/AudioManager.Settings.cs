@@ -12,8 +12,7 @@ namespace ArrowSwarm.Audio
             _musicVolume = Mathf.Clamp01(music);
             _sfxVolume = Mathf.Clamp01(sfx);
             RefreshMusicMix();
-            if ((AudioMuted || _sfxVolume == 0f) && _sfxSources != null)
-                foreach (var source in _sfxSources) if (source != null) source.Stop();
+            RefreshSfxMix();
         }
 
         private void LoadVolumeSettings()
