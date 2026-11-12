@@ -7,7 +7,7 @@ Profile controls need the same SFX coverage as the other menus. Remove the win f
 ## Checklist and phase commits
 
 - [x] Inspect project rules, previous audio report and actual Unity editor context. Back up all 17 initially modified tracked files and private preferences outside the project. Initial Editor scene is unsaved MainMenuScene; preserve it.
-- [ ] Profile opening, dismissal and all valid controls produce one appropriate UI sound.
+- [x] Profile avatar/opening/dismissal, dice and country controls produce one appropriate UI sound; native `profile-checks.txt` passes including repeated Show/Hide guards. Save/skip/close final regression follows isolated provider setup.
 - [ ] Remove automatic and explicit result confetti from Defense, Shapes and ColorShift; preserve other particles and star animation.
 - [ ] Add serialized three-track gameplay playlist using GameBGM, GameBGM_alt1, GameBGM_alt2.
 - [ ] New attempts/retry/next advance once; pause/resume, setting changes and clip loops never advance.

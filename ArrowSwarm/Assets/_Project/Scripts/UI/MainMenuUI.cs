@@ -117,6 +117,7 @@ namespace ArrowSwarm.UI
             if (_profileModal == null) _profileModal = GetComponentInChildren<ProfileSetupModalUI>(true);
             if (_profileModal != null)
             {
+                AudioManager.Instance?.PlayButtonClick();
                 _profileModal.gameObject.SetActive(true);
                 _profileModal.Show();
             }

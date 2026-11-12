@@ -2,6 +2,7 @@ namespace ArrowSwarm.UI
 {
     using System;
     using System.Collections.Generic;
+    using ArrowSwarm.Audio;
     using ArrowSwarm.Core;
     using ArrowSwarm.Data;
     using TMPro;
@@ -196,6 +197,7 @@ namespace ArrowSwarm.UI
         /// </summary>
         public void Show()
         {
+            bool opening = !_showRequested || !gameObject.activeInHierarchy;
             // An inactive scene modal runs Awake during this first activation.
             // Do not let its initial hide cancel the requested opening.
             _showRequested = true;
@@ -204,6 +206,7 @@ namespace ArrowSwarm.UI
             AutoWireComponents();
             BindButtons();
             ApplyLocalization();
+            if (opening) AudioManager.Instance?.PlayPopupOpen();
 
             // Pre-fill name: current PlayerData name or random generator
             string currentName = DataManager.Instance?.PlayerData?.playerName;
@@ -245,6 +248,10 @@ namespace ArrowSwarm.UI
         /// </summary>
         public void Hide(Action onComplete = null)
         {
+            bool closing = _showRequested && gameObject.activeInHierarchy;
+            _showRequested = false;
+            if (closing) AudioManager.Instance?.PlayPopupClose();
+
             if (_canvasGroup != null)
             {
                 _canvasGroup.interactable = false;
@@ -336,6 +343,7 @@ namespace ArrowSwarm.UI
         {
             if (_nameInput != null)
             {
+                AudioManager.Instance?.PlayButtonClick();
                 _nameInput.text = GenerateRandomNickname();
             }
 
@@ -343,6 +351,7 @@ namespace ArrowSwarm.UI
 
         private void OnSaveClicked()
         {
+            AudioManager.Instance?.PlayButtonClick();
             Debug.Log("[ArrowSwarm] ProfileSetupModalUI: Save profile button clicked!");
 
             string finalName = _nameInput != null ? _nameInput.text.Trim() : "";
@@ -374,6 +383,7 @@ namespace ArrowSwarm.UI
 
         private void OnSkipClicked()
         {
+            AudioManager.Instance?.PlayButtonClick();
             Debug.Log("[ArrowSwarm] ProfileSetupModalUI: Skip button clicked!");
 
             string currentName = _nameInput != null ? _nameInput.text.Trim() : "";
