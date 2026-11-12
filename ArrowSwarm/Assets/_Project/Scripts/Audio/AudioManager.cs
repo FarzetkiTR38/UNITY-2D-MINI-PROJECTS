@@ -15,6 +15,7 @@ namespace ArrowSwarm.Audio
         [SerializeField] private AudioSource[] _sfxSources;
 
         private float _musicVolume = 0.7f, _sfxVolume = 1f;
+        private AudioListener _fallbackListener;
 
         /// <summary>Assigned clips and Inspector-authored playback controls.</summary>
         public SFXLibrary Library => _sfxLibrary;
@@ -116,9 +117,17 @@ namespace ArrowSwarm.Audio
 
         private void EnsureAudioListener()
         {
-            if (FindFirstObjectByType<AudioListener>(FindObjectsInactive.Exclude) != null) return;
-            var cam = Camera.main ?? FindFirstObjectByType<Camera>();
-            (cam != null ? cam.gameObject : gameObject).AddComponent<AudioListener>();
+            // Bootstrap can run before the scene camera exists. Its temporary listener must yield
+            // to an authored active scene listener after loading rather than doubling the output.
+            if (_fallbackListener == null) _fallbackListener = GetComponent<AudioListener>();
+            foreach (var listener in FindObjectsByType<AudioListener>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            {
+                if (listener == _fallbackListener || !listener.isActiveAndEnabled) continue;
+                if (_fallbackListener != null) _fallbackListener.enabled = false;
+                return;
+            }
+            if (_fallbackListener == null) _fallbackListener = gameObject.AddComponent<AudioListener>();
+            _fallbackListener.enabled = true;
         }
 
         private void EnsureAudioSources()

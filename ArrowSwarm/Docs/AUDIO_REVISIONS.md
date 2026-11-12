@@ -17,6 +17,7 @@ Profile controls need the same SFX coverage as the other menus. Remove the win f
 - [x] All five Defense popup owners pass native `popups-checks.txt`: startup/repeated hides silent, repeated opening silent, one cue per actual transition, real Tip/Freeze Close buttons produce click+close and release input. Reward-ad buttons were inspected but no real ad was requested.
 - [x] Lossless edits to ArrowWrong/ToggleSwitch silent tails and MobDie_alt1 3/4ms edge fades; GUIDs, rates, PCM encoding and RIFF metadata retained. Native re-import/decode checks pass; source report and reproducible hash-guarded script provided.
 - [x] Four original music sources use Streaming/background load/no preload; source files are retained. Playlist gains 0.50/0.89/0.49 are serialized separately from user music level. Native importer checks pass.
+- [x] Bootstrap listener fix: the temporary persistent listener yields to the scene camera; native fallback recovery and one active listener in all three gameplay scenes pass in `playlist-checks.txt`.
 - [ ] Native Unity MCP regression across all modes, Light/Dark, real controls, retry/next/pause/mute and original state restoration.
 - [ ] Deliver reviewable evidence, updated audio report status and phase commit list.
 
