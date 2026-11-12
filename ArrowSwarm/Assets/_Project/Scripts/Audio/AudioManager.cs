@@ -11,7 +11,7 @@ namespace ArrowSwarm.Audio
     /// Central audio manager. Manages background music and multi-channel sound effects.
     /// Subscribes to gameplay events and provides public hooks for UI/skill audio.
     /// </summary>
-    public class AudioManager : Singleton<AudioManager>
+    public partial class AudioManager : Singleton<AudioManager>
     {
         [SerializeField] private SFXLibrary _sfxLibrary;
         [SerializeField] private AudioSource _bgmSource;
@@ -22,7 +22,6 @@ namespace ArrowSwarm.Audio
         private float _musicVolume = 0.7f, _sfxVolume = 1f;
 
         public SFXLibrary Library => _sfxLibrary;
-
         protected override void OnSingletonAwake()
         {
             EnsureAudioSources();
@@ -30,7 +29,12 @@ namespace ArrowSwarm.Audio
             LoadVolumeSettings();
         }
 
-        private void Start() => SyncBGMForCurrentScene();
+        private void Start()
+        {
+            _started = true;
+            RecoverGameplayAttempt();
+            SyncBGMForCurrentScene();
+        }
 
         private void OnEnable()
         {
@@ -45,6 +49,8 @@ namespace ArrowSwarm.Audio
             Mob.OnMobDamaged += HandleMobDamaged;
             Skills.FreezeManager.OnFreezeStarted += HandleFreezeStarted;
             DataManager.OnPlayerDataChanged += HandleDataChanged;
+            SubscribeAttemptEvents();
+            if (_started) RecoverGameplayAttempt();
         }
 
         private void OnDisable()
@@ -60,6 +66,7 @@ namespace ArrowSwarm.Audio
             Mob.OnMobDamaged -= HandleMobDamaged;
             Skills.FreezeManager.OnFreezeStarted -= HandleFreezeStarted;
             DataManager.OnPlayerDataChanged -= HandleDataChanged;
+            UnsubscribeAttemptEvents();
         }
 
         /// <summary>Plays a sound effect on an available channel with pitch modulation.</summary>
@@ -119,7 +126,7 @@ namespace ArrowSwarm.Audio
         {
             bool muted = DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled;
             if (state == GameState.Menu) PlayBGM(_sfxLibrary?.MenuBGM);
-            else if (state == GameState.Playing) PlayBGM(_sfxLibrary?.GameBGM);
+            else if (state == GameState.Playing) PlayCurrentGameplayMusic();
             else if (state == GameState.Paused && _bgmSource != null) _bgmSource.volume = muted ? 0f : (_musicVolume * 0.3f);
         }
 
@@ -137,10 +144,7 @@ namespace ArrowSwarm.Audio
                     GameManager.Instance.SetState(GameState.Menu);
                 PlayBGM(_sfxLibrary?.MenuBGM);
             }
-            else if ((scene == "GameScene" || scene == "MapScene") && GameManager.Instance?.CurrentState == GameState.Playing)
-            {
-                PlayBGM(_sfxLibrary?.GameBGM);
-            }
+            else if (GameManager.Instance?.CurrentState == GameState.Playing) PlayCurrentGameplayMusic();
         }
 
         private void HandleArrowClicked(Arrow arrow, bool success) => PlaySFX(success ? (arrow.IsRainbow ? _sfxLibrary?.RainbowArrow : _sfxLibrary?.ArrowFire) : _sfxLibrary?.ArrowWrong);
