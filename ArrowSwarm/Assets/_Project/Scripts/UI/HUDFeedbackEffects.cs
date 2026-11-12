@@ -2,7 +2,6 @@ namespace ArrowSwarm.UI
 {
     using System.Collections;
     using System.Collections.Generic;
-    using ArrowSwarm.Audio;
     using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
@@ -79,7 +78,6 @@ namespace ArrowSwarm.UI
                     if (_heartIcons[i] != null && _heartIcons[i].gameObject.activeSelf)
                         StartCoroutine(HeartBreakRoutine(_heartIcons[i], i));
                 }
-                AudioManager.Instance?.PlayHeartBreak();
             }
             else
             {

@@ -41,12 +41,8 @@ namespace ArrowSwarm.Audio
             GameManager.OnGameStateChanged += HandleStateChanged;
             GameManager.OnLevelWon += PlayLevelWin;
             GameManager.OnLevelLost += PlayLevelLose;
-            GameManager.OnWrongClick += PlayHeartBreak;
             GameManager.OnMobReachedFinish += PlayMobFinish;
-            Arrow.OnArrowClicked += HandleArrowClicked;
-            Mob.OnMobKilled += HandleMobKilled;
-            Mob.OnMobDamaged += HandleMobDamaged;
-            Skills.FreezeManager.OnFreezeStarted += HandleFreezeStarted;
+            SubscribeGameplayAudioEvents();
             DataManager.OnPlayerDataChanged += HandleDataChanged;
             SubscribeAttemptEvents();
             if (_started) RecoverGameplayAttempt();
@@ -58,12 +54,8 @@ namespace ArrowSwarm.Audio
             GameManager.OnGameStateChanged -= HandleStateChanged;
             GameManager.OnLevelWon -= PlayLevelWin;
             GameManager.OnLevelLost -= PlayLevelLose;
-            GameManager.OnWrongClick -= PlayHeartBreak;
             GameManager.OnMobReachedFinish -= PlayMobFinish;
-            Arrow.OnArrowClicked -= HandleArrowClicked;
-            Mob.OnMobKilled -= HandleMobKilled;
-            Mob.OnMobDamaged -= HandleMobDamaged;
-            Skills.FreezeManager.OnFreezeStarted -= HandleFreezeStarted;
+            UnsubscribeGameplayAudioEvents();
             DataManager.OnPlayerDataChanged -= HandleDataChanged;
             UnsubscribeAttemptEvents();
         }
@@ -89,7 +81,10 @@ namespace ArrowSwarm.Audio
         public void PlayStarEarn(int idx) => PlaySFX(_sfxLibrary?.StarEarn, 1.0f + (idx * 0.15f));
         public void PlayArrowFire(bool rainbow) => PlaySFX(rainbow ? _sfxLibrary?.RainbowArrow : _sfxLibrary?.ArrowFire, Random.Range(0.95f, 1.05f));
         public void PlayArrowWrong() => PlaySFX(_sfxLibrary?.ArrowWrong);
+        /// <summary>Legacy explicit collision cue; normal mob damage uses one hurt or death cue instead.</summary>
         public void PlayArrowHit() => PlaySFX(_sfxLibrary?.ArrowHitEnemy, Random.Range(0.93f, 1.07f));
+        /// <summary>Plays the hurt cue for a mob that survived its damage.</summary>
+        public void PlayMobHit() => PlaySFX(_sfxLibrary?.MobHit);
         public void PlayMobDie() => PlaySFX(_sfxLibrary?.MobDie, Random.Range(0.95f, 1.05f));
         public void PlayMobFinish() => PlaySFX(_sfxLibrary?.MobFinish);
         public void PlaySkillFreeze() => PlaySFX(_sfxLibrary?.SkillFreeze);
@@ -115,10 +110,6 @@ namespace ArrowSwarm.Audio
             else if (GameManager.Instance?.CurrentState == GameState.Playing) PlayCurrentGameplayMusic();
         }
 
-        private void HandleArrowClicked(Arrow arrow, bool success) => PlaySFX(success ? (arrow.IsRainbow ? _sfxLibrary?.RainbowArrow : _sfxLibrary?.ArrowFire) : _sfxLibrary?.ArrowWrong);
-        private void HandleMobKilled(Mob mob) => PlayMobDie();
-        private void HandleMobDamaged(Mob mob, int dmg) => PlayArrowHit();
-        private void HandleFreezeStarted(float dur) => PlaySkillFreeze();
         private void HandleDataChanged(PlayerData data)
         {
             if (data == null) return;
