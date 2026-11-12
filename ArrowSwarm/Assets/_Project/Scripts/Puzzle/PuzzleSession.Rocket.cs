@@ -15,14 +15,17 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Arms or cancels selection without consuming a charge.</summary>
         public void ToggleRocket()
         {
-            if (!Idle || RocketCharges <= 0) return;
+            if (!Idle) return;
+            if (RocketCharges <= 0) { OpenRocketPrompt(); return; }
             RocketArmed = !RocketArmed;
             for (int i = 0; i < _views.Length; i++) if (!_removed[i]) _views[i].Highlight(false);
+            RestoreHintHighlight();
             Notify();
         }
 
         private void ResetRocket()
         {
+            ResetRocketPrompt();
             RocketArmed = RocketNeeded = false; RocketCharges = _config.RocketCharges;
             if (_rocketEffect != null) _rocketEffect.Hide();
         }
@@ -33,6 +36,7 @@ namespace ArrowSwarm.Puzzle
             if (!Idle || !RocketArmed || RocketCharges <= 0 || index < 0 || index >= _removed.Length || _removed[index]) return;
             _busy = true; RocketArmed = RocketNeeded = false; RocketCharges--; _removed[index] = true; Remaining--;
             for (int i = 0; i < _views.Length; i++) if (_views[i] != null) _views[i].Highlight(false);
+            ConsumeHintArrow(index); RestoreHintHighlight();
             AudioManager.Instance?.PlayArrowFire(false);
             StartCoroutine(Extract(index)); Notify();
         }

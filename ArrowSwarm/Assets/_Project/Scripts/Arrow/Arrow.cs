@@ -135,7 +135,8 @@ namespace ArrowSwarm.Arrow
         public void OnPlayerClick()
         {
             if (_isFired || _isBlockedAnimating) return;
-            if (GameManager.Instance.CurrentState != GameState.Playing) return;
+            var game = GameManager.Instance;
+            if (game.CurrentState != GameState.Playing) return;
 
             // If tapped while still playing spawn growth animation, complete immediately
             if (_visuals != null && _visuals.IsSpawning)
@@ -166,13 +167,18 @@ namespace ArrowSwarm.Arrow
                 _isBlockedAnimating = true;
                 _isMarkedBlocked = true;
                 OnArrowClicked?.Invoke(this, false);
-                GameManager.Instance.HandleWrongClick();
+                bool finalLife = game.HandleWrongClick();
 
                 Vector2 collisionPoint = GridManager.Instance.GetCollisionPoint(HeadPoint, _headDirection, out Arrow obstacleArrow);
-                _movement?.StartBlockedBounce(this, collisionPoint, obstacleArrow, () =>
+                if (_movement != null && _movement.isActiveAndEnabled)
+                    _movement.StartBlockedBounce(this, collisionPoint, obstacleArrow, CompleteBounce);
+                else CompleteBounce();
+
+                void CompleteBounce()
                 {
                     _isBlockedAnimating = false;
-                });
+                    if (finalLife && game != null) game.CompleteBlockedArrowLoss();
+                }
 
                 LogDebug($"Arrow at {HeadPoint} BLOCKED BOUNCE (Dir={_headDirection}, Collision={collisionPoint})");
             }

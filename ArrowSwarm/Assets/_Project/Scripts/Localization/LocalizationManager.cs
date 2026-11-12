@@ -9,7 +9,7 @@ namespace ArrowSwarm.Localization
     /// Central manager for game-wide multi-language localization.
     /// Loads key-value JSON dictionaries, notifies listeners, and persists selected language.
     /// </summary>
-    public class LocalizationManager : Singleton<LocalizationManager>
+    public partial class LocalizationManager : Singleton<LocalizationManager>
     {
         private const string PrefsLanguageKey = "ArrowSwarm_SelectedLanguage";
         private const string DefaultLanguage = "en";
@@ -43,13 +43,19 @@ namespace ArrowSwarm.Localization
             else
             {
                 SetLanguage(saved, saveToPrefs: false);
+                if (ArrowSwarm.Data.DataManager.HasInstance && ArrowSwarm.Data.DataManager.Instance.PlayerData != null)
+                {
+                    var pd = ArrowSwarm.Data.DataManager.Instance.PlayerData;
+                    pd.selectedLanguage = _currentLanguage;
+                    pd.playerCountry = GetCountryCodeForLanguage(_currentLanguage);
+                }
             }
         }
 
         /// <summary>Changes the current language and reloads strings.</summary>
         public void SetLanguage(string langCode, bool saveToPrefs = true)
         {
-            if (string.IsNullOrEmpty(langCode)) langCode = DefaultLanguage;
+            langCode = NormalizeLanguageCode(langCode);
 
             TextAsset asset = FindAssetForCode(langCode);
             if (asset == null && langCode != DefaultLanguage)

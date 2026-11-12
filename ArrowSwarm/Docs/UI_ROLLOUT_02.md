@@ -1,0 +1,37 @@
+# UI rollout 02 - responsive screens, mode selection and Settings
+
+Baseline `c9786852`. The user authorizes board02 after the requested responsive Boot/Home revision. Approval is required again before board03.
+
+## Rules carried forward
+
+- Use the whole safe area and independent top/center/bottom anchors. A taller screen must not push its top HUD away from the top. Keep each related group internally proportional; scale down on compact/tablet/landscape windows and respect notches.
+- Keep functional text live TMP and existing localization. Reuse shared blank surfaces, icons and theme materials; do not bake working UI into a full-screen mockup.
+- Preserve the original runtime controllers, callbacks, data, settings, input feedback and functioning Defense mode. Geometry helpers may update geometry only.
+- Test each implemented phase through Unity MCP, inspect actual Light/Dark screenshots, and commit the completed phase. Work stays in this chat with no further approval before board02 is finished.
+
+## Phases
+
+- [x] P0: Read existing design/controllers; privately snapshot local files, both scenes, player/preferences and Editor state. Pointer: `%TEMP%/ArrowSwarm-UI02-path.txt`.
+- [x] P1: Fix Boot/Home responsive anchors. Verify the top HUD stays at its safe-area inset and illustrations/buttons remain visible and separate across phone/tablet/window ratios, then commit.
+- [x] P2: Implement board02 mode-selection modal with live TMP, three distinct reusable card illustrations, selected state, existing mode/icon/progress behavior and click feedback. MCP check and commit.
+- [x] P3: Implement board02 Settings with existing SFX/VFX/vibration, language and theme controls. Live TMP, responsive modal, reused visual kit and all existing behavior retained. MCP check and commit.
+- [x] P4: Verify actual navigation, every language/theme, settings roundtrips, all three modes and representative resolutions; inspect captures, restore original player/preferences/local files/Editor state, publish preview and commit. Request board02 approval before board03.
+
+Evidence goes under `Captures/UIRollout/Phase02/`. The previous full backup remains available outside the repo; preserve pre-existing dirty font/SDK/solution files and Recovery scenes.
+
+
+P1 complete: eight native sizes passed (720x1280,1080x1920,1080x2340,1080x2400,1179x2556,1536x2048,1920x1080,2400x1080). Actual PNG dimensions and passing reports were verified. The topHUD maintains its74-unit profile inset; Boot's logo/loading remain edge-attached, and Home branding stays clear of Play. The reusable fitter expands safeheight only when explicitly enabled and refreshes before rendering. The loading bevel now scales with barheight. All908 protected panel documents remain identical; the stricter count includes28 pre-existing orphaned leaderboard components belonging to protected GameObjects. No gameplay/data changes. Native evidence:Phase02/Responsive/verification-summary.json. P2 may now proceed under the user's authorization.
+
+P2 complete: rebuilt the existing mode overlay with three reused Light/Night card sprites, live localized TMP, one shared illustrated header, a clean opaque navy interior, separate close control and gold selected outline/check. Existing Home mode/icon/level bindings and callbacks are retained. Native Modes-r2 passes all10 languages, both themes, all3 mode choices, panel navigation and all3 Play routes. Modes-opaque-r1 repeats modal checks after the opaque dark-surface refinement; both reports have zero failed assertions. Settings/Profile/Levels/Leaderboard retain all820 protected source documents. Evidence: Modes-opaque-r1/* and Modes-r2/verification.txt.
+
+P3 complete: Settings reuses its original controller, five existing icons, footer, shared surfaces and the same popup crest as mode selection. It retains SFX/VFX/vibration saved callbacks and Back/Close, adds direct theme highlights and localized ON/OFF + theme labels in all10 languages. Theme crescent uses a tiny transparent UI mesh rather than another bitmap or an opaque palette cover. Toggle glyphs are verified clear of the knob. SafeAreaPanelFit refreshes before render as well as Update to handle changing Canvas scale. Final/verification.txt passes actual native controls, all languages/themes, existing panel navigation and all3 Play routes. All612 protected Profile/Levels/Leaderboard documents remain byte-identical. Source assertions include the real crescent CanvasRenderer mesh; screen captures were visually inspected.
+
+P4 validation complete: five native modal sizes are verified from actual PNG headers (720x1280,1080x1920,1080x2400,1536x2048,1920x1080), with both themes, every supported language, pointer feedback, toggle/knob/text clearance, direct theme selection and Back/Close. Primary runs include all preserved panel navigation and all3 Play routes. The Boot/Home layout already passed eight native sizes in P1. verification-summary.json records only passing, correctly sized final runs; earlier failed/debug/incorrect-size iterations are excluded. Checks are Editor Game View coverage, not physical device/notch certification or an APK-size measurement.
+
+Verifier robustness: layout predicates run in a temporary native LateUpdate host rather than EditorApplication.update, where Unity can report a docked editor viewport. UI action devices are scoped to a synthetic mouse during pointer checks to prevent physical input stealing; prior filters are copied and restored. Normal completion and cancellation restore player/preferences/providers/input, with zero temporary mice/runners left. A non-null prior action-device filter was also restored correctly. The frame host is UNITY_EDITOR-only, absent from all authored scenes/prefabs and excluded from player compilation.
+
+Delivery: open Captures/UIRollout/Phase02/index.html directly. It uses portable relative images, Light/Dark tabs, before/after and full-size viewing. overview.png and before-after.png are composed solely from native screenshots. asset-reuse-report.json documents the one shared generated header PNG and design brief; native-import-measurements.json records its1024x409 ASTC6x6 import (~188784-byte block payload estimate, not download size). All functional wording is TMP. No gameplay mechanics were changed. Final checkpoint: board02 is implemented and committed; wait for the user's approval before board03.
+
+Final preservation: all14 checkpointed solution/font/SDK files match their pre-task bytes; exact ProjectSettings bytes are restored. The11 original dirty files remain dirty with their original content; no generated font changes are included. The player's exact in-memory JSON, all5 preference values/existence flags, original Turkish language, Play/MainMenu state, background behavior and Game View1080x2400 selection were restored. Source Profile/Levels/Leaderboard remain612matching documents. Proof: runtime-restoration.json, protected-file-restoration.json and preserved-panels-final.json.
+
+Existing follow-up observed before and after this UI board: Unity logs two active AudioListeners (CoreManagers fallback and MainMenu camera). No audio/gameplay controller was changed in this rollout. This is consistent with AudioManager.EnsureAudioListener's fallback when no camera is available during startup; investigate in a separate quality pass. Final UI shaders report no compile errors. Restored native Home is Final/restored-home.png (actual1080x2400).

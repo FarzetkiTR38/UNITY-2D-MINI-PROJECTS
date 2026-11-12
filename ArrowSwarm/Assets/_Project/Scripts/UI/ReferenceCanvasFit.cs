@@ -7,12 +7,20 @@ namespace ArrowSwarm.UI
     public sealed class ReferenceCanvasFit : MonoBehaviour
     {
         [SerializeField] private Vector2 _referenceSize = new Vector2(941,1672);
+        [Tooltip("Use the full safe height so top, middle and bottom child anchors respond independently on taller screens.")]
+        [SerializeField] private bool _expandSafeHeight;
         private Rect _previous;
         private Vector2Int _screen;
         private Canvas _canvas;
         private float _canvasScale;
-        private void OnEnable() => Fit();
-        private void Update()
+        private void OnEnable()
+        {
+            Canvas.willRenderCanvases += RefreshIfNeeded;
+            Fit();
+        }
+        private void OnDisable() => Canvas.willRenderCanvases -= RefreshIfNeeded;
+        private void Update() => RefreshIfNeeded();
+        private void RefreshIfNeeded()
         {
             var size=new Vector2Int(Screen.width,Screen.height);
             if (_canvas==null)_canvas=GetComponentInParent<Canvas>();
@@ -29,8 +37,10 @@ namespace ArrowSwarm.UI
             float scale=Mathf.Max(.001f,_canvas.scaleFactor);_canvasScale=scale;
             Vector2 safeSize=_previous.size/scale;
             rect.anchorMin=rect.anchorMax=new Vector2(.5f,.5f); rect.pivot=new Vector2(.5f,.5f);
-            rect.sizeDelta=_referenceSize;
-            rect.localScale=Vector3.one*Mathf.Min(safeSize.x/_referenceSize.x,safeSize.y/_referenceSize.y);
+            float fit=Mathf.Min(safeSize.x/_referenceSize.x,safeSize.y/_referenceSize.y);
+            fit=Mathf.Max(.001f,fit);
+            rect.sizeDelta=new Vector2(_referenceSize.x,_expandSafeHeight?safeSize.y/fit:_referenceSize.y);
+            rect.localScale=Vector3.one*fit;
             rect.anchoredPosition=(_previous.center-new Vector2(Screen.width*.5f,Screen.height*.5f))/scale;
         }
     }

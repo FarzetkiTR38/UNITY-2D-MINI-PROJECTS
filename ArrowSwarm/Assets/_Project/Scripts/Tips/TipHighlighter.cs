@@ -9,12 +9,7 @@ namespace ArrowSwarm.Tips
     /// </summary>
     public class TipHighlighter : MonoBehaviour
     {
-        [SerializeField] private float _highlightDuration = 6f;
-        [SerializeField] private float _pulseSpeed = 4f;
-
         private Arrow _highlightedArrow;
-        private float _timer;
-        private bool _isHighlighting;
 
         private void OnEnable()
         {
@@ -40,14 +35,13 @@ namespace ArrowSwarm.Tips
         /// </summary>
         public void Highlight(Arrow arrow)
         {
+            if (arrow != null && arrow == _highlightedArrow && arrow.isActiveAndEnabled && !arrow.IsFired) return;
             // Clear previous highlight
             ClearHighlight();
 
-            if (arrow == null) return;
+            if (arrow == null || !arrow.isActiveAndEnabled || arrow.IsFired) return;
 
             _highlightedArrow = arrow;
-            _timer = _highlightDuration;
-            _isHighlighting = true;
 
             // Use ArrowVisuals to set highlight mode
             var visuals = arrow.GetComponent<ArrowVisuals>();
@@ -66,18 +60,13 @@ namespace ArrowSwarm.Tips
             }
 
             _highlightedArrow = null;
-            _isHighlighting = false;
         }
 
         private void Update()
         {
-            if (!_isHighlighting) return;
-
-            _timer -= Time.deltaTime;
-            if (_timer <= 0f)
-            {
-                ClearHighlight();
-            }
+            // A paid hint remains readable until its arrow is used or returned to the pool.
+            if (_highlightedArrow != null && (!_highlightedArrow.isActiveAndEnabled ||
+                _highlightedArrow.IsFired || _highlightedArrow.PathPoints.Count < 2)) ClearHighlight();
         }
     }
 }

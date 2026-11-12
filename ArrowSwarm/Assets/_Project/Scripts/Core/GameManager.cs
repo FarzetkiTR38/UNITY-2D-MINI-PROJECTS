@@ -123,12 +123,19 @@ namespace ArrowSwarm.Core
 
         /// <summary>
         /// Called when the player makes a wrong click (blocked arrow).
-        /// Reduces lives by 1 and checks for game over.
+        /// Returns true when this arrow's bounce owns the pending game over.
         /// </summary>
-        public void HandleWrongClick()
+        public bool HandleWrongClick()
         {
-            LoseLife();
+            bool finalLife = LoseLife(waitForBounce: true);
             OnWrongClick?.Invoke();
+            return finalLife;
+        }
+
+        /// <summary>Publishes a pending loss after its blocked arrow has returned to the grid.</summary>
+        internal void CompleteBlockedArrowLoss()
+        {
+            if (_currentState == GameState.ResolvingLoss) FinishLevelLoss();
         }
 
         /// <summary>
@@ -223,21 +230,25 @@ namespace ArrowSwarm.Core
             SetState(GameState.Playing);
         }
 
-        private void LoseLife()
+        private bool LoseLife(bool waitForBounce = false)
         {
-            if (_currentState != GameState.Playing) return;
+            if (_currentState != GameState.Playing) return false;
 
-            _currentLives--;
-            _currentLives = Mathf.Max(0, _currentLives);
+            _currentLives = Mathf.Max(0, _currentLives - 1);
+            bool finalLife = _currentLives == 0;
+            if (finalLife && waitForBounce) SetState(GameState.ResolvingLoss);
             OnLivesChanged?.Invoke(_currentLives);
             LogDebug($"Life lost! Remaining: {_currentLives}");
 
-            if (_currentLives <= 0)
-            {
-                SetState(GameState.Lose);
-                OnLevelLost?.Invoke();
-                LogDebug("Level LOST!");
-            }
+            if (finalLife && !waitForBounce) FinishLevelLoss();
+            return finalLife;
+        }
+
+        private void FinishLevelLoss()
+        {
+            SetState(GameState.Lose);
+            OnLevelLost?.Invoke();
+            LogDebug("Level LOST!");
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
@@ -268,6 +279,9 @@ namespace ArrowSwarm.Core
         Win,
 
         /// <summary>Player lost the level.</summary>
-        Lose
+        Lose,
+
+        /// <summary>The final blocked arrow is still completing its bounce.</summary>
+        ResolvingLoss
     }
 }

@@ -42,11 +42,25 @@ namespace ArrowSwarm.UI.Editor
             Configure("DarkField", "2B4160", 0.94f, 1, 0, 0, new Vector2(0.018f,0.10f), new Vector2(0.035f,0.23f));
             Configure("DarkBar", "20324F", 0.94f, 1, 0, 0, new Vector2(0.018f,0.105f), new Vector2(0.04f,0.28f));
             Configure("DarkOrnament", "233853", 0.96f, 1, 0, 4, Vector2.zero, Vector2.zero);
-            Configure("DarkPause", "20324F", 0.96f, 1, 0, 5, new Vector2(0.06f,0.06f),new Vector2(0.12f,0.12f));
+            ConfigurePause();
             Configure("DarkThumb", "6E96BF", 0.96f, 0.75f, 0, 0, new Vector2(0.015f,0.02f),new Vector2(0.1f,0.15f));
         }
 
         private static Material Load(string name) => AssetDatabase.LoadAssetAtPath<Material>($"{Folder}/{name}.mat");
+
+        /// <summary>Retains the exact original blue Pause face, alpha, clipping and feedback in Dark.</summary>
+        internal static void ConfigurePause()
+        {
+            var material = Load("DarkPause");
+            var original = new Material(UnityEngine.UI.Graphic.defaultGraphicMaterial) { name = "DarkPause" };
+            if (material == null) AssetDatabase.CreateAsset(original, $"{Folder}/DarkPause.mat");
+            else
+            {
+                EditorUtility.CopySerialized(original, material);
+                Object.DestroyImmediate(original);
+                EditorUtility.SetDirty(material);
+            }
+        }
 
         private static void Configure(string name, string hex, float accent, float surface, float background, float artwork, Vector2 inset, Vector2 corner)
         {
@@ -62,7 +76,7 @@ namespace ArrowSwarm.UI.Editor
             material.SetFloat("_SurfaceStrength",surface);
             material.SetFloat("_Background",background);
             material.SetFloat("_Artwork",artwork);
-            bool panelBevel = name == "DarkSurface" || name == "DarkRow" || name == "DarkField" || name == "DarkBar" || name == "DarkPause";
+            bool panelBevel = name == "DarkSurface" || name == "DarkRow" || name == "DarkField" || name == "DarkBar";
             material.SetFloat("_EdgeFill", panelBevel ? 1f : name == "DarkSelector" ? 0.9f : artwork > 0 && artwork < 3 ? 0f : 0.5f);
             material.SetFloat("_BevelStrength", panelBevel ? 1f : 0f);
             material.SetVector("_BevelShade", new Vector4(0.72f,1.10f,0,0));

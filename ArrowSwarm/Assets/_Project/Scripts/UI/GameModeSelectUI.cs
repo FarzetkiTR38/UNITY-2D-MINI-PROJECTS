@@ -15,6 +15,7 @@ namespace ArrowSwarm.UI
         [SerializeField] private Button _open, _close;
         [SerializeField] private Button[] _choices;
         [SerializeField] private TMP_Text[] _choiceLabels;
+        [SerializeField] private GameObject[] _selectionHighlights;
         [SerializeField] private TMP_Text _modeLabel;
         [SerializeField] private TMP_Text _levelLabel;
         [SerializeField] private Image[] _menuModeIcons;
@@ -112,6 +113,8 @@ namespace ArrowSwarm.UI
             if (_choiceLabels != null)
                 for (int i=0;i<_choiceLabels.Length;i++)
                     SetLabel(_choiceLabels[i],i==(int)mode?"modes_selected":"modes_select",i==(int)mode?"SELECTED":"SELECT");
+            if (_selectionHighlights != null)
+                for (int i=0;i<_selectionHighlights.Length;i++) if (_selectionHighlights[i] != null) _selectionHighlights[i].SetActive(i==(int)mode);
             if (_menuModeIcons != null)
                 for (int i=0;i<_menuModeIcons.Length;i++) if (_menuModeIcons[i] != null) _menuModeIcons[i].enabled=i==(int)mode;
         }

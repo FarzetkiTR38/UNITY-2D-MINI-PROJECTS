@@ -1,9 +1,7 @@
 namespace ArrowSwarm.Audio
 {
-    using ArrowSwarm.Arrow;
     using ArrowSwarm.Core;
     using ArrowSwarm.Data;
-    using ArrowSwarm.Mob;
     using ArrowSwarm.Utils;
     using UnityEngine;
 
@@ -11,26 +9,29 @@ namespace ArrowSwarm.Audio
     /// Central audio manager. Manages background music and multi-channel sound effects.
     /// Subscribes to gameplay events and provides public hooks for UI/skill audio.
     /// </summary>
-    public class AudioManager : Singleton<AudioManager>
+    public partial class AudioManager : Singleton<AudioManager>
     {
         [SerializeField] private SFXLibrary _sfxLibrary;
-        [SerializeField] private AudioSource _bgmSource;
         [SerializeField] private AudioSource[] _sfxSources;
 
-        private const int SfxChannelCount = 6;
-        private int _currentSfxIndex;
         private float _musicVolume = 0.7f, _sfxVolume = 1f;
+        private AudioListener _fallbackListener;
 
+        /// <summary>Assigned clips and Inspector-authored playback controls.</summary>
         public SFXLibrary Library => _sfxLibrary;
-
         protected override void OnSingletonAwake()
         {
-            EnsureAudioSources();
             AutoLinkLibrary();
+            EnsureAudioSources();
             LoadVolumeSettings();
         }
 
-        private void Start() => SyncBGMForCurrentScene();
+        private void Start()
+        {
+            _started = true;
+            RecoverGameplayAttempt();
+            SyncBGMForCurrentScene();
+        }
 
         private void OnEnable()
         {
@@ -38,13 +39,11 @@ namespace ArrowSwarm.Audio
             GameManager.OnGameStateChanged += HandleStateChanged;
             GameManager.OnLevelWon += PlayLevelWin;
             GameManager.OnLevelLost += PlayLevelLose;
-            GameManager.OnWrongClick += PlayHeartBreak;
             GameManager.OnMobReachedFinish += PlayMobFinish;
-            Arrow.OnArrowClicked += HandleArrowClicked;
-            Mob.OnMobKilled += HandleMobKilled;
-            Mob.OnMobDamaged += HandleMobDamaged;
-            Skills.FreezeManager.OnFreezeStarted += HandleFreezeStarted;
+            SubscribeGameplayAudioEvents();
             DataManager.OnPlayerDataChanged += HandleDataChanged;
+            SubscribeAttemptEvents();
+            if (_started) RecoverGameplayAttempt();
         }
 
         private void OnDisable()
@@ -53,75 +52,44 @@ namespace ArrowSwarm.Audio
             GameManager.OnGameStateChanged -= HandleStateChanged;
             GameManager.OnLevelWon -= PlayLevelWin;
             GameManager.OnLevelLost -= PlayLevelLose;
-            GameManager.OnWrongClick -= PlayHeartBreak;
             GameManager.OnMobReachedFinish -= PlayMobFinish;
-            Arrow.OnArrowClicked -= HandleArrowClicked;
-            Mob.OnMobKilled -= HandleMobKilled;
-            Mob.OnMobDamaged -= HandleMobDamaged;
-            Skills.FreezeManager.OnFreezeStarted -= HandleFreezeStarted;
+            UnsubscribeGameplayAudioEvents();
             DataManager.OnPlayerDataChanged -= HandleDataChanged;
+            UnsubscribeAttemptEvents();
         }
 
-        /// <summary>Plays a sound effect on an available channel with pitch modulation.</summary>
-        public void PlaySFX(AudioClip clip, float pitch = 1f, float volumeScale = 1f, bool ignoreMute = false)
-        {
-            if (clip == null || _sfxSources == null || _sfxSources.Length == 0) return;
-            if (!ignoreMute && DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled) return;
-
-            var src = _sfxSources[_currentSfxIndex];
-            _currentSfxIndex = (_currentSfxIndex + 1) % _sfxSources.Length;
-            if (src == null) return;
-            src.pitch = pitch;
-            float vol = (_sfxVolume > 0.01f ? _sfxVolume : 1f) * volumeScale;
-            src.PlayOneShot(clip, vol);
-        }
-
-        /// <summary>Plays background music with looping enabled.</summary>
-        public void PlayBGM(AudioClip clip)
-        {
-            if (clip == null || _bgmSource == null) return;
-            bool muted = DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled;
-            float targetVol = muted ? 0f : _musicVolume;
-            if (_bgmSource.clip == clip && _bgmSource.isPlaying) { _bgmSource.volume = targetVol; return; }
-            _bgmSource.clip = clip;
-            _bgmSource.volume = targetVol;
-            _bgmSource.Play();
-        }
-
-        /// <summary>Stops BGM playback.</summary>
-        public void StopBGM() => _bgmSource?.Stop();
-
-        public void SetVolumes(float music, float sfx)
-        {
-            _musicVolume = music > 0.01f ? Mathf.Clamp01(music) : 0.7f;
-            _sfxVolume = sfx > 0.01f ? Mathf.Clamp01(sfx) : 1f;
-            bool muted = DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled;
-            if (_bgmSource != null) _bgmSource.volume = muted ? 0f : _musicVolume;
-        }
-
-        public void PlayButtonClick() => PlaySFX(_sfxLibrary?.ButtonClick, Random.Range(0.96f, 1.04f));
+        /// <summary>Plays one control activation cue.</summary>
+        public void PlayButtonClick() => PlaySFX(_sfxLibrary?.ButtonClick);
+        /// <summary>Plays the opening cue for an actual popup transition.</summary>
         public void PlayPopupOpen() => PlaySFX(_sfxLibrary?.PopupOpen);
+        /// <summary>Plays the closing cue for an actual popup transition.</summary>
         public void PlayPopupClose() => PlaySFX(_sfxLibrary?.PopupClose);
-        public void PlayToggle() => PlaySFX(_sfxLibrary?.ToggleSwitch, 1f, 1f, true);
-        public void PlayStarEarn(int idx) => PlaySFX(_sfxLibrary?.StarEarn, 1.0f + (idx * 0.15f));
-        public void PlayArrowFire(bool rainbow) => PlaySFX(rainbow ? _sfxLibrary?.RainbowArrow : _sfxLibrary?.ArrowFire, Random.Range(0.95f, 1.05f));
+        /// <summary>Plays a settings toggle cue while respecting the global sound preference.</summary>
+        public void PlayToggle() => PlaySFX(_sfxLibrary?.ToggleSwitch);
+        /// <summary>Plays an earned star with the configured ascending pitch step.</summary>
+        public void PlayStarEarn(int idx) => PlaySFX(_sfxLibrary?.StarEarn, 1f + Mathf.Max(0, idx) * (_sfxLibrary != null ? _sfxLibrary.StarPitchStep : 0f));
+        /// <summary>Plays the configured normal or rainbow launch cue.</summary>
+        public void PlayArrowFire(bool rainbow) => PlaySFX(rainbow ? _sfxLibrary?.RainbowArrow : _sfxLibrary?.ArrowFire);
+        /// <summary>Plays a blocked-arrow impact and return cue.</summary>
         public void PlayArrowWrong() => PlaySFX(_sfxLibrary?.ArrowWrong);
-        public void PlayArrowHit() => PlaySFX(_sfxLibrary?.ArrowHitEnemy, Random.Range(0.93f, 1.07f));
-        public void PlayMobDie() => PlaySFX(_sfxLibrary?.MobDie, Random.Range(0.95f, 1.05f));
+        /// <summary>Legacy explicit collision cue; normal mob damage uses one hurt or death cue instead.</summary>
+        public void PlayArrowHit() => PlaySFX(_sfxLibrary?.ArrowHitEnemy);
+        /// <summary>Plays the hurt cue for a mob that survived its damage.</summary>
+        public void PlayMobHit() => PlaySFX(_sfxLibrary?.MobHit);
+        /// <summary>Plays the terminal mob cue without an additional hurt cue.</summary>
+        public void PlayMobDie() => PlaySFX(_sfxLibrary?.MobDie);
+        /// <summary>Plays the portal escape cue.</summary>
         public void PlayMobFinish() => PlaySFX(_sfxLibrary?.MobFinish);
+        /// <summary>Plays the freeze activation cue.</summary>
         public void PlaySkillFreeze() => PlaySFX(_sfxLibrary?.SkillFreeze);
+        /// <summary>Plays the cue for an actually used hint.</summary>
         public void PlaySkillTips() => PlaySFX(_sfxLibrary?.SkillTips);
+        /// <summary>Plays the victory cue using critical feedback capacity.</summary>
         public void PlayLevelWin() => PlaySFX(_sfxLibrary?.LevelWin);
+        /// <summary>Plays the loss cue using critical feedback capacity.</summary>
         public void PlayLevelLose() => PlaySFX(_sfxLibrary?.LevelLose);
+        /// <summary>Plays one life-loss cue; independent life changes are not time-coalesced.</summary>
         public void PlayHeartBreak() => PlaySFX(_sfxLibrary?.HeartBreak);
-
-        private void HandleStateChanged(GameState state)
-        {
-            bool muted = DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled;
-            if (state == GameState.Menu) PlayBGM(_sfxLibrary?.MenuBGM);
-            else if (state == GameState.Playing) PlayBGM(_sfxLibrary?.GameBGM);
-            else if (state == GameState.Paused && _bgmSource != null) _bgmSource.volume = muted ? 0f : (_musicVolume * 0.3f);
-        }
 
         private void HandleSceneLoaded(UnityEngine.SceneManagement.Scene s, UnityEngine.SceneManagement.LoadSceneMode m) => SyncBGMForCurrentScene();
 
@@ -137,16 +105,9 @@ namespace ArrowSwarm.Audio
                     GameManager.Instance.SetState(GameState.Menu);
                 PlayBGM(_sfxLibrary?.MenuBGM);
             }
-            else if ((scene == "GameScene" || scene == "MapScene") && GameManager.Instance?.CurrentState == GameState.Playing)
-            {
-                PlayBGM(_sfxLibrary?.GameBGM);
-            }
+            else if (GameManager.Instance?.CurrentState == GameState.Playing) PlayCurrentGameplayMusic();
         }
 
-        private void HandleArrowClicked(Arrow arrow, bool success) => PlaySFX(success ? (arrow.IsRainbow ? _sfxLibrary?.RainbowArrow : _sfxLibrary?.ArrowFire) : _sfxLibrary?.ArrowWrong);
-        private void HandleMobKilled(Mob mob) => PlayMobDie();
-        private void HandleMobDamaged(Mob mob, int dmg) => PlayArrowHit();
-        private void HandleFreezeStarted(float dur) => PlaySkillFreeze();
         private void HandleDataChanged(PlayerData data)
         {
             if (data == null) return;
@@ -156,23 +117,24 @@ namespace ArrowSwarm.Audio
 
         private void EnsureAudioListener()
         {
-            if (FindFirstObjectByType<AudioListener>(FindObjectsInactive.Exclude) != null) return;
-            var cam = Camera.main ?? FindFirstObjectByType<Camera>();
-            (cam != null ? cam.gameObject : gameObject).AddComponent<AudioListener>();
+            // Bootstrap can run before the scene camera exists. Its temporary listener must yield
+            // to an authored active scene listener after loading rather than doubling the output.
+            if (_fallbackListener == null) _fallbackListener = GetComponent<AudioListener>();
+            foreach (var listener in FindObjectsByType<AudioListener>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            {
+                if (listener == _fallbackListener || !listener.isActiveAndEnabled) continue;
+                if (_fallbackListener != null) _fallbackListener.enabled = false;
+                return;
+            }
+            if (_fallbackListener == null) _fallbackListener = gameObject.AddComponent<AudioListener>();
+            _fallbackListener.enabled = true;
         }
 
         private void EnsureAudioSources()
         {
             EnsureAudioListener();
-            if (_bgmSource == null) { _bgmSource = gameObject.AddComponent<AudioSource>(); _bgmSource.loop = true; _bgmSource.spatialBlend = 0f; }
-            if (_sfxSources != null && _sfxSources.Length != 0) return;
-            _sfxSources = new AudioSource[SfxChannelCount];
-            for (int i = 0; i < SfxChannelCount; i++)
-            {
-                _sfxSources[i] = gameObject.AddComponent<AudioSource>();
-                _sfxSources[i].playOnAwake = false;
-                _sfxSources[i].spatialBlend = 0f;
-            }
+            EnsureBgmSources();
+            EnsureSfxSources();
         }
 
         private void AutoLinkLibrary()
@@ -184,13 +146,5 @@ namespace ArrowSwarm.Audio
 #endif
         }
 
-        private void LoadVolumeSettings()
-        {
-            PlayerData data = DataManager.Instance?.PlayerData;
-            if (data == null) return;
-            _musicVolume = data.musicVolume > 0.01f ? data.musicVolume : 0.7f;
-            _sfxVolume = data.sfxVolume > 0.01f ? data.sfxVolume : 1f;
-            if (data.sfxVolume <= 0.01f && data.sfxEnabled) data.sfxVolume = 1f;
-        }
     }
 }

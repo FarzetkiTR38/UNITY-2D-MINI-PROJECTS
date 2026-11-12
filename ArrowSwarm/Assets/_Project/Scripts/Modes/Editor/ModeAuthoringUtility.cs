@@ -11,7 +11,7 @@ namespace ArrowSwarm.Modes.Editor
     {
         public const string Art = "Assets/_Project/Art/Sprites/ModeMenu/";
         public const string Data = "Assets/_Project/ScriptableObjects/Puzzles/";
-        public static TMP_FontAsset Font => AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/_Project/Fonts/LilitaOne_SDF.asset") ?? TMP_Settings.defaultFontAsset;
+        public static TMP_FontAsset Font => AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/_Project/Fonts/Farzetki_Title_Font_H1_SDF.asset") ?? TMP_Settings.defaultFontAsset;
 
         /// <summary>Creates directories and refreshes their asset identity.</summary>
         public static void Folder(string path) { System.IO.Directory.CreateDirectory(path); AssetDatabase.Refresh(); }

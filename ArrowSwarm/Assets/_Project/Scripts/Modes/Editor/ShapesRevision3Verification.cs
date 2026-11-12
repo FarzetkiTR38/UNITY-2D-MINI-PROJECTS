@@ -15,7 +15,7 @@ namespace ArrowSwarm.Modes.Editor
         private static string Folder = "Captures/Revision3/Playthroughs";
         private static readonly List<string> Results = new List<string>();
         private static readonly HashSet<string> Signatures = new HashSet<string>();
-        private static bool _running, _initializing;
+        private static bool _running, _initializing, _compactCapture;
         private static int _level, _stage, _step, _captureFrame, _peakShots, _nextActionFrame;
         private static double _deadline, _settleUntil;
         private static PuzzleSolution _solution;
@@ -32,10 +32,16 @@ namespace ArrowSwarm.Modes.Editor
         [MenuItem("Arrow Swarm/Puzzles/Revision4 Capture And Verify Shapes (Play Mode)")]
         public static void BeginRevision4() => BeginAt("Captures/Revision4/Playthroughs");
 
-        private static void BeginAt(string folder)
+        /// <summary>Plays the compact catalog in Preview and captures every level in both themes.</summary>
+        public static void BeginCompact(string folder) => StartCapture(folder, true);
+
+        private static void BeginAt(string folder) => StartCapture(folder, false);
+
+        private static void StartCapture(string folder, bool compact)
         {
             if (_running || !Application.isPlaying) throw new InvalidOperationException("Enter Play Mode without another running verification.");
             Folder = folder;
+            _compactCapture = compact;
             Snapshot(); _running = true; _initializing = true; _level = 1; _stage = 0;
             Results.Clear(); Rows.Clear(); Signatures.Clear(); Directory.CreateDirectory(Folder);
             _captureRun = "run-" + Guid.NewGuid().ToString("N").Substring(0, 8);
@@ -118,6 +124,7 @@ namespace ArrowSwarm.Modes.Editor
             if (_stage == 3)
             {
                 if (now < _settleUntil) return;
+                if (_compactCapture) _metrics.VerifyFraming(session);
                 Capture("dark"); _stage = 4; return;
             }
             if (Time.frameCount <= _captureFrame) return;
@@ -138,7 +145,8 @@ namespace ArrowSwarm.Modes.Editor
             _level++; session.LoadLevel(_level); Time.timeScale = 1; _stage = 0; _deadline = now + 180;
         }
 
-        private static bool CaptureDark(int level) => level == 2 || level == 3 || level == 15 || level == 20 || level == 28 || level == 34 || level == 50;
+        private static bool CaptureDark(int level) => _compactCapture || level == 2 || level == 3 ||
+            level == 15 || level == 20 || level == 28 || level == 34 || level == 50;
         private static string CaptureRelative(int level, string theme) => _captureRun + "/shapes-" + level.ToString("D2") + "-" + theme + ".png";
         private static string CapturePath(string theme) => Folder + "/" + CaptureRelative(_level, theme);
         private static void Capture(string theme) { ScreenCapture.CaptureScreenshot(CapturePath(theme)); _captureFrame = Time.frameCount; }

@@ -98,7 +98,7 @@ namespace ArrowSwarm.Modes.Editor
             Check(fake.Requests.Count - before == 1 && PlayerPrefs.GetInt(Pending, 0) == 1,
                 "A rejected Save sends once and retains pending instead of claiming success");
             fake.Online = false; before = fake.Requests.Count;
-            await Save(scope, "Offline_Latest", 7);
+            await Save(scope, "Offline_Latest", 5);
             Check(fake.Requests.Count == before && PlayerPrefs.GetInt(Pending, 0) == 1,
                 "Another offline edit retains the latest pending profile without provider calls");
             fake.Online = true; fake.Accept = true;

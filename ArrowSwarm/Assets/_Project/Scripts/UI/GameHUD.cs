@@ -362,11 +362,12 @@ namespace ArrowSwarm.UI
             }
 
             // HUD visibility based on state using CanvasGroup
-            bool visible = (state == GameState.Playing || state == GameState.Paused);
-            SetHUDVisible(visible);
+            bool allowInteraction = state == GameState.Playing || state == GameState.Paused;
+            bool visible = allowInteraction || state == GameState.ResolvingLoss || state == GameState.Win || state == GameState.Lose;
+            SetHUDVisible(visible, allowInteraction);
         }
 
-        private void SetHUDVisible(bool visible)
+        private void SetHUDVisible(bool visible, bool allowInteraction)
         {
             if (_canvasGroup == null)
             {
@@ -374,7 +375,7 @@ namespace ArrowSwarm.UI
             }
 
             _canvasGroup.alpha = visible ? 1f : 0f;
-            _canvasGroup.interactable = visible;
+            _canvasGroup.interactable = visible && allowInteraction;
             _canvasGroup.blocksRaycasts = visible;
         }
 
@@ -385,6 +386,11 @@ namespace ArrowSwarm.UI
 
         private void OnTipClicked()
         {
+            if (TipManager.HasInstance && TipManager.Instance.HasPendingSuggestion)
+            {
+                TipManager.Instance.UseTip();
+                return;
+            }
             int tips = DataManager.Instance?.PlayerData?.tipCount ?? 0;
             if (tips > 0)
             {

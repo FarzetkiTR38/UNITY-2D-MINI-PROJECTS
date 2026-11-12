@@ -336,8 +336,10 @@ namespace ArrowSwarm.Tutorial
 
         private string GetLocalizedText(string tr, string en)
         {
-            string lang = DataManager.Instance?.PlayerData?.selectedLanguage ?? "ENGLISH";
-            return lang.Equals("TURKISH", StringComparison.OrdinalIgnoreCase) ? tr : en;
+            string lang = ArrowSwarm.Localization.LocalizationManager.HasInstance
+                ? ArrowSwarm.Localization.LocalizationManager.Instance.CurrentLanguage
+                : (DataManager.Instance?.PlayerData?.selectedLanguage ?? "en");
+            return ArrowSwarm.Localization.LocalizationManager.NormalizeLanguageCode(lang) == "tr" ? tr : en;
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]

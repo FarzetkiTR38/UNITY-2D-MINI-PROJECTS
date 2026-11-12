@@ -34,7 +34,7 @@ namespace ArrowSwarm.Puzzle
         public bool Lost { get; private set; }
         public bool Paused { get; private set; }
         public bool Preview { get; private set; }
-        public bool Ready => Level != null && Lives > 0 && !_busy && !Won && !Lost && !Paused && !HintPromptOpen &&
+        public bool Ready => Level != null && Lives > 0 && !_busy && !Won && !Lost && !Paused && !HintPromptOpen && !RocketPromptOpen &&
             (_mode == GameModeId.Shapes || !HasActiveShots);
         /// <summary>Whether normal arrows are still escaping or returning from a collision.</summary>
         public bool HasActiveShots => _activeShots > 0;
@@ -62,6 +62,7 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Loads catalog data, restores three lives and resets all transient actions.</summary>
         public void LoadLevel(int number)
         {
+            ResetHintSuggestion();
             StopAllCoroutines(); _activeShots = 0; _version++; Time.timeScale = 1f;
             if (_views != null) foreach (var view in _views) if (view != null && view.gameObject.activeSelf) _pool.Release(view);
             LevelNumber = number; Level = _catalog.Get(number);
@@ -87,7 +88,7 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Pauses both movement and frame animation.</summary>
         public void Pause(bool value)
         {
-            if (Won || Lost) return;
+            if (Won || Lost || (value && Lives <= 0)) return;
             RocketArmed = false;
             Paused = value; Time.timeScale = value ? 0f : 1f;
             GameManager.Instance.SetState(value ? GameState.Paused : GameState.Playing); Notify();
@@ -96,6 +97,7 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Returns to menu, cancelling all outstanding callbacks and preview state.</summary>
         public void Menu()
         {
+            ResetHintSuggestion();
             StopAllCoroutines(); _activeShots = 0; _busy = true;
             if (_inFlight != null) Array.Clear(_inFlight, 0, _inFlight.Length);
             ResetRocket();
@@ -124,6 +126,7 @@ namespace ArrowSwarm.Puzzle
         private void SetMessage(string key, string fallback = "") { _messageKey = key; _messageFallback = fallback; }
         private void OnDestroy()
         {
+            ResetHintSuggestion();
             _version++; Time.timeScale = 1f;
             if (Active == this) Active = null;
         }

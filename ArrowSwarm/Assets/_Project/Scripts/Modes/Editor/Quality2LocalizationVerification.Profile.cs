@@ -35,10 +35,11 @@ namespace ArrowSwarm.Modes.Editor
                 int country = Field<int>(profile, "_currentCountryIndex");
                 string countryLabel = Field<TextMeshProUGUI>(profile, "_countryText").text;
                 var animation = Field<Coroutine>(profile, "_animateRoutine");
-                localization.SetLanguage(language.code == "en" ? "tr" : "en", false);
-                Check(name.text == "Draft_Q2" && Field<int>(profile, "_currentCountryIndex") == country &&
-                    Field<TextMeshProUGUI>(profile, "_countryText").text == countryLabel,
-                    language.code + ": switching language preserves the typed name and country draft");
+                string nextLang = language.code == "en" ? "tr" : "en";
+                localization.SetLanguage(nextLang, false);
+                Check(name.text == "Draft_Q2" &&
+                    Field<TextMeshProUGUI>(profile, "_countryText").text == LocalizationManager.GetCountryDisplayName(nextLang),
+                    language.code + ": switching language preserves the typed name and synchronizes country display");
                 Check(ReferenceEquals(animation, Field<Coroutine>(profile, "_animateRoutine")),
                     language.code + ": switching language does not restart the profile opening animation");
                 localization.SetLanguage(language.code, false);

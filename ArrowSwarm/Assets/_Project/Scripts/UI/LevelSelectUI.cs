@@ -37,6 +37,7 @@ namespace ArrowSwarm.UI
 
         private int _currentPage = 1;
         private readonly List<LevelButtonUI> _buttonPool = new List<LevelButtonUI>();
+        private readonly MenuPanelTransition _transition = new MenuPanelTransition();
 
         private void Awake()
         {
@@ -47,19 +48,14 @@ namespace ArrowSwarm.UI
         {
             ArrowSwarm.Localization.LocalizationManager.OnLanguageChanged += RefreshPageLabel;
             AutoWire();
+            AttachNavigation();
             UpdatePageToHighest();
-        }
-
-        private void Start()
-        {
-            _closeButton?.onClick.AddListener(Close);
-            _prevPageButton?.onClick.AddListener(PrevPage);
-            _nextPageButton?.onClick.AddListener(NextPage);
         }
 
         /// <summary>Discovers authored controls without replacing their styling.</summary>
         public void AutoWire()
         {
+            ResolveModeView();
             if (_canvasGroup == null) _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
             if (_dialogBox == null)
             {
@@ -104,48 +100,6 @@ namespace ArrowSwarm.UI
             }
         }
 
-        private void UpdatePage()
-        {
-            if (_levelGridContainer == null) return;
-
-            int highestLevel = SelectedHighest;
-            int maxPage = Mathf.Max(1, (highestLevel - 1) / LEVELS_PER_PAGE + 1);
-
-            _currentPage = Mathf.Clamp(_currentPage, 1, maxPage);
-
-            if (_prevPageButton != null) _prevPageButton.interactable = _currentPage > 1;
-            if (_nextPageButton != null) _nextPageButton.interactable = _currentPage < maxPage;
-
-            int startLevel = (_currentPage - 1) * LEVELS_PER_PAGE + 1;
-
-            RefreshPageLabel();
-
-            // Collect existing child buttons in container if pool is empty
-            if (_buttonPool.Count == 0)
-            {
-                var existing = _levelGridContainer.GetComponentsInChildren<LevelButtonUI>(true);
-                _buttonPool.AddRange(existing);
-            }
-
-            // Ensure we have 20 buttons in pool
-            while (_buttonPool.Count < LEVELS_PER_PAGE && _levelButtonPrefab != null)
-            {
-                LevelButtonUI newBtn = Instantiate(_levelButtonPrefab, _levelGridContainer);
-                _buttonPool.Add(newBtn);
-            }
-
-            // Update each button for current page
-            for (int i = 0; i < LEVELS_PER_PAGE && i < _buttonPool.Count; i++)
-            {
-                int levelNum = startLevel + i;
-                bool isUnlocked = levelNum <= highestLevel;
-                int stars = DataManager.Instance?.GetLevelStars(SelectedMode, levelNum) ?? 0;
-
-                _buttonPool[i].gameObject.SetActive(levelNum <= CampaignCount);
-                _buttonPool[i].Setup(levelNum, isUnlocked, stars, OnLevelClicked);
-            }
-        }
-
         private void OnLevelClicked(int level)
         {
             DataManager.Instance?.SetCurrentLevel(SelectedMode, level);
@@ -159,37 +113,15 @@ namespace ArrowSwarm.UI
             AutoWire();
             UpdatePageToHighest();
 
-            if (_canvasGroup != null)
-            {
-                _canvasGroup.interactable = true;
-                _canvasGroup.blocksRaycasts = true;
-                StopAllCoroutines();
-                StartCoroutine(UIPopupAnimator.AnimateOpen(_dialogBox, _canvasGroup));
-            }
+            _transition.Open(this, _dialogBox, _canvasGroup);
         }
 
         /// <summary>Closes the level select panel with elastic pop-out.</summary>
-        public void Close()
-        {
-            if (!gameObject.activeInHierarchy) return;
+        public void Close() => _transition.RequestClose(this, _dialogBox, _canvasGroup);
 
-            if (_canvasGroup != null)
-            {
-                _canvasGroup.interactable = false;
-                StopAllCoroutines();
-                StartCoroutine(UIPopupAnimator.AnimateClose(_dialogBox, _canvasGroup, onComplete: () => gameObject.SetActive(false)));
-            }
-            else
-            {
-                gameObject.SetActive(false);
-            }
-        }
+        internal bool CloseAnimated(System.Action onClosed)
+            => _transition.Close(this, _dialogBox, _canvasGroup, onClosed);
 
-        private void OnDestroy()
-        {
-            _closeButton?.onClick.RemoveListener(Close);
-            _prevPageButton?.onClick.RemoveListener(PrevPage);
-            _nextPageButton?.onClick.RemoveListener(NextPage);
-        }
+        private void OnDestroy() => DetachNavigation();
     }
 }

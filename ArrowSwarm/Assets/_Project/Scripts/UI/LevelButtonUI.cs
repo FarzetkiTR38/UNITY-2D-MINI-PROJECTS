@@ -9,7 +9,7 @@ namespace ArrowSwarm.UI
     /// Displays a single level button in the Level Select panel.
     /// Shows level number, locked/unlocked state, and 3 star slots (earned vs faded/empty).
     /// </summary>
-    public class LevelButtonUI : MonoBehaviour
+    public partial class LevelButtonUI : MonoBehaviour
     {
         [Header("UI References")]
         [SerializeField] private Button _button;
@@ -101,84 +101,6 @@ namespace ArrowSwarm.UI
             if (_defaultStarSprite == null && _starImages != null && _starImages.Length > 0 && _starImages[0] != null)
             {
                 _defaultStarSprite = _starImages[0].sprite;
-            }
-        }
-
-        /// <summary>
-        /// Configures the button for a specific level with unlock status and star count.
-        /// </summary>
-        /// <param name="level">Level number to display and trigger.</param>
-        /// <param name="isUnlocked">True if the player has unlocked this level.</param>
-        /// <param name="starsEarned">Number of stars earned on this level (0-3).</param>
-        /// <param name="onClickCallback">Callback invoked when button is clicked.</param>
-        public void Setup(int level, bool isUnlocked, int starsEarned, Action<int> onClickCallback)
-        {
-            AutoWire();
-
-            _level = level;
-            _onClickCallback = onClickCallback;
-
-            if (_levelText != null)
-            {
-                _levelText.text = level.ToString();
-                _levelText.gameObject.SetActive(isUnlocked);
-            }
-
-            if (_lockIcon != null)
-            {
-                _lockIcon.SetActive(!isUnlocked);
-            }
-
-            if (_button != null)
-            {
-                _button.interactable = isUnlocked;
-            }
-
-            if (_backgroundImage != null)
-            {
-                _backgroundImage.color = isUnlocked ? _unlockedColor : _lockedColor;
-            }
-
-            // Setup Star Slots
-            if (_starsContainer != null)
-            {
-                _starsContainer.SetActive(isUnlocked);
-            }
-
-            if (_starImages != null && _starImages.Length > 0)
-            {
-                for (int i = 0; i < _starImages.Length; i++)
-                {
-                    var starImg = _starImages[i];
-                    if (starImg == null) continue;
-
-                    starImg.gameObject.SetActive(isUnlocked);
-
-                    if (isUnlocked)
-                    {
-                        bool isEarned = i < starsEarned;
-                        starImg.color = isEarned ? _earnedStarColor : _emptyStarColor;
-
-                        if (isEarned)
-                        {
-                            starImg.sprite = _earnedStarSprite != null ? _earnedStarSprite : _defaultStarSprite;
-                        }
-                        else
-                        {
-                            starImg.sprite = _emptyStarSprite != null ? _emptyStarSprite : _defaultStarSprite;
-                        }
-                    }
-                }
-            }
-            else if (_stars != null)
-            {
-                for (int i = 0; i < _stars.Length; i++)
-                {
-                    if (_stars[i] != null)
-                    {
-                        _stars[i].SetActive(isUnlocked);
-                    }
-                }
             }
         }
 

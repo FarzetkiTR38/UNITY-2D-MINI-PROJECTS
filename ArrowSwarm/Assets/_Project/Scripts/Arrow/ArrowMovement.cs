@@ -196,8 +196,7 @@ namespace ArrowSwarm.Arrow
 
             if (_trajectory.Count < 2)
             {
-                _mode = MovementMode.None;
-                onComplete?.Invoke();
+                CompleteBlockedBounce();
                 return;
             }
 
@@ -313,12 +312,7 @@ namespace ArrowSwarm.Arrow
                 if (_currentHeadDistance <= _bodyLength)
                 {
                     _currentHeadDistance = _bodyLength;
-                    _isMoving = false;
-                    _mode = MovementMode.None;
-
-                    // Restore exact resting appearance on grid
-                    _arrow.Visuals?.RestoreRestingVisuals();
-                    _onBounceComplete?.Invoke();
+                    CompleteBlockedBounce();
                     return;
                 }
             }
@@ -344,6 +338,17 @@ namespace ArrowSwarm.Arrow
             {
                 _arrow.Visuals.UpdateSlitheringBody(_bodyPointsBuffer, new Vector3(headPos.x, headPos.y, -0.05f), headRot, true);
             }
+        }
+
+        private void CompleteBlockedBounce()
+        {
+            _isMoving = false;
+            _mode = MovementMode.None;
+            _obstacleArrow = null;
+            var complete = _onBounceComplete;
+            _onBounceComplete = null;
+            _arrow.Visuals?.RestoreRestingVisuals();
+            complete?.Invoke();
         }
 
         private Vector2 SamplePolyline(float targetDist, out Vector2 tangent)

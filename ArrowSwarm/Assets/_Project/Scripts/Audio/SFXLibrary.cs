@@ -7,7 +7,7 @@ namespace ArrowSwarm.Audio
     /// Easily configured and assigned via the Unity Inspector.
     /// </summary>
     [CreateAssetMenu(fileName = "SFXLibrary", menuName = "ArrowSwarm/SFXLibrary")]
-    public class SFXLibrary : ScriptableObject
+    public partial class SFXLibrary : ScriptableObject
     {
         [Header("--- Arrows ---")]
         [Tooltip("Standard arrow fired sound.")]
@@ -71,6 +71,33 @@ namespace ArrowSwarm.Audio
 
         [Tooltip("Active gameplay puzzle music.")]
         [SerializeField] private AudioClip _gameBGM;
+
+        [Tooltip("Ordered music rotation. Each new attempt uses the next non-empty entry and loops it until that attempt ends. Empty lists use the legacy gameplay clip.")]
+        [SerializeField] private AudioClip[] _gameBGMPlaylist;
+
+        /// <summary>Number of assigned rotation tracks, falling back to the original gameplay clip.</summary>
+        public int GameplayTrackCount
+        {
+            get
+            {
+                int count = 0;
+                if (_gameBGMPlaylist != null)
+                    foreach (var clip in _gameBGMPlaylist) if (clip != null) count++;
+                return count > 0 ? count : (_gameBGM != null ? 1 : 0);
+            }
+        }
+
+        /// <summary>Returns a cyclic playlist entry, ignoring empty slots and retaining the legacy fallback.</summary>
+        public AudioClip GetGameplayTrack(int index)
+        {
+            int count = GameplayTrackCount;
+            if (count == 0) return null;
+            int target = ((index % count) + count) % count;
+            if (_gameBGMPlaylist != null)
+                foreach (var clip in _gameBGMPlaylist)
+                    if (clip != null && target-- == 0) return clip;
+            return _gameBGM;
+        }
 
         // --- Public Getters ---
         public AudioClip ArrowFire => _arrowFire;

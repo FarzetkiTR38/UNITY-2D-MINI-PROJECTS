@@ -44,6 +44,7 @@ namespace ArrowSwarm.UI
         [SerializeField] private Button _lightThemeButton;
         [Tooltip("Direct button to select Dark theme (optional)")]
         [SerializeField] private Button _darkThemeButton;
+        [SerializeField] private GameObject[] _themeHighlights;
 
         [Header("Decoration & Board")]
         [SerializeField] private Image _boardImage;
@@ -66,16 +67,44 @@ namespace ArrowSwarm.UI
         [Header("Animation")]
         [SerializeField] private float _fadeSpeed = 5f;
 
-        private static readonly string[] SUPPORTED_LANGUAGES = { "ENGLISH", "TURKISH", "GERMAN", "SPANISH", "FRENCH" };
-        private int _currentLanguageIndex = 0;
+        private readonly MenuPanelTransition _transition = new MenuPanelTransition();
+        private bool _listenersBound;
 
         private void Awake()
         {
             AutoWire();
+            EnsureListeners();
+        }
+
+        private void OnEnable()
+        {
+            Localization.LocalizationManager.OnLanguageChanged += UpdateLanguageDisplay;
+            ThemeManager.OnThemeChanged += UpdateThemeDisplay;
+            UpdateLanguageDisplay();
+        }
+
+        private void OnDisable()
+        {
+            _transition.Reset(this);
+            Localization.LocalizationManager.OnLanguageChanged -= UpdateLanguageDisplay;
+            ThemeManager.OnThemeChanged -= UpdateThemeDisplay;
         }
 
         private void Start()
         {
+            EnsureListeners();
+
+            if (_titleText != null && string.IsNullOrEmpty(_titleText.text))
+                _titleText.text = "SETTINGS";
+
+            LoadSettings();
+        }
+
+        private void EnsureListeners()
+        {
+            if (_listenersBound) return;
+            _listenersBound = true;
+
             _closeButton?.onClick.AddListener(Hide);
 
             if (_sfxToggle != null)
@@ -94,11 +123,6 @@ namespace ArrowSwarm.UI
             _themeToggleButton?.onClick.AddListener(ToggleTheme);
             _lightThemeButton?.onClick.AddListener(OnSelectLightTheme);
             _darkThemeButton?.onClick.AddListener(OnSelectDarkTheme);
-
-            if (_titleText != null && string.IsNullOrEmpty(_titleText.text))
-                _titleText.text = "SETTINGS";
-
-            LoadSettings();
         }
 
         /// <summary>
@@ -228,33 +252,17 @@ namespace ArrowSwarm.UI
         {
             gameObject.SetActive(true);
             AutoWire();
+            EnsureListeners();
             LoadSettings();
 
-            if (_canvasGroup != null)
-            {
-                _canvasGroup.interactable = true;
-                _canvasGroup.blocksRaycasts = true;
-                StopAllCoroutines();
-                StartCoroutine(UIPopupAnimator.AnimateOpen(_dialogBox, _canvasGroup));
-            }
+            _transition.Open(this, _dialogBox, _canvasGroup);
         }
 
         /// <summary>Hides the settings panel with elastic pop-out.</summary>
-        public void Hide()
-        {
-            if (!gameObject.activeInHierarchy) return;
+        public void Hide() => _transition.RequestClose(this, _dialogBox, _canvasGroup);
 
-            if (_canvasGroup != null)
-            {
-                _canvasGroup.interactable = false;
-                StopAllCoroutines();
-                StartCoroutine(UIPopupAnimator.AnimateClose(_dialogBox, _canvasGroup, onComplete: () => gameObject.SetActive(false)));
-            }
-            else
-            {
-                gameObject.SetActive(false);
-            }
-        }
+        internal bool CloseAnimated(System.Action onClosed)
+            => _transition.Close(this, _dialogBox, _canvasGroup, onClosed);
 
         private void LoadSettings()
         {
@@ -355,6 +363,9 @@ namespace ArrowSwarm.UI
 
         private void UpdateThemeDisplay(ThemeMode theme)
         {
+            if (_themeHighlights != null)
+                for (int i = 0; i < _themeHighlights.Length; i++)
+                    if (_themeHighlights[i] != null) _themeHighlights[i].SetActive(i == (theme == ThemeMode.Dark ? 1 : 0));
             if (_themeSelectorImage != null)
             {
                 Sprite targetSprite = theme == ThemeMode.Light ? _lightThemeSprite : _darkThemeSprite;
