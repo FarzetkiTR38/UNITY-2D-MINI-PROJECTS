@@ -18,8 +18,9 @@ Profile controls need the same SFX coverage as the other menus. Remove the win f
 - [x] Lossless edits to ArrowWrong/ToggleSwitch silent tails and MobDie_alt1 3/4ms edge fades; GUIDs, rates, PCM encoding and RIFF metadata retained. Native re-import/decode checks pass; source report and reproducible hash-guarded script provided.
 - [x] Four original music sources use Streaming/background load/no preload; source files are retained. Playlist gains 0.50/0.89/0.49 are serialized separately from user music level. Native importer checks pass.
 - [x] Bootstrap listener fix: the temporary persistent listener yields to the scene camera; native fallback recovery and one active listener in all three gameplay scenes pass in `playlist-checks.txt`.
-- [ ] Native Unity MCP regression across all modes, Light/Dark, real controls, retry/next/pause/mute and original state restoration.
-- [ ] Deliver reviewable evidence, updated audio report status and phase commit list.
+- [x] Final native Unity MCP regression: 187 passing assertions across all six groups (voices/mix/events/profile/popups/playlist) after the final runtime change. Three gameplay scenes, Light/Dark result captures, actual next/retry/profile/close controls, pause/mute and fallback listeners covered. Error-console query returns zero errors.
+- [x] Deliver reviewable evidence at `Captures/AudioRevisions/index.html`, six native result JPGs and an overview. The original AudioReview page has a dated baseline warning and links this follow-up; its earlier metrics/ratings are not presented as current measurements.
+- [x] Original pre-task preference values/key existence restored. All 17 pre-existing tracked dirty files still match original SHA256 values; MainMenuScene remains unsaved/dirty with SharedBackdrop selected. No unrelated file was staged.
 
 Each code phase is compiled and checked in Unity before its commit. Exact related native checks and commits are recorded below as they complete. Changes stay within the requested audio/VFX scope; this is not approval to begin another numbered UI board.
 
@@ -29,8 +30,23 @@ This session cannot assess audio timbre, musical pleasure or aesthetic preferenc
 
 ## Resume point
 
-Eight phases are committed through `88d70ca7`: plan `d001f8c7`, Profile `cd07d746`, win VFX `bc685916`, attempt playlist `e5a9a5e6`, WAV boundaries `24d90f3d`, music streaming `1c8d543c`, mute/mix/crossfade `3e9e8f71`, Defense popup audio `88d70ca7`.
+The requested revision is complete. No later numbered UI board was started. Next action is user review of the existing three tracks at runtime; aesthetic selection still requires hearing. Do not automatically replace further sounds or begin another board.
 
-Current next action: compile/test the ready AudioManager.GameplayEvents partial together with the root's HUDFeedbackEffects duplicate removal, using the new Events verification partial from the metrics agent. Then commit life/hint/mob ownership and implement/verify bounded voices. The AudioManager agent is holding edits; release it for the voice phase only after the event phase is validated. New delivery HTML exists; event/voice statuses and six native result JPGs still need final evidence before delivery. Final Profile/Playlist/Mix/Popups reruns should follow the voice change.
+| Phase | Commit |
+| --- | --- |
+| Plan and original-state backup | `d001f8c7` |
+| Profile controls | `cd07d746` |
+| Background win VFX removal | `bc685916` |
+| Three-track per-attempt playlist | `e5a9a5e6` |
+| Lossless WAV boundary repair | `24d90f3d` |
+| Streaming music imports | `1c8d543c` |
+| Zero/mute/contextual gain and crossfade | `3e9e8f71` |
+| Defense popup SFX | `88d70ca7` |
+| Single life/hint/mob sound ownership | `7cb4e697` |
+| Bounded voices, priorities and continuing playback | `341b390e` |
+| Scene listener ownership | `bcbf9fd0` |
+| Final verification sources, captures and delivery | Same commit as this completed checklist |
 
-Root owns Unity, narrow commits and restoration. Do not reset or stage the 17 pre-existing dirty files. Original Editor MainMenuScene is unsaved/dirty with SharedBackdrop selected; keep its in-memory work. Exact original dirty-file hashes/copies and private preferences are outside the repository; `%TEMP%/ArrowSwarm-AudioRevisions-backup-path.txt` locates them. Restore private preferences and font-cache/file drift after final Play, then verify every original hash. MainMenuScene and BootScene must retain original bytes. No browser/server workaround is permitted for the earlier local-preview security denial.
+Native reports and all-source checks are under `Captures/AudioRevisions`. Test helpers are Editor-only `UI/Editor/AudioRevisionVerification*.cs`; enter initialized MainMenu Play Mode, let domain reload settle, call `Begin("profile")` / `"voices"` / `"mix"` / `"events"` / `"popups"` / `"playlist"`, then poll `Status`. Each group uses cloned player data and scoped offline services; reports explain unexercised real ads/device listening. These are controlled result-state/route checks, not claims of playing the full campaign.
+
+Preserve the 17 pre-existing dirty files and the unsaved MainMenuScene. Exact original dirty-file hashes/copies and private preferences are outside the repository; `%TEMP%/ArrowSwarm-AudioRevisions-backup-path.txt` locates them. Original full-resolution screenshots are also outside the repository; compact deliverable JPGs add no player build assets. No browser/server workaround was used for the earlier local-preview security denial. HTML source/links were checked programmatically; browser playback was not verified. Inspector budget shrinking removes only pool-owned dynamic AudioSources, preserving externally assigned authored components.

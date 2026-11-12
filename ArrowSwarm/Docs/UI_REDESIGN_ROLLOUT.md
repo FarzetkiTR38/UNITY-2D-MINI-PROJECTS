@@ -1,5 +1,7 @@
 # UI redesign rollout - sequential approval
 
+2026-11-12 audio/VFX follow-up is complete. The checked implementation, 12 phase commits and exact review checkpoint are in `AUDIO_REVISIONS.md`; delivery is `Captures/AudioRevisions/index.html`. Profile/popup SFX, three per-attempt music tracks, win-confetti removal and the audited runtime audio fixes are verified. Existing numbered-board approvals and gameplay remain unchanged; do not begin a later board automatically.
+
 Current explicit request (2026-11-06): **board08 exhausted Hint/Freeze popups only**, tracked in `UI_ROLLOUT_08_SKILLS.md`. Board06/Pause was reverted and is not authorized by this request. Gameplay, backdrop and HUD are preserved.
 
 Board08 follow-up is complete: `Farzetki_Title_Font_H1` retains the title family and supplies native-weight Turkish glyphs; the two exhausted-skill heroes gain subtle themed mesh accents. Four native sizes, both themes, ten languages and original controls/rewards pass. Actual Before/After: `Captures/UIRollout/Phase08Revisions/index.html`; checked implementation: `UI_ROLLOUT_08_REVISIONS.md`. Wait for user review before further numbered boards.

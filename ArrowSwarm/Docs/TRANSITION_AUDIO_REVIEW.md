@@ -1,5 +1,7 @@
 # Geçiş logosu ve ses incelemesi · 2026-11-11
 
+2026-11-12 güncellemesi: kullanıcı bu rapordaki uygulanabilir sorunların düzeltilmesini onayladı. Tamamlanan düzeltmeler ve kontrol listesi `AUDIO_REVISIONS.md`, yeni teslim `Captures/AudioRevisions/index.html` içindedir. Aşağıdaki inceleme, revizyon öncesi durumun tarihsel kaydıdır.
+
 Bu istek, geçişte kesilen görseli düzeltmek ve mevcut sesleri alternatifleriyle birlikte değerlendirmekle sınırlıdır. Ses değiştirme/yeniden üretme, kullanıcı değerlendirmesinden sonraki ayrı bir iştir. Sonraki numaralı UI board'u başlatılmadı.
 
 ## Aşamalar
