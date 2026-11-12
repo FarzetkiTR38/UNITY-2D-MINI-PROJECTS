@@ -11,12 +11,12 @@ Profile controls need the same SFX coverage as the other menus. Remove the win f
 - [x] Remove automatic and explicit result confetti from Defense, Shapes and ColorShift; native result checks find no playing confetti/fireworks. Other particle APIs and star animations are preserved.
 - [x] Add serialized three-track gameplay playlist using GameBGM, GameBGM_alt1, GameBGM_alt2.
 - [x] Real Next/Retry buttons in all three scenes advance 0→1→2→0; pause/resume, setting changes and clip-end loop retain their current track. `playlist-checks.txt` passes.
-- [ ] Accept exact zero volumes, respect mute everywhere, and retain pause/result gain after data refresh.
+- [x] Exact zero/mute, both crossfade channels, pause/result attenuation across data refresh, unscaled crossfade and non-destructive track matching pass native `mix-checks.txt`.
 - [ ] Own each life-loss sound once; wire Defense hint and distinguish surviving/fatal enemy damage.
 - [ ] Bound overlapping effects without changing the pitch of earlier tails; keep high-priority UI/feedback usable during bursts.
 - [ ] Complete Defense popup/action SFX coverage without double clicks.
 - [x] Lossless edits to ArrowWrong/ToggleSwitch silent tails and MobDie_alt1 3/4ms edge fades; GUIDs, rates, PCM encoding and RIFF metadata retained. Native re-import/decode checks pass; source report and reproducible hash-guarded script provided.
-- [ ] Configure existing music import/mix costs and per-track levels for three-track operation.
+- [x] Four original music sources use Streaming/background load/no preload; source files are retained. Playlist gains 0.50/0.89/0.49 are serialized separately from user music level. Native importer checks pass.
 - [ ] Native Unity MCP regression across all modes, Light/Dark, real controls, retry/next/pause/mute and original state restoration.
 - [ ] Deliver reviewable evidence, updated audio report status and phase commit list.
 

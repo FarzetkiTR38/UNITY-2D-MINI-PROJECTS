@@ -7,7 +7,7 @@ namespace ArrowSwarm.Audio
     /// Easily configured and assigned via the Unity Inspector.
     /// </summary>
     [CreateAssetMenu(fileName = "SFXLibrary", menuName = "ArrowSwarm/SFXLibrary")]
-    public class SFXLibrary : ScriptableObject
+    public partial class SFXLibrary : ScriptableObject
     {
         [Header("--- Arrows ---")]
         [Tooltip("Standard arrow fired sound.")]

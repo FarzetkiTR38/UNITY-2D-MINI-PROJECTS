@@ -14,7 +14,6 @@ namespace ArrowSwarm.Audio
     public partial class AudioManager : Singleton<AudioManager>
     {
         [SerializeField] private SFXLibrary _sfxLibrary;
-        [SerializeField] private AudioSource _bgmSource;
         [SerializeField] private AudioSource[] _sfxSources;
 
         private const int SfxChannelCount = 6;
@@ -73,43 +72,20 @@ namespace ArrowSwarm.Audio
         public void PlaySFX(AudioClip clip, float pitch = 1f, float volumeScale = 1f, bool ignoreMute = false)
         {
             if (clip == null || _sfxSources == null || _sfxSources.Length == 0) return;
-            if (!ignoreMute && DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled) return;
+            if (AudioMuted || _sfxVolume == 0f) return;
 
             var src = _sfxSources[_currentSfxIndex];
             _currentSfxIndex = (_currentSfxIndex + 1) % _sfxSources.Length;
             if (src == null) return;
             src.pitch = pitch;
-            float vol = (_sfxVolume > 0.01f ? _sfxVolume : 1f) * volumeScale;
+            float vol = _sfxVolume * volumeScale;
             src.PlayOneShot(clip, vol);
-        }
-
-        /// <summary>Plays background music with looping enabled.</summary>
-        public void PlayBGM(AudioClip clip)
-        {
-            if (clip == null || _bgmSource == null) return;
-            bool muted = DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled;
-            float targetVol = muted ? 0f : _musicVolume;
-            if (_bgmSource.clip == clip && _bgmSource.isPlaying) { _bgmSource.volume = targetVol; return; }
-            _bgmSource.clip = clip;
-            _bgmSource.volume = targetVol;
-            _bgmSource.Play();
-        }
-
-        /// <summary>Stops BGM playback.</summary>
-        public void StopBGM() => _bgmSource?.Stop();
-
-        public void SetVolumes(float music, float sfx)
-        {
-            _musicVolume = music > 0.01f ? Mathf.Clamp01(music) : 0.7f;
-            _sfxVolume = sfx > 0.01f ? Mathf.Clamp01(sfx) : 1f;
-            bool muted = DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled;
-            if (_bgmSource != null) _bgmSource.volume = muted ? 0f : _musicVolume;
         }
 
         public void PlayButtonClick() => PlaySFX(_sfxLibrary?.ButtonClick, Random.Range(0.96f, 1.04f));
         public void PlayPopupOpen() => PlaySFX(_sfxLibrary?.PopupOpen);
         public void PlayPopupClose() => PlaySFX(_sfxLibrary?.PopupClose);
-        public void PlayToggle() => PlaySFX(_sfxLibrary?.ToggleSwitch, 1f, 1f, true);
+        public void PlayToggle() => PlaySFX(_sfxLibrary?.ToggleSwitch);
         public void PlayStarEarn(int idx) => PlaySFX(_sfxLibrary?.StarEarn, 1.0f + (idx * 0.15f));
         public void PlayArrowFire(bool rainbow) => PlaySFX(rainbow ? _sfxLibrary?.RainbowArrow : _sfxLibrary?.ArrowFire, Random.Range(0.95f, 1.05f));
         public void PlayArrowWrong() => PlaySFX(_sfxLibrary?.ArrowWrong);
@@ -121,14 +97,6 @@ namespace ArrowSwarm.Audio
         public void PlayLevelWin() => PlaySFX(_sfxLibrary?.LevelWin);
         public void PlayLevelLose() => PlaySFX(_sfxLibrary?.LevelLose);
         public void PlayHeartBreak() => PlaySFX(_sfxLibrary?.HeartBreak);
-
-        private void HandleStateChanged(GameState state)
-        {
-            bool muted = DataManager.Instance?.PlayerData != null && !DataManager.Instance.PlayerData.sfxEnabled;
-            if (state == GameState.Menu) PlayBGM(_sfxLibrary?.MenuBGM);
-            else if (state == GameState.Playing) PlayCurrentGameplayMusic();
-            else if (state == GameState.Paused && _bgmSource != null) _bgmSource.volume = muted ? 0f : (_musicVolume * 0.3f);
-        }
 
         private void HandleSceneLoaded(UnityEngine.SceneManagement.Scene s, UnityEngine.SceneManagement.LoadSceneMode m) => SyncBGMForCurrentScene();
 
@@ -168,7 +136,7 @@ namespace ArrowSwarm.Audio
         private void EnsureAudioSources()
         {
             EnsureAudioListener();
-            if (_bgmSource == null) { _bgmSource = gameObject.AddComponent<AudioSource>(); _bgmSource.loop = true; _bgmSource.spatialBlend = 0f; }
+            EnsureBgmSources();
             if (_sfxSources != null && _sfxSources.Length != 0) return;
             _sfxSources = new AudioSource[SfxChannelCount];
             for (int i = 0; i < SfxChannelCount; i++)
@@ -188,13 +156,5 @@ namespace ArrowSwarm.Audio
 #endif
         }
 
-        private void LoadVolumeSettings()
-        {
-            PlayerData data = DataManager.Instance?.PlayerData;
-            if (data == null) return;
-            _musicVolume = data.musicVolume > 0.01f ? data.musicVolume : 0.7f;
-            _sfxVolume = data.sfxVolume > 0.01f ? data.sfxVolume : 1f;
-            if (data.sfxVolume <= 0.01f && data.sfxEnabled) data.sfxVolume = 1f;
-        }
     }
 }

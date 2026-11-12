@@ -46,22 +46,24 @@ namespace ArrowSwarm.Audio
         {
             var session = PuzzleSession.Active;
             if (session == null || session.Level == null || !session.gameObject.activeInHierarchy) return;
-            if (session == _musicPuzzleSession && session.AttemptVersion == _musicPuzzleVersion) return;
+            RefreshMusicMix();
+            if (session == _musicPuzzleSession && session.AttemptVersion == _musicPuzzleVersion && _attemptBgm != null) return;
+            if (!BeginGameplayAttempt(session.Preview)) return;
             _musicPuzzleSession = session;
             _musicPuzzleVersion = session.AttemptVersion;
-            BeginGameplayAttempt(session.Preview);
         }
 
-        private void BeginGameplayAttempt(bool preview)
+        private bool BeginGameplayAttempt(bool preview)
         {
             if (_sfxLibrary == null) AutoLinkLibrary();
             int count = _sfxLibrary != null ? _sfxLibrary.GameplayTrackCount : 0;
-            if (count == 0) return;
+            if (count == 0) return false;
             _gameplayTrackIndex = preview ? 0 : _nextGameplayTrack % count;
             _attemptBgm = _sfxLibrary.GetGameplayTrack(_gameplayTrackIndex);
             _attemptSceneHandle = SceneManager.GetActiveScene().handle;
             if (!preview) _nextGameplayTrack = (_gameplayTrackIndex + 1) % count;
             PlayBGM(_attemptBgm);
+            return true;
         }
 
         private void PlayCurrentGameplayMusic()
