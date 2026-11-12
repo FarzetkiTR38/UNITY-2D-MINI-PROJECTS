@@ -1,5 +1,6 @@
 namespace ArrowSwarm.UI
 {
+    using ArrowSwarm.Audio;
     using ArrowSwarm.Data;
     using TMPro;
     using UnityEngine;
@@ -32,7 +33,7 @@ namespace ArrowSwarm.UI
         private void Start()
         {
             _watchAdButton?.onClick.AddListener(OnWatchAd);
-            _closeButton?.onClick.AddListener(Hide);
+            _closeButton?.onClick.AddListener(OnCloseClicked);
             if (!_isShowing)
             {
                 Hide(instant: true);
@@ -54,7 +55,9 @@ namespace ArrowSwarm.UI
         /// <summary>Shows the tip popup with elastic pop-in.</summary>
         public void Show()
         {
+            if (_isShowing) return;
             _isShowing = true;
+            AudioManager.Instance?.PlayPopupOpen();
 
             if (!gameObject.activeSelf)
             {
@@ -91,9 +94,12 @@ namespace ArrowSwarm.UI
             Hide(false);
         }
 
+        /// <summary>Hides the tip popup with an optional immediate transition.</summary>
         public void Hide(bool instant = false)
         {
+            bool closing = _isShowing && gameObject.activeInHierarchy;
             _isShowing = false;
+            if (closing) AudioManager.Instance?.PlayPopupClose();
             if (_canvasGroup != null)
             {
                 _canvasGroup.interactable = false;
@@ -119,6 +125,7 @@ namespace ArrowSwarm.UI
 
         private void OnWatchAd()
         {
+            AudioManager.Instance?.PlayButtonClick();
             var context = new DefenseRewardContext(this);
             var data = DataManager.Instance;
             ArrowSwarm.Ads.AdManager.Instance?.ShowRewardedAd(success =>
@@ -132,7 +139,13 @@ namespace ArrowSwarm.UI
         private void OnDestroy()
         {
             _watchAdButton?.onClick.RemoveListener(OnWatchAd);
-            _closeButton?.onClick.RemoveListener(Hide);
+            _closeButton?.onClick.RemoveListener(OnCloseClicked);
+        }
+
+        private void OnCloseClicked()
+        {
+            AudioManager.Instance?.PlayButtonClick();
+            Hide();
         }
     }
 }

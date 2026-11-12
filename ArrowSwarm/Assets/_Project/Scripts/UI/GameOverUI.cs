@@ -1,6 +1,7 @@
 namespace ArrowSwarm.UI
 {
     using System.Collections;
+    using ArrowSwarm.Audio;
     using ArrowSwarm.Core;
     using ArrowSwarm.Data;
     using TMPro;
@@ -153,6 +154,7 @@ namespace ArrowSwarm.UI
         {
             if (_isShowing) return;
             _isShowing = true;
+            AudioManager.Instance?.PlayPopupOpen();
 
             if (!gameObject.activeSelf)
             {
@@ -191,7 +193,9 @@ namespace ArrowSwarm.UI
         /// <param name="instant">If true, snaps alpha immediately to 0.</param>
         public void Hide(bool instant = false)
         {
+            bool closing = _isShowing && gameObject.activeInHierarchy;
             _isShowing = false;
+            if (closing) AudioManager.Instance?.PlayPopupClose();
             if (_canvasGroup != null)
             {
                 _canvasGroup.interactable = false;
@@ -217,6 +221,7 @@ namespace ArrowSwarm.UI
 
         private void OnRetry()
         {
+            AudioManager.Instance?.PlayButtonClick();
             InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
             LevelManager.Instance?.RetryLevel();
@@ -224,6 +229,7 @@ namespace ArrowSwarm.UI
 
         private void OnMainMenu()
         {
+            AudioManager.Instance?.PlayButtonClick();
             InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
             GameManager.Instance?.GoToMainMenu();

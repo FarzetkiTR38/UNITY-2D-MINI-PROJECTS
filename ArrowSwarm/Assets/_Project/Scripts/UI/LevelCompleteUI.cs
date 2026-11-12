@@ -91,6 +91,7 @@ namespace ArrowSwarm.UI
             if (ArrowSwarm.Tutorial.TutorialManager.Instance != null && ArrowSwarm.Tutorial.TutorialManager.Instance.IsTutorialActive) return;
 
             _isShowing = true;
+            AudioManager.Instance?.PlayPopupOpen();
             if (!gameObject.activeSelf) gameObject.SetActive(true);
             if (_canvasGroup == null) AutoWire();
 
@@ -163,7 +164,9 @@ namespace ArrowSwarm.UI
         /// </summary>
         public void Hide(bool instant = false)
         {
+            bool closing = _isShowing && gameObject.activeInHierarchy;
             _isShowing = false;
+            if (closing) AudioManager.Instance?.PlayPopupClose();
             if (_canvasGroup != null) _canvasGroup.interactable = false;
             if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
             if (_starsCoroutine != null) StopCoroutine(_starsCoroutine);
@@ -182,6 +185,7 @@ namespace ArrowSwarm.UI
 
         private void OnNextLevel()
         {
+            AudioManager.Instance?.PlayButtonClick();
             InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
             int currentLevel = DataManager.Instance?.PlayerData != null ? DataManager.Instance.PlayerData.currentLevel : 1;
@@ -197,6 +201,7 @@ namespace ArrowSwarm.UI
 
         private void OnMainMenu()
         {
+            AudioManager.Instance?.PlayButtonClick();
             InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
             GameManager.Instance?.GoToMainMenu();
@@ -204,6 +209,7 @@ namespace ArrowSwarm.UI
 
         private void OnLevels()
         {
+            AudioManager.Instance?.PlayButtonClick();
             InputManager.Instance?.BlockInput(0.35f);
             Hide(instant: true);
             MainMenuUI.OpenLevelsOnLoad = true;
