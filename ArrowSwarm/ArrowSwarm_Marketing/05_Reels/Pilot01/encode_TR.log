@@ -1,0 +1,99 @@
+Input #0, image2, from 'C:\Users\Farzetki\Desktop\GitHub\UNITY-2D-MINI-PROJECTS\ArrowSwarm\ArrowSwarm_Marketing\04_Raw_Gameplay\Shapes_L2_20261113_081526_913\frame_%05d.jpg':
+  Duration: 00:00:20.00, start: 0.000000, bitrate: N/A
+  Stream #0:0: Video: mjpeg (Baseline), yuvj420p(pc, bt470bg/unknown/unknown), 1080x1920 [SAR 1:1 DAR 9:16], 30 fps, 30 tbr, 30 tbn
+[aist#1:0/pcm_s16le @ 000001927e069580] Guessed Channel Layout: stereo
+Input #1, wav, from 'C:\Users\Farzetki\Desktop\GitHub\UNITY-2D-MINI-PROJECTS\ArrowSwarm\ArrowSwarm_Marketing\05_Reels\Pilot01\original_editorial_audio.wav':
+  Duration: 00:00:18.00, bitrate: 1536 kb/s
+  Stream #1:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 48000 Hz, stereo, s16, 1536 kb/s
+Input #2, png_pipe, from 'C:\Users\Farzetki\Desktop\GitHub\UNITY-2D-MINI-PROJECTS\ArrowSwarm\ArrowSwarm_Marketing\05_Reels\Pilot01\overlay_TR_0.png':
+  Duration: N/A, bitrate: N/A
+  Stream #2:0: Video: png, rgba(pc, gbr/unknown/unknown), 1080x1920, 30 fps, 30 tbr, 30 tbn
+Input #3, png_pipe, from 'C:\Users\Farzetki\Desktop\GitHub\UNITY-2D-MINI-PROJECTS\ArrowSwarm\ArrowSwarm_Marketing\05_Reels\Pilot01\overlay_TR_1.png':
+  Duration: N/A, bitrate: N/A
+  Stream #3:0: Video: png, rgba(pc, gbr/unknown/unknown), 1080x1920, 30 fps, 30 tbr, 30 tbn
+Input #4, png_pipe, from 'C:\Users\Farzetki\Desktop\GitHub\UNITY-2D-MINI-PROJECTS\ArrowSwarm\ArrowSwarm_Marketing\05_Reels\Pilot01\overlay_TR_2.png':
+  Duration: N/A, bitrate: N/A
+  Stream #4:0: Video: png, rgba(pc, gbr/unknown/unknown), 1080x1920, 30 fps, 30 tbr, 30 tbn
+Input #5, png_pipe, from 'C:\Users\Farzetki\Desktop\GitHub\UNITY-2D-MINI-PROJECTS\ArrowSwarm\ArrowSwarm_Marketing\05_Reels\Pilot01\overlay_TR_3.png':
+  Duration: N/A, bitrate: N/A
+  Stream #5:0: Video: png, rgba(pc, gbr/unknown/unknown), 1080x1920, 30 fps, 30 tbr, 30 tbn
+Input #6, png_pipe, from 'C:\Users\Farzetki\Desktop\GitHub\UNITY-2D-MINI-PROJECTS\ArrowSwarm\ArrowSwarm_Marketing\05_Reels\Pilot01\overlay_TR_4.png':
+  Duration: N/A, bitrate: N/A
+  Stream #6:0: Video: png, rgba(pc, gbr/unknown/unknown), 1080x1920, 30 fps, 30 tbr, 30 tbn
+Stream mapping:
+  Stream #0:0 (mjpeg) -> fps:default
+  Stream #2:0 (png) -> format:default
+  Stream #3:0 (png) -> format:default
+  Stream #4:0 (png) -> format:default
+  Stream #5:0 (png) -> format:default
+  Stream #6:0 (png) -> format:default
+  setparams:default -> Stream #0:0 (libx264)
+  Stream #1:0 -> #0:1 (pcm_s16le (native) -> aac (native))
+Press [q] to stop, [?] for help
+[swscaler @ 000001927f9e7240] deprecated pixel format used, make sure you did set range correctly
+[libx264 @ 00000192003fe280] using SAR=1/1
+[libx264 @ 00000192003fe280] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX FMA3 BMI2 AVX2
+[libx264 @ 00000192003fe280] profile High, level 4.0, 4:2:0, 8-bit
+[libx264 @ 00000192003fe280] 264 - core 165 r3223 0480cb0 - H.264/MPEG-4 AVC codec - Copyleft 2003-2025 - http://www.videolan.org/x264.html - options: cabac=1 ref=3 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=24 lookahead_threads=4 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=1 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=18.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to 'C:\Users\Farzetki\Desktop\GitHub\UNITY-2D-MINI-PROJECTS\ArrowSwarm\ArrowSwarm_Marketing\05_Reels\Pilot01\ArrowSwarm_Pilot01_TR.mp4':
+  Metadata:
+    comment         : Genuine Unity Editor gameplay; captions and original synthesized audio added in post. No gameplay fabrication.
+    encoder         : Lavf63.1.102
+  Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(tv, bt709, progressive), 1080x1920 [SAR 1:1 DAR 9:16], q=2-31, 30 fps, 15360 tbn
+    Metadata:
+      encoder         : Lavc63.1.102 libx264
+    Side data:
+      CPB properties: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
+  Stream #0:1: Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 192 kb/s
+    Metadata:
+      encoder         : Lavc63.1.102 aac
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=00:00:00.44 bitrate=   0.9kbits/s speed=0.854x elapsed=0:00:00.52    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=00:00:00.44 bitrate=   0.9kbits/s speed=0.432x elapsed=0:00:01.03    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=00:00:00.44 bitrate=   0.9kbits/s speed=0.289x elapsed=0:00:01.55    
+frame=    5 fps=2.4 q=24.0 size=       0KiB time=00:00:00.44 bitrate=   0.9kbits/s speed=0.217x elapsed=0:00:02.06    
+frame=   27 fps= 10 q=24.0 size=       0KiB time=00:00:01.15 bitrate=   0.3kbits/s speed=0.444x elapsed=0:00:02.59    
+frame=   49 fps= 16 q=24.0 size=       0KiB time=00:00:01.85 bitrate=   0.2kbits/s speed=0.598x elapsed=0:00:03.10    
+frame=   71 fps= 20 q=24.0 size=       0KiB time=00:00:02.64 bitrate=   0.1kbits/s speed=0.731x elapsed=0:00:03.61    
+frame=   93 fps= 23 q=24.0 size=     256KiB time=00:00:03.34 bitrate= 626.3kbits/s speed=0.812x elapsed=0:00:04.12    
+frame=  113 fps= 24 q=24.0 size=     256KiB time=00:00:04.05 bitrate= 517.5kbits/s speed=0.871x elapsed=0:00:04.65    
+frame=  134 fps= 26 q=24.0 size=     256KiB time=00:00:04.54 bitrate= 461.6kbits/s speed=0.88x elapsed=0:00:05.16    
+frame=  155 fps= 27 q=24.0 size=     256KiB time=00:00:05.24 bitrate= 399.7kbits/s speed=0.925x elapsed=0:00:05.67    
+frame=  174 fps= 28 q=24.0 size=     256KiB time=00:00:05.95 bitrate= 352.4kbits/s speed=0.96x elapsed=0:00:06.19    
+frame=  195 fps= 29 q=24.0 size=     256KiB time=00:00:06.74 bitrate= 311.1kbits/s speed=   1x elapsed=0:00:06.71    
+frame=  215 fps= 30 q=24.0 size=     512KiB time=00:00:07.44 bitrate= 563.4kbits/s speed=1.03x elapsed=0:00:07.22    
+frame=  237 fps= 31 q=24.0 size=     512KiB time=00:00:08.14 bitrate= 514.7kbits/s speed=1.05x elapsed=0:00:07.73    
+frame=  257 fps= 31 q=24.0 size=     512KiB time=00:00:08.64 bitrate= 485.5kbits/s speed=1.05x elapsed=0:00:08.25    
+frame=  277 fps= 32 q=24.0 size=     768KiB time=00:00:09.34 bitrate= 673.4kbits/s speed=1.07x elapsed=0:00:08.76    
+frame=  296 fps= 32 q=24.0 size=     768KiB time=00:00:10.15 bitrate= 619.6kbits/s speed=1.09x elapsed=0:00:09.28    
+frame=  314 fps= 32 q=24.0 size=     768KiB time=00:00:10.83 bitrate= 580.6kbits/s speed=1.11x elapsed=0:00:09.79    
+frame=  334 fps= 32 q=24.0 size=     768KiB time=00:00:11.13 bitrate= 565.0kbits/s speed=1.08x elapsed=0:00:10.31    
+frame=  351 fps= 32 q=24.0 size=     768KiB time=00:00:11.94 bitrate= 526.7kbits/s speed= 1.1x elapsed=0:00:10.84    
+frame=  370 fps= 33 q=24.0 size=     768KiB time=00:00:12.73 bitrate= 494.0kbits/s speed=1.12x elapsed=0:00:11.36    
+frame=  389 fps= 33 q=24.0 size=     768KiB time=00:00:13.14 bitrate= 478.8kbits/s speed=1.11x elapsed=0:00:11.88    
+frame=  408 fps= 33 q=24.0 size=    1024KiB time=00:00:13.84 bitrate= 605.9kbits/s speed=1.12x elapsed=0:00:12.39    
+frame=  428 fps= 33 q=24.0 size=    1024KiB time=00:00:14.54 bitrate= 576.6kbits/s speed=1.13x elapsed=0:00:12.91    
+frame=  447 fps= 33 q=24.0 size=    1024KiB time=00:00:14.95 bitrate= 561.0kbits/s speed=1.11x elapsed=0:00:13.42    
+frame=  459 fps= 33 q=24.0 size=    1024KiB time=00:00:17.94 bitrate= 467.6kbits/s speed=1.29x elapsed=0:00:13.94    
+frame=  500 fps= 35 q=24.0 size=    1024KiB time=N/A bitrate=N/A speed=N/A elapsed=0:00:14.45    
+[mp4 @ 000001927e053780] Starting second pass: moving the moov atom to the beginning of the file
+[out#0/mp4 @ 000001927e050a00] video:1031KiB audio:425KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 1.430185%
+frame=  540 fps= 37 q=-1.0 Lsize=    1476KiB time=00:00:18.00 bitrate= 671.8kbits/s speed=1.24x elapsed=0:00:14.56    
+[libx264 @ 00000192003fe280] frame I:3     Avg QP:10.64  size:146551
+[libx264 @ 00000192003fe280] frame P:152   Avg QP:16.28  size:  2582
+[libx264 @ 00000192003fe280] frame B:385   Avg QP:17.32  size:   578
+[libx264 @ 00000192003fe280] consecutive B-frames:  3.0%  3.7%  6.7% 86.7%
+[libx264 @ 00000192003fe280] mb I  I16..4: 35.8% 39.8% 24.4%
+[libx264 @ 00000192003fe280] mb P  I16..4:  0.4%  0.3%  0.3%  P16..4:  1.4%  0.2%  0.2%  0.0%  0.0%    skip:97.2%
+[libx264 @ 00000192003fe280] mb B  I16..4:  0.1%  0.0%  0.0%  B16..8:  1.3%  0.1%  0.1%  direct: 0.1%  skip:98.3%  L0:50.2% L1:48.9% BI: 1.0%
+[libx264 @ 00000192003fe280] 8x8 transform intra:33.7% inter:28.8%
+[libx264 @ 00000192003fe280] coded y,uvDC,uvAC intra: 28.1% 34.9% 30.7% inter: 0.2% 0.4% 0.2%
+[libx264 @ 00000192003fe280] i16 v,h,dc,p: 48% 49%  2%  0%
+[libx264 @ 00000192003fe280] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 35% 29% 32%  1%  1%  1%  1%  0%  1%
+[libx264 @ 00000192003fe280] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 36% 29% 16%  3%  3%  4%  3%  4%  3%
+[libx264 @ 00000192003fe280] i8c dc,h,v,p: 47% 34% 18%  2%
+[libx264 @ 00000192003fe280] Weighted P-Frames: Y:0.0% UV:0.0%
+[libx264 @ 00000192003fe280] ref P L0: 68.0%  5.1% 15.2% 11.7%
+[libx264 @ 00000192003fe280] ref B L0: 74.7% 22.3%  3.0%
+[libx264 @ 00000192003fe280] ref B L1: 96.6%  3.4%
+[libx264 @ 00000192003fe280] kb/s:468.69
+[aac @ 000001927fa3ce40] Qavg: 506.697
