@@ -13,3 +13,7 @@ Doğrulanmış eylemler: instances/custom-tools/editor-state,execute_code,refres
 - Oyuncunun önceden değişmiş14dosyası, kayıt öncesi/sonrası hash karşılaştırmasında aynı:source_preservation.json.
 
 Kayıt sabit simülasyon adımlarıyla ekran kareleri alır; ağır Editor işinde duvar saati20s'den uzun sürebilir. Render30fps aynı oyun zamanını korur, son montajda oynanış hızlandırılmaz. NativeMCP doğrudan video/sistem sesi kaydetmez; FFmpeg gerçek kareleri MP4'e çevirir. Montajdaki sesler sonradan eklenmiş özgün editoryal sestir. Gerçek cihaz ve PlayConsole testi yapılmadı.
+
+
+## Sonraki devam turu — erişim ayrımı
+Unity kontrol araçları bu devam turunda sunulmuyor. Yukarıdaki bağlantı/kayıt sonuçları önceki gerçek testin kanıtıdır; bu turda yeni canlı test veya kayıt yapıldığı iddia edilmez. Güncel kayıt kuyruğu04_Raw_Gameplay/CAPTURE_QUEUE.csv içindedir.
