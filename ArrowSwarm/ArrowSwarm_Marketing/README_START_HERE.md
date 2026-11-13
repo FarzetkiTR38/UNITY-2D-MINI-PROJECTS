@@ -1,6 +1,6 @@
 # ArrowSwarm — ilk gerçek kreatif paket
 
-**13 Kasım 2026 · İlk örnek paket hazır; global yayın projesi tamamlanmış değil.**
+**13 Kasım 2026 · Mevcut ikonlar ve ilk Reels kullanıcı tarafından beğenilmedi. Bunlar onaylanmamış taslaklardır; görsel revizyonlar son aşamaya bırakılarak fazlara devam ediliyor.**
 
 [İnceleme sayfasını aç](Final_Deliverables/index.html). [İlk paketin ZIP dosyası](Final_Deliverables/ArrowSwarm_FirstCreative_20261113.zip) yerelde hazırdır; ham JPEG dizileri ZIP dışında, bu bilgisayarda saklanır.
 
@@ -21,8 +21,8 @@ MP4'ler baştan sona decode edildi;540 kare/18 saniye,1080×1920/30fps,stereo48k
 
 Oyuncunun14 mevcut açık dosyasının hash'i korunuyor. Oyuncu tercihleri ve cloud/ad sağlayıcıları geçici kayıttan sonra geri getirildi. Üretim gameplay/sahne/prefab/paket/PlayerSettings değişikliği yok. Çalışma dalı:`codex/marketing-launch-pilot-20261113`.
 
-## Sıradaki karar ve devam
+## Güncel devam kararı
 
-Önce ilk video kurgusu ile A/B/C ikon yönü değerlendirilecek. İlk paket onayından önce12 videoluk seri veya tam mağaza seti üretilmeyecek. Onay sonrası: seçilen ikonun adaptive katmanları/logo,gerçekTR/EN native çekimler,diğer iki mod ve tutorial/Rainbow klipleri; ardından mağaza seti ve seri içerik.
+Kullanıcı fazlara devam edilmesini istedi; ilk örnek için yeniden onay beklenmiyor. Faz 1 araştırmasının eksikleri, üretim bağımlılıkları ve bağımsız yayın hazırlıkları sürdürülecek. Önceki örnekler kalite standardı olarak onaylanmadı; marka/ikon/video son revizyon kuyruğunda.
 
-Fazların tamamı:[MASTER_PLAN.md](MASTER_PLAN.md). Güncel tek kontrol listesi:[PROGRESS.md](PROGRESS.md). Dosyalar:[ASSET_MANIFEST.md](ASSET_MANIFEST.md). Cihaz/build/Play Console/politika doğrulamaları tamamlanmadı; üretime yayın için **NO-GO** sürüyor. Hiçbir mağaza/sosyal yayın veya ücretli kampanya yapılmadı.
+Fazların tümü: [MASTER_PLAN.md](MASTER_PLAN.md). Tek devam kontrol listesi: [PROGRESS.md](PROGRESS.md). Gerçek dosyalar: [ASSET_MANIFEST.md](ASSET_MANIFEST.md). Uygulama/site/sosyal üretim yayını, ücretli kampanya veya mesaj gönderimi yapılmadı.

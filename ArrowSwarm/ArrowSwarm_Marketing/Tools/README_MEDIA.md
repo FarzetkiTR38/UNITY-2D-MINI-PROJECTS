@@ -27,3 +27,7 @@ Each language produces an H.264/yuv420p MP4 with48kHz stereo AAC, cover and SRT.
 `QA_REPORT.json` records technical checks and file hashes. It does not certify subjective music taste, actual Instagram UI overlap on every device, store compliance or publication approval. Listen to the film and check it in the intended platform preview before publishing. The first creative approval gate remains in place.
 
 `layout_only_ARCHIVE.jpg`, if present, is a discarded typography proof composited over the previously archived November10 still. It is not a new gameplay capture, video source or final deliverable.
+
+
+## Updated user direction · 13 November 2026
+The user disliked the icon concepts and pilot Reel and asked to continue phase work, deferring visual revisions until later. The first creative approval gate is no longer a reason to pause work. Existing media remains an unapproved draft; technical checks do not imply creative acceptance.

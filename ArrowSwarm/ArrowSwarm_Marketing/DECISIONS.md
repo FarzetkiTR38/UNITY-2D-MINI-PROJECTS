@@ -10,3 +10,8 @@
 - **Araştırma:** GörünenPlayrakamları bölgesel/önbellek/devicesnapshot;globalgerçek veya gelir/CTR/CPI tahmini değil. Yorumlar gözlenen küçük örneklemdir. Detaylı15görsel/sosyalvideoaudit pending.
 - **İnceleme:** Medya decode/metrikleri ve gerçek görseller kontrol edildi. Browserfile://güvenlik engeli aşılmadı;gerçekHTML/InstagramUItesti yapıldı iddiası yok. Kullanıcı video/ses tasarımını kendi oynatıcısında değerlendirir.
 - **Kalite kapısı:** İlk video ve ikon seçimi sonrası seri üretim. Hiçbir paylaşım,ücretli kampanya veya üretime yayın yapılmadı.
+
+
+## Son kullanıcı kararı — 13 Kasım 2026
+
+İkonlar ve ilk Reels beğenilmedi. Kullanıcı tasarımları sonradan revize ettireceğini belirterek çalışmanın sürmesini istedi. İlk örnek onayı artık bekleme kapısı değil; dosyalar taslak olarak korunacak. Teknik QA geçmesi yaratıcı tasarım onayı anlamına gelmez. Kamuya paylaşım veya harcama yetkisi çıkarılmayacak.
