@@ -1,10 +1,10 @@
 # Araştırma kaynak ve doğrulama kaydı
 
-Erişim:13 Kasım2026. Resmî Google Play sayfaları web aracıyla açıldı; bazı en_US parametreli URLler hata verirken id-only veya en-US biçimi açıldı. Bu erişim günü, sayfanın önbelleğe alındığı gün değildir. Sayfa başlığındaki toplam gösterge ile cihaz alt kümesindeki puan/yorum sayısı ayrı kaydedildi. Listeleme iddiası, kurulu oyun testi değildir.
+Erişim:13 Kasım 2026. Resmî Google Play sayfaları web aracıyla açıldı; bazı en_US parametreli URLler hata verirken id-only veya en-US biçimi açıldı. Bu erişim günü, sayfanın önbelleğe alındığı gün değildir. Sayfa başlığındaki toplam gösterge ile cihaz alt kümesindeki puan/yorum sayısı ayrı kaydedildi. Listeleme iddiası, kurulu oyun testi değildir.
 
 - [Arrows – Puzzle Escape — Lessmore GmbH](https://play.google.com/store/apps/details?id=com.ecffri.arrows)
 - [Tap Away — Popcore Games](https://play.google.com/store/apps/details?id=com.jctswbglsm.SwipeAway)
-- [Color Block Jam — Rollic Games](https://play.google.com/store/apps/details?id=com.GybeGames.ColorBlockJam)
+- [Color Block Jam — Rollic Games](https://play.google.com/store/apps/details?id=com.GybeGames.Color Block Jam)
 - [Tangled Snakes — Popcore Games](https://play.google.com/store/apps/details?id=com.nt.games.tangledsnakes)
 - [Unpuzzle - Tap Away Puzzle — HYPERCELL](https://play.google.com/store/apps/details?id=com.taptapgames.unpuzzle)
 - [Arrow Tap: Arrow Puzzle Escape — Apex IEG](https://play.google.com/store/apps/details?id=com.tf.arrows.puzzle.game)
@@ -27,3 +27,15 @@ Erişim:13 Kasım2026. Resmî Google Play sayfaları web aracıyla açıldı; ba
 - Yorumlar görünür seçkiden kısa parafrazdır; temsilî örneklem, doğrulanmış hata veya rakip aleyhine reklam kanıtı değildir. Tam yorum kopyalanmadı.
 - Sosyal bağlantılar yalnız Popcore yayımcısı için Tap Away resmî listesiyle doğrulandı. Videolar izlenmedi; açılış zaman kodu, izlenme, CTR/CPI/ROAS ve reklam başarısı bilinmiyor.
 - Rakip ikon/screenshot görsel karşılaştırması15/15 için hâlâ bekliyor; sayfada resim URLsi bulunması bu işi bitirmez.
+
+
+## Ek doğrulama — tarayıcı görselleri ve gerçek playback
+- Aynı15 resmî liste,Türkiye/Türkçe tarayıcı görünümünde açıldı;ikon ve ilk görünen ekran görüntüsü/kapak kartları doğrudan görüldü. Tam galeri/kurulu oyun testi değildir.
+- Play → YouTube: https://www.youtube.com/shorts/4_UFZDChX9g ;@popcoregames;28.261 s;0.264786ve13.811939 s örnekleri,paused=false.
+- Play → YouTube: https://www.youtube.com/shorts/tqxl-WbaD0I ;@GybeGamesDeveloper;30.021 s;0.339189ve6.302532 s örnekleri,paused=false.
+- Başlangıçta paused=true,time=0 olan posterler oynatılmış sayılmadı;gerçek UI tıklaması sonrası zaman ilerlemesi doğrulandı. Ses ve reklam performansı ölçülmedi.
+- Görsel ve sosyal ayrıntılar VISUAL_COMPETITOR_AUDIT.md,SOCIAL_CREATIVE_RESEARCH.md dosyalarındadır. Hiçbir rakip medya dosyası indirilmedi; hiçbir iletişim veya yayın yapılmadı.
+
+
+## Kalan13 başlığın odaklı video keşfi
+SOCIAL_DISCOVERY_LEDGER.csv/JSON her oyun için gerçekten çalıştırılan sorguyu ve kaynak URLleri kaydeder. Ek açılan birincil kaynaklar:https://lessmore.games/ ; https://hypercell.rocks/ ; https://jeetechstudio.in/ ; https://www.linkedin.com/posts/hypercell-games_hypercellgames-newgame-newhit-activity-7083109958346506240-8UuJ . Sonuncu yayıncı isimli gönderi metin olarak incelendi; video veya hesap sahipliği testi sayılmadı. Arama sonuçlarındaki üçüncü taraf tahmin/istatistikler kullanılmadı.
