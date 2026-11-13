@@ -1,19 +1,20 @@
-# ArrowSwarm yayın ve büyüme — ana plan
+# ArrowSwarm yayın ve büyüme — ana yol haritası
 
-Tek güncel kontrol listesi `PROGRESS.md`;gerçek ilk teslim `Final_Deliverables/index.html`.
+Son kullanıcı kararı: mevcut ikon/Reels beğenilmedi; fazlar sürsün, görsel revizyonlar en son yapılsın. Önceki ilkörnek onayı bekleme kapısı kaldırıldı.
 
-| Faz | Gerçek durum | Bir sonraki somut çıktı |
+Tek güncel kontrol listesi: [PROGRESS.md](PROGRESS.md). Faz sırası0→1→2→3→4→5→6→7→8→9korunur. Bir aşama dış erişime bağlıysa bu eksik açıkça yazılarak bağımsız hazırlık işleri sürdürülebilir; sıradaki dosyaların üretilmesi önceki aşamanın tamamlandığı anlamına gelmez.
+
+| Faz | Dosya/araç konumu | Tamamlanma kanıtı |
 |---|---|---|
-|0 — inceleme/erişim|MCP ve nativeShapes kaydı doğrulandı;cihaz/build incelemesi kısmi|Defense/ColorShift/ilk oyuncu akışı ve releasekanıtları|
-|1 — rakip araştırması|15 resmî liste,8 görünür yorum;tamamı değil|15 görsel/sosyal video incelemesi ve zaman kodlu kanca kayıtları|
-|İlk kreatif geri bildirimi|İkonlar ve Reels beğenilmedi; mevcut dosyalar taslak|Onay beklemeden fazlara devam; görsel düzeltmeler son revizyon kuyruğunda|
-|2 — marka|3konsept+küçük boyut QA hazır;kurulum yok|Seçim sonrası512final,adaptive,şeffaflogo,sosyalprofil|
-|3 — mağaza görselleri|Yeni nativekaynaklı2dilörneği+featuregraphic|Onaylı çizgide6–8görsel,tamyerelleştirme,sosyalşablonlar|
-|4 — kayıt|20snShapes2arşivi+otomasyon|Üç mod,tutorial,Rainbow,hata/win/lose ve seviye arşivi|
-|5 — video|1konsept/EN+TR18snMP4,kapak/SRT/açıklama/ses/QA|Onay sonrası12Reels+2reklam+fragman+tutorial+3modvideosu|
-|6 — ASO/SEO/GEO|İlk mesaj ve anahtar kelime hipotezleri var;tamfazbaşlamadı|TR/ENstoremetinleri,keywordmap,tanıtımsitesi,yerelleştirme|
-|7 — organik büyüme|Başlamadı|30günlük takvim,platformmetinleri,kurallıtopluluk/üreticitaslakları|
-|8 — analytics/reklam|Yeni SDK veya veri toplama eklenmedi|Mevcuteventaudit,KPI,düşükbütçedeneyplanı|
-|9 — launch|NO-GO:cihaz/Console/politika kanıtları eksik|Releasechecklist,GO/NO-GO,ön/gün/7/30planları|
+|0 — İnceleme |01_Game_Audit|CanlıUnity,korunanözeldurum,kaynak/hata/build/cihazkanıtları|
+|1 — Rakipler |00_Research|15başlık kaynakları,görseller,yorumlar,sosyalkeşifvegerçekizlemeayrımı|
+|2 — Marka |02_Branding|Sonseçilenikon,adaptive,logo,küçükboyut/cihazmaskesi;şimdilikreddedilenkonseptlervebrief|
+|3 — Mağaza |03_GooglePlay|8güncelnativegörsel,yerelleştirme,featuregraphic;DraftSet01yayınonayıdeğil|
+|4 — Kayıt |04_Raw_Gameplay|Queue'dakiherklipingerçekvideo/kare/event/provenance/restorationkanıtı|
+|5 — Video |05_Reels,06_Trailers_Ads_Tutorials|12ayrıkonseptMP4,reklam/fragman/tutorial/modvideoları,kaynak/ses/altyazıQA|
+|6 — Metin/site |07_ASO_SEO_GEO|Metadata/keyword/deneydosyaları,yerelsitetesti;publicindexingvedomainayrıkapı|
+|7 — Organik |08_Social_Media|30günkalender,platformmetinleri,doğrulanmışuyguncreators;gerçekpaylaşımayrı|
+|8 — Ölçüm |09_Analytics|Event/KPI/deneyaraçları;gerçekentegrasyon/izin/canlısonuçlarayrı|
+|9 — Yayın |10_Launch|LAUNCH_CHECKLISTkanıtlarıveGO_NO_GO;şimdikiNO-GO|
 
-13 Kasım son talimatı ilk örnek onayı bekleme şartını kaldırdı. İkon ve Reels tasarımları onaylanmadı; nihai görsel seçim/revizyon daha sonra yapılacak. Kamuya yayın,hesapgüvenliği,değişen veri toplama ve harcamalar kendiliğinden yapılmaz. Bu pazarlama çalışması numaralı oyun UI board'larını açmaz. Mevcut açık dosyalara toplu stage/reset yapılmaz.
+Oyunmekaniği/onaylıUI/özelkayıtlar korunur. Kaynakdosyaya önemli ek,SDK/veritoplama,yayın,hesapgüvenliği,harcama veoutreach için varolan yetki sınırları geçerlidir. İlk taslakları tamamlanmış/onaylanmış final üretim diye sayma.

@@ -1,39 +1,39 @@
-# Devam eden çalışma — 13 Kasım 2026
+# ArrowSwarm — güncel faz kontrol listesi
 
-## Aktif aşama: Faz 1 araştırmasını tamamlama; ardından bağımsız yayın hazırlıkları
+**13 Kasım 2026 · Son talimat: ikon ve Reels beğenilmedi; revizeler sona bırakılarak fazlara devam ediliyor.** İlk örnek onayı beklenmiyor. Teknik dosya doğrulaması, yaratıcı tasarım onayı anlamına gelmez.
 
-- [x] Ana prompt ve diğer sohbetin ulaşılabilen geçmişi okundu; yerel dosyalarla tamamlanma durumu karşılaştırıldı.
-- [x] Mevcut14 açık değişiklik özel yedeğe alındı;codex/marketing-launch-pilot-20261113 dalı açıldı.
-- [x] Unity6000.3.18f1/Android/MainMenu/1080×1920 bağlantısı canlı doğrulandı.
-- [x] Defense/Shapes/ColorShift isimleri,kataloglar ve mevcut mimari doğrulandı. Classic adlı dördüncü mod vaat edilmiyor.
-- [x] Editor-only kayıt aracının lifecycle/restore kusurları düzeltildi ve derleme doğrulandı.
-- [x] 1 saniye/30 kare deneme ve20 saniye/600 kare gerçek Shapes2 çekimi alındı;42 okla gerçek çözüm kaydedildi.
-- [x] Play Stop sonrası özel tercihlerin geri yüklenmesi,sağlayıcılar,scene/tema/dil/zaman ayarları ve14 kaynak dosya hash'i doğrulandı.
-- [x] Üç gerçek AI ikon dosyası;48/72/128/512 boyutları,dairesel maske ve kaynak promptlar teslim edildi.
-- [x] Güncel Unity karesinden TR/EN mağaza örneği ve1024×500 feature graphic üretildi.
-- [x] İlk18 saniyelik Reels'inTR/EN MP4'leri,kapaklar,altyazılar,açıklamalar,özgün ses ve montaj kaynakları üretildi.
-- [x] MP4 tam decode,540 kare,1080×1920/30fps,H.264/AAC,ses metrikleri ve metin sınırları doğrulandı;encoded contact sheet incelendi.
-- [x] Ham20 saniyelik sessiz MP4 ve600 kare decode kontrolü üretildi.
-- [x] 15 resmî rakip listesi/8 görünür yorum örneklemi kaynaklarla denetlendi;belirsiz metrikler ayrıldı.
-- [x] Gerçek dosyalara bağlı yerel inceleme sayfası ve tekrar üretim araçları oluşturuldu.
-- [ ] HTML'nin gerçek tarayıcı/video düğmesi testi: uygulama içi güvenlik denetimi file://erişimini engelledi. Dosya bağlantıları statik kontrol edilir;bu madde tarayıcı testi yapılmış anlamına gelmez.
-- [x] Kullanıcı geri bildirimi alındı: ikonlar ve ilk Reels beğenilmedi. Bu tasarımlar ONAYLANMADI.
-- [x] Kullanıcı, görsel düzeltmeleri sona bırakarak fazlara devam edilmesini istedi; ilk örnek onayı artık çalışma engeli değil.
-- [ ] Nihai ikon/marka ve video kurgusu revizyonu; mevcut taslaklar yayın adayı değil.
+## Faz durumu
 
-## Hâlâ yapılmamış işler
+| Faz | Yapılan somut iş | Durum / kalan iş |
+|---|---|---|
+|0 · Proje/erişim | Önceki turda Unity ve gerçek Shapes2 kaydı doğrulandı; bu tur kaynak incelemesi korundu | Kısmi: mevcut turda Unity kontrol araçları yok; cihaz/build/testler bekliyor |
+|1 · Araştırma |15 resmî liste,15 gerçek ikon/ilk mağaza görseli incelemesi,8 görünür yorum seçkisi,2 gerçek video örneklemi;15 sosyal keşif kaydı | Kısmi:4 resmî fragman adayı çözümleme/oynatım,9 oyunda doğrulanmış tekil video bulunamadı; temsilî yorum çalışması değil |
+|2 · Marka | Kaynak ikonlar/ölçek testleri korunuyor; son revizyon briefi yazıldı | Kullanıcı beğenmedi. Finalikon/adaptive/logo seçimi ve görsel revizyon sona bırakıldı |
+|3 · Mağaza |8 gerçek kaynaklı sahne düzeni,TR/EN16PNG ve overview,ölçü/hash/kaynak kayıtları | Taslak: karma tarihli native arşiv ve karışıkHUDdili; güncel tamyerelleştirilmiş kayıt ve son görsel revizyon gerekli |
+|4 · Ham kayıt | Önceki20s/600kareShapes2 +MP4 korunuyor;12 senaryoluk kayıt kuyruğu | Erişim bağımlı: yeniDefense/ColorShift/tutorial/Rainbow/hata kayıtları yok |
+|5 · Reels | Önceki tek konseptinTR/ENMP4'leri arşivde;12 farklı konu için renderkuyruğu | İlk kurgu reddedildi.12 yeni video tamamlandı sayılmıyor; yeni kaynak ve sonkurgu gerekli |
+|6 · ASO/SEO/GEO | TR/ENmetinler,13keywordniyeti,3deney,yerelleştirmeplanı;2dilli gerçekvideo/FAQ/basınkitli webtaslağı | Dosyalar/yerelsitehazır ve testli; publicdomain/Play/contact/yayın/indeksleme bilinmiyor |
+|7 · Organik büyüme |30günlükTR/ENtakvim,strateji,profil/metin/yanıt/outreachtaslakları;5doğrulanmışpublicoutletadayı+4microadayaraştırması | Planhazır; güncelkitleverisidoğrulanamadığındanqualifiedmicrocreator0,gerçekhesap/nihaiasset/paylaşım yok |
+|8 · Analytics | Kaynakaudit,18öneriolay,19boşKPI,6deney,yerelKPIhesaplayıcı,bütçe/gizliliksoruları | Plan/araçhazır; SDK/yeniveritoplamaeklenmedi,canlıcohort/retentionölçülmedi |
+|9 · Yayın |19kapılıkchecklist,kaynakayarenvanteri,ön/gün/7/30günplanı | **NO-GO**: build/cihaz/Console/politika/nihaiasset kanıtları eksik; üretimeyayın yapılmadı |
 
-- [ ] Faz1'in15/15 rakip görselleri,tekil sosyal videoları ve daha geniş yorum örneklemi.
-- [ ] Seçili ikonun adaptive katmanları,şeffaflogo,sosyal profil varlıkları ve fizikselAndroid maske testi.
-- [ ] Tam Türkçe native HUD'lı kayıt;Defense/ColorShift/tutorial/Rainbow/doğru-yanlış hamle klip arşivi.
-- [ ] 6–8 mağaza görseli ve12 Reels+reklam/fragman/tutorial seri üretimi.
-- [ ] TamASO/SEO/GEO,tanıtım sitesi,30 günlük sosyal plan,KPI dosyaları ve launchGO/NO-GO kanıtları.
-- [ ] Cihaz/AAB/PlayConsole/üretim erişimi/gizlilik ve veri güvenliği doğrulamaları.
+## Kontroller ve koruma
 
-## Kesin devam noktası
+- [x] İlk onay bekleme şartını kaldıran kullanıcı kararı kayda alındı; reddedilen taslaklar silinmedi.
+- [x] Yeni8mağaza düzenininTR/EN16PNG'si gerçek kaynaklara bağlı,1080×1920RGB ve per-fileSHA256 kayıtlı.
+- [x] Site1280×900 ve390×844 ölçülerde,EN↔TR,dil/FAQ/nativevideo oynatımı ve taşma açısından gerçek tarayıcıda test edildi. Sadece ayrı publicdistklasörü sunuldu; eski engellenenfile://önizleme açılmadı.
+- [x] Siteye tracker,form,dışfont,hesap veya uydurulmuşPlay/domain/contact eklenmedi. Previewservertestsonundakapatıldı; deployyok.
+- [x] TR/ENmetinleri24/67/1383 ve24/71/1396karakter;30/80/4000sınırları geçti. Markdown/TXT/JSON eşleşiyor.
+- [x]30takvimgünü,5outlet,18olay,19KPI,6deney CSVsayısı/hashleri kontrol edildi; gerçek KPIalanları boş.
+- [x] Güncelresmîreleasekaynakları okundu: yeniapp/updateAPI36,ilgilihesaplarda12tester/14gün,native16KB veSDKveribeyanları. Kaynak ayarı binarytest sayılmadı.
+- [ ] Yeni Unity erişimi ve güncel native kayıtlar.
+- [ ] Son ikon/kurgu ve mağazagörsel revizyonları — kullanıcı sonra yönlendirecek; bu madde bağımsız işleri durdurmaz.
+- [ ] FizikselAndroid/releaseAAB/Console/consent/networktestleri ve gerçek sonuçlarla launchgates.
 
-13 Kasım 2026 son kullanıcı talimatı ilk örnek onayı kapısını kaldırdı. Önce Faz 1'in erişilebilir görsel/yorum/sosyal araştırmasını ilerlet; her doğrulanamayan alanı açık bırak. Ardından fazları sırayla ele al. Bağlı işleri engelleyen Unity erişimi gibi bir durum varsa, üretim yapıldı demeden bağımsız ASO/site/sosyal/analytics işlerini sürdür.
+## Kesin sonraki teknik adım
 
-Bu turda Unity MCP araçları sunulmuyor; önceki turdaki kayıt kanıtı korunur, yeni kayıt veya canlı Unity testi iddia edilmez. Mevcut ikon ve Reels taslakları kullanıcı tarafından beğenilmedi; stil referansı olarak onaylanmış sayılmayacak ve son revizyon kuyruğunda kalacak.
+Unity araçları tekrar sunulduğunda önce instances/editorstate ve doğru projeyi doğrula; özel durumun yeni yedeğini al. Editor-onlyMarketingCapture smoke testini tekrar çalıştır, ardından CAPTURE_QUEUE'dakiColorShift rotate/match veDefense/tutorial/Rainbow/error senaryolarını gerçek görüntüyle üret. Her dosyaya kaynak/event/provenance ve Stop/restoration kanıtı ekle. O ana kadar kayıt alınmış gibi davranma.
 
-Her tamamlanan/test edilen faz yerel codex dalında commitlenir. Oyun kodu/ayarları, özel kayıtlar ve mevcut açık dosyalar korunur. Kamuya yayın, mesaj gönderme, harcama ve yeni SDK/veri toplama bu devam talimatıyla yapılmaz.
+Unity erişimi gelmeden yapılabilecek kalan araştırma: dört resmî fragman adayının bireysel kimlik/zaman kodu incelemesi, uygunmicrocreator listesi ve kapsamlı yorum/yerelleştirme incelemesi. Site ve metadata için gerçekpublicdomain/PlayURL/iletişim ancak doğrulandığında eklenecek. Kamuya yayın,harcama veya mesaj gönderimi yapılmadı.
+
+**Çalışma dalı:** codex/marketing-launch-pilot-20261113. Her fazın kaydı yerel commitlerde;push/merge yapılmadı. Önceden açık oyun dosyaları korunuyor.

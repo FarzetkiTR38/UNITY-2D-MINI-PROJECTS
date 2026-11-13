@@ -1,28 +1,28 @@
-# ArrowSwarm — ilk gerçek kreatif paket
+# ArrowSwarm — yayın ve büyüme çalışma paketi
 
-**13 Kasım 2026 · Mevcut ikonlar ve ilk Reels kullanıcı tarafından beğenilmedi. Bunlar onaylanmamış taslaklardır; görsel revizyonlar son aşamaya bırakılarak fazlara devam ediliyor.**
+13 Kasım2026. İkonlar ve ilkReels kullanıcı tarafından beğenilmedi; görsel revizyonlar son aşamaya bırakılarak fazlara devam edildi. Aşağıdakiler gerçek dosyalardır; tam global yayın projesi bitmiş değildir.
 
-[İnceleme sayfasını aç](Final_Deliverables/index.html). [İlk paketin ZIP dosyası](Final_Deliverables/ArrowSwarm_FirstCreative_20261113.zip) yerelde hazırdır; ham JPEG dizileri ZIP dışında, bu bilgisayarda saklanır.
+[Faz çalışma masasını aç](Final_Deliverables/phase_status.html). [Güncel çalışma paketi ZIP](Final_Deliverables/ArrowSwarm_Launch_Workbench_20261113.zip) yerelde hazırlanır; ham kareler ve özel durum yedekleri dahil edilmez.
 
-## Şu anda gerçekten hazır
+## Güncel çıktılar
 
-- **Tek Reels konseptinin iki dil sürümü:** 18 saniye,1080×1920,30fps,H.264/AAC. [Türkçe MP4](05_Reels/Pilot01/ArrowSwarm_Pilot01_TR.mp4) · [İngilizce MP4](05_Reels/Pilot01/ArrowSwarm_Pilot01_EN.mp4).
-- **Güncel gerçek Unity kaydı:** Shapes bölüm2,42 ok,600 kare/20 saniye; gerçek üretim aksiyonları solver ile otomatik çalıştırıldı. [Sessiz ham MP4](04_Raw_Gameplay/Shapes_L2_20261113_081526_913/raw_gameplay_1080x1920_30fps_SILENT.mp4).
-- **Üç AI ikon adayı:** [Boyut karşılaştırması](02_Branding/icon_comparison.png);48/72/128/512px dosyalar ve üretim kaynakları.512 sürümleri32-bit RGBA PNG ve1024KB altında. Nihai seçim veya oyuna kurulum yapılmadı.
-- **Mağaza ilk örnekleri:** [TR](03_GooglePlay/store_pilot_TR.png),[EN](03_GooglePlay/store_pilot_EN.png),[1024×500 feature graphic](03_GooglePlay/feature_graphic_pilot_EN_1024x500.png). Aynı gerçek Unity karesi kullanıldı; oklar yeniden çizilmedi.
-- Kapaklar,TR/EN altyazı ve açıklamalar,özgün editoryal ses,tekrar çalıştırılabilir montaj/kayıt kaynakları ve teknik QA kayıtları.
-- Kaynaklı15 rakiplik ön araştırma;8 oyunun görünür yorum örnekleri. Tam görsel/sosyal inceleme değildir.
+- [Faz kontrol listesi](PROGRESS.md) ve [ana yol haritası](MASTER_PLAN.md).
+- [15 rakibin görsel incelemesi](00_Research/VISUAL_COMPETITOR_AUDIT.md), [sosyal keşif kaydı](00_Research/SOCIAL_DISCOVERY_LEDGER.csv).15başlıktaarama,2videogerçekörneklem,4fragmanadayı,9odaklıaramadadoğrulanmıştekilvideobulunamadı. Bu,15videonunizlendiği anlamına gelmez.
+- [8 mağaza düzeni / TR+EN16PNG](03_GooglePlay/DraftSet01/overview_EN.jpg). Gerçeknativekaynaklar,karma tarihler,draftişaretleri; tamgüncel/yerelleştirilmiş releasegörseli değildir.
+- [Türkçe mağaza metni](07_ASO_SEO_GEO/PLAY_STORE_TR.md), [İngilizce mağaza metni](07_ASO_SEO_GEO/PLAY_STORE_EN.md). Karakter ve eşleşme kontrolleri geçerli.
+- [İki dilli yerel tanıtım sitesi](07_ASO_SEO_GEO/Website/dist/index.html). Hamgerçekvideo,modaçıklamaları,FAQ,basınkiti. Önceki beğenilmeyen ikon/Reels onaylıkimlikolarakkullanılmadı. Masaüstü/mobiltarayıcı testi geçti; publicyayın yapılmadı. [Tarayıcı kanıtı](07_ASO_SEO_GEO/Website/QA/browser_checks.json).
+- [30 günlük organik içerik takvimi](08_Social_Media/ORGANIC_CALENDAR_30D.csv), platformmetinleri veoutreachtaslakları. Mesaj/paylaşım gönderilmedi. [Micro creator araştırması](08_Social_Media/MICRO_CREATOR_RESEARCH.md)4aday içerir; güncel birincil kitleverisi doğrulanamadığı için hiçbiri uygunmicro olarak sertifikalandırılmadı.
+- [19 satırlık KPI tablosu](09_Analytics/KPI_DASHBOARD.csv), [18 önerilen olay](09_Analytics/EVENT_PLAN.csv), [6 büyüme deneyi](09_Analytics/GROWTH_EXPERIMENTS.csv), çalışan yerelKPIhesaplayıcı. Gerçek sonuç alanları boş; yeniSDK/veritoplamayok.
+- [19 kapılı yayın checklisti](10_Launch/LAUNCH_CHECKLIST.csv) ve [NO-GO değerlendirmesi](10_Launch/GO_NO_GO.md). Build/cihaz/PlayConsole/gizlilik/nihaiasset doğrulamaları açık.
 
-## Kullanım ve doğruluk sınırları
+## Eski örnekler
 
-Video sesi Unity ses kaydı değildir: bu edit için özgün müzik ve olay zamanlarına eklenen efektler üretildi. Türkçe video/mağaza örneğinde tanıtım yazıları Türkçe,native oyun HUD'ı İngilizcedir. Tam Türkçe native çekim sonraki set için bekler.
+[İlk kreatif inceleme sayfası](Final_Deliverables/index.html), [TRReels](05_Reels/Pilot01/ArrowSwarm_Pilot01_TR.mp4), [ENReels](05_Reels/Pilot01/ArrowSwarm_Pilot01_EN.mp4) ve [ikonkarşılaştırması](02_Branding/icon_comparison.png) korunuyor; bunlar REDDEDİLMİŞ/REVİZYONBEKLEYENtaslaklar. TeknikmedyaQA yaratıcıonaydeğil. Önceki17MBilkpaketZIParşivolarakkalır.
 
-MP4'ler baştan sona decode edildi;540 kare/18 saniye,1080×1920/30fps,stereo48kHz AAC doğrulandı. Ses seviyesi−17.58LUFS,tepe−6.02dBTP. Görseller doğrudan incelendi. Tarayıcının güvenlik kuralı yerelfile://sayfayı otomatik açmayı engelledi; HTML için gerçek tarayıcı veya Instagram yükleme testi tamamlandı diye işaretlenmedi. Önizleme dosyasını kendi tarayıcınızda açabilirsiniz.
+## Erişim ve sınırlar
 
-Oyuncunun14 mevcut açık dosyasının hash'i korunuyor. Oyuncu tercihleri ve cloud/ad sağlayıcıları geçici kayıttan sonra geri getirildi. Üretim gameplay/sahne/prefab/paket/PlayerSettings değişikliği yok. Çalışma dalı:`codex/marketing-launch-pilot-20261113`.
+Unity kontrol araçları bu turda sunulmadı; yeni nativeoynanış veya Androidbuildtestiyapıldığı iddiaedilmiyor. Önceki20s/600kareShapes2kaydı geçerli; yeni senaryolar [CAPTURE_QUEUE](04_Raw_Gameplay/CAPTURE_QUEUE.csv) içinde. Basınkitive görsellerin kaynak/tarihleri kaydedildi; AIoynanış/fakerank yok.
 
-## Güncel devam kararı
+Yeni siteyalnızpublicdistklasöründen loopbackHTTPile test edildi, server testsonunda kapatıldı. Önceki file://pilot inceleme sayfasının browserengelini aşmak için kullanılmadı; eski sayfa için browserQA açık kalır. Gerçekdomain/PlayURL/support/sosyalbağlantılar uydurulmadı.
 
-Kullanıcı fazlara devam edilmesini istedi; ilk örnek için yeniden onay beklenmiyor. Faz 1 araştırmasının eksikleri, üretim bağımlılıkları ve bağımsız yayın hazırlıkları sürdürülecek. Önceki örnekler kalite standardı olarak onaylanmadı; marka/ikon/video son revizyon kuyruğunda.
-
-Fazların tümü: [MASTER_PLAN.md](MASTER_PLAN.md). Tek devam kontrol listesi: [PROGRESS.md](PROGRESS.md). Gerçek dosyalar: [ASSET_MANIFEST.md](ASSET_MANIFEST.md). Uygulama/site/sosyal üretim yayını, ücretli kampanya veya mesaj gönderimi yapılmadı.
+Çalışma dalı:`codex/marketing-launch-pilot-20261113`;yerel fazcommitleri var,push/merge/yayın/harcama/outreach yapılmadı. Sonrakiteknikadım ve yapılabilecek bağımsız işler PROGRESS.md'de. Dosya envanteri ASSET_MANIFEST.md'de.
