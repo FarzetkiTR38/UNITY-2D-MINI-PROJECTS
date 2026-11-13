@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "tool": "@oai/artifact-tool via bundled dependency runtime",
+  "format": "CSV per task; no workbook requested",
+  "tables": [
+    {
+      "name": "calendar",
+      "file": "08_Social_Media/ORGANIC_CALENDAR_30D.csv",
+      "rows": 30,
+      "columns": 13,
+      "artifactRangeRoundtrip": true
+    },
+    {
+      "name": "creators",
+      "file": "08_Social_Media/CREATOR_CANDIDATES.csv",
+      "rows": 5,
+      "columns": 7,
+      "artifactRangeRoundtrip": true
+    },
+    {
+      "name": "events",
+      "file": "09_Analytics/EVENT_PLAN.csv",
+      "rows": 18,
+      "columns": 7,
+      "artifactRangeRoundtrip": true
+    },
+    {
+      "name": "kpis",
+      "file": "09_Analytics/KPI_DASHBOARD.csv",
+      "rows": 19,
+      "columns": 13,
+      "artifactRangeRoundtrip": true
+    },
+    {
+      "name": "experiments",
+      "file": "09_Analytics/GROWTH_EXPERIMENTS.csv",
+      "rows": 6,
+      "columns": 9,
+      "artifactRangeRoundtrip": true
+    }
+  ]
+}
