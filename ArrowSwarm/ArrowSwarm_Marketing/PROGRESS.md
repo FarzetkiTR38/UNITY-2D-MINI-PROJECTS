@@ -1,5 +1,7 @@
 # ArrowSwarm — güncel faz kontrol listesi
 
+**14 Kasım · R3 tanıtım kapanışı hazır:** Kullanıcı yalnız son kısmı revize etti. Tebrik bitişi33,52s korunuyor;33,7s sonrası mevcut logo/nativebuton/PlayNowbasma animasyonu/indirme çağrısı,toplam40s. **Mağaza henüz yok; kullanıcı açıkça mock istedi.** [Güncel MP4](05_Reels/ReferencePilot02_R3_20261114/ArrowSwarm_Shapes2_R3_Promo_TR.mp4), [önizleme](05_Reels/ReferencePilot02_R3_20261114/index.html), [güncel kontrol listesi](05_Reels/OUTRO_REVISION.md). Ortak kapanış `05_Reels/SharedOutro01/`; sonraki onaylı videolarda yeniden kullanılacak. Diğer seviyeler henüz üretilmedi.
+
 **14 Kasım · R2 hazır, değerlendirme bekleniyor:** Kullanıcının dört revizesi tamamlandı. Tam native oyun sahnesi ve iki HUD, yalnız A → tamamen bitiş → bekleme/anlatım → kalan41ok; yeni açılış/tebrik. **37s,1080×1920,2,9MB.** [Güncel MP4](05_Reels/ReferencePilot02_R2_20261114/ArrowSwarm_Shapes2_R2_FullScene_TR.mp4), [önizleme](05_Reels/ReferencePilot02_R2_20261114/index.html), [R2 kontrol listesi/devam noktası](05_Reels/REFERENCE_REEL_R2.md). Diğer seviyeler için R2 onayı bekleniyor. Aşağıdaki28s sürüm ve13Kasım fazları tarihsel kayıttır.
 
 **14 Kasım 2026 · Yeni pilot hazır, kullanıcı onayı bekleniyor:** İki Instagram referansına göre yalnız **Shapes 2 için 28 saniyelik Türkçe Reels** tamamlandı. Yeni gerçek Unity kaydı, 42 atış/üç yıldız, yakın plan/A-B-C/geri sayım ve özgün ses montajı. [MP4](05_Reels/ReferencePilot02_20261114/ArrowSwarm_Shapes2_ReferencePilot_TR.mp4), [önizleme](05_Reels/ReferencePilot02_20261114/index.html), [kontrol listesi](05_Reels/REFERENCE_REEL_PILOT.md), [referans arşivi](References/Videos/README.md). Bu yeni örnek onaylanmadan 12,16,21,5,29,39 seviyelerine geçilmeyecek. Aşağıdaki 13 Kasım faz dökümü tarihsel durumdur; ilk pilotun onay şartının o gün kaldırılması bu yeni açık onay sınırını geçersiz kılmaz.
@@ -35,6 +37,8 @@
 - [ ] FizikselAndroid/releaseAAB/Console/consent/networktestleri ve gerçek sonuçlarla launchgates.
 
 ## Kesin sonraki teknik adım
+
+**R3 güncel önceliği:** Kullanıcının yeni ortak tanıtım kapanışını değerlendirmesini bekle. `05_Reels/OUTRO_REVISION.md` en yeni devam noktasıdır. Gerçek mağazaURL'si yok; yayın yapılmadı. Aşağıdaki R2 ve önceki sürüm notları tarihsel/doğrulama kaydıdır.
 
 **R2 güncel önceliği:** `05_Reels/REFERENCE_REEL_R2.md` üzerinden yeni37s videonun kullanıcı revizesini/onayını bekle. Onay gelmeden başka seviyeye kayıt alma. NativeHUD koruma ve tek-cevap-atışı/bekleme akışı sonraki videolarda da uygulanacak.
 

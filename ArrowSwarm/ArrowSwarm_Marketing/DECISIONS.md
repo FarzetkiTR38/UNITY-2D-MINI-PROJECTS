@@ -1,5 +1,9 @@
 # Üretim kararları
 
+## 14 Kasım · R3 ortak tanıtım kapanışı
+
+Kullanıcı yalnız tebrik sonrası bitişi ortak bir tanıtım ekranıyla değiştirdi. Oynanış/HUD koruma kuralı oyun bölümünde sürer; tebrik33,52s'de tamamlandıktan sonra33,7s'de logolu/PlayNowanimasyonlu kapanışa geçilir. Bu sonraki videolarda yeniden kullanılacak bir ortak bileşendir. Mağazanın henüz olmadığı kullanıcı tarafından doğrulandı; bağlantı açıkça mock tutulur. Video içindeki pointer/basma bir montaj animasyonudur; MP4'nin tıklanabilir düğmesi olduğu iddia edilmez. Gerçek link, yayınlandığında ortak config ve paylaşım gönderisine eklenir.
+
 ## 14 Kasım · güncel R2 kuralları
 
 - Reels, tam native oyun sahnesinden düzenlenir; TopHUD/BottomHUD kaldırılmaz, maskelenmez, yeniden çizilmez veya zoom ile kadraj dışına itilmez.
