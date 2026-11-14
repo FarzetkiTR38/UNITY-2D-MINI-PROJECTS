@@ -24,6 +24,8 @@ namespace ArrowSwarm.Marketing.Editor
         private static int _frame;
         private static bool _recording;
         private static CaptureScope _scope;
+        private static int _firstShotHoldFrames;
+        private static string _captureLanguage;
         /// <summary>Current recording progress, without private save contents.</summary>
         public static string Status { get; private set; } = "Idle";
 
@@ -55,7 +57,8 @@ namespace ArrowSwarm.Marketing.Editor
         }
 
         /// <summary>Starts a 30fps authored-puzzle capture after Arm and initialized Play startup.</summary>
-        public static void Begin(int level, string mode = "Shapes", int seconds = 20)
+        public static void Begin(int level, string mode = "Shapes", int seconds = 20,
+            int firstShotHoldFrames = 0, string language = "en")
         {
             if (!Application.isPlaying || !SessionState.GetBool(Armed, false) || !DataManager.HasInstance)
                 throw new InvalidOperationException("Arm before Play, then wait for initialized MainMenu.");
@@ -63,6 +66,12 @@ namespace ArrowSwarm.Marketing.Editor
             if (mode != "Shapes" && mode != "ColorShift") throw new ArgumentException("Unsupported puzzle mode.", nameof(mode));
             if (level < 1) throw new ArgumentOutOfRangeException(nameof(level));
             if (seconds < 1 || seconds > 40) throw new ArgumentOutOfRangeException(nameof(seconds));
+            if (firstShotHoldFrames < 0 || (firstShotHoldFrames > 0 && firstShotHoldFrames > seconds * 30 - 180))
+                throw new ArgumentOutOfRangeException(nameof(firstShotHoldFrames));
+            if (firstShotHoldFrames > 0 && mode != "Shapes")
+                throw new ArgumentException("Isolated-first-shot capture currently requires Shapes.", nameof(mode));
+            if (string.IsNullOrEmpty(language)) throw new ArgumentException("Language is required.", nameof(language));
+            _firstShotHoldFrames = firstShotHoldFrames; _captureLanguage = language;
             _folder = Root + "/" + mode + "_L" + level + "_" + DateTime.UtcNow.ToString("yyyyMMdd_HHmmss_fff");
             Directory.CreateDirectory(_folder); Events.Clear(); Events.Add("frame,time_seconds,event,arrow,remaining,lives");
             _recording = true; Status = "Loading " + _folder;
@@ -95,6 +104,7 @@ namespace ArrowSwarm.Marketing.Editor
         private static IEnumerator Record(int level, string mode, int seconds)
         {
             _scope = new CaptureScope();
+            ArrowSwarm.Localization.LocalizationManager.Instance.SetLanguage(_captureLanguage, false);
             var modeId = mode == "ColorShift" ? GameModeId.ColorShift : GameModeId.Shapes;
             PuzzleLaunch.Preview = true; PuzzleLaunch.PreviewMode = modeId; PuzzleLaunch.PreviewLevel = level;
             SceneManager.LoadScene(modeId == GameModeId.Shapes ? "ShapesScene" : "ColorShiftScene");
@@ -105,19 +115,29 @@ namespace ArrowSwarm.Marketing.Editor
             if (Screen.width != 1080 || Screen.height != 1920) throw new InvalidOperationException("Set native Game View to1080x1920.");
             var solution = PuzzleSolver.Solve(session.Level);
             if (!solution.Solvable) throw new InvalidOperationException("No legal witness.");
-            int step = 0, nextShot = 75;
-            int cadence = Mathf.Clamp((seconds * 30 - 120) / Mathf.Max(1, solution.Steps.Count), 5, 22);
+            int step = 0, nextShot = 75, firstSettled = -1;
+            int cadence = Mathf.Clamp((seconds * 30 - 120 - _firstShotHoldFrames) / Mathf.Max(1, solution.Steps.Count), 5, 22);
             Time.captureFramerate = 30;
             var endFrame = new WaitForEndOfFrame();
             for (_frame = 0; _frame < seconds * 30; _frame++)
             {
-                if (_frame >= nextShot && session.Ready && step < solution.Steps.Count)
+                if (_firstShotHoldFrames > 0 && step == 1 && firstSettled < 0 && session.Idle)
+                {
+                    if (session.Remaining != session.Level.Arrows.Count - 1 || session.Lives != session.Config.Lives)
+                        throw new InvalidOperationException("The isolated first shot did not complete cleanly.");
+                    firstSettled = _frame;
+                    Events.Add(_frame + "," + (_frame / 30f).ToString("F3", System.Globalization.CultureInfo.InvariantCulture) +
+                        ",first_settled," + solution.Steps[0] + "," + session.Remaining + "," + session.Lives);
+                    nextShot = Mathf.Max(nextShot, firstSettled + 30);
+                }
+                bool firstShotFinished = _firstShotHoldFrames == 0 || step != 1 || (firstSettled >= 0 && session.Idle);
+                if (_frame >= nextShot && session.Ready && firstShotFinished && step < solution.Steps.Count)
                 {
                     int action = solution.Steps[step++];
                     if (action < 0) session.Rotate(1); else session.Fire(action);
                     Events.Add(_frame + "," + (_frame / 30f).ToString("F3", System.Globalization.CultureInfo.InvariantCulture) + "," +
                         (action < 0 ? "rotate" : "fire") + "," + action + "," + session.Remaining + "," + session.Lives);
-                    nextShot = _frame + cadence;
+                    nextShot = _frame + (step == 1 && _firstShotHoldFrames > 0 ? _firstShotHoldFrames : cadence);
                 }
                 yield return endFrame;
                 var texture = ScreenCapture.CaptureScreenshotAsTexture();
@@ -135,7 +155,8 @@ namespace ArrowSwarm.Marketing.Editor
             File.WriteAllText(_folder + "/provenance.json", JsonUtility.ToJson(new Provenance
             { scene = SceneManager.GetActiveScene().path, level = level, mode = mode, frames = _frame,
                 width = Screen.width, height = Screen.height, fps = 30, arrows = session.Level.Arrows.Count,
-                remaining = session.Remaining, won = session.Won, levelAsset = AssetDatabase.GetAssetPath(session.Level) }, true));
+                remaining = session.Remaining, won = session.Won, levelAsset = AssetDatabase.GetAssetPath(session.Level),
+                language = _captureLanguage, firstShotHoldFrames = _firstShotHoldFrames, firstShotSettledFrame = firstSettled }, true));
             // Unload the temporary board before restoring transient launch state and user data.
             SceneManager.LoadScene("MainMenuScene"); yield return null;
             Status = "PASS: " + _folder;
@@ -143,8 +164,8 @@ namespace ArrowSwarm.Marketing.Editor
 
         [Serializable] private sealed class Provenance
         {
-            public string scene, mode, levelAsset;
-            public int level, frames, width, height, fps, arrows, remaining;
+            public string scene, mode, levelAsset, language;
+            public int level, frames, width, height, fps, arrows, remaining, firstShotHoldFrames, firstShotSettledFrame;
             public bool won;
         }
     }
