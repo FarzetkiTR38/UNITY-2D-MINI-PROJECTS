@@ -1,5 +1,7 @@
 # ArrowSwarm — güncel faz kontrol listesi
 
+**Güncel onay ve iş:** Kullanıcı pilotu onayladı; **12 → 16 → 21 → 5 → 29 → 39** Shapes Reels sırası yetkilendirildi. Önceki “diğer seviyeler onay bekliyor” notları tarihseldir. Tek devam listesi: [SHAPES_SERIES.md](05_Reels/SHAPES_SERIES.md). Gerçek iki HUD, yalnız A/bekleme/kalan çözüm ve düzeltilmiş ortak mock mağaza kapanışı korunacak.
+
 **Son küçük düzeltme:** R3 CTA sesinin “Play Store’dan” telaffuzu fonetik Türkçe girdiyle yenilendi. Yalnız ses değişti; videoların görüntü akışı bit olarak aynı. Güncel video aynı R3 yolunda, `PRONUNCIATION_QA.json` kanıtı ekli. Diğer kurgu/görseller ve mock bağlantı korunuyor.
 
 **14 Kasım · R3 tanıtım kapanışı hazır:** Kullanıcı yalnız son kısmı revize etti. Tebrik bitişi33,52s korunuyor;33,7s sonrası mevcut logo/nativebuton/PlayNowbasma animasyonu/indirme çağrısı,toplam40s. **Mağaza henüz yok; kullanıcı açıkça mock istedi.** [Güncel MP4](05_Reels/ReferencePilot02_R3_20261114/ArrowSwarm_Shapes2_R3_Promo_TR.mp4), [önizleme](05_Reels/ReferencePilot02_R3_20261114/index.html), [güncel kontrol listesi](05_Reels/OUTRO_REVISION.md). Ortak kapanış `05_Reels/SharedOutro01/`; sonraki onaylı videolarda yeniden kullanılacak. Diğer seviyeler henüz üretilmedi.
