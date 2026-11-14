@@ -1,5 +1,7 @@
 # ArrowSwarm — güncel faz kontrol listesi
 
+**Son dar revize:** Kullanıcının duyduğu "biley" başlangıcı, "piley" için yalnız45ms'lik P sesiyle düzeltildi. Altı seri videosu, penguen pilotu ve ortak kapanış güncel. Görüntü akışları bit olarak aynı; zamanlama ve diğer konuşma korunuyor. `SharedOutro01/P_PRONUNCIATION_QA.json` sekiz çıktının decode/hash/ses kanıtını tutuyor. Galeri ve toplu ZIP güncellendi.
+
 **Güncel teslim:** Kullanıcının onayladığı **12 → 16 → 21 → 5 → 29 → 39** Shapes Reels serisi tamamlandı. [Altı videolu galeri](05_Reels/ShapesSeries_20261114/index.html), [çıktı listesi/kanıtlar](05_Reels/ShapesSeries_20261114/README.md), [tek devam listesi](05_Reels/SHAPES_SERIES.md). Gerçek iki HUD, yalnız A/bekleme/kalan çözüm ve düzeltilmiş ortak mock mağaza kapanışı korundu.255doğruatış,5400nativekare,6üçyıldızlıgerçekkazanma; altı MP4 tam decode/ses/kurgu kontrolünden geçti.1280×900/390×844 galeri ve gerçek oynatma/seek kontrolleri tamam. Özel ilerleme,10öncedenaçıkdosya veGameScene geri yüklendi. Önceki pilot onay/erişim notları tarihseldir; sıradaki adım bu altı videonun kullanıcı incelemesidir.
 
 **Son küçük düzeltme:** R3 CTA sesinin “Play Store’dan” telaffuzu fonetik Türkçe girdiyle yenilendi. Yalnız ses değişti; videoların görüntü akışı bit olarak aynı. Güncel video aynı R3 yolunda, `PRONUNCIATION_QA.json` kanıtı ekli. Diğer kurgu/görseller ve mock bağlantı korunuyor.

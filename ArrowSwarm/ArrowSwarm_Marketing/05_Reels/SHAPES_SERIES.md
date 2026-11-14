@@ -2,6 +2,8 @@
 
 Latest authorization: 14 November 2026. The user approved the revised pilot and requested **12 → 16 → 21 → 5 → 29 → 39**. This supersedes the pilot's old approval-wait notes. No numbered game UI board is being changed.
 
+Completed follow-up: user requested a clearer P in "piley". A45ms consonant-only correction was applied to all six reels, the penguin pilot and common outro. Every compressed video stream is unchanged; all other decoded soundtrack samples are unchanged before AAC re-encoding. All outputs decode, frame counts/timing remain, hashes and ZIP are refreshed. Shared `P_PRONUNCIATION_QA.json` records the exact windows and checks. The mock store and displayed text remain unchanged.
+
 ## Continuing checklist
 
 - [x] Read project rules, architecture and rollout boundaries; snapshot existing dirty-file hashes outside Git.

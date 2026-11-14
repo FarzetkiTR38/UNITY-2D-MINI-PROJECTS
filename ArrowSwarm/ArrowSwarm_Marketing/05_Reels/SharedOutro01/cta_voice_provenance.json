@@ -22,8 +22,27 @@
   "trimStartSeconds": 0.25,
   "trimEndSeconds": 0.858,
   "samplePeakDbFS": -4.125382935904394,
-  "sha256": "bbfed9553a02946a65274d77a757cd50c9f1b021820f1d94c73b9e7ed0b68bbf",
+  "sha256": "3cffc7f86966e7eb7c4c6e7b0524ea7a2ed59c9c013ad2305cfe0adc857e4c23",
   "synthesisText": "Oynamak için, piley sıtordan indirin!",
-  "pronunciationRevision": "Turkish phonetic spelling prevents English Store plus Turkish suffix from being merged incorrectly.",
-  "subjectiveListeningClaimed": false
+  "pronunciationRevision": "P onset revised with isolated Pi-ley release/aspiration; original sentence preserved outside45ms.",
+  "subjectiveListeningClaimed": false,
+  "onsetPatch": {
+    "method": "45ms aspirated P onset from isolated Pi-ley; other original phonemes preserved",
+    "sourceText": "Pi-ley.",
+    "targetVoiceWindow": [
+      1.015,
+      1.06
+    ],
+    "donorVoiceWindow": [
+      0.04,
+      0.085
+    ],
+    "donorGainDb": 14,
+    "crossfadeMs": 4,
+    "durationSeconds": 2.3,
+    "newVoiceSha256": "3cffc7f86966e7eb7c4c6e7b0524ea7a2ed59c9c013ad2305cfe0adc857e4c23",
+    "baseVoiceSha256": "bbfed9553a02946a65274d77a757cd50c9f1b021820f1d94c73b9e7ed0b68bbf",
+    "voicePcmOutsidePatchUnchanged": true,
+    "subjectiveListeningClaimed": false
+  }
 }

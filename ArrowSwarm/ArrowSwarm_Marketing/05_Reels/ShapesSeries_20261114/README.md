@@ -1,6 +1,8 @@
 # Arrow Swarm · Şekiller Reels serisi
 
-14Kasım2026. Onaylanan pilotun devamı; istenen sıra korunmuştur. [Galeriyi aç](index.html). Her video1080×1920/30fps, Türkçe anlatımlı, yaklaşık41s; altı finalin toplamı20.054.928bayttır (yaklaşık20MB).
+14Kasım2026. Onaylanan pilotun devamı; istenen sıra korunmuştur. [Galeriyi aç](index.html). Her video1080×1920/30fps, Türkçe anlatımlı, yaklaşık41s; altı finalin toplamı yaklaşık20MB'dır.
+
+Son küçük revize: "piley" başlangıcının45ms'lik P sesi netleştirildi. Yedi güncel Reels ve ortak kapanışta uygulandı; görüntü paketleri, süreler ve diğer konuşma korundu. Seri `P_PRONUNCIATION_QA.json` sekiz çıktıdaki hash/decode ve dar ses düzenlemesini kaydeder. ZIP güncel dosyaları içerir.
 
 |Sıra|Bölüm / şekil|Ok|MP4|Altyazı|
 |---|---|---:|---|---|
