@@ -1,5 +1,7 @@
 # ArrowSwarm — güncel faz kontrol listesi
 
+**14 Kasım 2026 · Yeni aktif iş:** Kullanıcının iki Instagram referansına göre yalnız **Shapes 2 için yeni bir Reels pilotu**. [Devam listesi](05_Reels/REFERENCE_REEL_PILOT.md), [kalıcı referans arşivi](References/Videos/README.md). Bu yeni örnek onaylanmadan 12,16,21,5,29,39 seviyelerine geçilmeyecek. Aşağıdaki 13 Kasım faz dökümü tarihsel durumdur; ilk pilotun onay şartının o gün kaldırılması bu yeni açık onay sınırını geçersiz kılmaz.
+
 **13 Kasım 2026 · Son talimat: ikon ve Reels beğenilmedi; revizeler sona bırakılarak fazlara devam ediliyor.** İlk örnek onayı beklenmiyor. Teknik dosya doğrulaması, yaratıcı tasarım onayı anlamına gelmez.
 
 ## Faz durumu
