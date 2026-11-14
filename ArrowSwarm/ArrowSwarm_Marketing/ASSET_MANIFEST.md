@@ -1,5 +1,7 @@
 # Güncel yayın çalışma dosyaları
 
+**14 Kasım ek paketi:** Yeni [Shapes2 pilot manifest'i](05_Reels/ReferencePilot02_20261114/file_manifest.json) ve [ham Türkçe kayıt manifest'i](04_Raw_Gameplay/Shapes_L2_20261114_101115_693/frame_manifest.json) ayrı tutulur. İki Instagram referansı `References/Videos/` içindedir. Aşağıdaki tablo ve `launch_file_manifest.json` 13 Kasım çalışma paketinin tarihsel envanteridir; yeni pilotu içerdiği varsayılmamalı.
+
 13 Kasım2026. Gerçek dosyalar ve boyutlar aşağıdadır. Bunlar finalyayın/yaratıcıonay anlamına gelmez. Ham630JPEGyereldekalır; özeloyuncuyedekleri dışarıdadır. Eski ilkpilothashlistesi ve ZIP tarihselarşivdir; güncel makineenvanteri Final_Deliverables/launch_file_manifest.json dosyasıdır.
 
 | Dosya | Bayt | Ölçü |
