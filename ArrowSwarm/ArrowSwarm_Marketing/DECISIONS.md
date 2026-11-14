@@ -1,5 +1,15 @@
 # Üretim kararları
 
+## 14 Kasım · güncel R2 kuralları
+
+- Reels, tam native oyun sahnesinden düzenlenir; TopHUD/BottomHUD kaldırılmaz, maskelenmez, yeniden çizilmez veya zoom ile kadraj dışına itilmez.
+- Sorunun cevabı açıklandıktan sonra önce yalnız o ok ateşlenir. `PuzzleSession.Idle` ile uçuşun bittiği doğrulanır; bekleme ve kalan-ok anlatımı sonrası diğer oklar gönderilir. `Ready`, Shapes'te eşzamanlı atışa izin verdiği için bu amaçla yeterli değildir.
+- Açılış doğal bir tam cümledir; bitişte kullanıcıyı tebrik eden cümle kullanılır. Native sonuç ve HUD'lar ekranda kalır.
+- Yeni Türkçe gerçek kaynak kullanıldı; 1,5× çözüm bölümü editoryal olarak etiketlendi. Önceki kayıtlara ait aşağıdaki “hızlandırma yok”/dil/tarayıcı sınırlamaları tarihsel sürüm bilgisi olarak okunur.
+- Genel yön beğenilmiş olsa da güncel R2'nin onayı gelmeden yeni seviyeler üretilmez. İki yeni referansın bağlantı/kare arşivi kalıcıdır; özgün InstagramMP4'lerinin indirildiği iddia edilmez.
+
+## Önceki kararlar
+
 - **Gerçek üç mod:** Defense,Shapes,Color Shift. Classic adı kaynakta yok;fazladan mod veya özellik reklamı yapılmaz.
 - **İlk konsept:** penguen biçimliShapes2. İlk2.5s gerçek42oklu tahta ve önce hangiok sorusu;ardından gerçek üretim aksiyonları. Aynı kaydın iki dili iki ayrı yaratıcı konsept sayılmaz.
 - **Doğruluk:** Solver otomasyonuyla gerçek oyun render'ı kaydedildi. Bu bir insanın dokunma kaydı değil. Yapay oyun sahnesi,AIframe,sonradan çizilen hareket veya oynanış hızlandırması yok.

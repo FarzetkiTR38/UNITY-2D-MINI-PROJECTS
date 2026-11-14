@@ -1,5 +1,7 @@
 # ArrowSwarm — yayın ve büyüme çalışma paketi
 
+**Güncel R2:** [Tam oyun sahnesi / HUD'lar korunmuş37s Türkçe MP4](05_Reels/ReferencePilot02_R2_20261114/ArrowSwarm_Shapes2_R2_FullScene_TR.mp4), [izleme sayfası](05_Reels/ReferencePilot02_R2_20261114/index.html), [devam/onay listesi](05_Reels/REFERENCE_REEL_R2.md). Önceki28s sürüm korunur. NativeA atışı tamamen biter; bekleme/anlatım sonrası kalan oklar gelir. Sonraki seviyeler için bu revizyonun değerlendirmesi bekleniyor.
+
 **14 Kasım · Yeni Reels pilotu:** [Shapes 2 / 28 s / Türkçe MP4](05_Reels/ReferencePilot02_20261114/ArrowSwarm_Shapes2_ReferencePilot_TR.mp4), [izleme sayfası](05_Reels/ReferencePilot02_20261114/index.html), [kontrol listesi ve devam noktası](05_Reels/REFERENCE_REEL_PILOT.md). İki yeni Instagram örneği görsel olarak incelendi; gerçek yeni Türkçe Unity kaydı kullanıldı. Bu yeni kurgu kullanıcı onayını bekliyor. Diğer istenen seviyeler henüz üretilmedi. Aşağıdaki 13 Kasım paketleri tarihsel sürümdür ve bu yeni MP4'ü içermez.
 
 13 Kasım2026. İkonlar ve ilkReels kullanıcı tarafından beğenilmedi; görsel revizyonlar son aşamaya bırakılarak fazlara devam edildi. Aşağıdakiler gerçek dosyalardır; tam global yayın projesi bitmiş değildir.

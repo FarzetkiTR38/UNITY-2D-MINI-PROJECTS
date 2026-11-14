@@ -1,5 +1,7 @@
 # Referans Reels · Shapes 2 · 14 Kasım 2026
 
+**Güncel revizyon R2:** Kullanıcı genel yönü beğendi; HUD'ların korunması, yalnız A sonrası bekleme ve iki anlatım cümlesi revize edildi. Güncel teslim/devam listesi [REFERENCE_REEL_R2.md](REFERENCE_REEL_R2.md). Aşağıdaki28s ilk referans pilotu tarihsel sürümdür.
+
 ## Aktif kapsam ve onay sınırı
 
 Kullanıcının yeni isteği, iki Instagram örneğine benzer **tek bir Shapes 2 Reels** hazırlamak. Önceki ilk pilot beğenilmedi ve korunuyor. Bu yeni örnek onaylanmadan diğer bölümler üretilmeyecek. Sonraki istenen sıra: **12, 16, 21, 5, 29, 39**; ardından diğer modlar ayrı değerlendirilecek. Genel pazarlama fazlarının tamamlandığı iddia edilmiyor.

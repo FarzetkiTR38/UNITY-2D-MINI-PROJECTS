@@ -1,5 +1,7 @@
 # ArrowSwarm — güncel faz kontrol listesi
 
+**14 Kasım · R2 hazır, değerlendirme bekleniyor:** Kullanıcının dört revizesi tamamlandı. Tam native oyun sahnesi ve iki HUD, yalnız A → tamamen bitiş → bekleme/anlatım → kalan41ok; yeni açılış/tebrik. **37s,1080×1920,2,9MB.** [Güncel MP4](05_Reels/ReferencePilot02_R2_20261114/ArrowSwarm_Shapes2_R2_FullScene_TR.mp4), [önizleme](05_Reels/ReferencePilot02_R2_20261114/index.html), [R2 kontrol listesi/devam noktası](05_Reels/REFERENCE_REEL_R2.md). Diğer seviyeler için R2 onayı bekleniyor. Aşağıdaki28s sürüm ve13Kasım fazları tarihsel kayıttır.
+
 **14 Kasım 2026 · Yeni pilot hazır, kullanıcı onayı bekleniyor:** İki Instagram referansına göre yalnız **Shapes 2 için 28 saniyelik Türkçe Reels** tamamlandı. Yeni gerçek Unity kaydı, 42 atış/üç yıldız, yakın plan/A-B-C/geri sayım ve özgün ses montajı. [MP4](05_Reels/ReferencePilot02_20261114/ArrowSwarm_Shapes2_ReferencePilot_TR.mp4), [önizleme](05_Reels/ReferencePilot02_20261114/index.html), [kontrol listesi](05_Reels/REFERENCE_REEL_PILOT.md), [referans arşivi](References/Videos/README.md). Bu yeni örnek onaylanmadan 12,16,21,5,29,39 seviyelerine geçilmeyecek. Aşağıdaki 13 Kasım faz dökümü tarihsel durumdur; ilk pilotun onay şartının o gün kaldırılması bu yeni açık onay sınırını geçersiz kılmaz.
 
 **13 Kasım 2026 · Son talimat: ikon ve Reels beğenilmedi; revizeler sona bırakılarak fazlara devam ediliyor.** İlk örnek onayı beklenmiyor. Teknik dosya doğrulaması, yaratıcı tasarım onayı anlamına gelmez.
@@ -33,6 +35,8 @@
 - [ ] FizikselAndroid/releaseAAB/Console/consent/networktestleri ve gerçek sonuçlarla launchgates.
 
 ## Kesin sonraki teknik adım
+
+**R2 güncel önceliği:** `05_Reels/REFERENCE_REEL_R2.md` üzerinden yeni37s videonun kullanıcı revizesini/onayını bekle. Onay gelmeden başka seviyeye kayıt alma. NativeHUD koruma ve tek-cevap-atışı/bekleme akışı sonraki videolarda da uygulanacak.
 
 **Güncel öncelik:** Yeni Shapes 2 pilotunun onayını/revizesini bekle. Sonraki seviyeleri henüz üretme. 14 Kasım'da Unity yeniden bağlandı, Türkçe Shapes2 kaydı alındı ve Edit GameScene/özel durum geri getirildi. Aşağıdaki erişim notu 13 Kasım durumunu anlatır; Defense/ColorShift ham kayıtları ve genel pazarlama fazları hâlâ açık işlerdir.
 

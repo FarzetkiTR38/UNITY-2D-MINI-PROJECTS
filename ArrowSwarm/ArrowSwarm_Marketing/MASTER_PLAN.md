@@ -1,5 +1,7 @@
 # ArrowSwarm yayın ve büyüme — ana yol haritası
 
+**14 Kasım güncel yönlendirme:** İki Instagram referansına göre tek Shapes2Reels ve sonrasında R2 revizyonu üretildi. Şimdi [R2 kontrol listesi](05_Reels/REFERENCE_REEL_R2.md) geçerli; kullanıcı değerlendirmesi gelmeden12/16/21/5/29/39'a geçilmeyecek. Aşağıdaki13Kasım kararı tarihsel/genel faz kapsamıdır.
+
 Son kullanıcı kararı: mevcut ikon/Reels beğenilmedi; fazlar sürsün, görsel revizyonlar en son yapılsın. Önceki ilkörnek onayı bekleme kapısı kaldırıldı.
 
 Tek güncel kontrol listesi: [PROGRESS.md](PROGRESS.md). Faz sırası0→1→2→3→4→5→6→7→8→9korunur. Bir aşama dış erişime bağlıysa bu eksik açıkça yazılarak bağımsız hazırlık işleri sürdürülebilir; sıradaki dosyaların üretilmesi önceki aşamanın tamamlandığı anlamına gelmez.

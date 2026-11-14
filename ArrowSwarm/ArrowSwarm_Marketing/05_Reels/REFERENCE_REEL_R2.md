@@ -8,12 +8,16 @@ Kullanıcı önceki kurgunun genel yönünü beğendi; dört revize istedi. Diğ
 - [x] Editor-only kayıt aracı derlendi ve gerçek kayıtta doğrulandı. `Idle` kontrolü, en az bir saniye durgun bekleme ve `first_settled` olayı var; varsayılan eski kayıt akışı korunuyor.
 - [x] Yeni 28 saniyelik Türkçe kayıt: `Shapes_L2_20261114_105432_122`. A f75'te atıldı, f97'de bitti; sonraki ok f225'e kadar bekledi. 42 atış/3 can/gerçek kazanma; 840 kare, hashli kaynak ve ham MP4. İki HUD sahnenin kendi düzeninde, sahne/prefab değiştirilmedi.
 - [x] Stop/Recover sonrası başlangıç GameScene Edit durumu, tercihler/sağlayıcılar/tema/dil/zamanlama geri getirildi. Önceden değişmiş 10 dosya bayt olarak aynı.
-- [ ] R2 kurguyu `ReferencePilot02_R2_20261114/` altında üret. Tam 1080×1920 kaynak; HUD maskesi, tüm kareyi kırpan yakınlaşma veya HUD yerine çizilen grafik olmasın.
-- [ ] Açılış: “Bu penguen 42 oktan oluşuyor.” Cevap A'dan sonra yalnız A çıksın. “Şimdi geriye kalan okları yollayalım” tamamlanınca diğer atışlar başlasın.
-- [ ] Kazanma: “Tebrikler! 42 oktan oluşan penguen bölümünü başarıyla geçtin!” Native sonuç ve HUD'lar ekranda kalsın.
-- [ ] Kaynak olayları, A'nın bitişi, bekleme, ses eşleşmesi, tam decode, HUD piksel alanları ve gerçek tarayıcı oynatımını doğrula. Özel oyuncu durumunu geri getir.
-- [ ] Tamamlanan aşamaları ayrı commitlere al; yeni MP4/önizlemeyi kullanıcı değerlendirmesine gönder.
+- [x] R2 üretildi: 37 s / 1080×1920 / 30fps / 2.913.353 bayt. Tam kaynak kare; iki HUD bandı tüm 1110 montaj karesinde kaynakla birebir. HUD maskesi, tüm kareye zoom/kırpma ve sahne yerine konulan bitiş ekranı yok.
+- [x] Yeni açılış var. Yalnız A 10,200 s'de ateşleniyor, 10,933 s'de tamamen bitiyor. Kalan-ok anlatımı 12,800–14,800; diğer oklar ancak 15,200'de başlıyor. Sayaç bekleme boyunca 1/42.
+- [x] Uzun tebrik cümlesi 28,800–33,520 aralığında. Native Türkçe kazanma paneli ve HUD'lar sonuna kadar görünür.
+- [x] Tam MP4 decode1110 kare; 42 olay/ses eşleşmesi; -17,46 LUFS / -2,02 dBTP. Gerçek tarayıcıda37s sona kadar oynatım,12,5s atlama,390×844 telefon görünümü ve taşma kontrolleri geçti. Bağımsız görsel kontrol actualencoded12,5s karesinde iki HUD/1/42/sabit diğer okları doğruladı.
+- [x] Önizlemenin native video kontrol çubuğu, duraklatılmış karede BottomHUD'ı örttüğü için kaldırıldı; erişilebilir Play/Pause/bölüm-atlama düğmeleri korunuyor. Güncel ekran kanıtları kaydedildi.
+- [x] Tamamlanan kayıt/ses/montaj aşamaları ayrı commitlere alındı. Yeni MP4/önizleme kullanıcı değerlendirmesine hazır.
+- [ ] Kullanıcı R2'yi onayladı; sonraki seviyelere başlanabilir. **Henüz onay gelmedi.**
 
 ## Kesin sonraki adım
 
-Kayıt aracı değişikliğini Unity MCP ile derle; temiz Edit durumunda `Arm()` → MainMenu Play → `Begin(2,"Shapes",28,150,"tr")` çalıştır. Bittiğinde Stop/Recover ve özgün Edit sahnesine dön. Sonra olay dosyasından gerçek zamanlarla tam sahne R2 montajını kur. Diğer seviyelere bu revizyon onaylanmadan geçme.
+[R2 MP4](ReferencePilot02_R2_20261114/ArrowSwarm_Shapes2_R2_FullScene_TR.mp4) / [yerel inceleme sayfası](ReferencePilot02_R2_20261114/index.html) için kullanıcı değerlendirmesini bekle. Sunucu: `py ArrowSwarm_Marketing/Tools/serve_reel_review.py --revision r2 --port 8192`. Eski pilot ayrı klasörde duruyor; `--revision original` ile de açılır. Onaydan sonra sıradaki bölüm Shapes12, ardından16/21/5/29/39. İlerideki tüm Reelslerde native TopHUD/BottomHUD korunacak; soru cevabı önce tek atış, tamamlanma ve anlatım sonrası kalan çözüm olacak.
+
+Commitler: `efd93df7` kayıt aracı + yeni gerçek kaynak; `6b0b89c8` ses revizyonu/yeniden kullanım; `3aab7a20` testli tam-sahne MP4 ve önizleme. Devam/onay notları ayrıca teslim commitine alınır.
