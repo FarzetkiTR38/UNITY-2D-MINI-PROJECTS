@@ -169,18 +169,55 @@
 
 ## 5. Performans & Mobil (Android Portrait)
 
-- [ ] **5.1. Event Abonelikleri ve Bellek Sızıntısı (Event Leak) Denetimi**
-  - `OnEnable` / `Awake` / `Start` içinde abone olunan (`+=`) C# static event ve UnityEvent'lerin `OnDisable` / `OnDestroy` içinde eksiksiz olarak ayrıldığının (`-=`) kontrolü.
-- [ ] **5.2. Mobil Güvenli Alan (Safe Area) ve Çözünürlük Ölçekleme (Android Portrait 1080x1920) Denetimi**
-  - `SafeAreaPanelFit`, `ReferenceCanvasFit`, `CanvasScaler` ayarları ve farklı dikey mobil en-boy oranlarında (1080x1920, 1080x2400 vb.) UI yerleşim/ölçekleme uyumluluğunun incelenmesi.
+- [x] **5.1. Event Abonelikleri ve Bellek Sızıntısı (Event Leak) Denetimi**
+  - **Durum:** ÇOĞUNLUKLA GÜVENLİ (182 runtime scriptinin tamamında `+=` ve `-=` eşleşmeleri incelendi; `MainMenuUI` üzerinde 1 adet lambda `RemoveListener` uyumsuzluğu tespit edildi).
+  - **Bulgular:**
+    - **Genel Event Hijyeni:** `AudioManager`, `HapticManager`, `GameHUD`, `PuzzleHUD`, `OverlayManager`, `SettingsUI`, `LeaderboardUI`, `LevelSelectUI`, `TipManager`, `TipHighlighter`, `MobSpawner`, `ArrowSpawner` (`ClearAllArrows` + `OnDestroy`), `LevelManager` (`CleanupLevel` + `OnDestroy`), `ThemedUIElement`, `LocalizedText`, `SafeAreaPanelFit` ve `ReferenceCanvasFit` sınıflarının tamamı abone oldukları statik event'lerden (`+=`) `OnDisable` veya `OnDestroy` içinde eksiksiz olarak çıkıyor (`-=`).
+    - **Bulgu 5.1.A (`MainMenuUI.SetupButtons()` Anonim Lambda vs. `OnDestroy()` `RemoveListener` Uyumsuzluğu — Orta Önem):**
+      - `Assets/_Project/Scripts/UI/MainMenuUI.cs:221, 227, 233, 239` satırlarında `_playButton`, `_leaderboardButton`, `_levelsButton` ve `_settingsButton` için `onClick.AddListener(() => { AudioManager.Instance?.PlayButtonClick(); OnPlayClicked(); })` şeklinde **anonim lambda** ifadeleri kaydediliyor; ancak `OnDestroy()` (`MainMenuUI.cs:445-448`) içinde `_playButton?.onClick.RemoveListener(OnPlayClicked)` gibi adlandırılmış metot referansları çağrılıyor. C#/UnityEvent'te `RemoveListener(OnPlayClicked)` anonim lambda delegate'ini **kaldırmaz**. Ayrıca `WireExitButtons()` (`MainMenuUI.cs:272-282`) alt panellerdeki child butonlara `BackToMain` eklerken `OnDestroy()` (satır `450-454`) yalnızca `_exitButtons` dizisini temizliyor.
+    - **Bulgu 5.1.B (`ArrowSpawner` ve `LevelManager` Yaşam Döngüsü Notu — Düşük Önem):** `ArrowSpawner.SpawnArrows()` (`ArrowSpawner.cs:145-146`) ve `LevelManager.LoadLevel()` (`LevelManager.cs:159-160`) statik event aboneliklerini `OnEnable` yerine seviye başlatma metotlarında yapıyor (`OnDestroy` içinde `ClearAllArrows()` / `CleanupLevel()` ile temizleniyor, ancak bileşen `Destroy` edilmeden `SetActive(false)` yapılırsa abonelik aktif kalır).
+
+- [x] **5.2. Mobil Güvenli Alan (Safe Area) ve Çözünürlük Ölçekleme (Android Portrait 1080x1920) Denetimi**
+  - **Durum:** KISMİ UYGUNLUK / İYİLEŞTİRME GEREKLİ (`SafeAreaPanelFit` ve `ReferenceCanvasFit` mevcut, ancak `CanvasScaler.matchWidthOrHeight = 0` ve oynanış sahnelerindeki `Canvas_HUD` üst/alt barlarında Safe Area bileşeni eksik).
+  - **Bulgular:**
+    - **Referans Çözünürlük (`1080x1920` Portrait):** Tüm sahnelerdeki (`BootScene`, `MainMenuScene`, `GameScene`, `ShapesScene`, `ColorShiftScene`) `CanvasScaler` bileşenleri `ScaleWithScreenSize` (`m_UiScaleMode: 1`) ve `1080x1920` referans çözünürlüğüne ayarlı (`Canvas_SceneTransition` hariç tümünde `matchWidthOrHeight = 0`).
+    - **Sahne Bazlı Safe Area Kapsaması:**
+      - `BootScene`: `ReferenceCanvasFit` (`BootDesign`) ile güvenli alana oturtuluyor.
+      - `MainMenuScene`: `ReferenceCanvasFit` (`MenuArt`) + **6 adet** `SafeAreaPanelFit` (`SafeAreaFit` x3, `LevelsSafeArea`, `ProfileSafeArea`, `ModeSafeFit`) ile tüm menü/alt paneller güvenli alan içinde ölçekleniyor.
+      - `GameScene`: **2 adet** `SafeAreaPanelFit` yalnızca `Canvas_Overlay` altındaki `TipPopupPanel/Ui08SafeArea` ve `FreezePopupPanel/Ui08SafeArea` üzerinde tanımlı.
+      - `ShapesScene` ve `ColorShiftScene`: **1'er adet** `SafeAreaPanelFit` (`Ui08SafeArea`) popup katmanında tanımlı.
+    - **Bulgu 5.2.A (`Canvas_HUD` Üst ve Alt Barlarında Safe Area Eksikliği — Orta/Yüksek Önem):** `GameScene` (`TopBar`, `BottomBar`), `ShapesScene` ve `ColorShiftScene` içerisindeki `Canvas_HUD` elemanlarında `SafeAreaPanelFit` veya `Screen.safeArea` tabanlı bir üst/alt inset bileşeni bulunmuyor (ayrıca `GameScene` içindeki `PausePanel`, `WinPanel`, `LosePanel` üzerinde de `SafeAreaPanelFit` yok). Çentikli (notch/punch-hole) modern Android telefonlarda (`1080x2400`, `20:9`) üst HUD barının kamera deliğiyle çakışma riski vardır.
+    - **Bulgu 5.2.B (`CanvasScaler` `matchWidthOrHeight = 0` Ayarı):** Tüm ana Canvas'larda `matchWidthOrHeight = 0` (sadece genişlik eşleştirme) kullanılmış. Geniş/kısa ekran oranlarında dikey taşmayı önlemek için `SafeAreaPanelFit` olmayan HUD/popup elemanlarında Safe Area koruması veya dengeli `matchWidthOrHeight` (`0.5f`) önerilir.
+
+---
+
+## 📊 GENEL DENETİM ÖZETİ VE ÖNCELİKLİ AKSİYON PLANI
+
+- **Genel Durum:** 5 kategorinin tamamındaki **16/16 madde** Unity MCP araçları (`read_console`, `run_tests`, `manage_scene`, `execute_code`) ve kaynak kod incelemesiyle tamamlandı.
+- **Derleme & Oynanabilirlik Sağlığı:** **0** derleme hatası, **0** Missing Script / Broken Reference, Defense örnek seviyeleri (`1..100`), `ShapesCatalog` (50/50) ve `ColorShiftCatalog` (50/50) **%100 çözülebilir**, tüm UI metinleri **%100 TextMeshPro** (`0` Legacy Text).
+- **Öncelikli İyileştirme Önerileri (Önerilen Sıra):**
+  1. **[Yüksek Öncelik — Yaşam Döngüsü / Performans / Doğru Çalışma]:**
+     - `LevelManager.InitializeSystems()` + `ArrowSpawner`/`MobSpawner.InitializePool()`: Her seviye yüklemesinde mevcut `ObjectPool<T>` yapısını `Clear()` ile yok edip 40 nesneyi yeniden `Instantiate` etmek yerine havuzu bir kez kurup seviyeler arası `Release` ile yeniden kullanmak (`2.4.A`); `GridVisualizer` ve `PathVisualizer` nokta/portal objelerini havuzlamak (`2.4.B`).
+     - `LevelManager.LoadLevel()` / `TutorialManager.HandleLevelReady()`: Level 1 açılışında `StartTutorial()` çağrısının iki kez tetiklenmesini önlemek (`2.3.C`).
+     - `FreezeManager.OnDestroy()`: `private void OnDestroy()` yerine `protected override void OnDestroy()` + `base.OnDestroy()` kullanmak (`2.2.A`).
+     - `GameScene`, `ShapesScene` ve `ColorShiftScene` `Canvas_HUD` (`TopBar`/`BottomBar`) ve `GameScene` overlay panellerine (`PausePanel`/`WinPanel`/`LosePanel`) Safe Area koruması eklemek (`5.2.A`).
+  2. **[Orta Öncelik — Release Hijyeni / GC / Mimari Tutarlılık]:**
+     - 12 runtime dosyasındaki korumasız `Debug.Log` çağrılarını (`LevelGenerator.cs:352` dahil) `[Conditional("UNITY_EDITOR")]` + `[ArrowSwarm]` standardına çekmek (`2.5.B`).
+     - `MobSpawner`, `ArrowVisuals`, `ParticleManager` gibi coroutine'lerdeki 20 adet cache'lenmemiş `WaitForSeconds` nesnesini ve `LeaderboardManager.Entries` / `SolvabilityTester.OnGUI` GC tahsislerini optimize etmek (`2.6.A-C`).
+     - `DifficultyCalculator.CalculateAll` (`0.60f` -> `GameConfig.WinabilityRatio`), `MobSpawner` (`1.0f` -> `GameConfig.MobSpawnDelay`, `9999`) ve `ArrowSpawner` (`20, 100`, `0.22f`) magic number'larını `GameConfig` ile hizalamak (`3.3`) ve atıl `WaveConfig` / `DifficultyReductionOnFail` kararını netleştirmek (`3.1.B`).
+     - `MainMenuUI.SetupButtons()` içindeki anonim lambda dinleyicilerini adlandırılmış metotlara dönüştürerek `OnDestroy` `RemoveListener` uyumsuzluğunu gidermek (`5.1.A`).
+  3. **[Düşük / Refaktör Önceliği — Kod Organizasyonu & Testler]:**
+     - 200 satırı aşan 28 runtime dosyasını (özellikle `LevelGenerator.cs` 2.803 satır, `ArrowVisuals.cs` 900 satır, `DataManager.cs` 503 satır) `partial class` / yardımcı sınıflara bölmek (`2.5.A`).
+     - Oyun nesnelerinden efekt singleton'larına / `GameManager`'a giden doğrudan `.Instance` çağrılarını C# static event dinleyicilerine taşımak (`2.3.A-B`) ve `Singleton<T>.ShouldPersist()` ayrımını eklemek (`2.2.B`).
+     - `HUDFeedbackEffects`, `SettingsUI`, `SettingsToggleUI` ve `TutorialManager` içindeki hardcoded UI renk atamalarını/tint ezmelerini Scene-First kuralına göre Inspector/stil yapılandırmasına çekmek (`4.3.A`).
+     - Mevcut Editor doğrulama akışlarına ek olarak çekirdek mantık (`DifficultyCalculator`, `SolvabilityChecker`, `PuzzleSolver`) için EditMode NUnit testleri eklemek (`1.2`).
 
 ---
 
 ## 📌 AKTİF DURUM VE SIRADAKİ ADIM
 
-- **Son Tamamlanan Adım:** **Kategori 4 — Madde 4.1, Madde 4.2 ve Madde 4.3** tamamlandı (Kategori 4 %100 bitti).
-  - **4.1:** Tüm sahne (370 TMP), prefab (139 TMP) ve runtime scriptlerde `0` adet Legacy `UnityEngine.UI.Text` (%100 TextMeshPro).
-  - **4.2:** Oynanış sahnelerinde `Canvas_HUD` (`order=0`) ve `Canvas_Overlay` (`order=10`) ayrımı tam; menü/popup geçişleri `CanvasGroup` + animasyon bitiminde `SetActive(false)` hibrit modeliyle çalışıyor (`GameHUD.SetBarsVisible()` gereksiz `SetActive` çağrısı içeriyor).
-  - **4.3:** Modern tema/buton bileşenleri (`ThemedUIElement`, `ModeButtonVisual`, `LevelButtonUI.States`) Scene-First kuralına tam uyumlu; yalnızca `HUDFeedbackEffects`, `SettingsUI`, `SettingsToggleUI` ve `TutorialManager` rich-text dizelerinde az sayıda hardcoded renk/white-tint ataması var.
-- **Sıradaki Adım (Bir Sonraki İnceleme):** **Kategori 5 — Performans & Mobil (Android Portrait)** altında **Madde 5.1 (Event Abonelikleri ve Bellek Sızıntısı / Event Leak Denetimi)** ve **Madde 5.2 (Mobil Güvenli Alan / Safe Area ve Çözünürlük Ölçekleme)** incelenerek tam denetim tamamlanacaktır.
-- **Kural Hatırlatması:** Kullanıcı onayı/talimatı olmadan hiçbir kod dosyası değiştirilmeyecek; her adımda yalnızca ilgili maddeler incelenip bu dosya güncellenecektir.
+- **Tamamlanma Durumu:** **TÜM KATEGORİLER TAMAMLANDI (16/16 Madde `%100` Denetlendi)** — Kategori 1 (`1.1`–`1.2`), Kategori 2 (`2.1`–`2.6`), Kategori 3 (`3.1`–`3.3`), Kategori 4 (`4.1`–`4.3`), Kategori 5 (`5.1`–`5.2`).
+- **Son Tamamlanan Adım:** **Kategori 5 — Madde 5.1 ve Madde 5.2** tamamlandı; genel denetim özeti ve öncelikli aksiyon planı eklendi.
+  - **5.1:** Statik event abonelik hijyeni güçlü (`ArrowSpawner` ve `LevelManager` `OnDestroy` temizliği mevcut); ancak `MainMenuUI.SetupButtons()` anonim lambda kayıtları `OnDestroy()` içindeki `RemoveListener(...)` ile eşleşmiyor.
+  - **5.2:** Tüm sahneler `1080x1920` `ScaleWithScreenSize` ayarlı ve `BootScene`/`MainMenuScene` üzerinde `ReferenceCanvasFit`/`SafeAreaPanelFit` mevcut; ancak `GameScene`, `ShapesScene` ve `ColorShiftScene` sahnelerindeki `Canvas_HUD` (`TopBar`/`BottomBar`) elemanlarında Safe Area koruması eksik.
+- **Sıradaki Adım:** Kod değişikliği fazına geçilmesi istendiğinde yukarıdaki **Öncelikli Aksiyon Planı** maddeleri (1. aşamadan başlayarak) sırayla uygulanacak ve her düzeltme Unity MCP ile doğrulanacaktır.
