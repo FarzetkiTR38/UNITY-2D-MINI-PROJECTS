@@ -8,10 +8,10 @@ Latest authorization: 14 November 2026. The user approved the revised pilot and 
 - [x] Confirm Unity is connected to ArrowSwarm, Edit GameScene clean, recorder unarmed.
 - [x] Export native screen geometry and production-rule quiz evidence; compile/check recorder. Editor-only geometry/win-event additions compile; native console has zero errors.
 - [x] Capture and verify level12 · kaplumbağa ·45 arrows.900nativeframes, three lives, exact solver witness, A settles at95 before second shot225.
-- [ ] Capture and verify level16 · ördek ·42 arrows.
-- [ ] Capture and verify level21 · ahtapot ·44 arrows.
-- [ ] Capture and verify level5 · roket ·40 arrows.
-- [ ] Capture and verify level29 · flamingo ·40 arrows.
+- [x] Capture and verify level16 · ördek ·42 arrows.900frames, zero remaining, three lives.
+- [x] Capture and verify level21 · ahtapot ·44 arrows.900frames, zero remaining, three lives.
+- [x] Capture and verify level5 · roket ·40 arrows.900frames, zero remaining, three lives.
+- [x] Capture and verify level29 · flamingo ·40 arrows.900frames, zero remaining, three lives.
 - [ ] Capture and verify level39 · ayçiçeği ·44 arrows.
 - [ ] Restore original Editor scene, private preferences/providers and capture settings; recheck dirty hashes.
 - [x] Generate twelve new shape/count narration lines and one shared explanation; reuse unchanged pilot clips.42WAVs pass48kHz monoPCM16/hash/no-clipping checks. Existing corrected CTA is unchanged.
@@ -26,4 +26,4 @@ Real1080×1920 Unity ShapesScene; both native HUDs remain. The question concerns
 
 ## Exact next action
 
-Level12 is captured and its first render is running. Level16 native capture is running. Next capture21,5,29,39 in order; inspect each episode's stills before rendering. New outputs: `ShapesSeries_20261114/Lxx/`. Reuse `SharedOutro01/ArrowSwarm_SharedOutro01_TR.mp4` without regenerating its pronunciation.
+Levels12/16/21 finals pass full decode, audio and HUD checks. Level5 was visually corrected for its tall board (one-line upper-gap captions, gutter markers);5/29 render now. Level39 native capture is running. Next verify39, restore Editor/private state, inspect/render39, then test all six in the gallery. New outputs: `ShapesSeries_20261114/Lxx/`. The existing shared outro is reused unchanged.
