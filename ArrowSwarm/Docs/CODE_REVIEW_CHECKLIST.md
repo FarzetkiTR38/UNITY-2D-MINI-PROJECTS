@@ -91,12 +91,46 @@
 
 ## 3. Oynanış & Procedural Seviye Mantığı
 
-- [ ] **3.1. `DifficultyCalculator` ve `LevelGenerator` Algoritma Tutarlılığı**
-  - `DifficultyCalculator`'ın saf (pure) statik fonksiyonlardan oluşup oluşmadığı, `LevelGenerator`'ın MonoBehaviour bağımlılığı olmadan seviye numarasından deterministik/tutarlı parametre ürettiğinin kontrolü.
-- [ ] **3.2. Çözülebilirlik Kontrolü (`SolvabilityChecker` & `PuzzleSolver`) Doğrulaması**
-  - Üretilen her seviyenin oynanabilir olmadan önce çözülebilirlik (solvability) ve kazanılabilirlik (winnability) kontrolünden eksiksiz geçtiğinin incelenmesi.
-- [ ] **3.3. Magic Number Denetimi (`GameConfig` ve `MapData` Uyumu)**
-  - Kod tabanında `GameConfig`, `MapData` veya `PuzzleConfig` ScriptableObject'leri dışına taşmış sabitlenmiş (hardcoded) magic number'ların tespiti.
+- [x] **3.1. `DifficultyCalculator` ve `LevelGenerator` Algoritma Tutarlılığı**
+  - **Durum:** ALGORİTMA ÇALIŞIYOR ANCAK DOKÜMANTASYON/FORMÜL SAPMALARI VE KULLANILMAYAN PARAMETRELER MEVCUT.
+  - **Bulgular:**
+    - **Saf Fonksiyon & MonoBehaviour Bağımsızlığı:** `DifficultyCalculator` (`Assets/_Project/Scripts/Core/DifficultyCalculator.cs`) tamamen `static` ve `MonoBehaviour` bağımlılığı olmayan saf matematiksel fonksiyonlardan oluşuyor (`GetDifficultyTier`, `GetArrowCount`, `GetOutwardChance`, `GetMobHP`, `GetMobSpeed`, `GetSpawnInterval`, `GetTotalMobs`, `GetMinWeight`, `GetMaxWeight`, `GetMapIndex`, `GetMapScaleFactor`, `GetMobSpeedForTransit`, `GetWaveConfig`, `CalculateAll`). `LevelGenerator` (`Assets/_Project/Scripts/Core/LevelGenerator.cs`) da `static` bir sınıf olup `MonoBehaviour` referansı barındırmıyor.
+    - **Bulgu 3.1.A (`LevelGenerator` Determinizm Eksikliği):** `LevelGenerator` içerisindeki rastgele yürüyüş ve aday seçimleri (`UnityEngine.Random.Range` / `Random.value`) seviye numarasına bağlı bir seed (`Random.InitState`) ile başlatılmadığı için aynı seviye numarası her çağrıda farklı bir ok dizilimi üretiyor.
+    - **Bulgu 3.1.B (Mimari Doküman `difficulty_formulas.md` / Yorumlar ile Kod Arasındaki Sapmalar):**
+      - **Harita Sayısı (12 vs. 5):** `difficulty_formulas.md:14`, `GameConfig.cs:123`, `MapData.cs:9, 41` ve `DifficultyCalculator.cs:361` (`LevelParams.MapIndex`) yorumlarında 5 harita (`0..4`, cyclic) yazmasına rağmen `GameConfig.asset` içinde **12 harita** (`Map 1`..`Map 12`) tanımlı ve `DifficultyCalculator.GetMapIndex()` (satır `182-209`) `0..11` aralığında indeks döndürüyor.
+      - **`GetArrowCount` Formülü:** `difficulty_formulas.md:19` içinde `min(gridWidth * gridHeight * 0.8, 15 + difficultyTier * 1.5)` yazarken, `DifficultyCalculator.GetArrowCount()` (satır `27-39`) `fillRatio = Mathf.Min(0.95f, 0.75f + (level * 0.02f))` ve `avgPointsPerArrow` üzerinden `Mathf.Max(5, maxArrows)` hesaplıyor.
+      - **`GetMinWeight` / `GetMaxWeight` ve `GetOutwardChance`:** `difficulty_formulas.md:29, 75-78` içinde tier tabanlı formüller (`0.65 -> 0.20` ve `min(5, 1 + floor(tier/20))`) tanımlıyken, kodda `GetOutwardChance` (satır `45-51`) `0.70f -> 0.25f` aralığını, `GetMinWeight`/`GetMaxWeight` (satır `112-167`) ise harita indeksine göre (`0..11`) sabit `switch` tablolarını (`MinWeight: 2..3`, `MaxWeight: 5..18`) kullanıyor.
+      - **Hesaplanıp Runtime'da Kullanılmayan Parametreler (`WaveConfig`, `MobSpeed`, `SpawnInterval`, `DifficultyReductionOnFail`):** `DifficultyCalculator.CalculateAll()` içinde `GetWaveConfig()` (satır `234-278`), `GetMobSpeed()` ve `GetSpawnInterval()` hesaplanıp `LevelParams` içine yazılmasına rağmen `MobSpawner.StartSpawning()` (`MobSpawner.cs:113-147, 199-225`) bu üç alanı hiç kullanmıyor; hızı `GetMobSpeedForTransit(totalPathLength, transitSeconds)` ile, spawn aralığını `_desiredSpacing / _baseMobSpeed` ile yeniden hesaplıyor ve mobları dalga yerine sonsuz akışta (`InfiniteContinuousSpawnRoutine`) üretiyor. Ayrıca `LevelGenerator.cs:66` satırında `float difficultyReduction = config.DifficultyReductionOnFail;` yerel değişkene okunup metodun hiçbir yerinde kullanılmıyor.
+
+- [x] **3.2. Çözülebilirlik Kontrolü (`SolvabilityChecker` & `PuzzleSolver`) Doğrulaması**
+  - **Durum:** GEÇTİ (%100 Çözülebilirlik Doğrulandı — Unity MCP üzerinden Canlı Simülasyon Koşuldu).
+  - **Bulgular:**
+    - **Defense Modu (`LevelGenerator.Generate` + `SolvabilityChecker.Check`):** Unity MCP (`execute_code`) üzerinden `GameConfig.asset` kullanılarak örnek seviyeler (`Level 0, 1, 2, 5, 10, 20, 35, 50, 75, 100`) canlı olarak üretildi ve denetlendi:
+      - Tüm normal seviyelerde (`1..100`) **%100 Grid Nokta Kapsaması** (`coveredPts == gridCap`: Lvl 1 `48/48`, Lvl 10 `80/80`, Lvl 20 `180/180`, Lvl 35 `375/375`, Lvl 50 `800/800`, Lvl 100 `1000/1000`),
+      - **0 Çakışma (`ValidateNoOverlaps == true`)**,
+      - **%100 Çözülebilirlik ve Kazanılabilirlik (`IsSolvable == true`, `IsWinnable == true`, `IsValid == true`)**,
+      - Üretim deneme sayısı `1` ile `8` arasında (`MaxRegenerateAttempts = 100` sınırının çok altında).
+    - **Puzzle Modları (`ShapesCatalog` & `ColorShiftCatalog` + `PuzzleSolver.Solve`):**
+      - `Assets/_Project/ScriptableObjects/Puzzles/ShapesCatalog.asset`: **50/50 seviye** `PuzzleSolver.Solve` testinden hatasız geçti (`failed = 0`).
+      - `Assets/_Project/ScriptableObjects/Puzzles/ColorShiftCatalog.asset`: **50/50 seviye** döndürme bütçesi dahilinde `PuzzleSolver.Solve` testinden hatasız geçti (`failed = 0`).
+    - **Bulgu 3.2.A (`GenerateSimpleGridPlacements` Son Çare Fallback Riski — Düşük Önem):** `LevelGenerator.cs:136-140` satırlarında 100 normal deneme + 5 fallback denemesi başarısız olursa çağrılan `GenerateSimpleGridPlacements(width, height)` metodu `x += 2` adımıyla ilerlediği için genişliği tek sayı olan haritalarda (örn. `15x25`, `25x40`) son sütunu boş bırakıyor ve `SolvabilityChecker.Check` çağrılmadan `result.IsValid = true` döndürüyor.
+
+- [x] **3.3. Magic Number Denetimi (`GameConfig`, `MapData` ve `PuzzleConfig` Uyumu)**
+  - **Durum:** İYİLEŞTİRME GEREKLİ (`GameConfig` / `PuzzleConfig` dışına taşmış hardcoded oynanış sabitleri tespit edildi).
+  - **Bulgular:**
+    - **Bulgu 3.3.A (`DifficultyCalculator.CalculateAll` İçinde Hardcoded Sabitler):** `Assets/_Project/Scripts/Core/DifficultyCalculator.cs:292-293` satırlarında `0.82f` (maksimum teorik hasar oranı) ve `0.60f` (`GameConfig.WinabilityRatio` yerine) sabit yazılmış; ayrıca `GetWaveConfig` (satır `276`) `WavePauseDuration = 1.5f` sabitini kullanıyor.
+    - **Bulgu 3.3.B (`LevelGenerator.cs` İçindeki Sabit Katsayılar):**
+      - Satır `39`: `public static float TargetUpperWeightRatio = 0.50f;`,
+      - Satır `70`: `Mathf.FloorToInt(maxGridCapacity * 0.82f)`,
+      - Satır `98`: `attempt < 4 ? (placements.Count > 60 ? 0.22f : 0.18f) : (attempt < 8 ? 0.28f : 0.35f)` (başlangıçta açık ok oranı eşikleri).
+    - **Bulgu 3.3.C (`MobSpawner.cs` İçindeki Sabitler ve `GameConfig` Uyumsuzlukları):**
+      - `Assets/_Project/Scripts/Mob/MobSpawner.cs:201`: `GameConfig.MobSpawnDelay` (`2.5f`) yerine sabit `yield return new WaitForSeconds(1.0f)` kullanılıyor.
+      - `Assets/_Project/Scripts/Mob/MobSpawner.cs:131-136`: Fallback yol uzunluğu `26f` ve mob dünya genişliği `0.8f * _mobScaleFactor` sabit.
+      - `Assets/_Project/Scripts/Mob/MobSpawner.cs:174`: `DestroyAllMobs()` içinde `TakeDamage(9999)` magic number kullanılıyor (oysa `GameConfig.RainbowArrowDamage = 999`).
+      - `Assets/_Project/Scripts/Mob/MobSpawner.cs:219-220`: Sonsuz mob döngüsünde `int groupIndex = _spawnedCount / 4; int mobHP = baseHP + (groupIndex * 2);` sabitleri hardcoded.
+    - **Bulgu 3.3.D (`ArrowSpawner` & `LevelManager` Sabitleri):**
+      - `Assets/_Project/Scripts/Arrow/ArrowSpawner.cs:83` ve `MobSpawner.cs:86`: Havuz kapasiteleri (`20, 100` ve `20, 150`) ve `ArrowSpawner.cs:124` dalga gecikmesi (`0.22f`) hardcoded (`PuzzleConfig` içinde `_poolSize = 96` ScriptableObject'ten okunurken Defense modunda sabit yazılmış).
+      - `Assets/_Project/Scripts/Core/LevelManager.cs:164` (`BlockInput(0.4f)`) ve `MainMenuUI.cs:432` (`BlockInput(0.5f)`) giriş kilitleme süreleri sabit.
 
 ---
 
@@ -122,8 +156,9 @@
 
 ## 📌 AKTİF DURUM VE SIRADAKİ ADIM
 
-- **Son Tamamlanan Adım:** **Kategori 2 — Madde 2.5 ve Madde 2.6** tamamlandı (Kategori 2 %100 bitti).
-  - **2.5:** 182 runtime scriptinin **28'i** 200 satır sınırını aşıyor (`LevelGenerator.cs` 2.803 satır, `ArrowVisuals.cs` 900 satır); ayrıca 12 runtime dosyasında `[Conditional("UNITY_EDITOR")]` korumasız `Debug.Log` çağrıları mevcut.
-  - **2.6:** `Update`/`LateUpdate` sıcak döngüleri GC açısından temiz; ancak `SolvabilityTester.OnGUI` satırında string interpolasyonu, `LeaderboardManager.Entries.cs` içinde `System.Linq` ve coroutine'lerde 20 adet cache'lenmemiş `new WaitForSeconds` tespit edildi.
-- **Sıradaki Adım (Bir Sonraki İnceleme):** **Kategori 3 — Oynanış & Procedural Seviye Mantığı** altında **Madde 3.1 (`DifficultyCalculator` ve `LevelGenerator` Algoritma Tutarlılığı)**, **Madde 3.2 (Çözülebilirlik Kontrolü `SolvabilityChecker` & `PuzzleSolver`)** ve **Madde 3.3 (Magic Number Denetimi)** incelenecektir.
+- **Son Tamamlanan Adım:** **Kategori 3 — Madde 3.1, Madde 3.2 ve Madde 3.3** tamamlandı (Kategori 3 %100 bitti).
+  - **3.1:** `DifficultyCalculator` ve `LevelGenerator` saf/statik yapıda; ancak `difficulty_formulas.md` ile kod arasında formül ve harita sayısı (`12` vs `5`) sapmaları mevcut, ayrıca `WaveConfig`/`MobSpeed`/`SpawnInterval` ve `DifficultyReductionOnFail` runtime'da kullanılmıyor.
+  - **3.2:** Unity MCP canlı simülasyonunda Defense modu örnek seviyeleri (`1..100`) %100 çözülebilir/kazanılabilir ve `0` çakışmalı; `ShapesCatalog` (50/50) ve `ColorShiftCatalog` (50/50) tamamen çözülebilir bulundu.
+  - **3.3:** `DifficultyCalculator`, `LevelGenerator`, `MobSpawner` ve `ArrowSpawner` içinde `GameConfig` dışına taşmış magic number'lar (`0.82f`, `0.60f`, `1.0f` delay, `9999`, havuz boyutları vb.) tespit edildi.
+- **Sıradaki Adım (Bir Sonraki İnceleme):** **Kategori 4 — UI & Görsel Bütünlük (Scene-First Rule)** altında **Madde 4.1 (TextMeshPro Zorunluluğu)**, **Madde 4.2 (İki Canvas Mimarisi & `CanvasGroup`)** ve **Madde 4.3 (Scene-First Visuals Kuralı)** incelenecektir.
 - **Kural Hatırlatması:** Kullanıcı onayı/talimatı olmadan hiçbir kod dosyası değiştirilmeyecek; her adımda yalnızca ilgili maddeler incelenip bu dosya güncellenecektir.
