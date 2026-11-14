@@ -169,7 +169,7 @@ def frame(t):
         im=Image.blend(im,c,alpha)
     return im.convert('RGB')
 
-def make_audio(ffmpeg,events):
+def make_audio(ffmpeg,events,countdown_times=(5.5,6.5,7.5),answer_time=8.55,victory_time=21.8):
     n=round(SECONDS*SR);mix=np.zeros((n,2));rng=np.random.default_rng(20826)
     def add(start,sig,gain=1,pan=0):
         a=round(start*SR)
@@ -200,14 +200,14 @@ def make_audio(ffmpeg,events):
             add(start,noise*np.exp(-tt*70),.032)
         melody=[74,78,81,78,76,74,69,73]
         if i%2==0:tone(start,.45,440*2**((melody[(i//2)%8]-69)/12),.018,pan=(-.25 if i%4 else .25))
-    for t in [5.5,6.5,7.5]:tone(t,.16,700,.11)
-    for j,note in enumerate([74,78,81]):tone(8.55+j*.075,.45,440*2**((note-69)/12),.08)
+    for t in countdown_times:tone(t,.16,700,.11)
+    for j,note in enumerate([74,78,81]):tone(answer_time+j*.075,.45,440*2**((note-69)/12),.08)
     cues=[]
     for e in events:
         if e['event']!='fire':continue
         t=event_time(int(e['frame']));tone(t,.12,1040,.045)
         cues.append({'sourceFrame':int(e['frame']),'sourceArrow':int(e['arrow']),'outputSeconds':round(t,6),'editorial':True})
-    for j,note in enumerate([74,78,81,86]):tone(21.8+j*.13,.8,440*2**((note-69)/12),.065)
+    for j,note in enumerate([74,78,81,86]):tone(victory_time+j*.13,.8,440*2**((note-69)/12),.065)
     manifest=json.loads((OUT/'audio/voice_manifest.json').read_text(encoding='utf-8'))
     voice_rows=[]
     for i,start in enumerate(VOICE_STARTS):
@@ -230,12 +230,15 @@ def make_audio(ffmpeg,events):
     path=OUT/'editorial_mix.wav'
     with wave.open(str(path),'wb') as f:
         f.setnchannels(2);f.setsampwidth(2);f.setframerate(SR);f.writeframes((mix*32767).astype('<i2').tobytes())
-    (OUT/'audio_timeline.json').write_text(json.dumps({'voice':voice_rows,'fireCues':cues,'countdown':[5.5,6.5,7.5],'samplePeakBeforeEncode':peak,'voiceProvider':manifest.get('provider','see voice_manifest.json')},indent=2),encoding='utf-8')
+    (OUT/'audio_timeline.json').write_text(json.dumps({'voice':voice_rows,'fireCues':cues,'countdown':list(countdown_times),'samplePeakBeforeEncode':peak,'voiceProvider':manifest.get('provider','see voice_manifest.json')},indent=2),encoding='utf-8')
 
-def render(ffmpeg):
-    path=OUT/'ArrowSwarm_Shapes2_ReferencePilot_TR.mp4'
+def render(ffmpeg,filename='ArrowSwarm_Shapes2_ReferencePilot_TR.mp4',metadata_comment=None):
+    path=OUT/filename
     args=[ffmpeg,'-hide_banner','-y','-f','rawvideo','-pixel_format','rgb24','-video_size',f'{W}x{H}','-framerate',str(FPS),'-i','pipe:0','-i',str(OUT/'editorial_mix.wav'),'-vf','scale=iw:ih:in_range=pc:out_range=tv:out_color_matrix=bt709,format=yuv420p','-c:v','libx264','-preset','fast','-crf','18','-r','30','-color_range','tv','-colorspace','bt709','-color_primaries','bt709','-color_trc','bt709','-c:a','aac','-b:a','192k','-ar',str(SR),'-ac','2','-af','loudnorm=I=-16:TP=-1.5:LRA=8','-t',str(SECONDS),'-movflags','+faststart','-metadata','comment=Genuine Unity Shapes2 footage. Editorial crop, hold, zoom, speed, annotations, original score and synthetic Turkish narration. No gameplay change.',str(path)]
     (OUT/'ffmpeg_command.json').write_text(json.dumps(args,indent=2),encoding='utf-8')
+    if metadata_comment:
+        index=args.index('-metadata');args[index+1]='comment='+metadata_comment
+        (OUT/'ffmpeg_command.json').write_text(json.dumps(args,indent=2),encoding='utf-8')
     with (OUT/'encode.log').open('w',encoding='utf-8') as log:
         p=subprocess.Popen(args,stdin=subprocess.PIPE,stderr=log)
         try:

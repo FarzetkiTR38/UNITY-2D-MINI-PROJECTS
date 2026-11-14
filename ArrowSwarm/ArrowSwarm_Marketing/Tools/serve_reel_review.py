@@ -44,8 +44,10 @@ class ReviewHandler(SimpleHTTPRequestHandler):
         except (BrokenPipeError,ConnectionResetError):pass
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--port',type=int,default=8191);a=p.parse_args()
-    directory=Path(__file__).resolve().parents[1]/'05_Reels/ReferencePilot02_20261114'
+    p=argparse.ArgumentParser();p.add_argument('--port',type=int,default=8191)
+    p.add_argument('--revision',choices=['original','r2'],default='r2');a=p.parse_args()
+    folder='ReferencePilot02_R2_20261114' if a.revision=='r2' else 'ReferencePilot02_20261114'
+    directory=Path(__file__).resolve().parents[1]/'05_Reels'/folder
     handler=functools.partial(ReviewHandler,directory=str(directory))
     print(f'Preview: http://127.0.0.1:{a.port}/index.html',flush=True)
     with ThreadingHTTPServer(('127.0.0.1',a.port),handler) as server:
