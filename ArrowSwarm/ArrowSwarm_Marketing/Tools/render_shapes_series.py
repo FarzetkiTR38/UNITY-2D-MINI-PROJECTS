@@ -99,6 +99,7 @@ class Episode:
             hx,hy=pts[0];cx=[220,540,860][rank[order]];badge_y=cy;r=round(33*alpha)
             if self.compact:
                 side=hx>=540;cx=1035 if side else 45;badge_y=max(320,min(1620,hy));r=round(27*alpha)
+                if abs(cx-hx)<60:badge_y+=100 if hy<1450 else -100
                 while any(abs(badge_y-y)<85 for y in occupied[side]):badge_y-=85
                 occupied[side].append(badge_y)
             endpoint=(cx+(r if cx<hx else -r),badge_y) if self.compact else (cx,badge_y-r)
