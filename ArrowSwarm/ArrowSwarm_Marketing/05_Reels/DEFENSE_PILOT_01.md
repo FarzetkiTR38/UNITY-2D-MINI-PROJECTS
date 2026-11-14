@@ -19,15 +19,23 @@ The recorder may temporarily use cloned tutorial-complete level10 data with one 
 - [x] Verify event chronology, real charge1→0, freeze movement pause, projectile hits, natural rainbow and true outcome.
 - [x] Stop/recover original Editor scene, private preferences/services/debug/random/timing; check all original dirty hashes.
 - [x] Lock the story around the real source; create short narration/edit/sound and label the final action's0.5× slow motion.
-- [ ] Inspect encoded beats, decode/frame/audio/CTA checks, native browser desktop/mobile playback and a reviewable preview.
-- [ ] Commit tested phases and deliver one finished MP4 with the exact review/resume checkpoint.
+- [x] Inspect encoded beats, decode/frame/audio/CTA checks, native browser desktop/mobile playback and a reviewable preview.
+- [x] Commit tested phases and deliver one finished MP4 with the exact review/resume checkpoint.
 
 ## Exact next action
 
-Review the encoded17s MP4 and responsive local preview, then commit/deliver this one pilot. Wait for the user's creative approval before another Defense video or ColorShift. Source: `04_Raw_Gameplay/Defense_L10_20261114_214156_530` (folder timestamp UTC; client date15November). See native capture/session checks and independent editorial audit in `DefensePilot01_20261115/`.
+**Await the user's creative review of this one completed17s pilot.** Final: `DefensePilot01_20261115/ArrowSwarm_Defense_PanikYok_TR.mp4`; preview `http://127.0.0.1:8196/index.html` (restart with `serve_reel_review.py --revision defense --port 8196` if needed). Do not begin another Defense video or ColorShift without approval. If a revision is requested, modify this pilot's renderer and recheck encoded output. Source: `04_Raw_Gameplay/Defense_L10_20261114_214156_530` (UTC folder timestamp, client date15November).
 
 ## Verified source and edit
 
 38s /1140native1080×1920 frames. Natural leading progress reaches.90132 at sourceframe596; actual Freeze button consumes1→0, holds the front mob still for21frames before the first shot617. All15shots pass occupancy replay and complete before actual productionWin718.22projectile kills plus1normal victory-cleanup kill; the latter is never attributed to the rainbow.3lives remain. Native victory's third gold star settles byframe800.
 
 The actual source supports a tighter17s edit: approach0–3, Freeze3, first shot3.7, rainbow5.2, nativeWin9.133, allthree goldstars11.867, promotional end12.3–17. Final action5–9.133 is explicitly labelled0,5×. Full-scene native HUD bands remain pixel-identical before encoding. Narration and event-aligned project SFX/music are editorial reconstruction; silent38s raw capture is available alongside. The corrected-P CTA is reused byte-exact; the store remains an explicit mock.
+
+## Delivery checks
+
+510frames /17s,1080×1920 H264/AAC,48kHz stereo,7,048,991bytes;−16.59LUFS and−2.82dBTP. Independent14decoded-frame review passes, including allgoldstars before promotion and unobstructed nativeHUDs. Actual browser1280×900/390×844 has no horizontal overflow;17s unmuted playback reaches ended,38s raw playback/seek, pause/mute/chapter controls and mockCTA pass;0consoleerrors. Temporary viewport override reset and preview marked deliverable. Final read-only UnityMCP: clean EditGameScene, not playing/compiling,0errors. No subjective audio-listening or user creative approval is claimed.
+
+Previous9media hashes remain unchanged. Ten original dirty-file hashes matched at immediate post-capture recovery. Later sharedEditor serialization touched two already-dirty TMP fonts; those files and additional unrelated title-cache/EditorSettings changes are left unstaged and unreset. See `PRESERVATION_CHECKS.json`; do not restore unrelated work to force a clean tree.
+
+Commits: `b24d9bc3` plan; `622863c1` isolated recorder/native source; `ee64af95` final video/edit/preview. Delivery/checkpoint documentation closes this task in a fourth marketing commit. Other concurrent review commits are unrelated. No push/publication performed.
