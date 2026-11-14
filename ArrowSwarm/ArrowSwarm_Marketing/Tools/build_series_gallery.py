@@ -1,0 +1,96 @@
+"""Build the local review gallery for the six approved Shapes reels.
+
+Only one video element is loaded at once. Custom controls stay outside genuine
+Unity HUD pixels, and the store action is an explicitly labelled local mock.
+"""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+OUT = ROOT / "05_Reels/ShapesSeries_20261114"
+ORDER = [(12,"Kaplumbağa",45), (16,"Ördek",42), (21,"Ahtapot",44),
+         (5,"Roket",40), (29,"Flamingo",40), (39,"Ayçiçeği",44)]
+
+def episodes() -> list[dict]:
+    result = []
+    for level, title, count in ORDER:
+        folder = OUT / f"L{level:02d}"
+        path = folder / "edit_plan.json"
+        plan = json.loads(path.read_text(encoding="utf-8-sig")) if path.exists() else {}
+        def moment(key: str, fallback: float) -> float:
+            return float(plan.get(key, fallback))
+        first = moment("first_fire",10.2)
+        rest = moment("rest_start",15.2)
+        win = moment("win_voice_start",28.8)
+        outro = moment("outro_start",34.0)
+        prefix = f"L{level:02d}"
+        stem = f"ArrowSwarm_Shapes{level}_TR"
+        result.append({"level":level, "title":title, "count":count,
+                       "video":f"{prefix}/{stem}.mp4", "poster":f"{prefix}/cover.jpg",
+                       "subtitles":f"{prefix}/captions_TR.srt",
+                       "contact":f"{prefix}/encoded_contact_sheet.jpg",
+                       "qa":f"{prefix}/QA_REPORT.json",
+                       "duration":moment("duration_seconds",outro+6.3),
+                       "chapters":[["Soru",2.6],["Cevap",first],
+                                   ["Kalan oklar",rest+.15],["Tebrik",win+.15],
+                                   ["Tanıtım kapanışı",outro+.5]]})
+    return result
+
+PAGE = r'''<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark"><title>Arrow Swarm · Altı Şekiller Reels videosu</title>
+<style>
+:root{color-scheme:dark;--ink:#08152c;--panel:#112640;--edge:#2b4b71;--text:#edf7ff;--soft:#b4cce5;--cyan:#64d6ff;--gold:#ffda58}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 90% 0,#123862 0,transparent 50%),var(--ink);color:var(--text);font:16px/1.55 system-ui,-apple-system,sans-serif}
+main{max-width:1180px;margin:auto;padding:32px 24px 50px}header{max-width:900px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.15em;color:var(--cyan)}h1{font-size:clamp(28px,4.5vw,44px);line-height:1.12;margin:9px 0 15px}h2{font-size:20px;margin:0 0 12px}p{color:var(--soft);margin:8px 0 18px}.gold{color:var(--gold)}
+.episodes{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px;margin:25px 0 28px}button,.link{font:inherit;border:1px solid var(--edge);border-radius:12px;background:#173654;color:var(--text);padding:10px 14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px;line-height:1.35;min-height:44px}button:hover,.link:hover{background:#244f76;border-color:var(--cyan)}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:3px}.episode{flex-direction:column;padding:12px 4px}.episode strong{font-size:20px}.episode span{font-size:12px;color:#b9d5eb}.episode[aria-pressed=true]{background:linear-gradient(145deg,#0e678b,#164981);border-color:var(--cyan);box-shadow:inset 0 -3px #30baf6}.episode[aria-pressed=true] strong{color:var(--gold)}
+.layout{display:grid;grid-template-columns:minmax(250px,410px) minmax(0,1fr);gap:35px;align-items:start}.player-column{min-width:0}.player{display:flex;justify-content:center}video{display:block;width:min(100%,44vh);height:auto;aspect-ratio:9/16;background:#020815;border:1px solid #385777;border-radius:18px;box-shadow:0 24px 65px #0006}.controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:16px auto 0}.primary{background:linear-gradient(#33d6ff,#09a7e5);color:#071c38;border-color:#79eaff;font-weight:800}.primary:hover{background:#7de4ff}.transport{max-width:370px;margin:12px auto 0}.seek{width:100%;accent-color:var(--cyan);height:24px;cursor:pointer}.clock{display:block;text-align:center;font-variant-numeric:tabular-nums;color:var(--cyan);font-size:14px}
+.card{border:1px solid var(--edge);background:linear-gradient(145deg,#102c49,#0e2039);border-radius:18px;padding:22px;margin-bottom:17px}.meta{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}.tag{font-size:12px;border:1px solid #355979;border-radius:100px;padding:4px 10px;color:#d4edff}.chapter-row,.links{display:flex;flex-wrap:wrap;gap:8px}.chapter-row button{font-size:14px}.links .link{font-size:14px}.steps{padding-left:21px;color:#c9dff0;margin:8px 0 16px}.steps li{padding:3px 0}.small{font-size:13px;color:#91aec8}.notice{border-left:3px solid var(--gold);padding-left:13px}.status{color:var(--gold);font-size:14px;margin:12px 0 0}.store{background:linear-gradient(135deg,#1ebcfa,#0869de);border:1px solid #92e8ff;font-weight:800;box-shadow:0 0 0 2px #eeb43b;color:white}.store:hover{background:#2bc9ff;color:#071b36}footer{color:#7897b6;font-size:12px;margin-top:26px}code{color:var(--cyan)}
+@media(max-width:780px){main{padding:24px 16px 36px}.layout{grid-template-columns:1fr;gap:24px}.episodes{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:22px 0}.player-column{max-width:420px;margin:auto;width:100%}video{width:min(100%,43vh)}.card{padding:18px}.episode{padding:9px 4px}.episode strong{font-size:18px}.controls button{padding:10px 12px}}
+@media(prefers-reduced-motion:no-preference){button,.link{transition:background .16s,border-color .16s}}
+</style></head><body><main>
+<header><div class="eyebrow">ARROW SWARM / ŞEKİLLER SERİSİ / TÜRKÇE</div><h1>Altı şekil. Altı bulmaca.</h1><p>Onayladığın penguen kurgusuyla: gerçek oyun sahnesi, iki HUD, tek doğru cevap ve ortak tanıtım kapanışı.</p></header>
+<nav class="episodes" aria-label="Bölüm seçimi" id="episodes"></nav>
+<div class="layout"><section class="player-column" aria-label="Video oynatıcı">
+<div class="player"><video id="reel" playsinline preload="metadata"></video></div>
+<div class="controls"><button class="primary" id="play">▶ Sesli oynat</button><button id="pause">Duraklat</button><button id="mute" aria-pressed="false">Sesi kapat</button></div>
+<div class="transport"><input class="seek" id="seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="Videoda zaman seç"><output class="clock" id="clock" aria-live="off">0,0 / — s</output></div>
+<p class="status" id="player-status" role="status"></p>
+</section><div>
+<section class="card"><div class="eyebrow" id="series-position"></div><h2 id="episode-title"></h2><div class="meta"><span class="tag" id="arrow-count"></span><span class="tag">1080 × 1920 · 30 fps</span><span class="tag">Türkçe</span></div><p>Bu üç oktan hangisi önce çıkar? A, B veya C arasından yolun açık olduğu oku seç.</p><div class="chapter-row" id="chapters" aria-label="Video bölümleri"></div><div class="links" style="margin-top:18px"><a class="link" id="download" download>↓ MP4 indir</a><a class="link" id="subtitles" download>Altyazı · SRT</a><a class="link" id="contact">Kurgu kareleri</a><a class="link" id="qa">Teknik kontrol</a></div></section>
+<section class="card"><h2>Korunan akış</h2><ol class="steps"><li>Şekil ve gerçek ok sayısıyla açılış.</li><li>A/B/C sorusu ve üç saniyelik geri sayım.</li><li>Yalnız A çıkar; uçuş biter, bekleme ve anlatım duyulur.</li><li>Kalan oklar çözülür, gerçek kazanma paneli görünür.</li><li>Tebrik cümlesi bitince ortak <span class="gold">Play Now</span> kapanışı gelir.</li></ol><p class="small">Oynanış gerçek Unity kaydıdır. TopHUD ve BottomHUD korunur. Kalan çözümün hızlanan kısmı 1,5× etiketi taşır. Konuşma, müzik ve ses vurguları kurguya eklenmiştir; Unity ses kaydı değildir.</p></section>
+<section class="card"><h2>Oyunu oyna</h2><a class="link store" id="store-cta" href="#mock-store">▶ PLAY NOW</a><p class="small" style="margin-top:14px">MOCK · Google Play bağlantısı henüz yayınlanmadı. Videodaki butona basma, tanıtım animasyonudur.</p><p class="status" id="store-status" role="status" hidden>Mock bağlantı test edildi. Mağaza henüz yayında değil; gerçek bağlantı yayınlanınca eklenecek.</p></section>
+<p class="small notice">Sıra: <code>12 → 16 → 21 → 5 → 29 → 39</code>. Üstten bölüm seçerek videoları tek tek inceleyebilirsin.</p>
+</div></div><footer>Farzetki Games · Yerel inceleme galerisi · Otomatik oynatma ve dışarıya yayın yok.</footer>
+</main><script>
+'use strict';
+const episodes=__EPISODES__;
+const v=document.getElementById('reel'),nav=document.getElementById('episodes'),seek=document.getElementById('seek'),clock=document.getElementById('clock'),status=document.getElementById('player-status');
+let selected=0;
+const fmt=n=>Number(n).toFixed(1).replace('.',',');
+function duration(){return Number.isFinite(v.duration)?v.duration:episodes[selected].duration}
+function update(){clock.textContent=fmt(v.currentTime)+' / '+fmt(duration())+' s';seek.max=duration();seek.value=v.currentTime;seek.setAttribute('aria-valuetext',fmt(v.currentTime)+' saniye');}
+function select(index){selected=index;const e=episodes[index];v.pause();status.textContent='';v.src=e.video;v.poster=e.poster;v.setAttribute('aria-label','Bölüm '+e.level+' · '+e.title+' Reels videosu');v.load();nav.querySelectorAll('button').forEach((b,i)=>b.setAttribute('aria-pressed',String(i===index)));document.getElementById('series-position').textContent=(index+1)+' / 6 · ŞEKİLLER';document.getElementById('episode-title').textContent='Bölüm '+e.level+' · '+e.title;document.getElementById('arrow-count').textContent=e.count+' ok';for(const [id,key] of [['download','video'],['subtitles','subtitles'],['contact','contact'],['qa','qa']])document.getElementById(id).href=e[key];const chapters=document.getElementById('chapters');chapters.replaceChildren();e.chapters.forEach(([label,time])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.dataset.time=time;b.onclick=()=>{v.pause();v.currentTime=Math.min(time,duration()-.1);update()};chapters.append(b)});update();}
+episodes.forEach((e,i)=>{const b=document.createElement('button');b.type='button';b.className='episode';b.setAttribute('aria-label','Bölüm '+e.level+' · '+e.title);b.setAttribute('aria-pressed',String(i===0));const number=document.createElement('strong'),title=document.createElement('span');number.textContent='Bölüm '+e.level;title.textContent=e.title;b.append(number,title);b.onclick=()=>select(i);nav.append(b)});
+document.getElementById('play').onclick=async()=>{try{v.muted=false;syncMute();await v.play();status.textContent=''}catch(error){status.textContent='Video oynatılamadı. MP4 dosyasını indirerek de açabilirsin.'}};
+document.getElementById('pause').onclick=()=>v.pause();
+function syncMute(){const b=document.getElementById('mute');b.textContent=v.muted?'Sesi aç':'Sesi kapat';b.setAttribute('aria-pressed',String(v.muted))}
+document.getElementById('mute').onclick=()=>{v.muted=!v.muted;syncMute()};
+seek.addEventListener('input',()=>{v.currentTime=Number(seek.value);update()});
+v.addEventListener('timeupdate',update);v.addEventListener('loadedmetadata',update);v.addEventListener('durationchange',update);v.addEventListener('volumechange',syncMute);
+v.addEventListener('error',()=>{status.textContent='Video henüz yüklenemedi. Dosya bağlantısını kontrol et veya MP4 indir.'});
+document.getElementById('store-cta').onclick=event=>{event.preventDefault();document.getElementById('store-status').hidden=false};
+select(0);
+</script></body></html>'''
+
+def main() -> None:
+    OUT.mkdir(parents=True,exist_ok=True)
+    data = episodes()
+    (OUT / "index.html").write_text(PAGE.replace("__EPISODES__",json.dumps(data,ensure_ascii=False)),encoding="utf-8")
+    print(json.dumps({"gallery":str(OUT / "index.html"),"order":[r["level"] for r in data],
+                      "loadedVideoElements":1,"nativeControls":False},ensure_ascii=False))
+
+if __name__ == "__main__":
+    main()

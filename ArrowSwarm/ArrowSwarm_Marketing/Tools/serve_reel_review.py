@@ -45,8 +45,8 @@ class ReviewHandler(SimpleHTTPRequestHandler):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--port',type=int,default=8191)
-    p.add_argument('--revision',choices=['original','r2','r3'],default='r3');a=p.parse_args()
-    folder={'original':'ReferencePilot02_20261114','r2':'ReferencePilot02_R2_20261114','r3':'ReferencePilot02_R3_20261114'}[a.revision]
+    p.add_argument('--revision',choices=['original','r2','r3','series'],default='r3');a=p.parse_args()
+    folder={'original':'ReferencePilot02_20261114','r2':'ReferencePilot02_R2_20261114','r3':'ReferencePilot02_R3_20261114','series':'ShapesSeries_20261114'}[a.revision]
     directory=Path(__file__).resolve().parents[1]/'05_Reels'/folder
     handler=functools.partial(ReviewHandler,directory=str(directory))
     print(f'Preview: http://127.0.0.1:{a.port}/index.html',flush=True)

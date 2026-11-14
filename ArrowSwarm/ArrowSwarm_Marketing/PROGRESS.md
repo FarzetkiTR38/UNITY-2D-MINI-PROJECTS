@@ -1,6 +1,6 @@
 # ArrowSwarm — güncel faz kontrol listesi
 
-**Güncel onay ve iş:** Kullanıcı pilotu onayladı; **12 → 16 → 21 → 5 → 29 → 39** Shapes Reels sırası yetkilendirildi. Önceki “diğer seviyeler onay bekliyor” notları tarihseldir. Tek devam listesi: [SHAPES_SERIES.md](05_Reels/SHAPES_SERIES.md). Gerçek iki HUD, yalnız A/bekleme/kalan çözüm ve düzeltilmiş ortak mock mağaza kapanışı korunacak.
+**Güncel teslim:** Kullanıcının onayladığı **12 → 16 → 21 → 5 → 29 → 39** Shapes Reels serisi tamamlandı. [Altı videolu galeri](05_Reels/ShapesSeries_20261114/index.html), [çıktı listesi/kanıtlar](05_Reels/ShapesSeries_20261114/README.md), [tek devam listesi](05_Reels/SHAPES_SERIES.md). Gerçek iki HUD, yalnız A/bekleme/kalan çözüm ve düzeltilmiş ortak mock mağaza kapanışı korundu.255doğruatış,5400nativekare,6üçyıldızlıgerçekkazanma; altı MP4 tam decode/ses/kurgu kontrolünden geçti.1280×900/390×844 galeri ve gerçek oynatma/seek kontrolleri tamam. Özel ilerleme,10öncedenaçıkdosya veGameScene geri yüklendi. Önceki pilot onay/erişim notları tarihseldir; sıradaki adım bu altı videonun kullanıcı incelemesidir.
 
 **Son küçük düzeltme:** R3 CTA sesinin “Play Store’dan” telaffuzu fonetik Türkçe girdiyle yenilendi. Yalnız ses değişti; videoların görüntü akışı bit olarak aynı. Güncel video aynı R3 yolunda, `PRONUNCIATION_QA.json` kanıtı ekli. Diğer kurgu/görseller ve mock bağlantı korunuyor.
 
@@ -42,7 +42,7 @@
 
 ## Kesin sonraki teknik adım
 
-**R3 güncel önceliği:** Kullanıcının yeni ortak tanıtım kapanışını değerlendirmesini bekle. `05_Reels/OUTRO_REVISION.md` en yeni devam noktasıdır. Gerçek mağazaURL'si yok; yayın yapılmadı. Aşağıdaki R2 ve önceki sürüm notları tarihsel/doğrulama kaydıdır.
+**Güncel öncelik:** Altı videolu seri teslim edildi. `05_Reels/SHAPES_SERIES.md` en yeni devam noktasıdır. Kullanıcının yaratıcı incelemesini/yeni yönlendirmesini bekle. Gerçek mağazaURL'si yok; yayın yapılmadı. Aşağıdaki R3/R2 ve önceki sürüm notları tarihsel/doğrulama kaydıdır.
 
 **R2 güncel önceliği:** `05_Reels/REFERENCE_REEL_R2.md` üzerinden yeni37s videonun kullanıcı revizesini/onayını bekle. Onay gelmeden başka seviyeye kayıt alma. NativeHUD koruma ve tek-cevap-atışı/bekleme akışı sonraki videolarda da uygulanacak.
 
