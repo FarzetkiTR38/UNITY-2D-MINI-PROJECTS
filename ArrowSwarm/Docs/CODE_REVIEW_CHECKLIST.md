@@ -136,12 +136,34 @@
 
 ## 4. UI & Görsel Bütünlük (Scene-First Rule)
 
-- [ ] **4.1. TextMeshPro Zorunluluğu ve Legacy UI Text Kontrolü**
-  - Sahne, prefab ve scriptlerde Legacy `UnityEngine.UI.Text` kullanımı olup olmadığının, tüm metinlerin `TextMeshPro` (`TMP_Text` / `TextMeshProUGUI`) kullandığının doğrulanması.
-- [ ] **4.2. İki Canvas Mimarisi (`Canvas_HUD` / `Canvas_Overlay`) ve `CanvasGroup` Geçişleri**
-  - HUD ve Overlay ayrımının incelenmesi; menü/popup gösterim-gizleme geçişlerinde `SetActive` yerine `CanvasGroup` kullanılıp kullanılmadığının kontrolü.
-- [ ] **4.3. Scene-First Visuals Kuralı Denetimi (`Awake`/`Start`/`Setup` Görsel Override Kontrolü)**
-  - Runtime kodunda (`Awake`, `Start`, `Setup` vb.) sahne/prefab/Inspector'da tanımlanması gereken statik UI renk, font veya sprite değerlerinin hardcoded olarak ezilip ezilmediğinin denetimi.
+- [x] **4.1. TextMeshPro Zorunluluğu ve Legacy UI Text Kontrolü**
+  - **Durum:** GEÇTİ (%100 Uyumlu — 0 Legacy Text).
+  - **Bulgular:**
+    - Unity MCP (`execute_code`) ile yapılan tam kapsamlı taramada:
+      - **15 Prefab:** `0` adet `UnityEngine.UI.Text`, **139** adet `TMP_Text`.
+      - **6 Sahne (`BootScene`: 5 TMP, `MainMenuScene`: 195 TMP, `GameScene`: 22 TMP, `MapTestScene`: 0 TMP, `ShapesScene`: 74 TMP, `ColorShiftScene`: 74 TMP):** Toplam **370** `TextMeshProUGUI` bileşeni, **`0` adet Legacy `UnityEngine.UI.Text`**.
+      - **182 Runtime Script:** `UnityEngine.UI.Text` referansı barındıran script sayısı **`0`**.
+
+- [x] **4.2. İki Canvas Mimarisi (`Canvas_HUD` / `Canvas_Overlay`) ve `CanvasGroup` Geçişleri**
+  - **Durum:** ÇOĞUNLUKLA UYGUN (Oynanış sahnelerinde iki Canvas ayrımı tam; geçişlerde `CanvasGroup` + animasyon sonrası `SetActive(false)` hibrit deseni kullanılıyor).
+  - **Bulgular:**
+    - **İki Canvas Mimarisi (`Canvas_HUD` + `Canvas_Overlay`):**
+      - `GameScene`, `ShapesScene` ve `ColorShiftScene` sahnelerinin tamamında `Canvas_HUD` (`sortingOrder = 0`, `ScreenSpaceOverlay`, `1080x1920`) ve `Canvas_Overlay` (`sortingOrder = 10`, `ScreenSpaceOverlay`, `1080x1920`) + `Canvas_SceneTransition` (`sortingOrder = 9999`) ayrımı eksiksiz uygulanmış.
+      - `BootScene` (`Canvas_Boot`) ve `MainMenuScene` (`Canvas_MainMenu`) tekil sahne oldukları için kendi ana Canvas'larını kullanıyor.
+    - **`CanvasGroup` vs. `SetActive` Kullanımı:**
+      - `GameHUD.SetHUDVisible()` (`GameHUD.cs:370-380`), `BootLoadingUI`, `MenuPanelTransition` (`MenuPanelTransition.cs:58-90`), `UIPopupAnimator`, `PauseMenuUI`, `GameOverUI`, `LevelCompleteUI`, `TipPopupUI`, `FreezePopupUI`, `PuzzlePopups` ve `PuzzleRocketPopupUI` görünürlük ve etkileşim geçişlerini `CanvasGroup` (`alpha`, `interactable`, `blocksRaycasts`) üzerinden yönetiyor.
+      - **Bulgu 4.2.A (`SetActive` ile Hibrit Kullanım Notu):** Popup'lar kapalıyken hiyerarşide deaktif (`activeSelf = false`) tutulduğu için `OverlayManager.cs:62, 73, 84, 95, 106` ve `MainMenuUI` panelleri açarken önce `gameObject.SetActive(true)` çağırıp ardından `CanvasGroup` animasyonunu başlatıyor; kapanış animasyonu bittiğinde de `MenuPanelTransition.cs:89` üzerinden `gameObject.SetActive(false)` çağrılıyor. Ayrıca `GameHUD.SetBarsVisible()` (`GameHUD.cs:309, 318`) içinde `CanvasGroup` değerleri ayarlandıktan hemen sonra `_topPanelRect.gameObject.SetActive(showTop)` çağrılması `CanvasGroup` yaklaşımını gereksiz yere bypass ediyor.
+
+- [x] **4.3. Scene-First Visuals Kuralı Denetimi (`Awake`/`Start`/`Setup` Görsel Override Kontrolü)**
+  - **Durum:** BÜYÜK ÖLÇÜDE UYGUN (Yeni UI bileşenleri Scene-First kuralına tam uyumlu; birkaç eski fallback/efekt kodunda hardcoded renk/stil ataması mevcut).
+  - **Bulgular:**
+    - **Scene-First Kuralına Uyumlu Modern Tasarım:**
+      - `ThemedUIElement.cs`, `ThemedInputField.cs`, `DarkThemeChoiceVisual.cs`, `ModeButtonVisual.cs` ve `LevelButtonUI.States.cs` (`ApplyAuthoredStates`) tüm renk, materyal ve sprite varyantlarını `[SerializeField]` üzerinden Inspector/Scene'den alıyor; `Awake`/`Start` içinde hardcoded renk veya font ataması yapmıyor (`FontAssign = 0`).
+      - `LevelButtonUI.States.cs:17-36` içinde `_unlockedState` ve `_lockedState` atanmışsa hiçbir rengi veya sprite'ı koddan ezmeden sadece ilgili state GameObject'lerini aktif/pasif yapıyor.
+    - **Bulgu 4.3.A (Eski Fallback ve Efekt Kodlarındaki Hardcoded Görsel Atamalar — Düşük/Orta Önem):**
+      - `Assets/_Project/Scripts/UI/HUDFeedbackEffects.cs:122-123`: Kalp kırılma animasyonunda `Color flashGold = new Color(1f, 0.95f, 0.5f, 1f)` ve `Color amberEnd = new Color(1f, 0.62f, 0.12f, 0f)` renkleri `[SerializeField]` yerine metodun içinde sabit tanımlanmış.
+      - `Assets/_Project/Scripts/UI/SettingsUI.cs:374-375`: `UpdateThemeDisplay` içinde `_themeSelectorImage.sprite = targetSprite; _themeSelectorImage.color = Color.white;` ile Inspector'da verilmiş olabilecek tint rengi `Color.white` ile eziliyor (aynı durum `SettingsToggleUI.cs:110` içinde `_useColorTint == false` iken mevcut).
+      - `Assets/_Project/Scripts/Tutorial/TutorialManager.cs:115-162`: Tutorial metinlerinde `<color=#FF66B2>`, `<color=#FFE066>` ve `<color=#66E0FF>` rich-text renk kodları C# string'leri içine gömülmüş.
 
 ---
 
@@ -156,9 +178,9 @@
 
 ## 📌 AKTİF DURUM VE SIRADAKİ ADIM
 
-- **Son Tamamlanan Adım:** **Kategori 3 — Madde 3.1, Madde 3.2 ve Madde 3.3** tamamlandı (Kategori 3 %100 bitti).
-  - **3.1:** `DifficultyCalculator` ve `LevelGenerator` saf/statik yapıda; ancak `difficulty_formulas.md` ile kod arasında formül ve harita sayısı (`12` vs `5`) sapmaları mevcut, ayrıca `WaveConfig`/`MobSpeed`/`SpawnInterval` ve `DifficultyReductionOnFail` runtime'da kullanılmıyor.
-  - **3.2:** Unity MCP canlı simülasyonunda Defense modu örnek seviyeleri (`1..100`) %100 çözülebilir/kazanılabilir ve `0` çakışmalı; `ShapesCatalog` (50/50) ve `ColorShiftCatalog` (50/50) tamamen çözülebilir bulundu.
-  - **3.3:** `DifficultyCalculator`, `LevelGenerator`, `MobSpawner` ve `ArrowSpawner` içinde `GameConfig` dışına taşmış magic number'lar (`0.82f`, `0.60f`, `1.0f` delay, `9999`, havuz boyutları vb.) tespit edildi.
-- **Sıradaki Adım (Bir Sonraki İnceleme):** **Kategori 4 — UI & Görsel Bütünlük (Scene-First Rule)** altında **Madde 4.1 (TextMeshPro Zorunluluğu)**, **Madde 4.2 (İki Canvas Mimarisi & `CanvasGroup`)** ve **Madde 4.3 (Scene-First Visuals Kuralı)** incelenecektir.
+- **Son Tamamlanan Adım:** **Kategori 4 — Madde 4.1, Madde 4.2 ve Madde 4.3** tamamlandı (Kategori 4 %100 bitti).
+  - **4.1:** Tüm sahne (370 TMP), prefab (139 TMP) ve runtime scriptlerde `0` adet Legacy `UnityEngine.UI.Text` (%100 TextMeshPro).
+  - **4.2:** Oynanış sahnelerinde `Canvas_HUD` (`order=0`) ve `Canvas_Overlay` (`order=10`) ayrımı tam; menü/popup geçişleri `CanvasGroup` + animasyon bitiminde `SetActive(false)` hibrit modeliyle çalışıyor (`GameHUD.SetBarsVisible()` gereksiz `SetActive` çağrısı içeriyor).
+  - **4.3:** Modern tema/buton bileşenleri (`ThemedUIElement`, `ModeButtonVisual`, `LevelButtonUI.States`) Scene-First kuralına tam uyumlu; yalnızca `HUDFeedbackEffects`, `SettingsUI`, `SettingsToggleUI` ve `TutorialManager` rich-text dizelerinde az sayıda hardcoded renk/white-tint ataması var.
+- **Sıradaki Adım (Bir Sonraki İnceleme):** **Kategori 5 — Performans & Mobil (Android Portrait)** altında **Madde 5.1 (Event Abonelikleri ve Bellek Sızıntısı / Event Leak Denetimi)** ve **Madde 5.2 (Mobil Güvenli Alan / Safe Area ve Çözünürlük Ölçekleme)** incelenerek tam denetim tamamlanacaktır.
 - **Kural Hatırlatması:** Kullanıcı onayı/talimatı olmadan hiçbir kod dosyası değiştirilmeyecek; her adımda yalnızca ilgili maddeler incelenip bu dosya güncellenecektir.
