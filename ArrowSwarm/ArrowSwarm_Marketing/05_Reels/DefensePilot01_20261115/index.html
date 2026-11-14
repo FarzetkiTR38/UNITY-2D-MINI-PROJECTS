@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark"><title>Arrow Swarm · Panik yok</title>
+<style>
+:root{color-scheme:dark;--navy:#061426;--surface:#102d47;--edge:#315a77;--text:#f0f8ff;--soft:#b4cfe1;--cyan:#79e6ff;--gold:#ffe08a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 95% 0,#184e6b,transparent 54%),var(--navy);color:var(--text);font:16px/1.55 system-ui,-apple-system,sans-serif}
+main{max-width:1080px;margin:auto;padding:28px 24px 44px}.intro{max-width:860px}.eyebrow{font-size:12px;letter-spacing:.14em;font-weight:800;color:var(--cyan)}
+h1{font-size:clamp(32px,5.5vw,52px);line-height:1.07;margin:10px 0 14px}h2{font-size:21px;margin:0 0 12px}p{margin:8px 0 18px;color:var(--soft)}
+.tags,.versions,.controls,.chapters,.links{display:flex;gap:8px;flex-wrap:wrap}.tags{margin:18px 0 25px}.tag{font-size:13px;padding:4px 11px;border:1px solid var(--edge);border-radius:100px;color:var(--cyan)}.tag.gold{color:var(--gold);border-color:#8c7947}
+.layout{display:grid;grid-template-columns:minmax(270px,390px) minmax(0,1fr);gap:30px;align-items:start}.player-column{min-width:0}
+button,a.button{display:inline-flex;justify-content:center;align-items:center;gap:6px;min-height:44px;border:1px solid var(--edge);border-radius:12px;background:#143a55;color:var(--text);font:inherit;line-height:1.35;padding:10px 12px;cursor:pointer;text-decoration:none}
+button:hover,a.button:hover{border-color:var(--cyan);background:#205577}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:3px}button:disabled{cursor:default;opacity:.65}
+.versions{margin-bottom:13px}.versions button{flex:1;font-size:13px;min-width:135px}.versions button[aria-pressed=true]{background:linear-gradient(135deg,#087b9c,#124572);border-color:var(--cyan);box-shadow:inset 0 -3px #7ce8ff;color:var(--gold);font-weight:800}
+.video-wrap{display:flex;justify-content:center}video{display:block;aspect-ratio:9/16;width:min(100%,42vh);height:auto;background:#020a15;border:1px solid #52748b;border-radius:18px;box-shadow:0 20px 60px #0006}
+.controls{justify-content:center;margin:15px auto 0}.primary{background:linear-gradient(#7ceaff,#25aedc);color:#041c30;border-color:#a1f2ff;font-weight:800}.transport{max-width:360px;margin:12px auto 0}.transport input{width:100%;height:26px;accent-color:var(--cyan);cursor:pointer}.clock{display:block;text-align:center;font-variant-numeric:tabular-nums;color:var(--cyan);font-size:14px}
+.card{border:1px solid var(--edge);border-radius:18px;padding:22px;background:linear-gradient(145deg,#103b53,#0e233b);margin-bottom:17px}.card p:last-child{margin-bottom:0}.chapters button,.links a{font-size:14px}.links{margin-top:17px}
+.steps{padding-left:21px;color:#c9e3ef;margin:10px 0 15px}.steps li{padding:5px 0}.steps strong{color:var(--gold)}.small{font-size:13px;color:#9cbdd1}.status{min-height:22px;color:var(--gold);font-size:13px;margin:10px 0 0}.store{background:linear-gradient(135deg,#27c9f5,#0c68cf)!important;border-color:#9aeaff!important;box-shadow:0 0 0 2px #b89c53;font-weight:800}.notice{border-left:3px solid var(--cyan);padding-left:14px}footer{color:#83a5bd;font-size:12px;margin-top:24px}
+@media(max-width:740px){main{padding:24px 16px 35px}.layout{grid-template-columns:1fr;gap:24px}.player-column{max-width:400px;width:100%;margin:auto}video{width:min(100%,43vh)}.card{padding:18px}.versions button{min-width:0;font-size:12px}.controls button{padding:10px 11px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style></head><body><main>
+<header class="intro"><div class="eyebrow">ARROW SWARM / DEFENSE PİLOT 01</div><h1>Panik yok.<br>Zamanlama sende.</h1>
+<p>Düşmanlar yaklaşırken doğru anı bekle. Tek Dondur kullanımıyla karşı saldırıya geç; son gökkuşağı okunu ve gerçek bölüm sonucunu izle.</p>
+<div class="tags"><span class="tag gold">17s</span><span class="tag">15 ok</span><span class="tag">3 can</span><span class="tag">1080 × 1920 · 30 fps</span><span class="tag">Gerçek Unity görüntüsü</span></div></header>
+<div class="layout"><section class="player-column" aria-label="Defense videosu oynatıcısı">
+<div class="versions" role="group" aria-label="Kurgu ve ham kayıt seçimi"><button id="final" type="button" aria-pressed="true">Reels · 17s</button><button id="raw" type="button" aria-pressed="false">Ham kayıt · 38s (sessiz)</button></div>
+<div class="video-wrap"><video id="reel" playsinline preload="metadata" poster="cover.jpg" aria-label="17 saniyelik Defense Reels videosu"></video></div>
+<div class="controls"><button class="primary" id="play" type="button">▶ Sesli oynat</button><button id="pause" type="button">Duraklat</button><button id="mute" type="button" aria-pressed="false">Sesi kapat</button></div>
+<div class="transport"><input type="range" id="seek" min="0" max="17" step="0.1" value="0" aria-label="Videoda zaman seç"><output for="seek" id="clock" class="clock">0,0 / 17,0 s</output></div>
+<p id="player-status" role="status" aria-live="polite" class="status"></p></section>
+<div><section class="card"><div class="eyebrow" id="version-label">17 SANİYELİK KURGU</div><h2 id="version-title">Bekle. Dondur. Karşı saldır.</h2>
+<p id="version-description">Doğal yaklaşma ve bir şarj tüketen gerçek Dondur hamlesi. Gökkuşağı anı 0,5× ağır çekimde; sonuç oyunun kendi akışından.</p>
+<div class="chapters" id="chapters" role="group" aria-label="Video bölümleri"></div>
+<div class="links"><a class="button" href="ArrowSwarm_Defense_PanikYok_TR.mp4" download>↓ Reels MP4 indir</a><a class="button" href="raw_capture.mp4" download>Ham MP4 · sessiz</a><a class="button" href="captions_TR.srt" download>Altyazı · SRT</a><a class="button" href="encoded_contact_sheet.jpg">Kurgu kareleri</a><a class="button" href="QA_REPORT.json">Teknik kontrol</a><a class="button" href="native_capture_checks.json">Yerel oyun kanıtı</a></div></section>
+<section class="card"><h2>Tek hamlede değişen tempo</h2><ol class="steps">
+<li><strong>0–3s</strong> · Düşmanların doğal yaklaşması; kısa bir bekleyiş.</li>
+<li><strong>3s</strong> · Bir Dondur şarjı kullanılır.</li>
+<li><strong>3,7s</strong> · Yolu açık oklarla karşı saldırı başlar.</li>
+<li><strong>5–9,1s</strong> · Son gökkuşağı oku, 0,5× ağır çekim.</li>
+<li><strong>9,1–11,9s</strong> · Üç canla tamamlanan bölümün yerel sonucu.</li>
+<li><strong>12,3–17s</strong> · Kısa marka ve Play Now kapanışı.</li></ol>
+<p class="small">Defense bölüm 10, 15 gerçek ok, bir Dondur kullanımı. Oklar açık yol kuralıyla ateşlenir. Oyun sonucu, son uçuşların tamamlanmasıyla oluşur; hayatta kalan bir düşmanı normal zafer temizliği kaldırır.</p></section>
+<section class="card"><h2>Sıra sende.</h2><button class="button store" id="store" type="button">▶ PLAY NOW</button>
+<p class="small" style="margin-top:14px">MOCK · Mağaza henüz yayınlanmadı. Videodaki basma hareketi tanıtım animasyonudur.</p>
+<p role="status" id="store-status" class="status" hidden>Mock düğme çalıştı. Yayınlanmış mağaza adresi bulunmadığı için dış bağlantı açılmadı.</p></section>
+<p class="small notice">Ham kayıt 38 saniyedir ve sessizdir: kare yakalama Unity sesini kaydetmez. Konuşma, müzik, ses vurguları, yazılar ve ağır çekim kurguya eklenmiştir. Oyun arayüzü gerçek kayıttan gelir.</p>
+</div></div><footer>Farzetki Games · Yerel inceleme · Otomatik oynatma veya dışarıya yayın yok.</footer></main>
+<script>
+'use strict';
+const configs={final:{file:'ArrowSwarm_Defense_PanikYok_TR.mp4',duration:17,poster:'cover.jpg',label:'17 SANİYELİK KURGU',title:'Bekle. Dondur. Karşı saldır.',description:'Doğal yaklaşma ve bir şarj tüketen gerçek Dondur hamlesi. Gökkuşağı anı 0,5× ağır çekimde; sonuç oyunun kendi akışından.',aria:'17 saniyelik Defense Reels videosu',chapters:[['Yaklaşma',0],['Dondur',3],['Karşı saldırı',3.7],['Gökkuşağı',5.2],['Sonuç',9.7],['Tanıtım',13.1]]},raw:{file:'raw_capture.mp4',duration:38,poster:'',label:'38 SANİYELİK HAM KAYIT · SESSİZ',title:'Kesintisiz yerel oyun kaydı.',description:'1140 kare sırayla korunur. Düşmanlar doğal olarak yaklaşır, gerçek Dondur kullanılır ve 15 ok açık yol kuralıyla ateşlenir. Bu kaynakta ses veya kurgu yazıları yoktur.',aria:'38 saniyelik kesintisiz sessiz Defense ham kaydı',chapters:[['Başlangıç',0],['Yaklaşma',506/30],['Dondur',596/30],['İlk atış',617/30],['Gökkuşağı',659/30],['Sonuç',718/30]]}};
+const v=document.getElementById('reel'),seek=document.getElementById('seek'),clock=document.getElementById('clock'),status=document.getElementById('player-status'),mute=document.getElementById('mute'),play=document.getElementById('play');let selected='final';const fmt=n=>Number(n).toFixed(1).replace('.',',');
+function duration(){return v.readyState>0&&Number.isFinite(v.duration)&&v.duration>0?v.duration:configs[selected].duration}
+function update(){const current=Number.isFinite(v.currentTime)?v.currentTime:0;clock.textContent=fmt(current)+' / '+fmt(duration())+' s';seek.max=duration();seek.value=current;seek.setAttribute('aria-valuetext',fmt(current)+' saniye / '+fmt(duration())+' saniye')}
+function syncMute(){const silent=selected==='raw';mute.disabled=silent;mute.textContent=silent?'Ham kayıt sessiz':v.muted?'Sesi aç':'Sesi kapat';mute.setAttribute('aria-pressed',String(silent||v.muted));play.textContent=silent?'▶ Sessiz oynat':'▶ Sesli oynat'}
+function jump(time){v.pause();const target=Math.max(0,Math.min(time,duration()-.05));if(v.readyState>0){v.currentTime=target;update()}else{v.addEventListener('loadedmetadata',()=>{v.currentTime=target;update()},{once:true});v.load()}}
+function select(key){selected=key;const c=configs[key];v.pause();status.textContent=key==='raw'?'Ham kayıt sessizdir. Konuşma ve müzik yalnız Reels kurgusunda bulunur.':'';v.src=c.file;v.poster=c.poster;v.muted=key==='raw';v.setAttribute('aria-label',c.aria);v.load();for(const name of ['final','raw'])document.getElementById(name).setAttribute('aria-pressed',String(name===key));for(const [id,value] of [['version-label',c.label],['version-title',c.title],['version-description',c.description]])document.getElementById(id).textContent=value;const chapters=document.getElementById('chapters');chapters.replaceChildren();c.chapters.forEach(([text,time])=>{const b=document.createElement('button');b.type='button';b.textContent=text;b.dataset.time=time;b.setAttribute('aria-label',text+' · '+fmt(time)+' saniye');b.onclick=()=>jump(time);chapters.append(b)});seek.value=0;syncMute();update()}
+document.getElementById('final').onclick=()=>select('final');document.getElementById('raw').onclick=()=>select('raw');play.onclick=async()=>{try{v.muted=selected==='raw';syncMute();await v.play();status.textContent=selected==='raw'?'Ham kayıt sessiz oynatılıyor.':''}catch(error){status.textContent='Video oynatılamadı. MP4 indir bağlantısını kullanabilirsin.'}};document.getElementById('pause').onclick=()=>v.pause();mute.onclick=()=>{v.muted=!v.muted;syncMute()};seek.addEventListener('input',()=>{v.currentTime=Number(seek.value);update()});for(const event of ['timeupdate','loadedmetadata','durationchange'])v.addEventListener(event,update);v.addEventListener('volumechange',syncMute);v.addEventListener('error',()=>{status.textContent='Video dosyası yüklenemedi. MP4 indir bağlantısını kontrol edebilirsin.'});document.getElementById('store').onclick=()=>{document.getElementById('store-status').hidden=false};select('final');
+</script></body></html>

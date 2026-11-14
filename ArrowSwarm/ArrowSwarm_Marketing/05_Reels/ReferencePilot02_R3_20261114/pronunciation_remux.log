@@ -1,0 +1,44 @@
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'C:\Users\Farzetki\AppData\Local\Temp\ArrowSwarm-CTA-Pronunciation-auhy_t41\ArrowSwarm_Shapes2_R3_Promo_TR.mp4':
+  Metadata:
+    major_brand     : isom
+    minor_version   : 512
+    compatible_brands: isomiso2avc1mp41
+    encoder         : Lavf63.1.102
+    comment         : R3: R2 edit preserved through33.7s; only ending replaced by reusable promotional mock-store outro. No public store destination exists yet.
+  Duration: 00:00:40.00, start: 0.000000, bitrate: 710 kb/s
+  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709/unknown/unknown, progressive), 1080x1920, 510 kb/s, 30 fps, 30 tbr, 15360 tbn (default)
+    Metadata:
+      handler_name    : VideoHandler
+      encoder         : Lavc63.1.102 libx264
+  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 190 kb/s (default)
+    Metadata:
+      handler_name    : SoundHandler
+[aist#1:0/pcm_s16le @ 0000026eb1122940] Guessed Channel Layout: stereo
+Input #1, wav, from 'C:\Users\Farzetki\Desktop\GitHub\UNITY-2D-MINI-PROJECTS\ArrowSwarm\ArrowSwarm_Marketing\05_Reels\SharedOutro01\outro_mix.wav':
+  Duration: 00:00:06.30, bitrate: 1536 kb/s
+  Stream #1:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 48000 Hz, stereo, s16, 1536 kb/s
+Stream mapping:
+  Stream #0:1 (aac) -> atrim:default
+  Stream #1:0 (pcm_s16le) -> asetpts:default
+  Stream #0:0 -> #0:0 (copy)
+  concat:out:a0 -> Stream #0:1 (aac)
+Press [q] to stop, [?] for help
+Output #0, mp4, to 'C:\Users\Farzetki\Desktop\GitHub\UNITY-2D-MINI-PROJECTS\ArrowSwarm\ArrowSwarm_Marketing\05_Reels\ReferencePilot02_R3_20261114\pronunciation_fixed.mp4':
+  Metadata:
+    major_brand     : isom
+    minor_version   : 512
+    compatible_brands: isomiso2avc1mp41
+    comment         : R3: R2 edit preserved through33.7s; only ending replaced by reusable promotional mock-store outro. No public store destination exists yet.
+    encoder         : Lavf63.1.102
+  Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709/unknown/unknown, progressive), 1080x1920, q=2-31, 510 kb/s, 30 fps, 30 tbr, 15360 tbn (default)
+    Metadata:
+      handler_name    : VideoHandler
+      encoder         : Lavc63.1.102 libx264
+  Stream #0:1: Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 192 kb/s
+    Metadata:
+      encoder         : Lavc63.1.102 aac
+frame=  591 fps=0.0 q=-1.0 size=    1024KiB time=00:00:19.63 bitrate= 427.3kbits/s speed=38.1x elapsed=0:00:00.51    
+[mp4 @ 0000026eb2c7a880] Starting second pass: moving the moov atom to the beginning of the file
+[out#0/mp4 @ 0000026eb10da400] video:2491KiB audio:934KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 1.297666%
+frame= 1200 fps=1165 q=-1.0 Lsize=    3469KiB time=00:00:40.00 bitrate= 710.5kbits/s speed=38.8x elapsed=0:00:01.03    
+[aac @ 0000026eb1154a80] Qavg: 5501.773

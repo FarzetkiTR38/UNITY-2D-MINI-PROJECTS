@@ -1,0 +1,20 @@
+﻿id,priority,gate,status,required_evidence,current_limit
+TECH01,P0,Signed AndroidAppBundle,NOT_TESTED,ReleaseAAB +SHA256/buildlog/version,No build created/inspected in this continuation
+TECH02,P0,Actual targetSdk >=36 for standardphoneapp,UNKNOWN,Builtmanifest/APIlevel +Playvalidation,Project automatic setting is not actual binary target
+TECH03,P0,ARM64 native library/page-size compatibility,UNKNOWN,AAB/APKAnalyzer +16KBdevice/emulatorrun,Rawarchitecture setting2 is not binary proof
+TECH04,P0,Release scene inclusion,REVIEW_REQUIRED,VerifyreleaseBoot/MainMenu/Game/Shapes/ColorShift route +MapTestdecision,MapTestScene currentlyenabled; do not remove without source references/runtime checks
+TECH05,P0,Playerdata persistence and cloud reconcile,NOT_TESTED_ON_DEVICE,Upgrade/restart/offline/reconnect devicecapture,PriorEditorstate-restoration proof not equivalent to release persistence
+TECH06,P0,Gameplay regression all modes,NOT_TESTED_CURRENT_DEVICE,First10levels +representativeadvancedcases; wrongfinalshot/rotationbudget/winlose,Existinghistoricalcaptures only
+TECH07,P1,Coldstart/performance/crash/ANR,NOT_MEASURED,DeviceCPU/RAM/framepacing/loadtime +Playvitalswhenavailable,No inventedperformancefigures
+TECH08,P1,Responsive/native localization,PARTIAL_ARCHIVE,Physical720x1280/1080x1920/tall/tablet/safearea +TR/ENfullHUD,WebsitebrowserQA is not game/deviceQA
+POL01,P0,Privacy/DataSafety/SDKinventory,PENDING_OWNER_CONFIRMATION,"Matchingpublicpolicy,retention/deletion/contact,SDKdata declarations",UGS+AdMob must be considered; no final form submitted
+POL02,P0,Ads/consent/age/audience/contentrating,PENDING_CONSOLE_DEVICE,AppContent declarations +applicableconsent/ads test,Nolegalcomplianceorconsenttestcertified
+POL03,P0,Account productionaccess/testtrack,UNKNOWN,"Consoleaccounttype/date,productionaccess andapplicableclosedtestevidence",12testers14days appliesqualifyingnewpersonalaccounts; notassumedeveryaccount
+POL04,P1,Permissions and nativeSDKreleaseversions,UNKNOWN,MergedmanifestandPlaySDKIndexreview,Sourcepackagelist is not finalmergedmanifest
+CRE01,P0,Finalicon andbranding,REVISION_DEFERRED,Newselectedicon+adaptive/maskchecks,Previousconcepts rejected
+CRE02,P0,Finalstore screenshots,DRAFT_ONLY,Currentfullylocalizednative8screens+dimension/contentQA,16TR/ENdraftsusemixedhistoricalsources
+CRE03,P1,Distinctgameplayvideos andsound approval,INCOMPLETE,Mode/tutorial/Rainbowclips andfinaleditedMP4s,Oneoldpilot rejected; no12newvideosclaimed
+WEB01,P1,Publicsite/domain/Play/supportlinks,LOCAL_ONLY,VerifiedrealURLs/contact +publishapproval +indexingchecks,Localbilingualsite works; publicdeploy not performed
+GROW01,P1,Analytics/experiment readiness,PROPOSAL_ONLY,Approvedschema/consent plusliveeventQA andactualcohorts,NoSDK/eventcollectionadded
+GROW02,P1,Organiccalendar/creatorreachout,PREPARED_NOT_SENT,Finalassetsandplatformaccounts/rulesverified,Calendarready; microcreatorqualificationpending; nooutreach
+GO01,P0,Explicit release approval,NOT_REQUESTED,Concreteverifiedbuild/listing +ownerreleaseapproval,Do not publish to production automatically
