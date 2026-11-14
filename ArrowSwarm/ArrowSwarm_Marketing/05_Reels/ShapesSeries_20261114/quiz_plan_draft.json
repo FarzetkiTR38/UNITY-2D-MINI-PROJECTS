@@ -1,0 +1,818 @@
+{
+  "status": "draft_local_read_only_analysis_requires_native_verification",
+  "order": [
+    12,
+    16,
+    21,
+    5,
+    29,
+    39
+  ],
+  "source_rules": "Assets/_Project/Scripts/Modes/PuzzleRules.cs",
+  "source_solver": "Assets/_Project/Scripts/Modes/PuzzleSolver.cs",
+  "method": "Exact integer point ray scan mirroring ObstacleDistance (self excludes only head), saturation ascending index mirroring Solve. Does not modify any game asset. Head is Points[0]. Quiz uniqueness applies to its three marked choices, not to the entire board.",
+  "levels": [
+    {
+      "level": 12,
+      "asset": "Assets/_Project/ScriptableObjects/Puzzles/Shapes_12.asset",
+      "asset_sha256": "356970885d4092248cbb353c046f2fd92d7a8b3fbbd37890313c9245c1e3ca5f",
+      "asset_title": "Emerald Turtle",
+      "turkish_shape_name": "kaplumbağa",
+      "grid": [
+        30,
+        30
+      ],
+      "arrow_count": 45,
+      "spoken_count": "kırk beş",
+      "opening": "Bu kaplumbağa kırk beş oktan oluşuyor.",
+      "congratulations": "Tebrikler! Kırk beş oktan oluşan kaplumbağa bölümünü başarıyla geçtin!",
+      "question": "Bu üç oktan hangisi önce çıkar?",
+      "explanation": "Çünkü önündeki yol açık.",
+      "correct_label": "A",
+      "choices": [
+        {
+          "label": "A",
+          "arrow_id": 0,
+          "head": [
+            2,
+            2
+          ],
+          "direction": [
+            -1,
+            0
+          ],
+          "initial_removable": true,
+          "first_obstruction": null
+        },
+        {
+          "label": "B",
+          "arrow_id": 5,
+          "head": [
+            4,
+            4
+          ],
+          "direction": [
+            0,
+            -1
+          ],
+          "initial_removable": false,
+          "first_obstruction": {
+            "arrow": 0,
+            "point": [
+              4,
+              3
+            ],
+            "distance": 1
+          }
+        },
+        {
+          "label": "C",
+          "arrow_id": 14,
+          "head": [
+            11,
+            5
+          ],
+          "direction": [
+            1,
+            0
+          ],
+          "initial_removable": false,
+          "first_obstruction": {
+            "arrow": 22,
+            "point": [
+              12,
+              5
+            ],
+            "distance": 1
+          }
+        }
+      ],
+      "initial_available_arrows": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        7,
+        12,
+        13,
+        16,
+        21,
+        25
+      ],
+      "solution_steps": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        12,
+        13,
+        16,
+        18,
+        21,
+        24,
+        25,
+        30,
+        31,
+        36,
+        39,
+        41,
+        43,
+        44,
+        11,
+        17,
+        20,
+        40,
+        9,
+        32,
+        33,
+        34,
+        26,
+        27,
+        28,
+        37,
+        15,
+        23,
+        22,
+        14,
+        42,
+        19,
+        35,
+        38,
+        29
+      ],
+      "local_solver_solvable": true
+    },
+    {
+      "level": 16,
+      "asset": "Assets/_Project/ScriptableObjects/Puzzles/Shapes_16.asset",
+      "asset_sha256": "0f1c7428c12373d810696a39c68b85cb1d3e0de1669a1bbc5efe248b9b75f45a",
+      "asset_title": "Pond Duck",
+      "turkish_shape_name": "ördek",
+      "grid": [
+        32,
+        28
+      ],
+      "arrow_count": 42,
+      "spoken_count": "kırk iki",
+      "opening": "Bu ördek kırk iki oktan oluşuyor.",
+      "congratulations": "Tebrikler! Kırk iki oktan oluşan ördek bölümünü başarıyla geçtin!",
+      "question": "Bu üç oktan hangisi önce çıkar?",
+      "explanation": "Çünkü önündeki yol açık.",
+      "correct_label": "A",
+      "choices": [
+        {
+          "label": "A",
+          "arrow_id": 0,
+          "head": [
+            31,
+            21
+          ],
+          "direction": [
+            1,
+            0
+          ],
+          "initial_removable": true,
+          "first_obstruction": null
+        },
+        {
+          "label": "B",
+          "arrow_id": 11,
+          "head": [
+            24,
+            19
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "initial_removable": false,
+          "first_obstruction": {
+            "arrow": 0,
+            "point": [
+              24,
+              20
+            ],
+            "distance": 1
+          }
+        },
+        {
+          "label": "C",
+          "arrow_id": 6,
+          "head": [
+            25,
+            23
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "initial_removable": false,
+          "first_obstruction": {
+            "arrow": 4,
+            "point": [
+              25,
+              24
+            ],
+            "distance": 1
+          }
+        }
+      ],
+      "initial_available_arrows": [
+        0,
+        1,
+        3,
+        4,
+        7,
+        9,
+        10,
+        13,
+        17,
+        20
+      ],
+      "solution_steps": [
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        13,
+        14,
+        16,
+        17,
+        18,
+        19,
+        20,
+        22,
+        25,
+        26,
+        32,
+        2,
+        12,
+        23,
+        27,
+        31,
+        36,
+        15,
+        24,
+        21,
+        28,
+        41,
+        33,
+        34,
+        38,
+        40,
+        35,
+        37,
+        39,
+        30,
+        29
+      ],
+      "local_solver_solvable": true
+    },
+    {
+      "level": 21,
+      "asset": "Assets/_Project/ScriptableObjects/Puzzles/Shapes_21.asset",
+      "asset_sha256": "d44b4a66861184990815e87806d1dd6c590c8d6e11f04f5292a0b6da26efbbfd",
+      "asset_title": "Violet Octopus",
+      "turkish_shape_name": "ahtapot",
+      "grid": [
+        32,
+        30
+      ],
+      "arrow_count": 44,
+      "spoken_count": "kırk dört",
+      "opening": "Bu ahtapot kırk dört oktan oluşuyor.",
+      "congratulations": "Tebrikler! Kırk dört oktan oluşan ahtapot bölümünü başarıyla geçtin!",
+      "question": "Bu üç oktan hangisi önce çıkar?",
+      "explanation": "Çünkü önündeki yol açık.",
+      "correct_label": "A",
+      "choices": [
+        {
+          "label": "A",
+          "arrow_id": 5,
+          "head": [
+            31,
+            8
+          ],
+          "direction": [
+            0,
+            -1
+          ],
+          "initial_removable": true,
+          "first_obstruction": null
+        },
+        {
+          "label": "B",
+          "arrow_id": 1,
+          "head": [
+            28,
+            5
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "initial_removable": false,
+          "first_obstruction": {
+            "arrow": 5,
+            "point": [
+              28,
+              8
+            ],
+            "distance": 3
+          }
+        },
+        {
+          "label": "C",
+          "arrow_id": 11,
+          "head": [
+            25,
+            7
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "initial_removable": false,
+          "first_obstruction": {
+            "arrow": 14,
+            "point": [
+              25,
+              8
+            ],
+            "distance": 1
+          }
+        }
+      ],
+      "initial_available_arrows": [
+        5,
+        8,
+        9,
+        12,
+        13,
+        15,
+        16,
+        18,
+        19,
+        20,
+        23
+      ],
+      "solution_steps": [
+        5,
+        8,
+        9,
+        12,
+        13,
+        15,
+        16,
+        18,
+        19,
+        20,
+        21,
+        23,
+        26,
+        31,
+        37,
+        42,
+        1,
+        3,
+        4,
+        10,
+        22,
+        25,
+        30,
+        32,
+        35,
+        36,
+        2,
+        17,
+        29,
+        0,
+        24,
+        27,
+        28,
+        33,
+        34,
+        43,
+        14,
+        40,
+        41,
+        11,
+        38,
+        39,
+        7,
+        6
+      ],
+      "local_solver_solvable": true
+    },
+    {
+      "level": 5,
+      "asset": "Assets/_Project/ScriptableObjects/Puzzles/Shapes_5.asset",
+      "asset_sha256": "97e147c07e1f97f5b93e70e63aa39dabd0bb5f9b5edbb952ba472e44856d51f0",
+      "asset_title": "Starlight Rocket",
+      "turkish_shape_name": "roket",
+      "grid": [
+        22,
+        34
+      ],
+      "arrow_count": 40,
+      "spoken_count": "kırk",
+      "opening": "Bu roket kırk oktan oluşuyor.",
+      "congratulations": "Tebrikler! Kırk oktan oluşan roket bölümünü başarıyla geçtin!",
+      "question": "Bu üç oktan hangisi önce çıkar?",
+      "explanation": "Çünkü önündeki yol açık.",
+      "correct_label": "A",
+      "choices": [
+        {
+          "label": "A",
+          "arrow_id": 0,
+          "head": [
+            10,
+            3
+          ],
+          "direction": [
+            -1,
+            0
+          ],
+          "initial_removable": true,
+          "first_obstruction": null
+        },
+        {
+          "label": "B",
+          "arrow_id": 9,
+          "head": [
+            6,
+            6
+          ],
+          "direction": [
+            -1,
+            0
+          ],
+          "initial_removable": false,
+          "first_obstruction": {
+            "arrow": 2,
+            "point": [
+              5,
+              6
+            ],
+            "distance": 1
+          }
+        },
+        {
+          "label": "C",
+          "arrow_id": 13,
+          "head": [
+            12,
+            6
+          ],
+          "direction": [
+            -1,
+            0
+          ],
+          "initial_removable": false,
+          "first_obstruction": {
+            "arrow": 8,
+            "point": [
+              11,
+              6
+            ],
+            "distance": 1
+          }
+        }
+      ],
+      "initial_available_arrows": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        14,
+        15,
+        36
+      ],
+      "solution_steps": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        12,
+        13,
+        14,
+        15,
+        34,
+        36,
+        5,
+        11,
+        21,
+        22,
+        23,
+        25,
+        31,
+        32,
+        35,
+        37,
+        39,
+        18,
+        28,
+        38,
+        26,
+        19,
+        20,
+        24,
+        30,
+        17,
+        16,
+        33,
+        27,
+        29
+      ],
+      "local_solver_solvable": true
+    },
+    {
+      "level": 29,
+      "asset": "Assets/_Project/ScriptableObjects/Puzzles/Shapes_29.asset",
+      "asset_sha256": "b677b6913061a26b4bea9adc7791dc8b0b603aee5112e4b3623e8effb0c6a8dd",
+      "asset_title": "Coral Flamingo",
+      "turkish_shape_name": "flamingo",
+      "grid": [
+        30,
+        34
+      ],
+      "arrow_count": 40,
+      "spoken_count": "kırk",
+      "opening": "Bu flamingo kırk oktan oluşuyor.",
+      "congratulations": "Tebrikler! Kırk oktan oluşan flamingo bölümünü başarıyla geçtin!",
+      "question": "Bu üç oktan hangisi önce çıkar?",
+      "explanation": "Çünkü önündeki yol açık.",
+      "correct_label": "A",
+      "choices": [
+        {
+          "label": "A",
+          "arrow_id": 1,
+          "head": [
+            29,
+            27
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "initial_removable": true,
+          "first_obstruction": null
+        },
+        {
+          "label": "B",
+          "arrow_id": 5,
+          "head": [
+            25,
+            26
+          ],
+          "direction": [
+            1,
+            0
+          ],
+          "initial_removable": false,
+          "first_obstruction": {
+            "arrow": 1,
+            "point": [
+              26,
+              26
+            ],
+            "distance": 1
+          }
+        },
+        {
+          "label": "C",
+          "arrow_id": 7,
+          "head": [
+            21,
+            29
+          ],
+          "direction": [
+            1,
+            0
+          ],
+          "initial_removable": false,
+          "first_obstruction": {
+            "arrow": 5,
+            "point": [
+              22,
+              29
+            ],
+            "distance": 1
+          }
+        }
+      ],
+      "initial_available_arrows": [
+        1,
+        3,
+        4,
+        8,
+        12,
+        14,
+        16,
+        32,
+        34
+      ],
+      "solution_steps": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        11,
+        12,
+        14,
+        16,
+        18,
+        22,
+        32,
+        34,
+        36,
+        39,
+        2,
+        10,
+        19,
+        27,
+        37,
+        38,
+        0,
+        24,
+        30,
+        17,
+        35,
+        31,
+        33,
+        29,
+        21,
+        23,
+        25,
+        13,
+        15,
+        20,
+        26,
+        28
+      ],
+      "local_solver_solvable": true
+    },
+    {
+      "level": 39,
+      "asset": "Assets/_Project/ScriptableObjects/Puzzles/Shapes_39.asset",
+      "asset_sha256": "84318843098ae6ce52128f0cd8801647a1031d24755efe40adbccede478f8b93",
+      "asset_title": "Summer Sunflower",
+      "turkish_shape_name": "ayçiçeği",
+      "grid": [
+        24,
+        34
+      ],
+      "arrow_count": 44,
+      "spoken_count": "kırk dört",
+      "opening": "Bu ayçiçeği kırk dört oktan oluşuyor.",
+      "congratulations": "Tebrikler! Kırk dört oktan oluşan ayçiçeği bölümünü başarıyla geçtin!",
+      "question": "Bu üç oktan hangisi önce çıkar?",
+      "explanation": "Çünkü önündeki yol açık.",
+      "correct_label": "A",
+      "choices": [
+        {
+          "label": "A",
+          "arrow_id": 0,
+          "head": [
+            19,
+            2
+          ],
+          "direction": [
+            0,
+            -1
+          ],
+          "initial_removable": true,
+          "first_obstruction": null
+        },
+        {
+          "label": "B",
+          "arrow_id": 1,
+          "head": [
+            21,
+            5
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "initial_removable": false,
+          "first_obstruction": {
+            "arrow": 37,
+            "point": [
+              21,
+              16
+            ],
+            "distance": 11
+          }
+        },
+        {
+          "label": "C",
+          "arrow_id": 19,
+          "head": [
+            17,
+            6
+          ],
+          "direction": [
+            0,
+            -1
+          ],
+          "initial_removable": false,
+          "first_obstruction": {
+            "arrow": 1,
+            "point": [
+              17,
+              5
+            ],
+            "distance": 1
+          }
+        }
+      ],
+      "initial_available_arrows": [
+        0,
+        5,
+        6,
+        7,
+        8,
+        14,
+        15,
+        16,
+        33
+      ],
+      "solution_steps": [
+        0,
+        5,
+        6,
+        7,
+        8,
+        12,
+        14,
+        15,
+        16,
+        17,
+        20,
+        22,
+        26,
+        33,
+        37,
+        38,
+        42,
+        1,
+        2,
+        3,
+        10,
+        18,
+        19,
+        9,
+        29,
+        24,
+        13,
+        21,
+        25,
+        32,
+        35,
+        31,
+        30,
+        40,
+        41,
+        34,
+        36,
+        39,
+        4,
+        28,
+        23,
+        27,
+        43,
+        11
+      ],
+      "local_solver_solvable": true
+    }
+  ]
+}

@@ -115,12 +115,20 @@ namespace ArrowSwarm.Marketing.Editor
             if (Screen.width != 1080 || Screen.height != 1920) throw new InvalidOperationException("Set native Game View to1080x1920.");
             var solution = PuzzleSolver.Solve(session.Level);
             if (!solution.Solvable) throw new InvalidOperationException("No legal witness.");
+            ExportGeometry(session, solution);
             int step = 0, nextShot = 75, firstSettled = -1;
+            bool winLogged = false;
             int cadence = Mathf.Clamp((seconds * 30 - 120 - _firstShotHoldFrames) / Mathf.Max(1, solution.Steps.Count), 5, 22);
             Time.captureFramerate = 30;
             var endFrame = new WaitForEndOfFrame();
             for (_frame = 0; _frame < seconds * 30; _frame++)
             {
+                if (session.Won && !winLogged)
+                {
+                    winLogged = true;
+                    Events.Add(_frame + "," + (_frame / 30f).ToString("F3", System.Globalization.CultureInfo.InvariantCulture) +
+                        ",won,-1," + session.Remaining + "," + session.Lives);
+                }
                 if (_firstShotHoldFrames > 0 && step == 1 && firstSettled < 0 && session.Idle)
                 {
                     if (session.Remaining != session.Level.Arrows.Count - 1 || session.Lives != session.Config.Lives)
