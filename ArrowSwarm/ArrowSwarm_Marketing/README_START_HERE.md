@@ -1,5 +1,7 @@
 # ArrowSwarm — yayın ve büyüme çalışma paketi
 
+**En yeni alternatif:** [16 saniyelik Ahtapot Reels](05_Reels/CreativeShort01_20261114/ArrowSwarm_Ahtapot_CreativeShort_TR.mp4), [önce/sonra oynatıcı](05_Reels/CreativeShort01_20261114/index.html), [devam listesi](05_Reels/CREATIVE_SHORT_01.md). Önceki sürümden%61,3 kısa; orijinal videolar değiştirilmedi. Teknik/native/browser kontrolleri tamam, kreatif değerlendirme kullanıcıda.
+
 **En güncel teslim ·14Kasım:** Onaylı pilotun ardından **12 →16 →21 →5 →29 →39** Shapes videoları tamamlandı. [Altı videolu galeri](05_Reels/ShapesSeries_20261114/index.html), [MP4 listesi ve kanıtlar](05_Reels/ShapesSeries_20261114/README.md), [tek devam listesi](05_Reels/SHAPES_SERIES.md), [toplu yerel ZIP](Final_Deliverables/ArrowSwarm_Shapes_Series_TR_20261114.zip). Gerçek iki HUD/tek A/bekleme/kalan çözüm ve düzeltilmiş ortak tanıtım kapanışı korunur. Aşağıdaki pilot-onay/Unity-erişim notları tarihseldir; bu altı seviyenin native Unity ve tarayıcı testleri artık tamamlandı. Mağaza hâlâ mock; yayın yapılmadı.
 
 **Güncel R3:** [40s tanıtım kapanışlı MP4](05_Reels/ReferencePilot02_R3_20261114/ArrowSwarm_Shapes2_R3_Promo_TR.mp4), [izleme sayfası](05_Reels/ReferencePilot02_R3_20261114/index.html), [kontrol/devam listesi](05_Reels/OUTRO_REVISION.md). İlk33,7s R2 kurgusu korunur; ardından ortak indirme/PlayNow kapanışı gelir. Mağaza henüz yayınlanmadı; kullanıcı istediği için bağlantı mock. Gerçek URL için tek config: `05_Reels/SharedOutro01/store_config.json`.

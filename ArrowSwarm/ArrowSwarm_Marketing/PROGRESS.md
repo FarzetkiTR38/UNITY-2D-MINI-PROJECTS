@@ -1,6 +1,6 @@
 # ArrowSwarm — güncel faz kontrol listesi
 
-**Aktif yeni kurgu:** Kullanıcı tek bir Reels'i tamamen yeniden kurgulayıp kısaltmayı istedi. Ayrı16s Ahtapot alternatifi hazırlanıyor; önceki yedi video korunuyor. Devam listesi: [CREATIVE_SHORT_01.md](05_Reels/CREATIVE_SHORT_01.md).
+**Güncel teslim · yaratıcı kısa kurgu:** Shapes21 Ahtapot için ayrı **16s** Reels tamamlandı; önceki41,3s'den **%61,3 kısa**. İki seçenekli hızlı soru, gerçek ilk atış,2,6s/7,4× çözüm, normal son atış/üç yıldız ve kısa tanıtım; yeni konuşma/müzik/SFX montajı. [MP4](05_Reels/CreativeShort01_20261114/ArrowSwarm_Ahtapot_CreativeShort_TR.mp4), [önce/sonra](05_Reels/CreativeShort01_20261114/index.html), [kontrol/devam listesi](05_Reels/CREATIVE_SHORT_01.md).480kare decode, her oynanış karesinde native HUD guard, bağımsız encoded kare incelemesi ve gerçek browser baştan sona sesli oynatma tamam. Önceki8medya çıktısı ve10öncedenaçık dosya aynen korundu. Sonraki adım kullanıcı kreatif incelemesidir; başka seviyeye otomatik geçme.
 
 **Son dar revize:** Kullanıcının duyduğu "biley" başlangıcı, "piley" için yalnız45ms'lik P sesiyle düzeltildi. Altı seri videosu, penguen pilotu ve ortak kapanış güncel. Görüntü akışları bit olarak aynı; zamanlama ve diğer konuşma korunuyor. `SharedOutro01/P_PRONUNCIATION_QA.json` sekiz çıktının decode/hash/ses kanıtını tutuyor. Galeri ve toplu ZIP güncellendi.
 
