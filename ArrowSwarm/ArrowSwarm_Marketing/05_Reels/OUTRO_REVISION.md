@@ -1,5 +1,7 @@
 # Ortak tanıtım kapanışı · R3
 
+**Küçük telaffuz düzeltmesi:** Kullanıcı diğer her şeyi beğendi; yalnız “Play Store’dan” okunuşu revize edildi. Görünen metin aynı, sentez girdisi `Oynamak için, piley sıtordan indirin!`. Yeni CTA2,30s;34,5–36,8s aralığında. Her iki MP4'ün video akışı yeniden kodlanmadan kopyalandı ve SHA256 birebir aynı kaldı. Tam1200kare decode/ses metrikleri ve tarayıcıda güncel sesle sona kadar oynatım geçti. Önceki ses/video dosyaları değiştirme öncesinde TEMP yedeğine alındı; Git geçmişinde de korunuyor.
+
 Kullanıcı yalnız son bölümü değiştirdi: uzun tebrik cümlesi bittikten sonra eski logolu kompozisyonla tanıtım/Play Now/indirme çağrısı. Mağaza henüz yok; kullanıcı açıkça **mock bağlantı** istedi. Uydurulmuş uygulama adresi kullanılmayacak.
 
 - [x] R2 ve referans görsel okundu; 33,52 s'de tebrik tamamlanıyor.
