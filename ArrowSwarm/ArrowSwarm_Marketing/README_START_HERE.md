@@ -1,5 +1,7 @@
 # ArrowSwarm — yayın ve büyüme çalışma paketi
 
+**15 Kasım · Yeni Win/Lose sesleri:** [Önizleme merkezinde altı sesi dinle](http://127.0.0.1:8200/#%2Fmarketing%2F01_Game_Audit%2FOutcomeSoftAudio_20261115%2Findex.html). Üç kazanma + üç kaybetme; ana çift oyunda, alt1/alt2 alternatifleri hazır. [Tamamlanan uygulama ve kanıtlar](01_Game_Audit/OutcomeSoftAudio_20261115/IMPLEMENTATION.md). Dal **ArrowSwarm**; eski faz ve erişim notları tarihsel kayıttır.
+
 **En yeni alternatif:** [16 saniyelik Ahtapot Reels](05_Reels/CreativeShort01_20261114/ArrowSwarm_Ahtapot_CreativeShort_TR.mp4), [önce/sonra oynatıcı](05_Reels/CreativeShort01_20261114/index.html), [devam listesi](05_Reels/CREATIVE_SHORT_01.md). Önceki sürümden%61,3 kısa; orijinal videolar değiştirilmedi. Teknik/native/browser kontrolleri tamam, kreatif değerlendirme kullanıcıda.
 
 **En güncel teslim ·14Kasım:** Onaylı pilotun ardından **12 →16 →21 →5 →29 →39** Shapes videoları tamamlandı. [Altı videolu galeri](05_Reels/ShapesSeries_20261114/index.html), [MP4 listesi ve kanıtlar](05_Reels/ShapesSeries_20261114/README.md), [tek devam listesi](05_Reels/SHAPES_SERIES.md), [toplu yerel ZIP](Final_Deliverables/ArrowSwarm_Shapes_Series_TR_20261114.zip). Gerçek iki HUD/tek A/bekleme/kalan çözüm ve düzeltilmiş ortak tanıtım kapanışı korunur. Aşağıdaki pilot-onay/Unity-erişim notları tarihseldir; bu altı seviyenin native Unity ve tarayıcı testleri artık tamamlandı. Mağaza hâlâ mock; yayın yapılmadı.
