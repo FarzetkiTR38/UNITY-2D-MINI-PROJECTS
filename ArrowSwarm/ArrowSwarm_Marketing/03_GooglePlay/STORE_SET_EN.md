@@ -19,12 +19,23 @@ Three user reference JPEGs are archived byte-exact at `References/StoreScreensho
 - [x] Compose eight colorful footer designs, verify all sources/dimensions/text/legibility and inspect full-size exports.
 - [x] Restore original scene/view/preferences/providers/debug/random/working files; verify prior media unchanged.
 - [x] Create ordered overview, individual downloads/ZIP and actual desktop/mobile review preview; test and commit completed phases.
-- [ ] Deliver all eight English images; await user review before more store locales/videos.
+- [x] Package all eight English images for delivery; await user review before more store locales/videos.
 
-Native capture phase passed: all eight actual English sources, both original HUDs, real Freeze charge and real ColorShift rotation. Defense stills were recaptured with12% wider camera on the temporary runtime instance to clear the portal/HP from the HUD; final Freeze uses one legal shot in flight before impact. No scene/config asset was edited. Shapes12 is Emerald Turtle45arrows; Shapes21 is Violet Octopus44arrows. Leaderboard uses the authentic UI with10fictional in-process entries, Nova6th/108sharedstars; no live rank claim or external upload.
+Native capture phase passed: all eight actual English sources, both original HUDs, real Freeze charge and real Color Shift rotation. Defense stills were recaptured with a 12% wider camera on the temporary runtime instance to clear the portal/HP from the HUD; final Freeze uses one legal shot in flight before impact. No scene/config asset was edited. Shapes12 is Emerald Turtle with 45 arrows; Shapes21 is Violet Octopus with 44 arrows. Leaderboard uses the authentic UI with 10 fictional in-process entries, Nova at #6 with 108 shared stars; no live rank claim or external upload.
 
-Recovery passed: original unsaved Boot retained, clean additive scene closed, original GameView18 restored and temporary capture size removed, all5preferences restored,13pre-existing dirty files byte-identical and11previous media hashes unchanged. Console errors0. Evidence: `Native/state_checks.txt`, `native_source_checks.json`, `NATIVE_IMAGE_REVIEW.md`, `unity_cleanup_checks.json`, `preservation_checks.json` in the delivery folder.
+Recovery passed: original unsaved Boot retained, clean additive scene closed, original GameView18 restored and temporary capture size removed, all 5 preferences restored, 13 pre-existing dirty files byte-identical and 11 previous media hashes unchanged. Console errors: 0. Evidence: `Native/state_checks.txt`, `native_source_checks.json`, `NATIVE_IMAGE_REVIEW.md`, `unity_cleanup_checks.json`, `preservation_checks.json` in the delivery folder.
 
-Composition and browser review passed:8RGBPNG at1080×1920,5,445,227bytes total; all8native1080×1620body regions remain RGB-identical after export,300px caption ribbons begin below the native frame. Existing title font reused; no new game art/imports. Eight English alt descriptions76–100characters. Ordered overview, full-size/native comparison, keyboard/close controls and actual ZIP/PNG downloads pass at1280×900and390×844without horizontal page overflow or browser warnings/errors. Downloaded files match package hashes. ZIP5,421,820bytes,8finalPNGs only,CRC/per-entrySHA256 passed. Browser override reset; deliverable tab retained. Review: http://127.0.0.1:8198/index.html . Server exposes only this review folder on127.0.0.1; restart via `py -3.13 ArrowSwarm_Marketing/Tools/serve_store_review.py --port8198` (put a space between `--port` and `8198`).
+Composition and browser review passed: 8 RGB PNGs at 1080×1920, 5,445,227 bytes total. All 8 native 1080×1620 body regions remain RGB-identical after export; 300px caption ribbons begin below the native frame. Existing title font reused; no new game art/imports. Eight English alt descriptions contain 76–100 characters. Ordered overview, full-size/native comparison, keyboard/close controls and actual ZIP/PNG downloads pass at 1280×900 and 390×844 without horizontal page overflow or browser warnings/errors. Downloaded files match package hashes. ZIP: 5,421,820 bytes, 8 final PNGs only; CRC/per-entry SHA256 passed. Browser override reset; deliverable tab retained. Review: http://127.0.0.1:8198/index.html . Server exposes only this review folder on 127.0.0.1. Restart from the ArrowSwarm project directory:
 
-Exact next action: finish delivery/checkpoint commits and show all8images. Await creative review; do not start a new video/locale/gameplay change automatically.
+```powershell
+py -3.13 ArrowSwarm_Marketing/Tools/serve_store_review.py --port 8198
+```
+
+Phase commits on **ArrowSwarm**, without pushing:
+
+- `2c978068` — approved Defense template, saved references and eight-image plan.
+- `7e7f1523` — isolated English capture helpers, eight native sources, independent inspection and restoration proof.
+- `794e52f5` — eight final store images, composer, overview, downloads and tested desktop/mobile review.
+- The delivery checkpoint commit containing this document updates the continuing plan and `PROGRESS.md`.
+
+**Exact next action:** user creative review of these eight English images. Apply only requested revisions to this package, rerun native/composition/browser checks for changed material and commit the tested phase. More languages or videos require a new user request. Approved Defense R2 remains the reusable future-video template.
