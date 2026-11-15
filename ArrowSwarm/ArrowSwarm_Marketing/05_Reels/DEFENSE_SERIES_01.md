@@ -13,9 +13,9 @@ About21seconds per edited reel, with varied short Turkish hooks, clear chronolog
 - [x] Read project rules/template, confirm ArrowSwarm and connected idle Unity, preserve original dirty Boot and native1080×1920 view.
 - [x] Back up all14pre-existing dirty tracked files outside Git before changes.
 - [x] Add isolated no-Freeze/optional-Tip recorder and compile with no errors.
-- [ ] Trial five legal distinct levels until natural three-life victory, every enemy actually killed, zero cleanup kills and readable action.
-- [ ] Capture five complete native sources, verify geometry/events/charges/outcomes and inspect actual frames.
-- [ ] Restore original private preferences, services/debug/random/timing, unsaved Boot and GameView; verify14dirty files and all previous media.
+- [x] Trial five legal distinct levels until natural three-life victory, every enemy actually killed, zero cleanup kills and readable action.
+- [x] Capture five complete native sources, verify geometry/events/charges/outcomes and inspect actual frames.
+- [x] Restore original private preferences, services/debug/random/timing, unsaved Boot and GameView; verify14dirty files and all previous media.
 - [ ] Produce five original Turkish edits/voice mixes with preserved HUDs and corrected-P outro.
 - [ ] Decode/inspect all five encoded videos, event alignment, audio, native source/CTA hashes and desktop/mobile browser playback/downloads.
 - [ ] Commit tested phases and deliver five MP4s, contact sheets, review gallery and ZIP.
@@ -27,13 +27,15 @@ Output: `05_Reels/DefenseSeries01_20261115/`, episodes `L03`, `L06`, `L08`, `L12
 | Level | Skill | Seed | Full source | Proven outcome |
 |---|---|---|---|---|
 |3|None|20261115|`DefenseSeries_L3_20261115_120226_359`|Final wider framing;11 legal arrows,21 spawns=21 projectile deaths,0 cleanup,3 lives; strict full-source PASS.|
-|6|None|20261115|`DefenseSeries_L6_20261115_120300_964`|Final wider framing;15 legal arrows,21 spawns=21 projectile deaths,0 cleanup,3 lives; natural full-source PASS, independent checks in progress.|
-|8|Tip|20261123|Recording after strict trial PASS|Different native procedural layout:14 arrows,22 projectile deaths,0 cleanup; Tip1→0 and75-frame highlight.|
-|12|None|20261127|Pending trial/full capture|Use a different natural procedural roll.|
-|15|None|20261130|Pending trial/full capture|Use a different natural procedural roll.|
+|6|None|20261115|`DefenseSeries_L6_20261115_120300_964`|Final wider framing;15 legal arrows,21 spawns=21 projectile deaths,0 cleanup,3 lives; strict full-source PASS.|
+|8|Tip|20261123|`DefenseSeries_L8_20261115_120336_892`|14 legal arrows,22 projectile deaths,0 cleanup; Tip1→0,target7 highlighted75frames then fired; strict PASS.|
+|12|None|20261127|`DefenseSeries_L12_20261115_120417_819`|21 legal arrows,26 projectile deaths,0 cleanup,3 lives; strict full-source PASS.|
+|15|None|20261130|`DefenseSeries_L15_20261115_120503_493`|20 legal arrows,26 projectile deaths,0 cleanup,3 lives; strict full-source PASS.|
 
 The user referenced the **21s R2 style**, not an exact duration requirement. Keep normal arrow action near1× with labelled rate changes instead of stretching a short level to21seconds. Expected finished episodes around18–22seconds, slightly longer only if the Tip explanation or natural action needs it.
 
 The rotating portal partly clipped the edge in initial sources. Final sources use a12%wider camera on the temporary runtime instance only; original scenes/configuration and full-size HUDs stay unchanged. Final provenance includes `captureCameraZoomOut:1.12`. Earlier committed3/6source metadata and initial renders are historical trials, superseded by the final source table and each episode's strict native proof. The five final recordings run sequentially through `BeginDefenseSeriesBatch()` and stop immediately on a RETRY/FAIL; `capture_batch.csv` records completed folders.
 
-**Exact next action:** finish full Tip8 capture and strict checks, then trial/capture12and15 while editing the completed sources in parallel. Original dirty Boot remains safely loaded in Edit setup beneath a clean temporary additive scene; after recordings, Stop/Recover and close only that clean empty temporary scene. Final restoration and browser playback remain unchecked.
+Native batch finished and independent strict checks passed:5 distinct layouts,81 legal taps,116 spawned enemies=116 projectile deaths,0 cleanup/finishes/Freeze. Stop/Recover passed; original unsaved Boot retained, clean temporary scene closed, GameView18/fps0/backgroundtrue restored. All5privatepreferences,14dirtytrackedfiles,11previousvideos and16previousstorePNGs match. Evidence: `NATIVE_SERIES_CHECKS.json`, `UNITY_RESTORATION_CHECKS.json`, `PRESERVATION_CHECKS.json`.
+
+**Exact next action:** finish editing/independent encoded review for all5episodes, build final-only ZIP and gallery at port8199, test actual desktop/mobile playback and downloads, then commit delivery and show the five videos. Native capture/private restoration is finished; do not recapture or modify game assets without a concrete new defect.
