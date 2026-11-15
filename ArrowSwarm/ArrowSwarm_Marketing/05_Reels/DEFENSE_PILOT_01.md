@@ -1,5 +1,7 @@
 # Defense pilot01 · Zamanı çal
 
+**15November2026 · User approved R2.** Save/reuse `DEFENSE_REEL_TEMPLATE.md` for later requested level videos. Current active task is the eight English store screenshots (`../03_GooglePlay/STORE_SET_EN.md`); do not launch another video automatically. Earlier review-wait notes below are historical.
+
 ## Active revision02 ·15November2026
 
 User requests a new native capture and edit: fewer enemies, real Freeze about2s earlier, readable sequential shots instead of a volley, **every spawned enemy killed by projectiles with zero victory-cleanup kills**, a lead-halfway opening with “Düşmanlar ilerliyor. Ama panik yok.”, and an isolated, clearly visible natural final rainbow arrow. Preserve the first pilot for comparison. Work on **ArrowSwarm**; do not create another branch or touch production gameplay/configuration to fabricate the result.
