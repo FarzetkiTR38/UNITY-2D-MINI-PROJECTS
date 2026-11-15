@@ -5,14 +5,14 @@
 User requests a new native capture and edit: fewer enemies, real Freeze about2s earlier, readable sequential shots instead of a volley, **every spawned enemy killed by projectiles with zero victory-cleanup kills**, a lead-halfway opening with “Düşmanlar ilerliyor. Ama panik yok.”, and an isolated, clearly visible natural final rainbow arrow. Preserve the first pilot for comparison. Work on **ArrowSwarm**; do not create another branch or touch production gameplay/configuration to fabricate the result.
 
 - [x] Read rules, verify ArrowSwarm branch and clean EditBootScene; back up13preexisting dirty tracked files externally.
-- [ ] Plan a legal timed shot sequence; add only isolated Editor recording controls/evidence and compile through UnityMCP.
-- [ ] Record native earlier Freeze/sequential/rainbow play; inspect and retry until real zero-cleanup victory and all UI/motion read correctly.
-- [ ] Restore private preferences/services/scene/debug/timing and verify preexisting working files.
+- [x] Plan a legal timed shot sequence; add only isolated Editor recording controls/evidence and compile through UnityMCP.
+- [x] Record native earlier Freeze/sequential/rainbow play; inspect and retry until real zero-cleanup victory and all UI/motion read correctly.
+- [x] Restore private preferences/services/scene/debug/timing and verify preexisting working files.
 - [ ] Re-edit around actual events, original revised TR narration, separate rainbow lead-in and unchanged corrected-P mockCTA.
 - [ ] Decode/visual/audio/event checks and native browser playback/controls; preserve all previous deliverables.
 - [ ] Commit tested phases and deliver one revised MP4/review. Wait for creative approval before more Defense or ColorShift.
 
-Exact next action: inspect valid perimeter-entry/shot order and earlierFreeze threshold; native simulation/capture must prove no enemy removed by cleanup9999. Reuse captured scene/UI and project sounds. New output: `DefensePilot02_20261115/`. Previous pilot notes below are historical.
+Exact next action: encoded21sR2 is rendered and technically passed; finish independent encoded review and actual browser8197desktop/mobile/playback/threeversions controls, then commit/deliver. Fullsource `DefenseR2_L10_20261115_002652_928` proves24spawns=24projectiledeaths,0cleanup/finishes,15shots. Opening halfway13mobs vsold20; peak20vs23. Freeze at.77066 instead.90132 is3.2665s earlier in native traversal (approximately3s, not an exact2s claim). Native shot spacing10frames, promotionhold32, allnormalflights finish before finalRainbow, no stat/spawn edits. New output: `DefensePilot02_20261115/`. Previous pilot notes below are historical.
 
 15 November2026. User authorizes **one** new Defense Reels concept, distinct from the Shapes arrow-choice quiz. Produce actual gameplay, edit and deliver it for creative approval. Do not batch more Defense clips or begin ColorShift before that approval.
 

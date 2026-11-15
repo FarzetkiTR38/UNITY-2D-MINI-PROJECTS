@@ -47,7 +47,7 @@ namespace ArrowSwarm.Marketing.Editor
             // pooling can already have reset HP. Classify the queued death only now.
             if (PendingDefenseKills.Remove(mob.MobId))
             {
-                if (!cleanup) _defenseKills++;
+                if (!cleanup) _defenseKills++; else _defenseCleanupKills++;
                 DefenseEvent(cleanup ? "cleanup_kill" : "projectile_kill", mob.MobId, "");
             }
         }
