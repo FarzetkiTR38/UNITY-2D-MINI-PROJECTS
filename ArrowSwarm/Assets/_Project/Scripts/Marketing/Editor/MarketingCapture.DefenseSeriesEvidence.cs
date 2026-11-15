@@ -25,7 +25,7 @@ namespace ArrowSwarm.Marketing.Editor
                 spawnedMobs = MobSpawner.Instance.SpawnedCount, reservedLastArrow = _defenseReservedArrow,
                 cadenceFrames = cadence, lastHoldFrames = 32, allFramesSaved = _defenseSaveFrames,
                 generationSeed = _defenseSeed, waitForNormalFlights = true, finalDelayFrames = _defenseFinalDelay,
-                won = GameManager.Instance.CurrentState == GameState.Win, startThreshold = _seriesStart,
+                won = GameManager.Instance.CurrentState == GameState.Win, startThreshold = _seriesStart, captureCameraZoomOut = 1.12f,
                 tipUsed = _seriesTip, tipFrame = _seriesTipFrame, tipTargetArrow = _seriesTipTarget,
                 tipCountBefore = 1, tipCountAfter = p.tipCount, tipHoldFrames = _seriesTipHold,
                 tipUsedEvents = _seriesTipEvents, freezeStartedEvents = _seriesFreezeEvents,
@@ -44,7 +44,7 @@ namespace ArrowSwarm.Marketing.Editor
             public int projectileHits, projectileKills, cleanupKills, spawnedMobs, reservedLastArrow, cadenceFrames, lastHoldFrames;
             public int generationSeed, finalDelayFrames, tipFrame, tipTargetArrow, tipCountBefore, tipCountAfter, tipHoldFrames;
             public int tipUsedEvents, freezeStartedEvents, freezeCountBefore, freezeCountAfter;
-            public float startThreshold;
+            public float startThreshold, captureCameraZoomOut;
             public bool won, allFramesSaved, waitForNormalFlights, tipUsed;
         }
     }

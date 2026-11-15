@@ -57,6 +57,7 @@ namespace ArrowSwarm.Marketing.Editor
                 if (wait >= 300) throw new InvalidOperationException("Defense series startup timed out.");
                 for (int i = 0; i < 30; i++) yield return null;
                 if (Screen.width != 1080 || Screen.height != 1920) throw new InvalidOperationException("Use native1080x1920 GameView.");
+                StoreFrameDefense(); // Runtime-only framing: retain every rotating portal corner, with no asset edits.
                 _defenseReservedArrow = ChooseSeriesLastArrow(); _frame = 0;
                 AttachDefenseEvents(); AttachSeriesEvents(); ExportDefenseGeometry(level);
                 int nextShot = int.MaxValue, started = -1, total = ArrowSwarm.Arrow.ArrowSpawner.Instance.TotalArrows;
