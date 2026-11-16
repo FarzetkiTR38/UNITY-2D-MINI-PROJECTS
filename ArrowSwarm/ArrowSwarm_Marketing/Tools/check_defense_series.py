@@ -148,6 +148,7 @@ def verify_native(source, output, allow_trial=False):
         'level': p['level'], 'frames': total, 'width': 1080, 'height': 1920, 'fps': 30,
         'arrows': count, 'legalShotReplay': count, 'shotOrder': [int(e['arrow']) for e in shots],
         'grid': [width, height], 'freezeUsed': False, 'freezeChargeUnchanged': int(next(iter(freeze_charges))),
+        'captureCameraZoomOut': p.get('captureCameraZoomOut'),
         'tipUsed': tip_used, 'tipFrame': p['tipFrame'],
         'tipTargetArrow': p['tipTargetArrow'], 'tipCharge': [p['tipCountBefore'], p['tipCountAfter']],
         'tipHighlightHoldFrames': first - p['tipFrame'] if tip_used else 0,
