@@ -1,6 +1,6 @@
 # Fragman, reklam ve öğretici — kaynak bağımlılıkları
 
-Bunlar üretim briefidir; bu klasörde henüz tamamlanmışMP4yoktur. Gerçek kaynak yokken bir Storyboard'u video diye teslim etmiyoruz.
+**16 Kasım güncellemesi:** 25 saniyelik üç modlu mağaza fragmanı ve 15 saniyelik yanlış hamle reklamı tamamlandı. [İzleme/indirme](http://127.0.0.1:8200/#%2Fmarketing%2F06_Trailers_Ads_Tutorials%2FStoreLaunch_20261115%2Findex.html), [tikli uygulama kaydı](StoreLaunch_20261115/IMPLEMENTATION.md). Seçilen ikonla uyumlu TR/EN özellik grafikleri de aynı sayfadadır. Aşağıdaki diğer briefler plan olarak kalır; tutorial veya diğer reklamların üretildiği anlamına gelmez.
 
 | İş | Akış | Doğruluk koşulu |
 |---|---|---|
