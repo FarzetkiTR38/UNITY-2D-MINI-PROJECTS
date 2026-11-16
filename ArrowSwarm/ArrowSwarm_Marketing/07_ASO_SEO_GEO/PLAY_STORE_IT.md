@@ -1,0 +1,38 @@
+# IT Play Store listing (it-IT)
+
+Generated and validated for ArrowSwarm (`com.farzetkigames.arrowswarm`).
+
+## App name / Uygulama adı
+
+```text
+ArrowSwarm: Puzzle Frecce
+```
+
+## Short description / Kısa açıklama
+
+```text
+Libera forme di frecce, ruota la cornice e difendi in 3 modalità puzzle.
+```
+
+## Full description / Uzun açıklama
+
+```text
+Ogni freccia ha una direzione. La prossima mossa spetta a te.
+
+ArrowSwarm unisce rompicapi direzionali in tre diverse modalità per leggere lo schema, pianificare l'ordine e liberare la via.
+
+FORME
+Trova l'ordine giusto nascosto in una figura composta da frecce intrecciate. Osserva il pinguino, il cuore e altre sagome, tocca una freccia con uscita libera e svuota il livello passo dopo passo. La campagna Forme include 50 livelli.
+
+CAMBIO COLORE
+Un percorso libero non basta: ogni freccia deve raggiungere un muro dello stesso colore. Ruota la cornice esterna di un quarto di giro mantenendo le frecce ferme e gestisci le rotazioni disponibili. La campagna Cambio Colore include 50 livelli.
+
+DIFESA
+Porta la tua logica su una plancia dinamica. Apri la strada alle frecce e scagliale contro i nemici in movimento lungo il bordo.
+
+STUDIA IL PERCORSO
+Nelle modalità puzzle, un tiro bloccato rimbalza e costa una vita. Proteggi le tue tre vite e scegli quale freccia far uscire per prima.
+
+SEGUI I PROGRESSI
+Forme e Cambio Colore salvano i progressi separatamente. Ottieni fino a tre stelle per livello, scegli tra tema chiaro e scuro e scala la classifica mondiale.
+```

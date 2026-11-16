@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ArrowSwarm — ASO, SEO &amp; GEO Play Console Merkezi (10 Dil)</title>
+  <style>
+    :root {
+      --bg: #080d1a;
+      --card: #0e1629;
+      --card2: #121d36;
+      --border: rgba(0, 212, 255, 0.24);
+      --text: #eaf6ff;
+      --muted: #8ea9c4;
+      --cyan: #00d4ff;
+      --gold: #ffe066;
+      --green: #3ddc97;
+      --purple: #b56bff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at top right, rgba(181, 107, 255, 0.12), transparent 40%), var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      padding: 24px 16px 64px;
+    }
+    .wrap { max-width: 1120px; margin: 0 auto; }
+    .header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .header h1 { margin: 0 0 6px; font-size: 1.6rem; color: var(--cyan); }
+    .header p { margin: 0; color: var(--muted); font-size: 0.94rem; }
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: rgba(61, 220, 151, 0.12);
+      border: 1px solid rgba(61, 220, 151, 0.35);
+      color: var(--green);
+    }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-bottom: 24px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .card h2 { margin: 0 0 14px; font-size: 1.2rem; color: var(--cyan); }
+    .card h3 { margin: 16px 0 8px; font-size: 1rem; color: var(--gold); }
+    .url-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--card2);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      font-size: 0.88rem;
+      word-break: break-all;
+    }
+    .url-label { color: var(--muted); font-size: 0.78rem; display: block; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .tab {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card2);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.88rem;
+    }
+    .tab.active {
+      background: linear-gradient(135deg, #00d4ff, #8a5cf6);
+      color: #060a14;
+      border-color: transparent;
+    }
+    .field-box {
+      background: var(--card2);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .field-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .field-title { font-weight: 700; color: var(--gold); font-size: 0.92rem; }
+    .count { font-size: 0.8rem; color: var(--green); font-family: monospace; }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: inherit;
+      font-size: 0.94rem;
+      color: var(--text);
+    }
+    button.copy-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--cyan);
+      background: rgba(0, 212, 255, 0.12);
+      color: var(--cyan);
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      shrink: 0;
+    }
+    button.copy-btn.copied {
+      background: var(--green);
+      border-color: var(--green);
+      color: #06130d;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    th { color: var(--cyan); }
+    td { color: var(--muted); }
+    td strong { color: var(--text); }
+    ul { margin: 8px 0 0; padding-left: 20px; color: var(--muted); font-size: 0.9rem; }
+    li { margin-bottom: 6px; }
+    li strong { color: var(--text); }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div>
+      <h1>ArrowSwarm — ASO, SEO &amp; GEO Play Console Merkezi</h1>
+      <p>10 oyun içi dil için doğrulanmış Play Store metinleri, Veri Güvenliği (Data Safety) form cevapları ve GEO sinyalleri.</p>
+      <div class="pills">
+        <span class="pill">10 Dil Doğrulandı (PASS)</span>
+        <span class="pill">farzetkigames.com.tr Canlı</span>
+        <span class="pill">31 Anahtar Kelime Niyeti</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h2>Play Console Bağlantıları (Tek Tık Kopyala)</h2>
+      <div class="url-row">
+        <div><span class="url-label">Gizlilik Politikası (App Content)</span>https://farzetkigames.com.tr/arrowswarm/privacy-policy</div>
+        <button class="copy-btn" onclick="copyText(this, 'https://farzetkigames.com.tr/arrowswarm/privacy-policy')">Kopyala</button>
+      </div>
+      <div class="url-row">
+        <div><span class="url-label">Veri Silme / İletişim Formu</span>https://farzetkigames.com.tr/contact</div>
+        <button class="copy-btn" onclick="copyText(this, 'https://farzetkigames.com.tr/contact')">Kopyala</button>
+      </div>
+      <div class="url-row">
+        <div><span class="url-label">Geliştirici Web Sitesi (Store Settings — app-ads.txt için kök adres)</span>https://farzetkigames.com.tr</div>
+        <button class="copy-btn" onclick="copyText(this, 'https://farzetkigames.com.tr')">Kopyala</button>
+      </div>
+      <div class="url-row">
+        <div><span class="url-label">Paket Adı (Package Name)</span>com.farzetkigames.arrowswarm</div>
+        <button class="copy-btn" onclick="copyText(this, 'com.farzetkigames.arrowswarm')">Kopyala</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Veri Güvenliği (Data Safety) &amp; İçerik Beyanı</h2>
+      <ul>
+        <li><strong>Kategori &amp; Etiketler:</strong> Oyunlar → Bulmaca (Puzzle) · Etiketler: Puzzle, Logic, Single player, Casual.</li>
+        <li><strong>Reklam Beyanı:</strong> Evet, reklam içeriyor (Google AdMob — Ödüllü + Geçiş).</li>
+        <li><strong>Hedef Yaş:</strong> 13-15, 16-17, 18+ (13 yaş altı seçilmez; Aileler kapsamı dışı).</li>
+        <li><strong>Veri Toplama:</strong> <strong>Evet</strong> (Unity Gaming Services + AdMob SDK). Aktarım şifreli (HTTPS): <strong>Evet</strong>. Silme talebi yöntemi: <strong>Evet</strong>.</li>
+        <li><strong>İşaretlenecek Veri Türleri:</strong> Yaklaşık Konum (IP), Kullanıcı Kimlikleri / Takma Ad (UGS), Uygulama Etkileşimleri, Kilitlenme/Tanılama Günlükleri, Cihaz/Reklam Kimlikleri (Advertising ID).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Google Play Mağaza Metinleri — 10 Dil (TR, EN, DE, FR, ES, PT, IT, RU, JA, KO)</h2>
+    <div id="tabs" class="tabs"></div>
+    <div id="localeContent"></div>
+  </div>
+
+  <div class="card">
+    <h2>SEO, GEO &amp; İlk 3 Mağaza Deneyi (Store Listing Experiments)</h2>
+    <ul>
+      <li><strong>Web SEO &amp; GEO:</strong> <code>farzetkigames.com.tr</code> üzerinde <code>sitemap.xml</code>, <code>llms.txt</code>, <code>robots.txt</code> AI crawler izinleri ve <code>VideoGame</code> + <code>FAQPage</code> JSON-LD yapılandırıldı.</li>
+      <li><strong>ASO-01 (İlk Görsel Testi):</strong> Mevcut <code>01_Home</code> yerine doğrudan <code>03_Shapes</code> tahtasını 1. sıraya koyarak kurulum dönüşümü testi.</li>
+      <li><strong>ASO-02 (İkon Testi):</strong> Seçili ikon vs. yüksek kontrastlı varyasyon testi.</li>
+      <li><strong>ASO-03 (Kısa Açıklama Testi):</strong> 3 mod özeti vs. ok yönü/bulmaca kancası testi.</li>
+    </ul>
+    <h3>Anahtar Kelime Haritası Özeti (<span id="kwCount"></span> terim)</h3>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Dil</th><th>Terim</th><th>Niyet</th><th>Önerilen Alan</th><th>Kanıt</th></tr></thead>
+        <tbody id="kwTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = {"languages": {"EN": {"locale": "en-US", "title": "ArrowSwarm: Arrow Puzzle", "short": "Clear arrow shapes, match exits and defend with three puzzle modes.", "long": "Every arrow has a direction. The next move is yours.\n\nArrowSwarm combines directional arrow puzzles with three different ways to read a board, plan a route and clear a path.\n\nSHAPES\nFind the order hidden inside a picture made of bent arrow paths. Study the penguin, heart and other silhouettes, choose an arrow with a clear exit, and work through the shape one move at a time. The current Shapes campaign contains 50 puzzles.\n\nCOLOR SHIFT\nAn open path is only part of the answer. An arrow must also meet a wall of the same color. Rotate the colored outer frame in quarter turns while the arrows stay in place. Each level gives you a limited rotation budget. The current Color Shift campaign contains 50 puzzles.\n\nDEFENSE\nBring puzzle decisions into a moving defense board. Open routes for arrows and send them toward enemies traveling around the board. Plan your shots as the action unfolds.\n\nREAD THE ROUTE\nIn the puzzle modes, a blocked shot returns and costs a life. Clear the arrows while protecting your three lives. Use the board's paths and the direction of each arrow to decide what can leave next.\n\nFOLLOW YOUR PROGRESS\nShapes and Color Shift keep their own campaign progress. Earn up to three stars for a completed puzzle, based on the lives you have left. Light and dark themes give the boards different looks.\n\nStart with a shape, learn the exits and find your next move."}, "TR": {"locale": "tr-TR", "title": "ArrowSwarm: Ok Bulmacası", "short": "Okların yolunu aç, şekilleri çöz ve üç farklı modda hamlelerini planla.", "long": "Her okun bir yönü var. Sıradaki hamle senin.\n\nArrowSwarm, okların çıkış yollarını okumaya dayanan bulmacaları üç farklı oyun moduyla bir araya getirir. Tahtayı incele, hamle sırasını düşün ve yolu aç.\n\nŞEKİLLER\nBükülen ok yollarından oluşan bir resmin içindeki sırayı bul. Penguen, kalp ve diğer siluetleri incele; önü açık bir oku seçerek şekli adım adım boşalt. Mevcut Şekiller bölüm listesinde 50 bulmaca bulunur.\n\nRENK DEĞİŞİMİ\nÇıkış yolunun açık olması tek başına yetmez. Okun rengi, ulaşacağı duvarın rengiyle de eşleşmelidir. İçerideki oklar sabit kalırken renkli dış çerçeveyi çeyrek turlarla döndür. Her bölümde sınırlı döndürme hakkını planla. Mevcut Renk Değişimi bölüm listesinde 50 bulmaca bulunur.\n\nSAVUNMA\nBulmaca kararlarını hareketli bir savunma tahtasına taşı. Okların önündeki yolları aç ve onları tahtanın çevresinde ilerleyen düşmanlara doğru ateşle. Aksiyon sürerken hangi oku ne zaman çıkaracağını düşün.\n\nYOLU OKU\nBulmaca modlarında engellenen bir atış geri döner ve bir can kaybettirir. Üç canını koruyarak okları temizle. Her okun yönüne ve diğer okların oluşturduğu yollara bakarak sıradaki çıkışı bul.\n\nİLERLEMENİ TAKİP ET\nŞekiller ve Renk Değişimi bölüm ilerlemesini ayrı tutar. Tamamladığın bir bulmacadan kalan canlarına göre en fazla üç yıldız kazan. Açık ve koyu temalarla tahtanın görünümünü değiştir.\n\nBir şekille başla, çıkışları öğren ve sıradaki hamleni bul."}, "DE": {"locale": "de-DE", "title": "ArrowSwarm: Pfeil-Puzzle", "short": "Löse Pfeil-Formen, drehe den Rahmen und verteidige in 3 Puzzle-Modi.", "long": "Jeder Pfeil hat eine Richtung. Der nächste Zug gehört dir.\n\nArrowSwarm verbindet logische Pfeil-Rätsel mit drei unterschiedlichen Spielmodi, in denen du Wege liest, Reihenfolgen planst und Ausgänge freimachst.\n\nFORMEN\nFinde die richtige Reihenfolge in einer Figur aus gebogenen Pfeilpfaden. Sieh dir Pinguin, Herz und viele weitere Silhouetten an, wähle einen freien Pfeil und löse die Form Schritt für Schritt. Die aktuelle Formen-Kampagne enthält 50 handgefertigte Level.\n\nFARBWECHSEL\nEin freier Weg allein reicht nicht aus. Jeder Pfeil muss auch zur Farbe der Ausgangswand passen. Während die Pfeile feststehen, drehst du den bunten Außenrahmen in 90-Grad-Schritten und planst dein begrenztes Drehbudget. Die Farbwechsel-Kampagne bietet 50 Level.\n\nVERTEIDIGUNG\nBringe deine Puzzle-Entscheidungen auf ein aktives Verteidigungsbrett. Öffne Wege für deine Pfeile und schieße sie auf Gegner ab, die rund um das Feld vorrücken.\n\nLIES DEN WEG\nIn den Puzzle-Modi prallt ein blockierter Schuss ab und kostet ein Leben. Schütze deine drei Leben, nutze Hinweise bei Bedarf und finde den nächsten freien Ausgang.\n\nDEIN FORTSCHRITT\nFormen und Farbwechsel speichern ihren Fortschritt getrennt. Verdiene bis zu drei Sterne pro Level, wechsle zwischen hellem und dunklem Design und tritt in der weltweiten Bestenliste an."}, "FR": {"locale": "fr-FR", "title": "ArrowSwarm : Puzzle Flèches", "short": "Libère des formes de flèches, tourne le cadre et défends dans 3 modes.", "long": "Chaque flèche a une direction. Le prochain coup est à toi.\n\nArrowSwarm réunit des casse-têtes directionnels dans trois modes de jeu distincts où tu analyses le plateau, planifies l'ordre des tirs et ouvres la voie.\n\nFORMES\nTrouve l'ordre caché dans une silhouette composée de flèches imbriquées. Observe le pingouin, le cœur et d'autres figures, choisis une flèche libre et vide le plateau étape par étape. La campagne Formes propose 50 niveaux.\n\nCHANGEMENT DE COULEUR\nUne sortie libre ne suffit plus : la flèche doit aussi correspondre à la couleur du mur. Fais pivoter le cadre extérieur par quarts de tour tout en gardant les flèches immobiles et gère ton nombre de rotations. Cette campagne contient 50 niveaux.\n\nDÉFENSE\nApplique ta logique sur un plateau dynamique. Dégage le passage des flèches et tire sur les ennemis qui avancent autour de la grille.\n\nOBSERVE LE PARCOURS\nDans les modes puzzle, un tir bloqué rebondit et coûte une vie. Protège tes trois vies, utilise des indices si besoin et repère la bonne sortie.\n\nSUIS TA PROGRESSION\nFormes et Changement de couleur gardent une progression séparée. Gagne jusqu'à trois étoiles par niveau, profite des thèmes clair et sombre et grimpe dans le classement mondial."}, "ES": {"locale": "es-ES", "title": "ArrowSwarm: Puzzle Flechas", "short": "Despeja formas de flechas, gira el marco y defiende en 3 modos de juego.", "long": "Cada flecha tiene una dirección. El siguiente movimiento es tuyo.\n\nArrowSwarm combina puzles de flechas direccionales con tres modos distintos para analizar el tablero, planificar rutas y despejar salidas.\n\nFORMAS\nDescubre el orden correcto dentro de una silueta hecha de flechas curvas. Observa el pingüino, el corazón y muchas figuras más, elige una flecha con salida libre y limpia el tablero paso a paso. La campaña de Formas incluye 50 niveles.\n\nCAMBIO DE COLOR\nUn camino despejado es solo la mitad de la solución: cada flecha debe coincidir con el color del muro de salida. Gira el marco exterior en cuartos de vuelta mientras las flechas permanecen fijas y administra tus giros disponibles. Esta campaña incluye 50 niveles.\n\nDEFENSA\nLleva tus decisiones lógicas a un tablero con acción constante. Abre paso a las flechas y lánzalas contra los enemigos que rodean el campo.\n\nLEE LA RUTA\nEn los modos puzle, un disparo bloqueado rebota y cuesta una vida. Cuida tus tres vidas y decide qué flecha puede salir a continuación.\n\nSIGUE TU PROGRESO\nFormas y Cambio de color guardan su avance por separado. Consigue hasta tres estrellas por nivel, alterna entre tema claro y oscuro y compite en la clasificación mundial."}, "PT": {"locale": "pt-BR", "title": "ArrowSwarm: Puzzle Setas", "short": "Desbloqueie formas de setas, gire a moldura e defenda em 3 modos de jogo.", "long": "Cada seta tem uma direção. O próximo movimento é seu.\n\nArrowSwarm une quebra-cabeças de setas direcionais em três modos diferentes para ler o tabuleiro, planejar a ordem certa e liberar caminhos.\n\nFORMAS\nDescubra a sequência escondida em desenhos feitos de setas dobradas. Analise o pinguim, o coração e outras silhuetas, escolha uma seta com saída livre e esvazie a forma passo a passo. A campanha Formas conta com 50 níveis.\n\nTROCA DE COR\nUm caminho aberto não basta: a seta também precisa encontrar uma parede da mesma cor. Gire a moldura colorida externa enquanto as setas ficam paradas e planeje suas rotações limitadas. A campanha Troca de Cor conta com 50 níveis.\n\nDEFESA\nLeve suas decisões de lógica para um tabuleiro em movimento. Libere rotas para as setas e dispare contra os inimigos que cercam a arena.\n\nLEIA O CAMINHO\nNos modos de puzzle, um disparo bloqueado retorna e custa uma vida. Proteja suas três vidas, use dicas quando precisar e encontre a próxima saída.\n\nACOMPANHE SEU PROGRESSO\nFormas e Troca de Cor mantêm progressos separados. Ganhe até três estrelas por fase, alterne entre tema claro e escuro e dispute o ranking global."}, "IT": {"locale": "it-IT", "title": "ArrowSwarm: Puzzle Frecce", "short": "Libera forme di frecce, ruota la cornice e difendi in 3 modalità puzzle.", "long": "Ogni freccia ha una direzione. La prossima mossa spetta a te.\n\nArrowSwarm unisce rompicapi direzionali in tre diverse modalità per leggere lo schema, pianificare l'ordine e liberare la via.\n\nFORME\nTrova l'ordine giusto nascosto in una figura composta da frecce intrecciate. Osserva il pinguino, il cuore e altre sagome, tocca una freccia con uscita libera e svuota il livello passo dopo passo. La campagna Forme include 50 livelli.\n\nCAMBIO COLORE\nUn percorso libero non basta: ogni freccia deve raggiungere un muro dello stesso colore. Ruota la cornice esterna di un quarto di giro mantenendo le frecce ferme e gestisci le rotazioni disponibili. La campagna Cambio Colore include 50 livelli.\n\nDIFESA\nPorta la tua logica su una plancia dinamica. Apri la strada alle frecce e scagliale contro i nemici in movimento lungo il bordo.\n\nSTUDIA IL PERCORSO\nNelle modalità puzzle, un tiro bloccato rimbalza e costa una vita. Proteggi le tue tre vite e scegli quale freccia far uscire per prima.\n\nSEGUI I PROGRESSI\nForme e Cambio Colore salvano i progressi separatamente. Ottieni fino a tre stelle per livello, scegli tra tema chiaro e scuro e scala la classifica mondiale."}, "RU": {"locale": "ru-RU", "title": "ArrowSwarm: Головоломка", "short": "Освобождай фигуры из стрел, вращай рамку и защищайся в 3 режимах игры.", "long": "У каждой стрелы есть направление. Следующий ход за тобой.\n\nArrowSwarm объединяет логические головоломки со стрелами в трёх разных режимах, где важно читать пути, планировать порядок ходов и открывать выходы.\n\nФИГУРЫ\nНайди правильную последовательность внутри силуэтов из изогнутых стрел. Изучай пингвина, сердце и другие фигуры, выбирай свободную стрелу и очищай поле шаг за шагом. Кампания «Фигуры» содержит 50 уровней.\n\nСМЕНА ЦВЕТА\nСвободного пути недостаточно — цвет стрелы должен совпадать со стеной выхода. Вращай внешнюю цветную рамку на четверть оборота, пока стрелы остаются на месте, и рассчитывай запас поворотов. Кампания «Смена цвета» содержит 50 уровней.\n\nЗАЩИТА\nПеренеси логические решения на живое поле обороны. Открывай дорогу стрелам и сбивай врагов, движущихся вокруг поля.\n\nЧИТАЙ МАРШРУТ\nВ режимах головоломок заблокированный выстрел возвращается и отнимает одну жизнь. Береги три жизни и находи верный следующий выход.\n\nСЛЕДИ ЗА ПРОГРЕССОМ\nФигуры и Смена цвета хранят прогресс раздельно. Зарабатывай до трёх звёзд за уровень, переключай светлую и тёмную темы и соревнуйся в мировом рейтинге."}, "JA": {"locale": "ja-JP", "title": "ArrowSwarm：矢印パズル", "short": "矢印の形を解き、枠を回して色を合わせ、3つのモードで進めるロジックパズル。", "long": "すべての矢印には向きがある。次の一手を決めよう。\n\nArrowSwarmは、矢印の進む道と順番を読み解く3つのモードを備えた2Dパズルゲームです。\n\nシェイプ\nペンギンやハートなど、折れ曲がった矢印でできたシルエットから正しい順番を見つけよう。出口が空いている矢印を選び、1手ずつ盤面をクリアします。シェイプモードには50ステージを収録。\n\nカラーシフト\n道が空いているだけでは足りません。矢印の色と外側の壁の色を合わせる必要があります。矢印はそのままに、色のついた外枠を90度ずつ回転させ、限られた回転回数の中でクリアを目指しましょう。カラーシフトモードにも50ステージを収録。\n\nディフェンス\nパズルの判断力を防衛ボードへ。盤面の周囲を進む敵に向けて、矢印のルートを切り開いて発射しましょう。\n\nルートを読む\nパズルモードでは、塞がれた矢印を撃つと跳ね返りライフを1つ失います。3つのライフを守りながら、次に抜ける矢印を見極めましょう。\n\n進行状況とテーマ\nシェイプとカラーシフトは個別に進行を保存します。残りライフに応じて最大3つ星を獲得でき、ライト／ダークテーマ切り替えや世界ランキングにも対応しています。"}, "KO": {"locale": "ko-KR", "title": "ArrowSwarm: 화살표 퍼즐", "short": "모양을 비우고 테두리를 돌려 색을 맞추는 3가지 모드의 화살표 퍼즐.", "long": "모든 화살표에는 방향이 있습니다. 다음 수를 선택하세요.\n\nArrowSwarm은 화살표의 이동 경로와 순서를 읽고 해결하는 세 가지 모드의 논리 퍼즐 게임입니다.\n\n셰이프\n펭귄, 하트 등 구부러진 화살표로 이루어진 실루엣 속에서 올바른 탈출 순서를 찾으세요. 앞이 막히지 않은 화살표를 탭해 한 수씩 보드를 비울 수 있습니다. 셰이프 캠페인은 50개의 스테이지를 제공합니다.\n\n컬러 시프트\n길만 열려 있다고 끝이 아닙니다. 화살표의 색과 바깥쪽 벽의 색도 일치해야 합니다. 화살표는 고정된 상태에서 바깥 테두리를 90도씩 회전시키며 제한된 회전 횟수 안에 해답을 찾으세요. 컬러 시프트 캠페인도 50개의 스테이지를 제공합니다.\n\n디펜스\n퍼즐의 판단력을 방어 보드로 확장하세요. 보드 주변을 이동하는 적을 향해 화살표의 길을 열어 발사할 수 있습니다.\n\n경로 읽기\n퍼즐 모드에서 막힌 화살표를 발사하면 되돌아오며 생명이 하나 줄어듭니다. 세 개의 생명을 지키며 다음 탈출 경로를 찾으세요.\n\n진행도와 테마\n셰이프와 컬러 시프트는 진행 상황이 별도로 저장됩니다. 남은 생명에 따라 최대 별 3개를 획득하고, 라이트/다크 테마와 글로벌 순위표를 즐길 수 있습니다."}}, "qa": {"EN": {"locale": "en-US", "counts": {"title": {"unicodeCodePoints": 24, "utf16Units": 24, "limit": 30, "passed": true}, "short": {"unicodeCodePoints": 67, "utf16Units": 67, "limit": 80, "passed": true}, "long": {"unicodeCodePoints": 1383, "utf16Units": 1383, "limit": 4000, "passed": true}}, "copySha256": "f11d807c0971972a0b8cfaf6688c6f43bcd6851f481834e9d38ca97c48c36082"}, "TR": {"locale": "tr-TR", "counts": {"title": {"unicodeCodePoints": 24, "utf16Units": 24, "limit": 30, "passed": true}, "short": {"unicodeCodePoints": 71, "utf16Units": 71, "limit": 80, "passed": true}, "long": {"unicodeCodePoints": 1396, "utf16Units": 1396, "limit": 4000, "passed": true}}, "copySha256": "b4ae36c58afd4a0501b03ff027d9f4f3c01831acc9ef7a5dfbc7b4bd90c55864"}, "DE": {"locale": "de-DE", "counts": {"title": {"unicodeCodePoints": 24, "utf16Units": 24, "limit": 30, "passed": true}, "short": {"unicodeCodePoints": 68, "utf16Units": 68, "limit": 80, "passed": true}, "long": {"unicodeCodePoints": 1309, "utf16Units": 1309, "limit": 4000, "passed": true}}, "copySha256": "569bd5b786858880079ee071640113dd08bbf445e68c43597e2763a620761e1f"}, "FR": {"locale": "fr-FR", "counts": {"title": {"unicodeCodePoints": 27, "utf16Units": 27, "limit": 30, "passed": true}, "short": {"unicodeCodePoints": 70, "utf16Units": 70, "limit": 80, "passed": true}, "long": {"unicodeCodePoints": 1223, "utf16Units": 1223, "limit": 4000, "passed": true}}, "copySha256": "8e539dda7f25b2fe45aa6bf0c60408fa4d67e284063d249db97ca1a37cc8f561"}, "ES": {"locale": "es-ES", "counts": {"title": {"unicodeCodePoints": 26, "utf16Units": 26, "limit": 30, "passed": true}, "short": {"unicodeCodePoints": 72, "utf16Units": 72, "limit": 80, "passed": true}, "long": {"unicodeCodePoints": 1218, "utf16Units": 1218, "limit": 4000, "passed": true}}, "copySha256": "2bff0275fca4022f12102d507dd4dca8972199714d2ec1425c2b2e65d77c60fb"}, "PT": {"locale": "pt-BR", "counts": {"title": {"unicodeCodePoints": 24, "utf16Units": 24, "limit": 30, "passed": true}, "short": {"unicodeCodePoints": 73, "utf16Units": 73, "limit": 80, "passed": true}, "long": {"unicodeCodePoints": 1150, "utf16Units": 1150, "limit": 4000, "passed": true}}, "copySha256": "4000c3a77fbe1eb79875253b9ef55658ab9a4bec4485d3126cf3715cc786f882"}, "IT": {"locale": "it-IT", "counts": {"title": {"unicodeCodePoints": 25, "utf16Units": 25, "limit": 30, "passed": true}, "short": {"unicodeCodePoints": 72, "utf16Units": 72, "limit": 80, "passed": true}, "long": {"unicodeCodePoints": 1163, "utf16Units": 1163, "limit": 4000, "passed": true}}, "copySha256": "17d8ea06d6f1ce090f67879fb4da0b9f58d73fecbe009934f5ef5aef1970e019"}, "RU": {"locale": "ru-RU", "counts": {"title": {"unicodeCodePoints": 23, "utf16Units": 23, "limit": 30, "passed": true}, "short": {"unicodeCodePoints": 70, "utf16Units": 70, "limit": 80, "passed": true}, "long": {"unicodeCodePoints": 1111, "utf16Units": 1111, "limit": 4000, "passed": true}}, "copySha256": "d707716db05e3cfe5ab54dfab79214cf591b5266ee52c6eede7fb4c4d1100b5c"}, "JA": {"locale": "ja-JP", "counts": {"title": {"unicodeCodePoints": 16, "utf16Units": 16, "limit": 30, "passed": true}, "short": {"unicodeCodePoints": 37, "utf16Units": 37, "limit": 80, "passed": true}, "long": {"unicodeCodePoints": 507, "utf16Units": 507, "limit": 4000, "passed": true}}, "copySha256": "134873317fd955558d2dc3ddca494223a0ca0672a3791719661761f5548777c2"}, "KO": {"locale": "ko-KR", "counts": {"title": {"unicodeCodePoints": 18, "utf16Units": 18, "limit": 30, "passed": true}, "short": {"unicodeCodePoints": 38, "utf16Units": 38, "limit": 80, "passed": true}, "long": {"unicodeCodePoints": 592, "utf16Units": 592, "limit": 4000, "passed": true}}, "copySha256": "98334e328c8ad7273554585032b5d052f3449d920e3e74ab2108d64fbd496ae7"}}, "keywords": [{"term": "arrow puzzle", "language": "EN", "intent": "direction/order puzzle", "proposed_placement": "title,opening copy", "product_evidence": "All three modes; GameModeId and arrow action source", "priority_hypothesis": "Primary candidate", "measurement_boundary": "No measured search volume or competition score"}, {"term": "arrow game", "language": "EN", "intent": "generic directional game", "proposed_placement": "body naturally if needed", "product_evidence": "Arrow paths and exit decisions", "priority_hypothesis": "Secondary candidate", "measurement_boundary": "Broad term; no rank promise"}, {"term": "tap away puzzle", "language": "EN", "intent": "pieces leaving in an order", "proposed_placement": "Shapes landing explanation, not repeated title tags", "product_evidence": "PuzzleSession.Fire and Shapes silhouettes", "priority_hypothesis": "Test candidate", "measurement_boundary": "Competitor vocabulary; no exclusivity claim"}, {"term": "shape puzzle", "language": "EN", "intent": "recognizable image puzzle", "proposed_placement": "Shapes heading/screenshot alt text", "product_evidence": "50-entry Shapes catalog", "priority_hypothesis": "Primary Shapes candidate", "measurement_boundary": "Not claimed unique in market"}, {"term": "color matching puzzle", "language": "EN", "intent": "color/exit reasoning", "proposed_placement": "Color Shift page/body", "product_evidence": "Arrow color and wall color requirement", "priority_hypothesis": "Secondary mode candidate", "measurement_boundary": "Do not imply block dragging"}, {"term": "logic puzzle", "language": "EN", "intent": "planning challenge", "proposed_placement": "description once naturally", "product_evidence": "Clear-path sequencing", "priority_hypothesis": "Broad candidate", "measurement_boundary": "No brain-health or IQ promise"}, {"term": "tower defense puzzle", "language": "EN", "intent": "puzzle plus enemies", "proposed_placement": "Defense page test only", "product_evidence": "Defense enemy route and arrows", "priority_hypothesis": "Exploratory", "measurement_boundary": "Not all modes; no genre dominance claim"}, {"term": "ok bulmacası", "language": "TR", "intent": "yön ve sıra kararı", "proposed_placement": "title,opening copy", "product_evidence": "Üç modun gerçek ok mekaniği", "priority_hypothesis": "Birincil aday", "measurement_boundary": "Arama hacmi ölçülmedi"}, {"term": "ok oyunu", "language": "TR", "intent": "genel yönlü oyun", "proposed_placement": "body naturally if needed", "product_evidence": "Ok yolları ve atışlar", "priority_hypothesis": "İkincil aday", "measurement_boundary": "Tekrarla doldurma yok"}, {"term": "şekil bulmacası", "language": "TR", "intent": "siluetli görsel bulmaca", "proposed_placement": "Şekiller bölüm başlığı/alt text", "product_evidence": "50-entry Shapes catalog", "priority_hypothesis": "Şekiller adayı", "measurement_boundary": "Tam resim açılma animasyonu vaat edilmez"}, {"term": "renk bulmacası", "language": "TR", "intent": "renk eşleme", "proposed_placement": "Renk Değişimi başlığı/body", "product_evidence": "Sabit oklar/dönen renk çerçevesi", "priority_hypothesis": "Mod adayı", "measurement_boundary": "Arama hacmi ölçülmedi"}, {"term": "mantık bulmacası", "language": "TR", "intent": "hamle sırası", "proposed_placement": "description naturally", "product_evidence": "Yol açık mı,çıkış rengi uygun mu", "priority_hypothesis": "Geniş aday", "measurement_boundary": "Zihinsel gelişim garantisi yok"}, {"term": "ArrowSwarm", "language": "ALL", "intent": "brand/navigation", "proposed_placement": "title,site h1,official profile", "product_evidence": "Existing project name", "priority_hypothesis": "Brand", "measurement_boundary": "Trademark/name availability checked locally"}, {"term": "Pfeil-Puzzle", "language": "DE", "intent": "direction/order puzzle", "proposed_placement": "title,short description", "product_evidence": "DE localized mode strings and arrow mechanics", "priority_hypothesis": "Primary DE candidate", "measurement_boundary": "No measured DE volume yet"}, {"term": "Logikrätsel", "language": "DE", "intent": "planning challenge", "proposed_placement": "body naturally", "product_evidence": "Clear-path sequencing in 50+50 levels", "priority_hypothesis": "Secondary DE candidate", "measurement_boundary": "No IQ or health claim"}, {"term": "Farben Puzzle", "language": "DE", "intent": "color/exit reasoning", "proposed_placement": "FARBWECHSEL section", "product_evidence": "50-entry ColorShift catalog", "priority_hypothesis": "Mode DE candidate", "measurement_boundary": "Accurate frame-rotation rule"}, {"term": "Puzzle Flèches", "language": "FR", "intent": "direction/order puzzle", "proposed_placement": "title,short description", "product_evidence": "FR localized mode strings", "priority_hypothesis": "Primary FR candidate", "measurement_boundary": "No measured FR volume yet"}, {"term": "casse-tête logique", "language": "FR", "intent": "planning challenge", "proposed_placement": "body naturally", "product_evidence": "Step-by-step arrow order decisions", "priority_hypothesis": "Secondary FR candidate", "measurement_boundary": "Natural phrasing only"}, {"term": "Puzzle Flechas", "language": "ES", "intent": "direction/order puzzle", "proposed_placement": "title,short description", "product_evidence": "ES localized mode strings", "priority_hypothesis": "Primary ES candidate", "measurement_boundary": "No measured ES volume yet"}, {"term": "puzle de lógica", "language": "ES", "intent": "planning challenge", "proposed_placement": "body naturally", "product_evidence": "Route planning and three-life rule", "priority_hypothesis": "Secondary ES candidate", "measurement_boundary": "No offline claim"}, {"term": "Puzzle Setas", "language": "PT", "intent": "direction/order puzzle", "proposed_placement": "title,short description", "product_evidence": "PT localized mode strings", "priority_hypothesis": "Primary PT candidate", "measurement_boundary": "Portuguese Brazil locale"}, {"term": "quebra-cabeça lógico", "language": "PT", "intent": "planning challenge", "proposed_placement": "body naturally", "product_evidence": "Clear-path sequencing and rotation budget", "priority_hypothesis": "Secondary PT candidate", "measurement_boundary": "No brain claim"}, {"term": "Puzzle Frecce", "language": "IT", "intent": "direction/order puzzle", "proposed_placement": "title,short description", "product_evidence": "IT localized mode strings", "priority_hypothesis": "Primary IT candidate", "measurement_boundary": "No measured IT volume yet"}, {"term": "rompicapo logico", "language": "IT", "intent": "planning challenge", "proposed_placement": "body naturally", "product_evidence": "Three-mode puzzle architecture", "priority_hypothesis": "Secondary IT candidate", "measurement_boundary": "Natural wording"}, {"term": "Головоломка стрелы", "language": "RU", "intent": "direction/order puzzle", "proposed_placement": "title,short description", "product_evidence": "RU localized mode strings", "priority_hypothesis": "Primary RU candidate", "measurement_boundary": "Matches Cyrillic Store copy"}, {"term": "логическая игра", "language": "RU", "intent": "planning challenge", "proposed_placement": "body naturally", "product_evidence": "50+50 puzzles and Defense mode", "priority_hypothesis": "Secondary RU candidate", "measurement_boundary": "No repetition stuffing"}, {"term": "矢印パズル", "language": "JA", "intent": "direction/order puzzle", "proposed_placement": "title,short description", "product_evidence": "JA localized mode strings", "priority_hypothesis": "Primary JA candidate", "measurement_boundary": "Full-width limit checked"}, {"term": "ロジックパズル", "language": "JA", "intent": "planning challenge", "proposed_placement": "body naturally", "product_evidence": "Shapes and Color Shift route planning", "priority_hypothesis": "Secondary JA candidate", "measurement_boundary": "No unsupported promises"}, {"term": "화살표 퍼즐", "language": "KO", "intent": "direction/order puzzle", "proposed_placement": "title,short description", "product_evidence": "KO localized mode strings", "priority_hypothesis": "Primary KO candidate", "measurement_boundary": "Full-width limit checked"}, {"term": "논리 퍼즐", "language": "KO", "intent": "planning challenge", "proposed_placement": "body naturally", "product_evidence": "Three modes with clear exit rules", "priority_hypothesis": "Secondary KO candidate", "measurement_boundary": "No unsupported promises"}, {"term": "색상 매치 퍼즐", "language": "KO", "intent": "color/exit reasoning", "proposed_placement": "컬러 시프트 section", "product_evidence": "Rotating frame color matching", "priority_hypothesis": "Mode KO candidate", "measurement_boundary": "Accurate frame-rotation rule"}]};
+const ORDER = ['TR', 'EN', 'DE', 'FR', 'ES', 'PT', 'IT', 'RU', 'JA', 'KO'];
+let active = 'TR';
+
+function copyText(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const prev = btn.textContent;
+    btn.textContent = 'Kopyalandı!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = prev; btn.classList.remove('copied'); }, 1400);
+  });
+}
+
+function renderTabs() {
+  const el = document.getElementById('tabs');
+  el.innerHTML = '';
+  ORDER.forEach(code => {
+    const b = document.createElement('button');
+    b.className = 'tab' + (code === active ? ' active' : '');
+    b.textContent = code + ' (' + DATA.languages[code].locale + ')';
+    b.onclick = () => { active = code; renderTabs(); renderLocale(); };
+    el.appendChild(b);
+  });
+}
+
+function renderLocale() {
+  const item = DATA.languages[active];
+  const counts = DATA.qa[active].counts;
+  const wrap = document.getElementById('localeContent');
+  wrap.innerHTML = '';
+
+  const fields = [
+    ['title', 'Uygulama Adı (App Name · maks 30)'],
+    ['short', 'Kısa Açıklama (Short Description · maks 80)'],
+    ['long', 'Uzun Açıklama (Full Description · maks 4000)']
+  ];
+
+  fields.forEach(([key, label]) => {
+    const box = document.createElement('div');
+    box.className = 'field-box';
+    const head = document.createElement('div');
+    head.className = 'field-head';
+    const t = document.createElement('span');
+    t.className = 'field-title';
+    t.textContent = label;
+    const c = document.createElement('span');
+    c.className = 'count';
+    c.textContent = counts[key].unicodeCodePoints + ' / ' + counts[key].limit + ' kr · PASS';
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Kopyala';
+    btn.onclick = () => copyText(btn, item[key]);
+    const right = document.createElement('div');
+    right.style.display = 'flex';
+    right.style.alignItems = 'center';
+    right.style.gap = '10px';
+    right.appendChild(c);
+    right.appendChild(btn);
+    head.appendChild(t);
+    head.appendChild(right);
+    const pre = document.createElement('pre');
+    pre.textContent = item[key];
+    box.appendChild(head);
+    box.appendChild(pre);
+    wrap.appendChild(box);
+  });
+}
+
+function renderKeywords() {
+  document.getElementById('kwCount').textContent = DATA.keywords.length;
+  const tbody = document.getElementById('kwTable');
+  DATA.keywords.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><strong>${row.language}</strong></td><td><strong>${row.term}</strong></td><td>${row.intent}</td><td>${row.proposed_placement}</td><td>${row.product_evidence}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+renderTabs();
+renderLocale();
+renderKeywords();
+</script>
+</body>
+</html>
