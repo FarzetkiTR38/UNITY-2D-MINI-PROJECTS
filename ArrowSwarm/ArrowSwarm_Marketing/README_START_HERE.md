@@ -1,5 +1,10 @@
 # ArrowSwarm — yayın ve büyüme çalışma paketi
 
+**17 Kasım · ASO (10 Dil), Canlı Web SEO/GEO, Android Optimizasyon & Color Shift Reels:**
+- **Play Console Kopyala-Yapıştır Merkezi (10 Dil):** [07_ASO_SEO_GEO/index.html](07_ASO_SEO_GEO/index.html) ve [PLAY_CONSOLE_SETUP_GUIDE.md](07_ASO_SEO_GEO/PLAY_CONSOLE_SETUP_GUIDE.md) ile tüm mağaza metinleri, Veri Güvenliği ve İçerik Beyanı cevapları hazırlandı.
+- **Canlı Stüdyo Sitesi & GEO (`https://farzetkigames.com.tr`):** `/arrowswarm`, `/arrowswarm/privacy-policy`, `/app-ads.txt`, `sitemap.xml`, `llms.txt`, `llms-full.txt` ve Schema.org JSON-LD yayına alındı.
+- **Color Shift Reels:** [ArrowSwarm_ColorShift_L03_TR.mp4](05_Reels/ColorShiftPilot01_20261117/ArrowSwarm_ColorShift_L03_TR.mp4) (`21s`) üretildi ve tüm bitmiş 15 Reels MP4'ü Masaüstü `reels videoları` klasörüne senkronize edildi.
+
 **15 Kasım · Yeni Win/Lose sesleri:** [Önizleme merkezinde altı sesi dinle](http://127.0.0.1:8200/#%2Fmarketing%2F01_Game_Audit%2FOutcomeSoftAudio_20261115%2Findex.html). Üç kazanma + üç kaybetme; ana çift oyunda, alt1/alt2 alternatifleri hazır. [Tamamlanan uygulama ve kanıtlar](01_Game_Audit/OutcomeSoftAudio_20261115/IMPLEMENTATION.md). Dal **ArrowSwarm**; eski faz ve erişim notları tarihsel kayıttır.
 
 **En yeni alternatif:** [16 saniyelik Ahtapot Reels](05_Reels/CreativeShort01_20261114/ArrowSwarm_Ahtapot_CreativeShort_TR.mp4), [önce/sonra oynatıcı](05_Reels/CreativeShort01_20261114/index.html), [devam listesi](05_Reels/CREATIVE_SHORT_01.md). Önceki sürümden%61,3 kısa; orijinal videolar değiştirilmedi. Teknik/native/browser kontrolleri tamam, kreatif değerlendirme kullanıcıda.
