@@ -1,5 +1,7 @@
 # ArrowSwarm — yayın ve büyüme çalışma paketi
 
+**18 Kasım · Videolarda güncel giriş noktası:** [Tüm videolar · tek arşiv](http://127.0.0.1:8200/#%2Fmarketing%2FFinal_Deliverables%2FVideoLibrary%2Findex.html).34güncel teslim ve5eski sürüm ayrı kategorilerde. [Son12konsept · izleme ve toplu indirme](http://127.0.0.1:8200/#%2Fmarketing%2F05_Reels%2FConceptBacklog_20261117%2Findex.html), [tikli uygulama/devam kaydı](05_Reels/ConceptBacklog_20261117/IMPLEMENTATION.md), [dosya/hash envanteri](Final_Deliverables/VideoLibrary/inventory.csv). Orijinal12render briefinin tamamı gerçek MP4'e bağlandı. Önceki Reels/Fragman/Rehber teslimleri korunur. Eski dal/erişim/ilk-pilot notları aşağıda tarihsel kayıttır; güncel dal ArrowSwarm. Yayın veya push yapılmadı.
+
 **17 Kasım · ASO (10 Dil), Canlı Web SEO/GEO, Android Optimizasyon & Color Shift Reels:**
 - **Play Console Kopyala-Yapıştır Merkezi (10 Dil):** [07_ASO_SEO_GEO/index.html](07_ASO_SEO_GEO/index.html) ve [PLAY_CONSOLE_SETUP_GUIDE.md](07_ASO_SEO_GEO/PLAY_CONSOLE_SETUP_GUIDE.md) ile tüm mağaza metinleri, Veri Güvenliği ve İçerik Beyanı cevapları hazırlandı.
 - **Canlı Stüdyo Sitesi & GEO (`https://farzetkigames.com.tr`):** `/arrowswarm`, `/arrowswarm/privacy-policy`, `/app-ads.txt`, `sitemap.xml`, `llms.txt`, `llms-full.txt` ve Schema.org JSON-LD yayına alındı.
