@@ -10,7 +10,7 @@ Her kaydın Top/Bottom HUD’u korunur. Başlıklar sonuç popup’larının üz
 
 Ses, oyundan kaydedilmiş AudioListener çıkışı değildir: mevcut proje GameBGM_alt1 müziği, kaynak olaylarına göre yerleştirilen SFX ve rehber için Microsoft speech/edge-tts üzerinden yalnız kamusal özgün anlatım cümlelerinden oluşan editoryal karışımdır. Seslendirme kaynak MP3’leri `Voice/` altında; PCM ara dosyaları yeniden üretilebilir. Bazı cümleler bölüme sığması için en fazla1,2× tempo ile sığdırılır. Teknik kontroller estetik dinleme puanı değildir.
 
-Önceki25sfragman,15sreklam,5DefenseReels,ColorShiftpilotu ve bütün oyun/sahne/oyuncu dosyaları değiştirilmez. Bu oturumda Unity MCP bağlantısı yoktur; doğrulanmış mevcut native kayıtlar ve olay/provenance kayıtları kullanılır. Yeni kayıt/oyun kontrolü yapıldığı iddia edilmez. Mağazaya/sosyal medyaya yükleme ve Git push yapılmaz.
+Önceki25sfragman,15sreklam,5DefenseReels,ColorShiftpilotu ve bütün oyun/sahne/oyuncu dosyaları değiştirilmez. Bu üretimde yeni Unity MCP kaydı alınmadı; doğrulanmış mevcut native kayıtlar ve olay/provenance kayıtları kullanılır. Yeni kayıt/oyun kontrolü yapıldığı iddia edilmez. Mağazaya/sosyal medyaya yükleme ve Git push yapılmaz.
 
 Yeniden üretim sırası:
 
