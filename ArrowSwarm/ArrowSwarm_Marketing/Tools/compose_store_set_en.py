@@ -52,7 +52,9 @@ def font(size: int):
 def fitted(lines: tuple[str, ...], scale: int, height: int) -> tuple[ImageFont.FreeTypeFont, int]:
     for n in range(min(128, round(128 * height / 300)), 69, -1):
         f = font(n * scale)
-        if max(f.getlength(s) for s in lines) <= 940 * scale:
+        boxes = [f.getbbox(line, stroke_width=6 * scale) for line in lines]
+        block_height = sum(box[3] - box[1] for box in boxes) + 9 * scale * (len(lines) - 1)
+        if max(f.getlength(s) for s in lines) <= 940 * scale and block_height <= (height - 78) * scale:
             return f, n
     raise ValueError('Headline cannot fit safely without becoming too small')
 

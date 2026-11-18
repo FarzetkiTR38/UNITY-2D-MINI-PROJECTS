@@ -8,12 +8,12 @@ namespace ArrowSwarm.Marketing.Editor
     using UnityEngine;
     using UnityEngine.SceneManagement;
 
-    /// <summary>Fictional in-process leaderboard data shown by the real English runtime UI, never submitted externally.</summary>
+    /// <summary>Fictional in-process leaderboard data shown by the real localized runtime UI, never submitted externally.</summary>
     public static partial class MarketingCapture
     {
-        private static IEnumerator StoreLeaderboard()
+        private static IEnumerator StoreLeaderboard(string language)
         {
-            StoreEnglish(); SceneManager.LoadScene("MainMenuScene"); yield return StoreWait(60); StoreEnglish();
+            SetStoreLanguage(language); SceneManager.LoadScene("MainMenuScene"); yield return StoreWait(60); SetStoreLanguage(language);
             _storeDemo = new StoreDemoCloud();
             Factory.SetValue(null, new Func<ILeaderboardCloudService>(() => _storeDemo));
             var manager = LeaderboardManager.Instance;
@@ -28,7 +28,7 @@ namespace ArrowSwarm.Marketing.Editor
             if (refresh.IsFaulted || manager.RefreshState != LeaderboardRefreshState.Ready)
                 throw new InvalidOperationException("In-process demonstration board did not refresh.");
             board.RefreshLeaderboardData(); yield return StoreWait(45);
-            yield return StoreSave("08_Leaderboard_EN", "Leaderboard", 20,
+            yield return StoreSave("08_Leaderboard", language, "Leaderboard", 20,
                 "Fictional Nova and demonstration rivals through real provider/UI refresh. No live players, external requests or verified global rank claims.");
         }
 

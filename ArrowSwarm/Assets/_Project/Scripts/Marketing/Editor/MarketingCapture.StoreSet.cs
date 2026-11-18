@@ -11,32 +11,41 @@ namespace ArrowSwarm.Marketing.Editor
     using UnityEngine;
     using UnityEngine.SceneManagement;
 
-    /// <summary>Eight genuine English store stills, with isolated progress and no production visual edits.</summary>
+    /// <summary>Eight genuine localized store stills, with isolated progress and no production visual edits.</summary>
     public static partial class MarketingCapture
     {
-        private const string StoreRoot = "ArrowSwarm_Marketing/03_GooglePlay/StoreSet_EN_20261115";
+        private const string EnglishStoreRoot = "ArrowSwarm_Marketing/03_GooglePlay/StoreSet_EN_20261115";
+        private const string TurkishStoreRoot = "ArrowSwarm_Marketing/03_GooglePlay/StoreSet_TR_20261118";
         private static readonly List<StoreShot> StoreShots = new List<StoreShot>();
         private static int _storeHeight;
         private static StoreDemoCloud _storeDemo;
 
         /// <summary>Captures the requested ordered store subjects after Arm and initialized offline Play.</summary>
-        public static void BeginEnglishStoreSet(int nativeHeight = 1620)
+        public static void BeginEnglishStoreSet(int nativeHeight = 1620) =>
+            BeginLocalizedStoreSet(nativeHeight, "en", EnglishStoreRoot, "English store set loading");
+
+        /// <summary>Captures the same eight ordered store subjects in Turkish after Arm and initialized offline Play.</summary>
+        public static void BeginTurkishStoreSet(int nativeHeight = 1920) =>
+            BeginLocalizedStoreSet(nativeHeight, "tr", TurkishStoreRoot, "Turkish store set loading");
+
+        private static void BeginLocalizedStoreSet(int nativeHeight, string language, string root, string loadingStatus)
         {
             if (!Application.isPlaying || !SessionState.GetBool(Armed, false) || _recording || !DataManager.HasInstance)
                 throw new InvalidOperationException("Arm before initialized Play; do not overlap captures.");
             if (nativeHeight != 1620 && nativeHeight != 1920) throw new ArgumentOutOfRangeException(nameof(nativeHeight));
-            _storeHeight = nativeHeight; _folder = StoreRoot + "/Native";
+            _storeHeight = nativeHeight; _folder = root + "/Native";
             Directory.CreateDirectory(_folder); StoreShots.Clear(); _recording = true;
-            Status = "English store set loading";
-            ArrowSwarm.Audio.AudioManager.Instance.StartCoroutine(Drive(RecordEnglishStoreSet()));
+            Status = loadingStatus;
+            ArrowSwarm.Audio.AudioManager.Instance.StartCoroutine(Drive(RecordLocalizedStoreSet(language)));
         }
 
-        private static IEnumerator RecordEnglishStoreSet()
+        private static IEnumerator RecordLocalizedStoreSet(string language)
         {
             _scope = new CaptureScope(); PrepareDefenseDebug();
             var factory = Factory.GetValue(null); int seed = _defenseSeed; bool unloaded = false;
             try
             {
+                SetStoreLanguage(language);
                 var p = DataManager.Instance.PlayerData;
                 p.playerId = "store-demo-nova"; p.playerName = "Nova"; p.playerCountry = "US";
                 p.currentLevel = 10; p.highestLevel = 20; p.tipCount = 3; p.freezeCount = 1;
@@ -47,17 +56,17 @@ namespace ArrowSwarm.Marketing.Editor
                 for (int i = 1; i <= 8; i++) p.colorShiftProgress.Complete(i, 3, 50);
                 Time.captureFramerate = 30; _defenseSeed = 20261115;
                 LevelManager.OnLevelLoading += SeedDefenseLevel;
-                yield return StoreHome();
-                yield return StoreDefense(10, false, "02_Defense_EN");
-                yield return StorePuzzle(GameModeId.Shapes, 12, false, "03_Shapes_EN");
-                yield return StorePuzzle(GameModeId.ColorShift, 3, false, "04_ColorShift_EN");
-                yield return StoreDefense(15, true, "05_Defense_Freeze_EN");
-                yield return StorePuzzle(GameModeId.Shapes, 21, false, "06_Shapes_Advanced_EN");
-                yield return StorePuzzle(GameModeId.ColorShift, 15, true, "07_ColorShift_Rotate_EN");
-                yield return StoreLeaderboard();
+                yield return StoreHome(language);
+                yield return StoreDefense(10, false, "02_Defense", language);
+                yield return StorePuzzle(GameModeId.Shapes, 12, false, "03_Shapes", language);
+                yield return StorePuzzle(GameModeId.ColorShift, 3, false, "04_ColorShift", language);
+                yield return StoreDefense(15, true, "05_Defense_Freeze", language);
+                yield return StorePuzzle(GameModeId.Shapes, 21, false, "06_Shapes_Advanced", language);
+                yield return StorePuzzle(GameModeId.ColorShift, 15, true, "07_ColorShift_Rotate", language);
+                yield return StoreLeaderboard(language);
                 File.WriteAllText(_folder + "/capture_manifest.json", JsonUtility.ToJson(new StoreManifest
                 {
-                    language = "en", theme = "Light", nativeWidth = 1080, nativeHeight = _storeHeight,
+                    language = language, theme = "Light", nativeWidth = 1080, nativeHeight = _storeHeight,
                     leaderboardData = "Fictional demonstration entries through an in-process provider; not verified live ranks.",
                     externalServiceCalls = 0, demoProviderCalls = _storeDemo != null ? _storeDemo.Calls : 0,
                     shots = StoreShots
@@ -83,10 +92,11 @@ namespace ArrowSwarm.Marketing.Editor
             for (int i = 0; i < frames; i++) yield return null;
         }
 
-        private static IEnumerator StoreSave(string name, string mode, int level, string note)
+        private static IEnumerator StoreSave(string prefix, string language, string mode, int level, string note)
         {
-            if (ArrowSwarm.Localization.LocalizationManager.Instance.CurrentLanguage != "en")
-                throw new InvalidOperationException("English locale required.");
+            if (ArrowSwarm.Localization.LocalizationManager.Instance.CurrentLanguage != language)
+                throw new InvalidOperationException(language == "en" ? "English locale required." : "Turkish locale required.");
+            string name = prefix + "_" + language.ToUpperInvariant();
             yield return new WaitForEndOfFrame();
             var image = ScreenCapture.CaptureScreenshotAsTexture();
             try
@@ -96,7 +106,7 @@ namespace ArrowSwarm.Marketing.Editor
                 File.WriteAllBytes(_folder + "/" + name + ".png", image.EncodeToPNG());
                 StoreShots.Add(new StoreShot { file = name + ".png", mode = mode, level = level,
                     scene = SceneManager.GetActiveScene().path, width = image.width, height = image.height,
-                    language = "en", note = note, visibleTexts = StoreVisibleTexts() });
+                    language = language, note = note, visibleTexts = StoreVisibleTexts() });
                 Status = "Store captured " + StoreShots.Count + "/8: " + name;
             }
             finally { if (image != null) UnityEngine.Object.Destroy(image); }
