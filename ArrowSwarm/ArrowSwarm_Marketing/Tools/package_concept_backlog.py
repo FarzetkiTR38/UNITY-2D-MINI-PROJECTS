@@ -1,5 +1,5 @@
 """Build the twelve-film review, a final-only ZIP and the complete existing video library."""
-import csv,html,json,os,re,zipfile
+import argparse,csv,html,json,os,re,zipfile
 from pathlib import Path
 from urllib.parse import quote
 import build_concept_backlog as c
@@ -36,8 +36,26 @@ def bundle():
     foot='<details><summary>Kaynak ve kontrol notları</summary><p>Tam native1080×1920 kayıtlar;30fpsH.264/AAC,6480karenin tam çözümü, kaynak hashleri, altyazı süreleri ve ses seviyeleri kontrol edildi. Yavaş/hızlı sahneler etiketli. Menü dil değişimi ve arşiv İngilizceHUD’lar kartlarda açıklanır. Ses editoryal mikstir.</p><div class="links"><a href="ENCODED_QA.json">Medya/kaynak QA</a><a href="manifest.json">Kurgu manifesti</a><a href="IMPLEMENTATION.md">Tikli uygulama</a><a href="BUNDLE_QA.json">ZIP doğrulaması</a></div></details>'
     page(P/'index.html','ArrowSwarm · 12 Yeni Konsept · Tam Video Galerisi','12 konu.<br><em>12 yeni video.</em>','İlk açık yoldan son gökkuşağı okuna. Önceki planda kalan bütün konseptler, ayrı Türkçe anlatım ve gerçek oyun görüntüleriyle hazır.',data,extras,foot)
 
+def series_library_details():
+    """Use titles and existing covers from the current short-series manifests."""
+    details = {}
+    reels = b.m.MEDIA / '05_Reels'
+    for folder, mode in (('ShapesShorts_20261118', 'Şekiller'), ('ColorShiftSeries_20261118', 'Renk Değişimi')):
+        series = reels / folder
+        manifest = series / 'manifest.json'
+        if not manifest.is_file():
+            continue
+        for entry in b.m.read(manifest):
+            if entry.get('existing'):
+                continue
+            title = f"{mode} · Bölüm {entry['level']} · {entry['title']}"
+            note = entry.get('note', 'Bölümün 16 saniyelik Türkçe anlatımlı kısa kurgusu.')
+            details[(series / entry['file']).resolve()] = (title, series / entry['poster'], note)
+    return details
+
 def library():
     LIB.mkdir(parents=True,exist_ok=True);items=[];archive_names=('Pilot01/','ReferencePilot02_20261114/','ReferencePilot02_R2_20261114/','DefensePilot01_20261115/')
+    series = series_library_details()
     for base in (b.m.MEDIA/'05_Reels',b.m.MEDIA/'06_Trailers_Ads_Tutorials'):
         for p in sorted(base.rglob('ArrowSwarm_*.mp4')):
             rel=p.relative_to(b.m.MEDIA).as_posix()
@@ -45,35 +63,50 @@ def library():
             archive=any(x in rel for x in archive_names)
             group='Arşiv / önceki sürüm' if archive else 'Yeni12 konsept' if 'ConceptBacklog_' in rel else 'Fragman / reklam / rehber' if '06_Trailers' in rel else 'Savunma' if 'Defense' in rel else 'Renk Değişimi' if 'ColorShift' in rel else 'Şekiller'
             inf=b.m.imageio_ffmpeg.read_frames(str(p));meta=next(inf);inf.close()
-            stem=p.stem;poster=p.with_name(stem+'_cover.jpg')
+            stem = p.stem
+            title, poster, series_note = series.get(p.resolve(), (stem.replace('ArrowSwarm_', '').replace('_', ' '), p.with_name(stem + '_cover.jpg'), None))
             if not poster.exists():
                 poster=LIB/'Posters'/f'{b.m.sha(p)[:12]}.jpg';poster.parent.mkdir(exist_ok=True)
                 if not poster.exists():b.m.run([b.FF,'-y','-ss',str(min(2,meta['duration']/3)),'-i',str(p),'-frames:v','1','-vf','scale=320:-1','-q:v','3',str(poster)],'library_poster')
             src=quote(os.path.relpath(p,LIB).replace('\\','/'));pos=quote(os.path.relpath(poster,LIB).replace('\\','/'))
             srt=p.with_suffix('.srt');contact=p.with_name('review_strip.jpg')
             if not contact.exists():contact=p.with_name(stem+'_contact.jpg')
-            title=stem.replace('ArrowSwarm_','').replace('_',' ')
             concept=re.search(r'ConceptBacklog_.*/(R\d\d)/',rel)
             if concept:title=concept[1]+' · '+next(x['title'] for x in b.m.read(P/'manifest.json')['items'] if x['id']==concept[1])
-            items.append({'title':title,'group':group,'src':src,'poster':pos,'srt':quote(os.path.relpath(srt,LIB).replace('\\','/')) if srt.exists() else None,'contact':quote(os.path.relpath(contact,LIB).replace('\\','/')) if contact.exists() else None,'meta':f'{meta["duration"]:g}s · {meta["size"][0]}×{meta["size"][1]} · '+('Arşiv' if archive else 'Teslim edilmiş dosya'),'note':'Önceki sürüm / taslak; güncel öneri olarak sayılmaz.' if archive else NOTES.get(concept[1],'Önceki teslim korunur. Ayrıntılı kurgu ve teknik kanıtlar ilgili teslim klasöründedir.') if concept else 'Önceki teslim korunur; tüm dosyalar yayın/yaratıcı onay anlamına gelmez.','path':rel,'sha256':b.m.sha(p),'durationSeconds':meta['duration'],'archive':archive})
+            note = series_note or 'Kurgu ayrıntıları ve teknik kontroller ilgili teslim klasöründedir.'
+            if archive:
+                note = 'Önceki kurgu sürümü.'
+            elif concept:
+                note = NOTES.get(concept[1], note)
+            items.append({'title':title,'group':group,'src':src,'poster':pos,'srt':quote(os.path.relpath(srt,LIB).replace('\\','/')) if srt.exists() else None,'contact':quote(os.path.relpath(contact,LIB).replace('\\','/')) if contact.exists() else None,'meta':f'{meta["duration"]:g}s · {meta["size"][0]}×{meta["size"][1]} · '+('Arşiv' if archive else 'Teslim edilmiş dosya'),'note':note,'path':rel,'sha256':b.m.sha(p),'durationSeconds':meta['duration'],'archive':archive})
     items.sort(key=lambda x:(x['archive'],'Yeni12' not in x['group'],x['group'],x['title']))
     active=[x for x in items if not x['archive']];b.dump(LIB/'inventory.json',{'date':'2026-11-18','total':len(items),'currentFiles':len(active),'archiveFiles':len(items)-len(active),'originalRenderQueueRemaining':0,'items':items,'componentsExcluded':['SharedOutro01 reusable ending','render segments','pre-master copies'],'published':False})
     with (LIB/'inventory.csv').open('w',newline='',encoding='utf-8-sig') as f:
         w=csv.DictWriter(f,fieldnames=['title','group','path','durationSeconds','archive','sha256']);w.writeheader();w.writerows({k:x[k] for k in w.fieldnames} for x in items)
     extras='<div class="actions"><a class="pill primary" href="../../05_Reels/ConceptBacklog_20261117/index.html">Yeni12videoya geç ↗</a><a class="pill" href="inventory.csv" download>↓ Dosya envanteri</a></div><div class="stats"><span><strong>'+str(len(active))+'</strong> güncel teslim</span><span><strong>'+str(len(items)-len(active))+'</strong> arşiv sürümü</span><span><strong>0</strong> planda eksik video</span></div>'
-    page(LIB/'index.html','ArrowSwarm · Tüm Videolar · Tek Arşiv','Bütün videolar.<br><em>Tek yerde.</em>','Yeni12konsept, seviye serileri, üç oyun modu, mağaza fragmanı ve rehber. Güncel dosyalar ile eski sürümler ayrı kategorilerde; hiçbir önceki video silinmedi.',items,extras,'<details><summary>Envanterin kapsamı</summary><p>Mevcut Reels ve Fragman/Reklam/Rehber klasörlerindeki tamamlanmış MP4 dosyaları. Render parçaları, ham kareler ve ortak kapanış bileşeni bu sayıya girmez. Arşivdeki pilotlar güncel yaratıcı teslim diye sayılmaz.</p><a href="inventory.json">Dosyalar ve SHA256 envanteri</a></details>')
+    page(LIB/'index.html','ArrowSwarm · Tüm Videolar · Tek Arşiv','Bütün videolar.<br><em>Tek yerde.</em>','Şekiller kısa kurguları, Renk Değişimi ve Savunma serileri, mağaza fragmanı ve rehber.',items,extras,'<details><summary>Envanterin kapsamı</summary><p>Reels, fragman, reklam ve rehber klasörlerindeki tamamlanmış MP4 dosyaları. Önceki kurgu sürümlerine Arşiv filtresinden ulaşabilirsin.</p><a href="inventory.json">Dosyalar ve SHA256 envanteri</a></details>')
+    polish_page(LIB)
     print('LIBRARY',len(items),'CURRENT',len(active),'ARCHIVE',len(items)-len(active))
+def polish_page(folder):
+    file=folder/'index.html';text=file.read_text(encoding='utf-8')
+    icon=quote(os.path.relpath(b.m.ICON,folder).replace('\\','/'))
+    text=text.replace('<style>',f'<link rel="icon" href="{icon}"><style>',1)
+    for old,new in [('Yeni12','Yeni 12'),('yeni12','yeni 12'),('12konsept','12 konsept'),('12videoya','12 videoya'),('Şekiller1','Şekiller 1'),('Şekiller2','Şekiller 2'),('Şekiller50','Şekiller 50'),('Savunma10','Savunma 10'),('Savunma3','Savunma 3'),('Değişimi1','Değişimi 1'),('Değişimi3','Değişimi 3'),('Değişimi5','Değişimi 5')]:text=text.replace(old,new)
+    file.write_text(text,encoding='utf-8')
+
 def polish():
-    for folder in (P,LIB):
-        file=folder/'index.html';text=file.read_text(encoding='utf-8')
-        icon=quote(os.path.relpath(b.m.ICON,folder).replace('\\','/'))
-        text=text.replace('<style>',f'<link rel="icon" href="{icon}"><style>',1)
-        for old,new in [('Yeni12','Yeni 12'),('yeni12','yeni 12'),('12konsept','12 konsept'),('12videoya','12 videoya'),('Şekiller1','Şekiller 1'),('Şekiller2','Şekiller 2'),('Şekiller50','Şekiller 50'),('Savunma10','Savunma 10'),('Savunma3','Savunma 3'),('Değişimi1','Değişimi 1'),('Değişimi3','Değişimi 3'),('Değişimi5','Değişimi 5')]:text=text.replace(old,new)
-        file.write_text(text,encoding='utf-8')
+    polish_page(P)
     overview=b.Image.new('RGB',(1440,920),'#0b1830')
     for i,x in enumerate(b.m.read(P/'manifest.json')['items']):
         img=b.Image.open(P/x['id']/(Path(x['file']).stem+'_cover.jpg')).convert('RGB').resize((234,416),b.Image.Resampling.LANCZOS)
         left=(i%6)*240+3;top=(i//6)*460+6;overview.paste(img,(left,top))
         b.m.text(overview,x['id'],(left+117,top+435),24,anchor='mm',fill='#92e9ff')
     overview.save(P/'overview.jpg',quality=90)
-if __name__=='__main__':bundle();library();polish()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--library-only', action='store_true', help='Refresh the combined library without rebuilding the twelve-film bundle')
+    args = parser.parse_args()
+    if not args.library_only:
+        bundle()
+        polish()
+    library()
