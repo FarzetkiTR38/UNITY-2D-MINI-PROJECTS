@@ -1,12 +1,13 @@
 # ArrowSwarm · Oyuncu deneyimi yol haritası
 
-19 Kasım 2026 · Plan kaydedildi. Uygulama, temel ölçüm ve oyuncu testleri bekliyor.
+19 Kasım 2026 · Uygulama başladı. Temel Android ve oyuncu testleri bekliyor.
 
 İlk hedef, yeni oyuncunun ek yardım almadan doğru bir ok göndermesi, bir hata yaptığında sebebini anlaması ve ilk galibiyetten sonra kendi isteğiyle ikinci bölüme geçmesi. Kapalı testte bu akışı ölç. Ardından Savunma’daki zamanlamanın değerini ve üç modun ayrı ayrı tekrar oynanma nedenini doğrula.
 
 ## 0 · Kapalı test için başlangıç ölçümü ve yayın adayı
 
 - [ ] Play’den kurulabilen aday derlemenin sürüm kodunu ve kaynak commit’ini kaydet. Portre donanım bildirimi düzeltmesini birleştirilmiş manifestte ve Play Console’da doğrula. Dar bir Android telefon ve uzun ekranlı bir telefonda temiz açılış, duraklatma, arka plana alma ve geri dönme akışlarını dene. Erişilebilir cihaz varsa tablet düzenini de kontrol et. Sorunları cihaz ve derleme bilgisiyle kaydet. [Yayın kontrol listesi](../ArrowSwarm_Marketing/10_Launch/GO_NO_GO.md)
+  - [x] Yerel imzalı aday `Builds/ArrowSwarm 1.0.0 (2) Boot check.aab`. Paket `com.farzetkigames.arrowswarm`, kod 2, kaynak `6954e74f` ve mevcut yerel Android Player Settings. SHA-256 `D3C724AA341C463ED12E3D6E1D81EBA2A244E04A9BD134D1040A83D3F16AD3BA`. Unity IL2CPP derlemesi ve bundletool geçerli. Bir etkin ve dışa açık GameActivity giriş noktası, portre yönü, isteğe bağlı portre donanımı ve AD_ID bildirimi doğrulandı. İmza önceki yükleme anahtarıyla eşleşiyor. Play Console ve cihaz kurulum doğrulaması açık.
 - [ ] İlk testte projeyi bilmeyen 5–8 oyuncuya kurulu oyunu ver. Yardım etmeden ilk oturumu izle. İlk açılış, ilk oynanabilir dokunuş, ilk doğru ok, öğreticiyi bitirme veya atlama, ilk zafer, ikinci bölüm başlangıcı ve oturumdan çıkışı zamanla. Yanlış hamlede oyuncunun dokunmak istediği oku ve hataya verdiği açıklamayı not et. Kayıt varsa oyuncunun iznini al.
 - [ ] İlk grupla mümkünse ilk oturumda geçiş reklamsız bir başlangıç ölçümü al. Reklam izin akışını, doldurulamayan reklamı ve ödül dönüşünü ayrı cihaz senaryolarında doğrula. Üretime hazır olma kararı güncel AAB, cihaz kanıtı ve Play Console durumuyla verilir. [Yayın engelleri](../ArrowSwarm_Marketing/10_Launch/GO_NO_GO.md)
 
@@ -14,10 +15,12 @@
 
 ## 1 · Açılış, ilk galibiyet ve ikinci bölüm
 
-- [ ] Boot’taki 2,4 saniyelik dolum ve ardından gelen 0,25 saniyelik beklemeyi gerçek sahne yüklemesine bağla. Hazır olan sahneyi yapay beklemeye sokan döngüyü kaldır. Soğuk açılış ve menüden bölüme dönüşü ayrı ölç. [BootLoadingUI.cs](../Assets/_Project/Scripts/UI/BootLoadingUI.cs#L147) · [BootLoader.cs](../Assets/_Project/Scripts/Core/BootLoader.cs#L47)
-- [ ] Öğretici zaferinde birincil eylemi **Sonraki Bölüm** yap, **Ana Menü** seçeneğini erişilebilir tut. Öğreticiyi atlamak ikinci bölümü açabilsin. Üç yıldız yalnız oynanmış bir başarıdan gelsin. Eski kayıtlar için kazanılmış ilerleme veya yıldızı geriye dönük değiştirme. [TutorialManager.cs](../Assets/_Project/Scripts/Tutorial/TutorialManager.cs#L254)
-- [ ] İlk menü girişindeki profil penceresini, oyuncu sıralamaya katılmak ya da profilini düzenlemek istediği ana taşı. Ülke ve dil etkileşimini ayrı değerlendir. Ülke kaydı, oyuncunun açıkça seçtiği dili değiştirmesin. Dil tercihi ve anonim çevrimiçi kimlik akışını ayrı test et. [MainMenuUI.cs](../Assets/_Project/Scripts/UI/MainMenuUI.cs#L95) · [ProfileSetupModalUI.cs](../Assets/_Project/Scripts/UI/ProfileSetupModalUI.cs#L357)
-- [ ] Savunma öğreticisini ortak TMP yerelleştirmesine taşı. İlk üç bölümde açık yol, engellenmiş ok ve düşmana göre atış zamanlamasını kısa, oynanabilir örneklerle öğret. Diğer modların özel kurallarını ilk girişlerinde öğret. [TutorialManager.cs](../Assets/_Project/Scripts/Tutorial/TutorialManager.cs#L337)
+- [x] Boot göstergesini gerçek sahne yüklemesine bağla ve hazır sahneyi bekleten zamanlayıcıyı kaldır. `700cc1c7` ile Unity MCP Play Mode karşılaştırmasında ana menü 3,967 → 2,079 sn, öğretici 5,239 → 1,975 sn. İki rotada da tek sahne aktivasyonu, gerilemeden %100’e ulaşan gösterge ve sıfır konsol hatası kaydedildi. [Unity öncesi/sonrası](http://127.0.0.1:8200/#%2Fcaptures%2FPlayerExperience%2Findex.html)
+- [ ] Android cihazda soğuk açılışı ve menüden bölüme dönüşü ayrı ölç.
+- [x] Öğretici zaferinde **Sonraki Bölüm** ve **Ana Menü** seçenekleri var. Unity’de gerçek giriş olaylarıyla tamamlanan öğretici üç yıldız verdi ve Sonraki Bölüm doğrudan ikinci Savunma bölümünü açtı. Atla temiz kayıtta ikinci bölümü sıfır yıldızla açtı ve eski kayıttaki iki yıldızı korudu. Ana Menü seçeneği kazanılan yıldızları ve ikinci bölüm erişimini korudu. `d3008c9f` · [Unity öncesi/sonrası ve test kayıtları](http://127.0.0.1:8200/#%2Fcaptures%2FPlayerExperience%2Findex.html)
+- [x] İlk ana menü açılışı profil formu göstermiyor. İlk Lider Tablosu tıklaması formu açıyor ve kayıt sonrasında tabloya devam ediyor. Profil simgesi de formu açmaya devam ediyor. Unity’de ülkeyi ABD’den Türkiye’ye değiştirmek ve kaydetmek İngilizce dilini korudu. Dil kaydını değiştirmek de ülkeyi korudu. `aa13ade0`
+- [ ] Anonim çevrimiçi kimlik akışını gerçek test ortamında doğrula. Editör gezinme testi yalıtılmış çevrimdışı sağlayıcı ile yapıldı.
+- [x] Savunma öğreticisinde açık yol, ikinci bölümde engellenmiş ok ve üçüncü bölümde düşmana göre atış zamanlaması anlatılıyor. Şekiller ve Renk Değişimi ilk tahtalarında kendi kurallarını gösteriyor. Unity’de ikinci bölümde engelli ve doğru atış, üçüncü bölümde hasar bildirimi, Şekiller’de doğru atış ve Renk Değişimi’nde dönüş kontrol edildi. Tamamlama kartı 10 dil ve iki temada 20/20 geçti. Gerçek kullanıcı ölçümü açık. `f03dbf39` · [Sahne görüntüleri ve Unity testleri](http://127.0.0.1:8200/#%2Fcaptures%2FPlayerExperience%2Findex.html)
 
 **Kabul ölçütü.** Temiz kurulumda gerçek dokunuşla oynayıp bitirme ve atlama ayrı ayrı geçer. İkinci bölüm tek eylemle açılır ve profil formu araya girmez. Yerelleştirme on dilde, iki temada ve dar/uzun ekranda okunur. Aynı protokolle yeni oyuncularda ilk hamle süresini ve ikinci bölüme geçişi başlangıçla karşılaştır.
 
@@ -53,6 +56,6 @@
 
 ## Devam noktası
 
-**Sıradaki ilk iş.** Faz 0’da mevcut aday AAB’nin derleme kimliğini kaydet ve temiz Android kurulumunda açılıştan öğretici zaferi, profil penceresi ve ikinci bölüme kadar başlangıç videosu al. Kayıtta süreleri, doğrudan ilerlemeyi engelleyen adımları ve cihaz bilgisini işaretle. Ardından Faz 1’in ilk küçük değişikliğiyle karşılaştır.
+**Sıradaki ilk iş.** Yanlış hamle nedenini atışın temas anında göster. Dönüş hakkı bittiğinde tahta ve sonuç panelindeki mesajları ayrı ayrı doğrula. Android cihaz bağlandığında temiz kurulumdan ikinci bölüme kadar süreleri ve akıştaki engelleri cihaz bilgisiyle kaydet.
 
 Her aşama için bulgu, önce/sonra kanıtı, doğrulama sonucu ve commit kaydını bu dosyaya ekle. Unity MCP ile gerçek kontrolleri ve önceki regresyonları dene. Cihaz ve insan gözlemlerini Editör ve çözücü sonuçlarından ayrı kaydet. Oyuncu kayıtlarını, tercihleri ve açık yerel değişiklikleri koru. Onaylı UI tasarım sırası kendi [UI yol haritasından](UI_REDESIGN_ROLLOUT.md) izlenir.
