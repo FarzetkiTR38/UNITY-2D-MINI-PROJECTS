@@ -12,12 +12,15 @@ namespace ArrowSwarm.Puzzle
         [SerializeField] private LineRenderer _head;
         [Tooltip("Optional authored upward triangle. The legacy line head remains a fallback.")]
         [SerializeField] private SpriteRenderer _filledHead;
+        [SerializeField] private PuzzleMatchMarker _matchMarker;
+        [SerializeField, Range(.1f, .9f)] private float _matchMarkerScale = .48f;
         private PuzzleArrowData _data;
         private PuzzleConfig _config;
         private Vector3 _origin;
         private Vector3[] _path;
         private float _length;
         private bool _usingFilledHead;
+        private bool _showMatchMarker;
         private Transform _filledHeadTransform;
         private Vector3 _filledHeadBaseScale, _filledHeadTipOffset;
         private float _filledHeadDepth, _headScale = 1f, _travel, _headForwardOffset, _headRearExtent;
@@ -41,14 +44,18 @@ namespace ArrowSwarm.Puzzle
             _body.startColor = _body.endColor = color;
             if (_head != null) _head.startColor = _head.endColor = color;
             if (_filledHead != null) _filledHead.color = color;
+            if (_showMatchMarker && _matchMarker != null)
+                _matchMarker.Show(_data.ColorId, color, _config.HeadSize * _matchMarkerScale);
         }
 
         /// <summary>Assigns path data and color when acquired from the pool.</summary>
-        public void Bind(PuzzleArrowData data, int index, Vector3 origin, PuzzleConfig config)
+        public void Bind(PuzzleArrowData data, int index, Vector3 origin, PuzzleConfig config, bool showMatchMarker = false)
         {
             if (!PuzzleRules.HasNaturalNeck(data))
                 throw new System.ArgumentException("Puzzle arrow requires an aligned unit neck behind its head.", nameof(data));
             _data = data; Index = index; _origin = origin; _config = config;
+            _showMatchMarker = showMatchMarker;
+            _matchMarker?.Hide();
             _length = data.Points.Count - 1;
             _path = new Vector3[data.Points.Count];
             for (int i = 0; i < _path.Length; i++) _path[i] = origin + (Vector3)(Vector2)data.Points[_path.Length - 1 - i];
@@ -103,6 +110,8 @@ namespace ArrowSwarm.Puzzle
                 Vector3 position = tip - rotation * (_filledHeadTipOffset * _headScale);
                 position.z += _filledHeadDepth;
                 _filledHeadTransform.SetPositionAndRotation(position, rotation);
+                if (_showMatchMarker && _matchMarker != null)
+                    _matchMarker.transform.position = tip - direction * (_config.HeadSize * _headScale * .64f);
                 return;
             }
             if (_head == null) return;

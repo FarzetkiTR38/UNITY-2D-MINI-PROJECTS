@@ -79,16 +79,16 @@ namespace ArrowSwarm.UI
             if (_lessonGroup == null || _lessonText == null) return;
             bool onBoard = !session.Paused && !session.Won && !session.Lost &&
                 !session.HintPromptOpen && !session.RocketPromptOpen;
-            bool showFailure = onBoard && session.HasFailureMessage;
+            bool showFeedback = onBoard && (session.HasFailureMessage || session.HasRotationLesson);
             bool firstLesson = session.LevelNumber == 1 && !session.Preview && session.Ready &&
                 session.Remaining == session.Level.Arrows.Count && session.Turns == session.Level.TurnBudget;
-            _lessonGroup.alpha = showFailure || firstLesson ? 1f : 0f;
-            if (showFailure) _lessonText.text = session.Message;
+            _lessonGroup.alpha = showFeedback || firstLesson ? 1f : 0f;
+            if (showFeedback) _lessonText.text = session.Message;
             else if (firstLesson)
             {
                 _lessonText.text = session.Mode == GameModeId.Shapes
                     ? Text("puzzle_shapes_help", "Clear the shape. Blocked arrows cost a life.")
-                    : Text("puzzle_color_help", "Match the arrow to the exit wall color.");
+                    : Text("puzzle_color_help", "Match the arrow’s symbol to the exit wall.");
             }
         }
         private void OnDestroy()

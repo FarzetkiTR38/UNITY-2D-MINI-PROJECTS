@@ -313,6 +313,7 @@ Transform:
   - {fileID: 8487541012081881201}
   - {fileID: 6128033138130794682}
   - {fileID: 5412848129672373361}
+  - {fileID: 8301836168072679921}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4107280286205875521
@@ -330,6 +331,8 @@ MonoBehaviour:
   _body: {fileID: 9207875381160521856}
   _head: {fileID: 1779327855511750395}
   _filledHead: {fileID: 1709677411928274297}
+  _matchMarker: {fileID: 7348520933287326038}
+  _matchMarkerScale: 0.5
 --- !u!1 &6816250305828279065
 GameObject:
   m_ObjectHideFlags: 0
@@ -421,3 +424,76 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1001 &3831252251135263020
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 9119292530811378284}
+    m_Modifications:
+    - target: {fileID: 3503536988642227626, guid: c7e1775fc88ea9d4da87bb168473ad26, type: 3}
+      propertyPath: m_Name
+      value: PuzzleMatchMarker
+      objectReference: {fileID: 0}
+    - target: {fileID: 5052295087462224093, guid: c7e1775fc88ea9d4da87bb168473ad26, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5052295087462224093, guid: c7e1775fc88ea9d4da87bb168473ad26, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5052295087462224093, guid: c7e1775fc88ea9d4da87bb168473ad26, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5052295087462224093, guid: c7e1775fc88ea9d4da87bb168473ad26, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5052295087462224093, guid: c7e1775fc88ea9d4da87bb168473ad26, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5052295087462224093, guid: c7e1775fc88ea9d4da87bb168473ad26, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5052295087462224093, guid: c7e1775fc88ea9d4da87bb168473ad26, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5052295087462224093, guid: c7e1775fc88ea9d4da87bb168473ad26, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5052295087462224093, guid: c7e1775fc88ea9d4da87bb168473ad26, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5052295087462224093, guid: c7e1775fc88ea9d4da87bb168473ad26, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c7e1775fc88ea9d4da87bb168473ad26, type: 3}
+--- !u!114 &7348520933287326038 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5823267866065612922, guid: c7e1775fc88ea9d4da87bb168473ad26, type: 3}
+  m_PrefabInstance: {fileID: 3831252251135263020}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7043fe621644e2d46ab210d8cec6a9c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Puzzle.PuzzleMatchMarker
+--- !u!4 &8301836168072679921 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5052295087462224093, guid: c7e1775fc88ea9d4da87bb168473ad26, type: 3}
+  m_PrefabInstance: {fileID: 3831252251135263020}
+  m_PrefabAsset: {fileID: 0}

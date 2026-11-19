@@ -16,6 +16,7 @@ namespace ArrowSwarm.Puzzle
         public void ToggleRocket()
         {
             if (!Idle) return;
+            ClearRotationLesson();
             if (RocketCharges <= 0) { OpenRocketPrompt(); return; }
             RocketArmed = !RocketArmed;
             for (int i = 0; i < _views.Length; i++) if (!_removed[i]) _views[i].Highlight(false);

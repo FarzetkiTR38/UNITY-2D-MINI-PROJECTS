@@ -9,6 +9,11 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Collapses the selected path into its head, then lifts and fades it out.</summary>
         public void RenderRocket(float progress, Vector3 lift)
         {
+            if (_showMatchMarker)
+            {
+                _showMatchMarker = false;
+                _matchMarker?.Hide();
+            }
             RenderTravel(0f);
             float collapse = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(progress * 2f));
             float flight = progress * progress;

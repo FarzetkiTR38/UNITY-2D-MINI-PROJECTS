@@ -28,6 +28,7 @@ namespace ArrowSwarm.Puzzle
         public void Fire(int index)
         {
             if (!Ready || index < 0 || index >= _removed.Length || _removed[index] || _inFlight[index]) return;
+            ClearRotationLesson();
             if (HasFailureMessage) SetMessage("");
             RocketArmed = false;
             ConsumeHintArrow(index);
@@ -67,7 +68,11 @@ namespace ArrowSwarm.Puzzle
             {
                 if (Lives <= 0) End(false);
                 else if (Remaining == 0) End(true);
-                else CheckStuck();
+                else
+                {
+                    CheckStuck();
+                    if (!blocked) TrySuggestRotation();
+                }
             }
             Notify();
         }
@@ -76,6 +81,7 @@ namespace ArrowSwarm.Puzzle
         public void Rotate(int direction)
         {
             if (!Ready || _mode != GameModeId.ColorShift || Turns <= 0) return;
+            ClearRotationLesson();
             if (HasFailureMessage) SetMessage("");
             ConsumeHintRotation();
             RocketArmed = false;
@@ -85,8 +91,12 @@ namespace ArrowSwarm.Puzzle
         private IEnumerator Turn(int direction)
         {
             yield return _frame.Rotate(direction, _config.RotationDuration);
-            _busy = false; CheckStuck(); Notify();
+            _busy = false;
+            CheckStuck();
+            TryTeachFirstRotation();
+            Notify();
         }
+
         private void CheckStuck()
         {
             RocketNeeded = false;
@@ -118,6 +128,7 @@ namespace ArrowSwarm.Puzzle
         public void Hint()
         {
             if (!Idle) return;
+            ClearRotationLesson();
             if (RepeatHintSuggestion()) return;
             RocketArmed = false;
             if (RocketNeeded)

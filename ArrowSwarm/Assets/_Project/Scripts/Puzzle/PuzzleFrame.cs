@@ -10,6 +10,8 @@ namespace ArrowSwarm.Puzzle
     public sealed partial class PuzzleFrame : MonoBehaviour
     {
         [SerializeField] private LineRenderer[] _walls;
+        [SerializeField] private PuzzleMatchMarker[] _matchMarkers;
+        [SerializeField, Range(.2f, .95f)] private float _matchMarkerWidth = .68f;
         [Header("Rounded Border")]
         [SerializeField, Min(.01f)] private float _cornerRadius = .8f;
         [SerializeField, Range(2, 24)] private int _cornerSamples = 8;
@@ -44,6 +46,7 @@ namespace ArrowSwarm.Puzzle
         {
             _theme = theme;
             PaintWalls();
+            ShowMatchMarkers();
         }
 
         /// <summary>Sets level-dependent wall geometry and palette, leaving arrow transforms alone.</summary>
@@ -58,6 +61,7 @@ namespace ArrowSwarm.Puzzle
             float x = (level.Width - 1) * .5f + config.WallOffset;
             float y = (level.Height - 1) * .5f + config.WallOffset;
             BuildRoundedWalls(x, y);
+            PlaceMatchMarkers(x, y);
             ApplyTheme(ThemeManager.CurrentTheme);
             gameObject.SetActive(true);
         }
@@ -69,6 +73,8 @@ namespace ArrowSwarm.Puzzle
             int generation = ++_generation;
             float from = _paintOffset, to = from + (direction > 0 ? 1f : -1f);
             float elapsed = 0f; duration = Mathf.Max(.01f, duration); IsAnimating = true;
+            if (_matchMarkers != null)
+                foreach (var marker in _matchMarkers) marker?.Hide();
             try
             {
                 while (elapsed < duration)
@@ -85,13 +91,40 @@ namespace ArrowSwarm.Puzzle
                 _paintOffset = Mathf.Repeat(to, 2f); _orientation ^= 1;
                 PaintWalls();
             }
-            finally { if (generation == _generation) IsAnimating = false; }
+            finally
+            {
+                if (generation == _generation)
+                {
+                    IsAnimating = false;
+                    ShowMatchMarkers();
+                }
+            }
         }
 
         private void CancelFlow()
         {
             _generation++; IsAnimating = false; _paintOffset = _orientation;
             PaintWalls();
+        }
+
+        private void PlaceMatchMarkers(float x, float y)
+        {
+            if (_matchMarkers == null || _matchMarkers.Length != 4) return;
+            _matchMarkers[0].transform.localPosition = new Vector3(0, y, 0);
+            _matchMarkers[1].transform.localPosition = new Vector3(x, 0, 0);
+            _matchMarkers[2].transform.localPosition = new Vector3(0, -y, 0);
+            _matchMarkers[3].transform.localPosition = new Vector3(-x, 0, 0);
+        }
+
+        private void ShowMatchMarkers()
+        {
+            if (IsAnimating || _level == null || _level.Mode != GameModeId.ColorShift || _matchMarkers == null) return;
+            for (int side = 0; side < _matchMarkers.Length; side++)
+            {
+                int key = PuzzleRules.WallId((side & 1) == 0 ? Vector2Int.up : Vector2Int.right, _orientation);
+                var wallColor = _config.ThemeColor(_level.WallColors[key], _theme);
+                _matchMarkers[side]?.Show(key, wallColor, _config.WallWidth * _matchMarkerWidth);
+            }
         }
     }
 }
