@@ -1,7 +1,7 @@
 namespace ArrowSwarm.Tutorial
 {
     using System.Collections;
-    using ArrowSwarm.Core;
+    using ArrowSwarm.Audio;
     using UnityEngine;
 
     /// <summary>Presentation animations and completion navigation for the tutorial overlay.</summary>
@@ -74,6 +74,7 @@ namespace ArrowSwarm.Tutorial
 
         private void OnSkipClicked()
         {
+            AudioManager.Instance?.PlayButtonClick();
             TutorialManager.Instance?.SkipTutorial();
         }
 
@@ -86,19 +87,14 @@ namespace ArrowSwarm.Tutorial
 
         private void OnContinueClicked()
         {
-            Debug.Log("[ArrowSwarm] TutorialOverlayUI: Continue Button Clicked! Returning to MainMenuScene...");
-            if (TutorialManager.Instance != null)
-            {
-                TutorialManager.Instance.CompleteAndReturnToMenu();
-            }
-            else if (SceneTransitionManager.Instance != null)
-            {
-                SceneTransitionManager.Instance.LoadScene("MainMenuScene");
-            }
-            else
-            {
-                UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenuScene");
-            }
+            AudioManager.Instance?.PlayButtonClick();
+            TutorialManager.Instance?.ContinueToNextLevel();
+        }
+
+        private void OnMainMenuClicked()
+        {
+            AudioManager.Instance?.PlayButtonClick();
+            TutorialManager.Instance?.CompleteAndReturnToMenu();
         }
     }
 }

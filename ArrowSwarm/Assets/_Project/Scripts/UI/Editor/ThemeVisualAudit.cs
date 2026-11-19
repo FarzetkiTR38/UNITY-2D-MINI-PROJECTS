@@ -84,7 +84,7 @@ namespace ArrowSwarm.UI.Editor
                     tutorial.transform.parent.gameObject.SetActive(true);
                     tutorial.Show();
                     tutorial.SetInstruction("Tap an arrow to hit the enemies!");
-                    if (screen == "TutorialComplete") tutorial.ShowCompletionCard("TUTORIAL COMPLETE", "You mastered all the basics!", "MAIN MENU");
+                    if (screen == "TutorialComplete") tutorial.ShowCompletionCard();
                     tutorial.StopAllCoroutines();
                     foreach (var group in tutorial.GetComponentsInChildren<CanvasGroup>(true))
                         group.alpha = group.name == "Banner" && screen == "TutorialComplete" || group.name == "CompletionBackdrop" && screen != "TutorialComplete" ? 0 : 1;

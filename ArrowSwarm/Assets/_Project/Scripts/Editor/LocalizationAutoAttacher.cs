@@ -64,7 +64,9 @@ namespace ArrowSwarm.Editor
             ("TutorialOverlay/CompleteCard/TitleText", "tutorial_complete"),
             ("TutorialOverlay/CompleteCard/SubtitleText2", "tutorial_sub2"),
             ("TutorialOverlay/CompleteCard/SubtitleText", "tutorial_sub1"),
-            ("TutorialOverlay/CompleteCard/ContinueButton/Text", "win_main_menu")
+            ("TutorialOverlay/CompleteCard/ContinueButton/Text", "win_next_level"),
+            ("TutorialOverlay/CompleteCard/MainMenuButton/Text", "win_main_menu"),
+            ("TutorialOverlay/SkipButton/Text", "profile_skip")
         };
 
         static LocalizationAutoAttacher()
