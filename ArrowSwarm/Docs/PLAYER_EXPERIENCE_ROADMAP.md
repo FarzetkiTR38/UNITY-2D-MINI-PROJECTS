@@ -1,6 +1,6 @@
 # ArrowSwarm · Oyuncu deneyimi yol haritası
 
-19 Kasım 2026 · Uygulama başladı. Temel Android ve oyuncu testleri bekliyor.
+20 Kasım 2026 · Açılış, öğretici ve geri bildirim Unity’de doğrulandı. Fiziksel Android ve oyuncu testleri bekliyor.
 
 İlk hedef, yeni oyuncunun ek yardım almadan doğru bir ok göndermesi, bir hata yaptığında sebebini anlaması ve ilk galibiyetten sonra kendi isteğiyle ikinci bölüme geçmesi. Kapalı testte bu akışı ölç. Ardından Savunma’daki zamanlamanın değerini ve üç modun ayrı ayrı tekrar oynanma nedenini doğrula.
 
@@ -38,7 +38,7 @@
 
 ## 3 · Savunma dengesi, zorluk ve reklam ritmi
 
-- [ ] Aynı erken ve orta Savunma tahtalarını iki yöntemle karşılaştır. İlk yöntemde her açık oku hemen gönder, ikincide düşman konumuna ve atış zamanına göre oyna. Zaferi, kalan canı, gerçek mermi isabetini, bitişe ulaşan düşmanı, final temizliğini ve Dondur kullanımını kaydet. [LevelManager.cs](../Assets/_Project/Scripts/Core/LevelManager.cs#L270)
+- [x] 2. ve 35. Savunma bölümlerinde aynı tahta tohumuyla iki atış stratejisi denendi. Dört koşu da üç canla kazandı. Konuma göre seçilen atışlarda normal ok isabeti 2. bölümde 4 → 7, 35. bölümde 34 → 76 oldu. Toplam süre sırasıyla 2,41 → 5,28 ve 9,28 → 17,86 oyun saniyesiydi. Dondur her iki yöntemde kapalıydı, bütün bitişlerde kalan düşman sayısı sıfırdı. Bunlar Unity hipotez testleri, oyuncu tercihleri henüz ölçülmedi. [Koşu tablosu](http://127.0.0.1:8200/captures/PlayerExperience/DefenseTiming/attempts.csv)
 - [ ] Test sonuçlarına göre en küçük denge değişikliğini seç. İyi zamanlama zaten fark yaratıyorsa bunu sahada daha görünür kıl. Hızlı boşaltma üstün geliyorsa önce zamanlamaya bağlı görünür ustalık hedefini dene. Ana kazanma kuralı için prototip gerekirse eski ve yeni kuralla aynı tahtaları karşılaştır. Gökkuşağı finalini, son can ile son ok yarışını ve kayıt ilerlemesini doğrula.
 - [ ] Üç modun ilk beş bölümünde süre, tekrar ve çıkış nedenlerine bak. Tek bir seviyedeki büyük zorluk sıçramasını önce düzenle. Şekiller’de tıkanmanın çizgi yoğunluğundan mı, gerçek planlama zorluğundan mı geldiğini ayırt et. Renk Değişimi’nde ilk dönüş kullanımını ve sıfır hakla kaybı gözle.
 - [ ] İlk birkaç galibiyette geçiş reklamı ertelemesini dene. Mevcut ayar 4. bölüm ve 90 saniye. Reklam koşulları değiştiğinde galibiyetten sonraki bölüme geçişi, oturumdan çıkışı ve yeniden denemeyi karşılaştır. Ödüllü akışta ret, başarısız yükleme, çevrimdışı durum ve tek ödül senaryolarını test et. [CoreManagers.prefab](../Assets/_Project/Prefabs/Core/CoreManagers.prefab#L375)
@@ -48,7 +48,8 @@
 ## 4 · Sıralama ve mağaza vaadi
 
 - [ ] Canlı sıralamadaki `Savunma en yüksek bölüm × 10.000 + toplam yıldız` ağırlığını kullanıcıya açıkla. İlk seçenek listeyi **Savunma Sıralaması** diye adlandırmak. Ayrı mod tablolarına, her modda anlamlı bir rekabet talebi ve skor yönetimi varsa geç. Yardımlı/yardımsız sonuçların kapsamını tanımla. Formül değişikliği seçilirse eski skoru koruyan sürümleme, geçiş ve geri dönüş planını ayrı kaydet. [UnityCloudService.cs](../Assets/_Project/Scripts/Data/UnityCloudService.cs#L129)
-- [ ] Aynı mağaza metniyle ilk görseldeki iki adayı karşılaştır. Bir aday Savunma’da okun sürüyü vurduğu anı, diğeri tanınan bir Şekiller siluetini gösterir. Mevcut menü görselini karşılaştırma için sakla. İlk görseli gören kişiye oyunda ne yapacağını sor. Mağazada yeterli trafik oluşursa aynı dil ve dönemle Play Console dönüşümünü karşılaştır. [Mağaza stratejisi](../ArrowSwarm_Marketing/07_ASO_SEO_GEO/ASO_STRATEGY.md)
+- [ ] Aynı mağaza metniyle ilk görseldeki iki adayı karşılaştır. İlk görseli gören kişiye oyunda ne yapacağını sor. Mağazada yeterli trafik oluşursa aynı dil ve dönemle Play Console dönüşümünü karşılaştır. [Mağaza stratejisi](../ArrowSwarm_Marketing/07_ASO_SEO_GEO/ASO_STRATEGY.md)
+  - [x] Savunma’da gerçek isabet karesi ve Şekiller silueti aynı Türkçe başlıkla hazır. Ana menü görseli karşılaştırmada duruyor. [Mağaza görseli karşılaştırması](http://127.0.0.1:8200/#%2Fcaptures%2FPlayerExperience%2Fstore.html)
 
 **Kabul ölçütü.** Oyuncu yıldızın ve bölümün sırasına etkisini anlıyor. Sıralamanın boş, gecikmeli, çevrimdışı ve yeniden bağlanma durumları önceki testleri geçiyor. Yeni mağaza görseli, oyunun kuralını ilk bakışta daha iyi anlatıyor ve gerçek oynanışla eşleşiyor.
 
@@ -59,6 +60,6 @@
 
 ## Devam noktası
 
-**Sıradaki ilk iş.** Savunma’nın aynı erken ve orta tahtalarında anında atış ve konuma göre atışı karşılaştır. Küçük ok hedeflerini ve HUD ile tahta dengesini Android cihazda kendi ölçümleriyle doğrula.
+**Sıradaki ilk iş.** Savunma’da zamanlı atışın etkisini sonuçta görünür kıl ve sıralama puanının hangi ilerlemeyi saydığını anlat. Küçük ok hedeflerini ve HUD ile tahta dengesini Android cihazda kendi ölçümleriyle doğrula.
 
 Her aşama için bulgu, önce/sonra kanıtı, doğrulama sonucu ve commit kaydını bu dosyaya ekle. Unity MCP ile gerçek kontrolleri ve önceki regresyonları dene. Cihaz ve insan gözlemlerini Editör ve çözücü sonuçlarından ayrı kaydet. Oyuncu kayıtlarını, tercihleri ve açık yerel değişiklikleri koru. Onaylı UI tasarım sırası kendi [UI yol haritasından](UI_REDESIGN_ROLLOUT.md) izlenir.
