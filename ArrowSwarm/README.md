@@ -1,5 +1,7 @@
 # Arrow Swarm — Technical Architecture & Engine Anatomy Document
 
+[Oyuncu deneyimi yol haritası](Docs/PLAYER_EXPERIENCE_ROADMAP.md) · [Yayın ve büyüme yol haritası](ArrowSwarm_Marketing/MASTER_PLAN.md)
+
 > **Comprehensive Technical Master Reference Manual**  
 > *Target Audience: Senior Game Engineers, Software Architects, Technical Directors, QA Leads, and Systems Integrators.*  
 > *Project Version: Unity 6 (6000.3.18f1) URP 2D | Target Platform: Android Portrait (1080x1920)*
