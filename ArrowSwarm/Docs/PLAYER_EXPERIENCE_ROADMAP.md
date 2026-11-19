@@ -27,6 +27,7 @@
 ## 2 · Oyun tahtasının okunurluğu, dokunma ve hata geri bildirimi
 
 - [ ] Şekiller’de başlangıç ve yoğun tahtalarda ok ucu, gövde ve arka plan kontrastını iyileştir. HUD ile tahta arasındaki görsel ağırlığı ve Savunma düşman sayılarının küçük ekrandaki okunurluğunu düzenle. Kaydedilen örneklerde küçük hedefleri gerçek parmakla dene. [Unity mağaza çekimleri](../ArrowSwarm_Marketing/03_GooglePlay/StoreSet_TR_20261118/overview_TR.jpg)
+  - [x] Şekiller’in açık tema ok paletinde en yüksek ölçülen doğrusal parlaklık 0,462 → 0,281. 720×1280 Unity Game View’da 1, 2 ve 50. bölümlerde baş ve gövde birlikte kontrol edildi. Savunma 35’te düşman sayıları 3 → 3,45 TMP boyutuna yükseltildi, beyaz yüz ve koyu kontur eklendi. [Önce ve sonra görüntüleri](http://127.0.0.1:8200/#%2Fcaptures%2FPlayerExperience%2Findex.html)
 - [ ] Yakın iki ok üzerinde amaçlanan ve hareket eden oku karşılaştır. Dokunma önceliğini ölçülen yanlış seçimlere göre düzelt. Gerekirse yakınlaştırma, yenilenen ok hedeflerinden sonra ayrı bir deney olarak değerlendirilir. [PuzzleSession.Actions.cs](../Assets/_Project/Scripts/Puzzle/PuzzleSession.Actions.cs#L13)
 - [ ] Yanlış hamlede çarpılan oku, yanlış renk kenarını ve Savunma’da düşmanın bitişe ulaşmasını birbirinden ayırt edilebilir göster. Renk Değişimi’nde eşleşen ok ve duvar için ortak simge/desen dene. İlk tahtada dönüşün hangi okun yolunu açtığını göster. Sağa ve sola dönüş aynı mantıksal duruma gidiyor ve bir hak tüketiyor. Oyuncu bu kuralı kontrolü gördüğünde anlayabilmeli. [PuzzleRules.cs](../Assets/_Project/Scripts/Modes/PuzzleRules.cs#L28)
   - [x] Ok teması, yanlış renkli duvar ve düşmanın çıkışa ulaşması farklı metinlerle gösteriliyor. Renk Değişimi’nin dönüş kontrolü iki yönün de tek hak kullandığını belirtiyor. Unity’de üç modun gerçek oyun akışlarında ve iki dönüş yönünde doğrulandı. Düşman çıkış bildirimi testte doğrudan oyun yöneticisine gönderildi. [Sahne çekimleri ve test kayıtları](http://127.0.0.1:8200/#%2Fcaptures%2FPlayerExperience%2Findex.html)
@@ -58,6 +59,6 @@
 
 ## Devam noktası
 
-**Sıradaki ilk iş.** Şekiller’de açık zemin üzerindeki soluk okları ve Savunma’da küçük düşman sayılarını aynı dar Game View çekimlerinde karşılaştır. Yakın ok dokunma testi ve temiz kurulum ölçümü için Android cihaz kanıtını ayrıca kaydet.
+**Sıradaki ilk iş.** Savunma’nın aynı erken ve orta tahtalarında anında atış ve konuma göre atışı karşılaştır. Küçük ok hedeflerini ve HUD ile tahta dengesini Android cihazda kendi ölçümleriyle doğrula.
 
 Her aşama için bulgu, önce/sonra kanıtı, doğrulama sonucu ve commit kaydını bu dosyaya ekle. Unity MCP ile gerçek kontrolleri ve önceki regresyonları dene. Cihaz ve insan gözlemlerini Editör ve çözücü sonuçlarından ayrı kaydet. Oyuncu kayıtlarını, tercihleri ve açık yerel değişiklikleri koru. Onaylı UI tasarım sırası kendi [UI yol haritasından](UI_REDESIGN_ROLLOUT.md) izlenir.
