@@ -17,6 +17,8 @@ namespace ArrowSwarm.UI
         [SerializeField] private TextMeshProUGUI _rocketCount;
         [SerializeField] private GameObject _hintAdBadge, _rotationBar;
         [SerializeField] private HUDFeedbackEffects _feedback;
+        [SerializeField] private CanvasGroup _lessonGroup;
+        [SerializeField] private TextMeshProUGUI _lessonText;
         private int _attempt = -1, _lives = -1, _remaining = -1;
 
         private void Awake() { _feedback.Initialize(_heartIcons, _arrowCountText); }
@@ -69,6 +71,19 @@ namespace ArrowSwarm.UI
             if (_rotationButton != null) _rotationButton.interactable = s.Ready && s.Turns > 0;
             _instruction.text = s.RocketNeeded ? Text("puzzle_rocket_needed", "Use the rocket to rescue an arrow") :
                 Text("puzzle_swipe", "Tap or swipe left / right to rotate");
+            RefreshFirstLesson(s);
+        }
+
+        private void RefreshFirstLesson(PuzzleSession session)
+        {
+            if (_lessonGroup == null || _lessonText == null) return;
+            bool visible = session.LevelNumber == 1 && !session.Preview && session.Ready &&
+                session.Remaining == session.Level.Arrows.Count && session.Turns == session.Level.TurnBudget;
+            _lessonGroup.alpha = visible ? 1f : 0f;
+            if (!visible) return;
+            _lessonText.text = session.Mode == GameModeId.Shapes
+                ? Text("puzzle_shapes_help", "Clear the shape. Blocked arrows cost a life.")
+                : Text("puzzle_color_help", "Match the arrow to the exit wall color.");
         }
         private void OnDestroy()
         {
