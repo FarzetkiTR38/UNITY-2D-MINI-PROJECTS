@@ -48,7 +48,7 @@
 
 ## 4 · Sıralama ve mağaza vaadi
 
-- [ ] Canlı sıralamadaki `Savunma en yüksek bölüm × 10.000 + toplam yıldız` ağırlığını kullanıcıya açıkla. İlk seçenek listeyi **Savunma Sıralaması** diye adlandırmak. Ayrı mod tablolarına, her modda anlamlı bir rekabet talebi ve skor yönetimi varsa geç. Yardımlı/yardımsız sonuçların kapsamını tanımla. Formül değişikliği seçilirse eski skoru koruyan sürümleme, geçiş ve geri dönüş planını ayrı kaydet. [UnityCloudService.cs](../Assets/_Project/Scripts/Data/UnityCloudService.cs#L129)
+- [x] Tablo **Savunma Sıralaması** başlığını ve açılabilir puan kartını kullanıyor. Kart, açılan en yüksek Savunma bölümü × 10.000 + üç modun yıldız toplamını ve yardım alınan sonuçların kapsamını açıklıyor. Editör örnekleri de aynı ağırlıkla sıralanıyor. 10 dil × iki tema ve gerçek tıklama hedefleri geçti. Sahte bağlantıyla gecikme, hata, önbellek, boş sonuç ve yeniden bağlanma doğrulandı. [Unity testleri](http://127.0.0.1:8200/#%2Fcaptures%2FPlayerExperience%2Findex.html)
 - [ ] Aynı mağaza metniyle ilk görseldeki iki adayı karşılaştır. İlk görseli gören kişiye oyunda ne yapacağını sor. Mağazada yeterli trafik oluşursa aynı dil ve dönemle Play Console dönüşümünü karşılaştır. [Mağaza stratejisi](../ArrowSwarm_Marketing/07_ASO_SEO_GEO/ASO_STRATEGY.md)
   - [x] Savunma’da gerçek isabet karesi ve Şekiller silueti aynı Türkçe başlıkla hazır. Ana menü görseli karşılaştırmada duruyor. [Mağaza görseli karşılaştırması](http://127.0.0.1:8200/#%2Fcaptures%2FPlayerExperience%2Fstore.html)
 
@@ -61,6 +61,6 @@
 
 ## Devam noktası
 
-**Sıradaki ilk iş.** Savunma’da zamanlı atışın etkisini sonuçta görünür kıl ve sıralama puanının hangi ilerlemeyi saydığını anlat. Küçük ok hedeflerini ve HUD ile tahta dengesini Android cihazda kendi ölçümleriyle doğrula.
+**Sıradaki ilk iş.** Unity’de reklam erteleme adayını ve ödül akışlarını yalıtılmış sağlayıcıyla karşılaştır. Gerçek Android kurulumu, reklam izni ve 5–8 yeni oyuncunun ilk oturumu için yeni imzalı aday ve kapalı test erişimi gerekiyor.
 
 Her aşama için bulgu, önce/sonra kanıtı, doğrulama sonucu ve commit kaydını bu dosyaya ekle. Unity MCP ile gerçek kontrolleri ve önceki regresyonları dene. Cihaz ve insan gözlemlerini Editör ve çözücü sonuçlarından ayrı kaydet. Oyuncu kayıtlarını, tercihleri ve açık yerel değişiklikleri koru. Onaylı UI tasarım sırası kendi [UI yol haritasından](UI_REDESIGN_ROLLOUT.md) izlenir.

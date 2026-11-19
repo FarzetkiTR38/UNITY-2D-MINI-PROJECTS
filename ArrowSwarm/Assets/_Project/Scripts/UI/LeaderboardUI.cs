@@ -71,10 +71,12 @@ namespace ArrowSwarm.UI
             _nameInputField?.onEndEdit.AddListener(OnNameInputEndEdit);
             _saveNameButton?.onClick.AddListener(OnSaveNameClicked);
             _retryButton?.onClick.AddListener(Retry);
+            _scoreInfoButton?.onClick.AddListener(ToggleScoringInfo);
+            _scoreInfoClose?.onClick.AddListener(CloseScoringInfo);
 
             if (_titleText != null && string.IsNullOrEmpty(_titleText.text))
             {
-                _titleText.text = "LEADERBOARD";
+                _titleText.text = Text("leaderboard_title", "DEFENSE RANKING");
             }
         }
 
@@ -85,6 +87,7 @@ namespace ArrowSwarm.UI
         {
             gameObject.SetActive(true);
             AutoWire();
+            SetScoringInfo(false);
 
             _transition.Open(this, _dialogBox, _canvasGroup);
 
@@ -144,6 +147,8 @@ namespace ArrowSwarm.UI
             _nameInputField?.onEndEdit.RemoveListener(OnNameInputEndEdit);
             _saveNameButton?.onClick.RemoveListener(OnSaveNameClicked);
             _retryButton?.onClick.RemoveListener(Retry);
+            _scoreInfoButton?.onClick.RemoveListener(ToggleScoringInfo);
+            _scoreInfoClose?.onClick.RemoveListener(CloseScoringInfo);
         }
     }
 }

@@ -16,6 +16,28 @@ namespace ArrowSwarm.UI
         [SerializeField] private TextMeshProUGUI _retryText;
         [SerializeField] private TextMeshProUGUI _playerSummaryText;
         [SerializeField] private Button _retryButton;
+        [SerializeField] private Button _scoreInfoButton, _scoreInfoClose;
+        [SerializeField] private CanvasGroup _scoreInfo;
+
+        private void ToggleScoringInfo()
+        {
+            ArrowSwarm.Audio.AudioManager.Instance?.PlayButtonClick();
+            if (_scoreInfo != null) SetScoringInfo(_scoreInfo.alpha < .5f);
+        }
+
+        private void CloseScoringInfo()
+        {
+            ArrowSwarm.Audio.AudioManager.Instance?.PlayButtonClick();
+            SetScoringInfo(false);
+        }
+
+        private void SetScoringInfo(bool visible)
+        {
+            if (_scoreInfo == null) return;
+            _scoreInfo.alpha = visible ? 1f : 0f;
+            _scoreInfo.interactable = visible;
+            _scoreInfo.blocksRaycasts = visible;
+        }
 
         /// <summary>Retries the existing refresh path; a running request retains ownership of its result.</summary>
         public void Retry()

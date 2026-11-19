@@ -17,6 +17,7 @@ namespace ArrowSwarm.Modes.Editor
         private const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
         private static readonly FieldInfo Factory = typeof(LeaderboardManager).GetField("_editorCloudFactory",
             BindingFlags.Static | BindingFlags.NonPublic);
+        private static readonly FieldInfo EditorRivals = typeof(LeaderboardUI).GetField("_showSampleRivalsInEditor", Private);
 
         /// <summary>Owns the lazy fake singleton and restores the exact original player state.</summary>
         private sealed class Scope : IDisposable
@@ -28,6 +29,7 @@ namespace ArrowSwarm.Modes.Editor
             private readonly object _factory;
             private readonly string _language;
             private readonly bool _background;
+            private readonly bool _showEditorRivals;
             private readonly Vector3 _dialogScale;
             private readonly UnityEngine.Random.State _random;
             private readonly EventSystem _eventSystem;
@@ -52,6 +54,7 @@ namespace ArrowSwarm.Modes.Editor
                 _random = UnityEngine.Random.state; _eventSystem = EventSystem.current;
                 _selection = _eventSystem != null ? _eventSystem.currentSelectedGameObject : null;
                 _dialogScale = Field<RectTransform>(Board, "_dialogBox").localScale;
+                _showEditorRivals = (bool)EditorRivals.GetValue(Board);
                 Data = new QualityDataSnapshot(DataManager.Instance);
                 var player = PlayerData.CreateDefault(); player.playerName = "Quality5 Local"; player.playerCountry = "TR";
                 player.highestLevel = 9876; player.isTutorialCompleted = player.isProfileSetupCompleted = true;
@@ -61,6 +64,7 @@ namespace ArrowSwarm.Modes.Editor
                 Factory.SetValue(null, new Func<ILeaderboardCloudService>(() => { Cloud.FactoryCalls++; return Cloud; }));
                 Application.runInBackground = true; LocalizationManager.Instance.SetLanguage("en", false);
                 DataManager.Instance.SetTheme(ThemeMode.Light);
+                EditorRivals.SetValue(Board, false);
             }
 
             /// <summary>Removes only the owned fake manager and restores all original values and key existence.</summary>
@@ -72,6 +76,7 @@ namespace ArrowSwarm.Modes.Editor
                 {
                     if (Board != null)
                     {
+                        EditorRivals.SetValue(Board, _showEditorRivals);
                         Board.StopAllCoroutines(); Board.gameObject.SetActive(false);
                         var group = Field<CanvasGroup>(Board, "_canvasGroup");
                         group.alpha = 0f; group.interactable = group.blocksRaycasts = false;
