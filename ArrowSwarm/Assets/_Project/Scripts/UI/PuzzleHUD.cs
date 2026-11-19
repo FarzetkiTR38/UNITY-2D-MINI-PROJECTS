@@ -70,20 +70,26 @@ namespace ArrowSwarm.UI
             if (_rocketCount != null) _rocketCount.text = s.RocketCharges.ToString();
             if (_rotationButton != null) _rotationButton.interactable = s.Ready && s.Turns > 0;
             _instruction.text = s.RocketNeeded ? Text("puzzle_rocket_needed", "Use the rocket to rescue an arrow") :
-                Text("puzzle_swipe", "Tap or swipe left / right to rotate");
-            RefreshFirstLesson(s);
+                Text("puzzle_swipe", "Tap or swipe either way · 1 turn");
+            RefreshBoardNotice(s);
         }
 
-        private void RefreshFirstLesson(PuzzleSession session)
+        private void RefreshBoardNotice(PuzzleSession session)
         {
             if (_lessonGroup == null || _lessonText == null) return;
-            bool visible = session.LevelNumber == 1 && !session.Preview && session.Ready &&
+            bool onBoard = !session.Paused && !session.Won && !session.Lost &&
+                !session.HintPromptOpen && !session.RocketPromptOpen;
+            bool showFailure = onBoard && session.HasFailureMessage;
+            bool firstLesson = session.LevelNumber == 1 && !session.Preview && session.Ready &&
                 session.Remaining == session.Level.Arrows.Count && session.Turns == session.Level.TurnBudget;
-            _lessonGroup.alpha = visible ? 1f : 0f;
-            if (!visible) return;
-            _lessonText.text = session.Mode == GameModeId.Shapes
-                ? Text("puzzle_shapes_help", "Clear the shape. Blocked arrows cost a life.")
-                : Text("puzzle_color_help", "Match the arrow to the exit wall color.");
+            _lessonGroup.alpha = showFailure || firstLesson ? 1f : 0f;
+            if (showFailure) _lessonText.text = session.Message;
+            else if (firstLesson)
+            {
+                _lessonText.text = session.Mode == GameModeId.Shapes
+                    ? Text("puzzle_shapes_help", "Clear the shape. Blocked arrows cost a life.")
+                    : Text("puzzle_color_help", "Match the arrow to the exit wall color.");
+            }
         }
         private void OnDestroy()
         {

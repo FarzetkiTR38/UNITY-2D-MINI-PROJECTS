@@ -54,6 +54,9 @@ namespace ArrowSwarm.Arrow
         /// <summary>Whether the arrow is currently in motion.</summary>
         public bool IsMoving => _isMoving;
 
+        /// <summary>Fires when a rejected Defense arrow reaches its point of contact.</summary>
+        public static event Action OnBlockedImpact;
+
         private void Awake()
         {
             _arrow = GetComponent<Arrow>();
@@ -280,6 +283,7 @@ namespace ArrowSwarm.Arrow
                     _currentHeadDistance = _maxForwardDistance;
                     _blockedState = BlockedState.ImpactShake;
                     _shakeTimer = 0.08f;
+                    OnBlockedImpact?.Invoke();
 
                     // Trigger impact effects
                     _arrow.Visuals?.PlayBlockedEffect();

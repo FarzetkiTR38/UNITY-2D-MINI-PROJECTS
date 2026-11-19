@@ -80,7 +80,9 @@ namespace ArrowSwarm.UI
             SetPanelVisible(2, session.Lost);
             SetPanelVisible(3, session.HintPromptOpen && !session.Won && !session.Lost && !session.Paused);
             if (_winLevel != null) _winLevel.text = FormatLevel("puzzle_level_cleared", "Level {0} Cleared", session.LevelNumber);
-            if (_loseLevel != null) _loseLevel.text = FormatLevel("puzzle_level_failed", "Level {0} Failed", session.LevelNumber);
+            if (_loseLevel != null)
+                _loseLevel.text = session.Lost && session.HasFailureMessage ? session.Message :
+                    FormatLevel("puzzle_level_failed", "Level {0} Failed", session.LevelNumber);
             if (_nextLabel != null)
             {
                 string key = session.LastLevel ? "win_levels" : "win_next_level";

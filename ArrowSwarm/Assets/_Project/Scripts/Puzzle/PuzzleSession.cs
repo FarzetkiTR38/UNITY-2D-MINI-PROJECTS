@@ -43,6 +43,9 @@ namespace ArrowSwarm.Puzzle
         public bool LastLevel => LevelNumber >= _catalog.Count;
         private string _messageKey, _messageFallback;
         public string Message => ArrowSwarm.Localization.LocalizationManager.Instance.GetText(_messageKey, _messageFallback);
+        /// <summary>Whether the current message explains a failed action or a blocked board.</summary>
+        public bool HasFailureMessage => _messageKey == "puzzle_arrow_blocked" ||
+            _messageKey == "puzzle_wall_mismatch" || _messageKey == "puzzle_stuck";
         public int AttemptVersion => _version;
         public bool HintPromptOpen { get; private set; }
         public bool CanContinue => Lost && !_continued && !Preview;

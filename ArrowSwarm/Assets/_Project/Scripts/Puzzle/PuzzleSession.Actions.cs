@@ -28,6 +28,7 @@ namespace ArrowSwarm.Puzzle
         public void Fire(int index)
         {
             if (!Ready || index < 0 || index >= _removed.Length || _removed[index] || _inFlight[index]) return;
+            if (HasFailureMessage) SetMessage("");
             RocketArmed = false;
             ConsumeHintArrow(index);
             for (int i = 0; i < _views.Length; i++) if (!_removed[i] && !_inFlight[i]) _views[i].Highlight(false);
@@ -43,7 +44,8 @@ namespace ArrowSwarm.Puzzle
             var arrow = Level.Arrows[index]; var view = _views[index];
             float obstacle = PuzzleRules.ObstacleDistance(Level, _removed, index);
             bool match = PuzzleRules.MatchesWall(Level, index, Orientation);
-            bool blocked = !float.IsPositiveInfinity(obstacle) || !match;
+            bool hitArrow = !float.IsPositiveInfinity(obstacle);
+            bool blocked = hitArrow || !match;
             float wallDistance = arrow.Direction.x > 0 ? Level.Width - 1 - arrow.Head.x : arrow.Direction.x < 0 ? arrow.Head.x : arrow.Direction.y > 0 ? Level.Height - 1 - arrow.Head.y : arrow.Head.y;
             float distance = blocked ? Mathf.Max(.1f, Mathf.Min(obstacle - _config.StrokeWidth, wallDistance + _config.WallOffset - _config.StrokeWidth) - view.HeadForwardOffset)
                 : wallDistance + view.Length + _config.WallOffset + _config.HeadSize;
@@ -53,6 +55,7 @@ namespace ArrowSwarm.Puzzle
             while (travel < distance) { travel = Mathf.Min(distance, travel + Time.deltaTime * speed); view.RenderTravel(travel); yield return null; }
             if (blocked)
             {
+                SetMessage(hitArrow ? "puzzle_arrow_blocked" : "puzzle_wall_mismatch");
                 Lives = Mathf.Max(0, Lives - 1); AudioManager.Instance?.PlayArrowWrong(); Notify();
                 if (version != _version) yield break;
                 while (travel > 0) { travel = Mathf.Max(0, travel - Time.deltaTime * _config.Speed); view.RenderTravel(travel); yield return null; }
@@ -73,6 +76,7 @@ namespace ArrowSwarm.Puzzle
         public void Rotate(int direction)
         {
             if (!Ready || _mode != GameModeId.ColorShift || Turns <= 0) return;
+            if (HasFailureMessage) SetMessage("");
             ConsumeHintRotation();
             RocketArmed = false;
             _busy = true; Turns--; Orientation ^= 1; Notify();

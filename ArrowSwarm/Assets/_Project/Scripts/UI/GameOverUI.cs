@@ -4,6 +4,7 @@ namespace ArrowSwarm.UI
     using ArrowSwarm.Audio;
     using ArrowSwarm.Core;
     using ArrowSwarm.Data;
+    using ArrowSwarm.Localization;
     using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
@@ -175,7 +176,13 @@ namespace ArrowSwarm.UI
 
             if (_levelText != null)
             {
-                _levelText.text = $"Level {level} Failed";
+                var game = GameManager.Instance;
+                if (game != null && game.CurrentState == GameState.Lose)
+                {
+                    string reason = game.EnemyCausedLastLifeLoss ? "defense_enemy_escaped" : "puzzle_arrow_blocked";
+                    _levelText.text = LocalizationManager.Instance.GetText(reason, $"Level {level} Failed");
+                }
+                else _levelText.text = $"Level {level} Failed";
             }
 
             if (_canvasGroup != null)

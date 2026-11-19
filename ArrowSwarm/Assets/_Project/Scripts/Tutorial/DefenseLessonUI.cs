@@ -7,7 +7,7 @@ namespace ArrowSwarm.Tutorial
     using ArrowSwarm.Mob;
     using UnityEngine;
 
-    /// <summary>Shows contextual, nonblocking lessons on the first two regular Defense levels.</summary>
+    /// <summary>Shows nonblocking Defense lessons and distinct feedback when a life is lost.</summary>
     public sealed class DefenseLessonUI : MonoBehaviour
     {
         private const int BlockedPathLevel = 2;
@@ -18,6 +18,7 @@ namespace ArrowSwarm.Tutorial
 
         private int _lessonLevel;
         private bool _resolved;
+        private string _feedbackKey;
 
         private void OnEnable()
         {
@@ -25,6 +26,8 @@ namespace ArrowSwarm.Tutorial
             GameManager.OnGameStateChanged += Refresh;
             Arrow.OnArrowClicked += OnArrowClicked;
             Mob.OnMobDamaged += OnMobDamaged;
+            ArrowMovement.OnBlockedImpact += OnBlockedImpact;
+            GameManager.OnMobReachedFinish += OnEnemyEscaped;
         }
 
         private void OnDisable()
@@ -33,6 +36,8 @@ namespace ArrowSwarm.Tutorial
             GameManager.OnGameStateChanged -= Refresh;
             Arrow.OnArrowClicked -= OnArrowClicked;
             Mob.OnMobDamaged -= OnMobDamaged;
+            ArrowMovement.OnBlockedImpact -= OnBlockedImpact;
+            GameManager.OnMobReachedFinish -= OnEnemyEscaped;
         }
 
         private void OnLevelReady(LevelParams level)
@@ -41,15 +46,14 @@ namespace ArrowSwarm.Tutorial
             bool firstPlay = player?.isTutorialCompleted == true && player.highestLevel == level.Level;
             _lessonLevel = firstPlay ? level.Level : 0;
             _resolved = false;
-            if (_lessonLevel == BlockedPathLevel) _instruction.SetKey("tutorial_blocked_path");
-            if (_lessonLevel == TimingLevel) _instruction.SetKey("tutorial_shot_timing");
+            _feedbackKey = null;
             Refresh(GameManager.Instance.CurrentState);
         }
 
         private void OnArrowClicked(Arrow arrow, bool fired)
         {
-            if (_lessonLevel != BlockedPathLevel) return;
-            _resolved = fired;
+            if (_lessonLevel == BlockedPathLevel) _resolved = fired;
+            if (fired) _feedbackKey = null;
             Refresh(GameManager.Instance.CurrentState);
         }
 
@@ -60,10 +64,29 @@ namespace ArrowSwarm.Tutorial
             Refresh(GameManager.Instance.CurrentState);
         }
 
+        private void OnBlockedImpact() => ShowFeedback("puzzle_arrow_blocked");
+
+        private void OnEnemyEscaped() => ShowFeedback("defense_enemy_escaped");
+
+        private void ShowFeedback(string key)
+        {
+            var state = GameManager.Instance.CurrentState;
+            if (state != GameState.Playing && state != GameState.ResolvingLoss) return;
+            _feedbackKey = key;
+            Refresh(state);
+        }
+
         private void Refresh(GameState state)
         {
-            bool teaching = _lessonLevel == BlockedPathLevel || _lessonLevel == TimingLevel;
-            _group.alpha = teaching && !_resolved && state == GameState.Playing ? 1f : 0f;
+            string key = _feedbackKey;
+            if (key == null && !_resolved && state == GameState.Playing)
+            {
+                if (_lessonLevel == BlockedPathLevel) key = "tutorial_blocked_path";
+                if (_lessonLevel == TimingLevel) key = "tutorial_shot_timing";
+            }
+            bool visible = key != null && (state == GameState.Playing || state == GameState.ResolvingLoss);
+            _group.alpha = visible ? 1f : 0f;
+            if (visible && _instruction.LocalizationKey != key) _instruction.SetKey(key);
         }
     }
 }
