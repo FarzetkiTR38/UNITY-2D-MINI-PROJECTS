@@ -43,6 +43,7 @@
   - [x] İsabet farkı sonuç kartında **Normal ok isabeti** olarak görünüyor. Gerçek atış temasları sayılıyor. Gökkuşağı teması ve otomatik final temizliği bu sayıya dahil edilmiyor. Bölüm kazanma ve yıldız koşulları korunuyor. Unity’de gerçek atışla kazanılan 2. bölümde sayaç Türkçe açık ve İngilizce koyu temada doğrulandı. Ustalık hedefi için sayısal eşik oyuncu gözlemine bağlı.
 - [ ] Üç modun ilk beş bölümünde süre, tekrar ve çıkış nedenlerine bak. Tek bir seviyedeki büyük zorluk sıçramasını önce düzenle. Şekiller’de tıkanmanın çizgi yoğunluğundan mı, gerçek planlama zorluğundan mı geldiğini ayırt et. Renk Değişimi’nde ilk dönüş kullanımını ve sıfır hakla kaybı gözle.
 - [ ] İlk birkaç galibiyette geçiş reklamı ertelemesini dene. Mevcut ayar 4. bölüm ve 90 saniye. Reklam koşulları değiştiğinde galibiyetten sonraki bölüme geçişi, oturumdan çıkışı ve yeniden denemeyi karşılaştır. Ödüllü akışta ret, başarısız yükleme, çevrimdışı durum ve tek ödül senaryolarını test et. [CoreManagers.prefab](../Assets/_Project/Prefabs/Core/CoreManagers.prefab#L375)
+  - [x] Unity’de 6. bölüm adayı 4 ve 5. bölümlerin ardından doğrudan ilerledi, 6. bölümde hazır reklamı kabul etti ve 90 saniyelik beklemeyi korudu. Çevrimdışı ve doldurulamayan reklam geçişi engellemedi. Şekiller ve Renk Değişimi’de başarılı, başarısız ve geç ipucu ödülleriyle yinelenen yanıtları denedik. Can kaybı ile son uçuş yarışında ve olumlu gökkuşağı finalinde Savunma regresyonu geçti. Üretim reklam eşiği 4 ve 90 saniye. [Unity test kayıtları](http://127.0.0.1:8200/#%2Fcaptures%2FPlayerExperience%2Findex.html)
 
 **Kabul ölçütü.** Oyuncu ne zaman ateş ettiğinin sonucunu görebiliyor. Planlı atış ile hızlı boşaltma karşılaştırmasının sonucu kaydedilmiş. Yeni reklam ritmi seçilirse seçim, sonraki bölüme geçiş ve gerçek cihazdaki izin/ödül akışıyla gerekçelendiriliyor.
 
@@ -61,6 +62,6 @@
 
 ## Devam noktası
 
-**Sıradaki ilk iş.** Unity’de reklam erteleme adayını ve ödül akışlarını yalıtılmış sağlayıcıyla karşılaştır. Gerçek Android kurulumu, reklam izni ve 5–8 yeni oyuncunun ilk oturumu için yeni imzalı aday ve kapalı test erişimi gerekiyor.
+**Sıradaki ilk iş.** Günün Bulmacası’nı Editör’de mevcut tahtalarla çalıştır, yeniden denemeyi ve kampanya kaydının yalıtımını doğrula. Gerçek Android kurulumu, reklam izni ve 5–8 yeni oyuncunun ilk oturumu için yeni imzalı aday ve kapalı test erişimi gerekiyor.
 
 Her aşama için bulgu, önce/sonra kanıtı, doğrulama sonucu ve commit kaydını bu dosyaya ekle. Unity MCP ile gerçek kontrolleri ve önceki regresyonları dene. Cihaz ve insan gözlemlerini Editör ve çözücü sonuçlarından ayrı kaydet. Oyuncu kayıtlarını, tercihleri ve açık yerel değişiklikleri koru. Onaylı UI tasarım sırası kendi [UI yol haritasından](UI_REDESIGN_ROLLOUT.md) izlenir.
