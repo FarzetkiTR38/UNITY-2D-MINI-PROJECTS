@@ -57,11 +57,12 @@
 
 ## 5 · İlk içeriğe dönme nedeni
 
-- [ ] İlk oturum akışı iyileştikten sonra **Günün Bulmacası** prototipini mevcut seviyelerden gün ve mod bazında seçilen tek bir tahta ile dene. Herkese aynı tahta ve oyuncunun kendi yıldız kaydı ilk deneme için yeterli. Mevcut kampanya kilidi, kaydı ve yıldız hesabıyla etkileşimi doğrula.
+- [x] **Günün Bulmacası** prototipi Unity Editör’ünde mevcut bölümlerden UTC gününe bağlı tek tahta açıyor. Üç mod sırayla geliyor. Bir gün içinde aynı bölüm ve Savunma üretim tohumu kullanılıyor. Günlük en iyi yıldız yalnızca yerel Editör kaydında tutuluyor. Unity’de üç modda gerçek bölüm kazanma, aynı tahtayı tekrar deneme ve ana menüye dönünce asıl kampanya kaydının geri yüklenmesi geçti. [Unity görüntüleri ve doğrulama](http://127.0.0.1:8200/#%2Fcaptures%2FPlayerExperience%2Findex.html)
+  - Denemek için kaydedilmiş BootScene ile **Arrow Swarm → Playtest → Daily Challenge** penceresini aç. Yalıtılmış Play Mode’u başlat, ana menü hazır olduğunda günlük tahtayı aç. Pencere tarihi, modu, bölümü ve kişisel yıldız rekorunu gösterir. Editör prototipi mağaza paketine dahil edilmez.
 - [ ] Günlük tahtaya girenlerin tamamlama oranını, D1/D7 dönüşünü ve kampanyaya devamını ölç. Oyuncu verisi talebi gösterirse özel günlük tahtaları değerlendir. Dördüncü mod, seri ödülleri, bildirime dayalı hatırlatmalar ve geniş seviye üretimi bu ölçümden sonra değerlendirilir.
 
 ## Devam noktası
 
-**Sıradaki ilk iş.** Günün Bulmacası’nı Editör’de mevcut tahtalarla çalıştır, yeniden denemeyi ve kampanya kaydının yalıtımını doğrula. Gerçek Android kurulumu, reklam izni ve 5–8 yeni oyuncunun ilk oturumu için yeni imzalı aday ve kapalı test erişimi gerekiyor.
+**Sıradaki ilk iş.** Çarpışma anında bulmaca tahtasındaki ok ve kenar ipuçlarını doğrula. Gerçek Android kurulumu, reklam izni ve 5–8 yeni oyuncunun ilk oturumu için yeni imzalı aday ve kapalı test erişimi gerekiyor.
 
 Her aşama için bulgu, önce/sonra kanıtı, doğrulama sonucu ve commit kaydını bu dosyaya ekle. Unity MCP ile gerçek kontrolleri ve önceki regresyonları dene. Cihaz ve insan gözlemlerini Editör ve çözücü sonuçlarından ayrı kaydet. Oyuncu kayıtlarını, tercihleri ve açık yerel değişiklikleri koru. Onaylı UI tasarım sırası kendi [UI yol haritasından](UI_REDESIGN_ROLLOUT.md) izlenir.
