@@ -88,25 +88,6 @@ namespace ArrowSwarm.UI
             {
                 OpenMainPanel();
             }
-
-            CheckInitialProfileSetup();
-        }
-
-        private void CheckInitialProfileSetup()
-        {
-            if (DataManager.Instance != null && DataManager.Instance.IsTutorialCompleted)
-            {
-                var data = DataManager.Instance.PlayerData;
-                if (data != null && !data.isProfileSetupCompleted)
-                {
-                    if (_profileModal == null) _profileModal = GetComponentInChildren<ProfileSetupModalUI>(true);
-                    if (_profileModal != null)
-                    {
-                        _profileModal.gameObject.SetActive(true);
-                        _profileModal.Show();
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -118,7 +99,6 @@ namespace ArrowSwarm.UI
             if (_profileModal != null)
             {
                 AudioManager.Instance?.PlayButtonClick();
-                _profileModal.gameObject.SetActive(true);
                 _profileModal.Show();
             }
         }
@@ -224,7 +204,7 @@ namespace ArrowSwarm.UI
             if (_leaderboardButton != null)
             {
                 _leaderboardButton.onClick.RemoveAllListeners();
-                _leaderboardButton.onClick.AddListener(() => { AudioManager.Instance?.PlayButtonClick(); OpenLeaderboard(); });
+                _leaderboardButton.onClick.AddListener(OnLeaderboardClicked);
                 EnsureButtonFeedback(_leaderboardButton);
             }
             if (_levelsButton != null)
@@ -362,6 +342,22 @@ namespace ArrowSwarm.UI
         /// <summary>Opens the Leaderboard panel.</summary>
         public void OpenLeaderboard() => OpenPanel(_leaderboardPanel);
 
+        private void OnLeaderboardClicked()
+        {
+            AudioManager.Instance?.PlayButtonClick();
+            if (DataManager.Instance?.PlayerData?.isProfileSetupCompleted == false)
+            {
+                if (_profileModal == null) _profileModal = GetComponentInChildren<ProfileSetupModalUI>(true);
+                if (_profileModal != null)
+                {
+                    _profileModal.Show(OpenLeaderboard);
+                    return;
+                }
+            }
+
+            OpenLeaderboard();
+        }
+
         /// <summary>Opens the Levels panel.</summary>
         public void OpenLevels() => OpenPanel(_levelsPanel);
 
@@ -443,7 +439,7 @@ namespace ArrowSwarm.UI
         private void OnDestroy()
         {
             _playButton?.onClick.RemoveListener(OnPlayClicked);
-            _leaderboardButton?.onClick.RemoveListener(OpenLeaderboard);
+            _leaderboardButton?.onClick.RemoveListener(OnLeaderboardClicked);
             _levelsButton?.onClick.RemoveListener(OpenLevels);
             _settingsButton?.onClick.RemoveListener(OpenSettings);
 

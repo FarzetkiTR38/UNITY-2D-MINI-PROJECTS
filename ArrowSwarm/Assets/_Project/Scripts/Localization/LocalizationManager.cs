@@ -47,7 +47,6 @@ namespace ArrowSwarm.Localization
                 {
                     var pd = ArrowSwarm.Data.DataManager.Instance.PlayerData;
                     pd.selectedLanguage = _currentLanguage;
-                    pd.playerCountry = GetCountryCodeForLanguage(_currentLanguage);
                 }
             }
         }
