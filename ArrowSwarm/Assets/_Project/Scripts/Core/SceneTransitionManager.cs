@@ -64,6 +64,7 @@ namespace ArrowSwarm.Core
         private Canvas _transitionCanvas;
         private Image _overlayImage;
         private Coroutine _currentTransition;
+        private AsyncOperation _startupLoad;
         private bool _isTransitioning;
 
         // Cached runtime materials per style
@@ -222,6 +223,7 @@ namespace ArrowSwarm.Core
         /// <param name="screenCenter">Optional focus center (0-1 UV).</param>
         public void LoadScene(string sceneName, float duration = -1f, Vector2? screenCenter = null)
         {
+            if (_startupLoad != null) return;
             float d = duration > 0f ? duration : _defaultDuration;
             Vector2 center = screenCenter ?? new Vector2(0.5f, 0.5f);
 
@@ -229,11 +231,23 @@ namespace ArrowSwarm.Core
             _currentTransition = StartCoroutine(SceneTransitionRoutine(sceneName, d, center));
         }
 
+        /// <summary>Preloads the first scene during Boot and activates it behind the closed transition.</summary>
+        internal void LoadStartupScene(string sceneName, Action<float> onProgress)
+        {
+            if (_startupLoad != null) return;
+            if (_currentTransition != null) StopCoroutine(_currentTransition);
+            _startupLoad = SceneManager.LoadSceneAsync(sceneName);
+            _startupLoad.allowSceneActivation = false;
+            _currentTransition = StartCoroutine(SceneTransitionRoutine(sceneName, _defaultDuration,
+                new Vector2(0.5f, 0.5f), onProgress));
+        }
+
         /// <summary>
         /// Executes a custom callback action at the transition midpoint (e.g. reload board or popup transition).
         /// </summary>
         public void PlayTransition(Action onMidpoint, float duration = -1f, Vector2? screenCenter = null)
         {
+            if (_startupLoad != null) return;
             float d = duration > 0f ? duration : _defaultDuration;
             Vector2 center = screenCenter ?? new Vector2(0.5f, 0.5f);
 
@@ -241,7 +255,7 @@ namespace ArrowSwarm.Core
             _currentTransition = StartCoroutine(ActionTransitionRoutine(onMidpoint, d, center));
         }
 
-        private IEnumerator SceneTransitionRoutine(string sceneName, float duration, Vector2 center)
+        private IEnumerator SceneTransitionRoutine(string sceneName, float duration, Vector2 center, Action<float> onProgress = null)
         {
             _isTransitioning = true;
             EnsureUI();
@@ -259,6 +273,17 @@ namespace ArrowSwarm.Core
                     mat.SetFloat(PropAspectRatio, aspect);
                     mat.SetFloat(PropProgress, 0f);
                     _overlayImage.material = mat;
+                }
+
+                if (_startupLoad != null)
+                {
+                    // A queued Unity scene stalls at 0.9 until activation is allowed.
+                    while (_startupLoad.progress < 0.9f)
+                    {
+                        onProgress?.Invoke(_startupLoad.progress);
+                        yield return null;
+                    }
+                    onProgress?.Invoke(1f);
                 }
 
                 if (_overlayImage != null)
@@ -286,7 +311,12 @@ namespace ArrowSwarm.Core
 #endif
                 Time.timeScale = 1f;
                 Debug.Log($"[ArrowSwarm] SceneTransitionManager: Loading '{sceneName}' with {_activeStyle}...");
-                SceneManager.LoadScene(sceneName);
+                if (_startupLoad != null)
+                {
+                    _startupLoad.allowSceneActivation = true;
+                    yield return _startupLoad;
+                }
+                else SceneManager.LoadScene(sceneName);
 
                 // Wait 1 frame for new scene Awake & Start to resolve
                 yield return null;
@@ -312,6 +342,12 @@ namespace ArrowSwarm.Core
             }
             finally
             {
+                // Unity stalls the async scene queue if a pending operation is left gated.
+                if (_startupLoad != null)
+                {
+                    if (!_startupLoad.isDone) _startupLoad.allowSceneActivation = true;
+                    _startupLoad = null;
+                }
                 // 4. Guaranteed Cleanup
                 if (mat != null) mat.SetFloat(PropProgress, 0f);
 

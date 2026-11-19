@@ -34,17 +34,10 @@ namespace ArrowSwarm.Core
                 _loadingUI = Object.FindFirstObjectByType<BootLoadingUI>();
             }
 
-            if (_loadingUI != null)
-            {
-                _loadingUI.StartLoading(OnLoadingCompleted);
-            }
-            else
-            {
-                StartCoroutine(FallbackLoadRoutine());
-            }
+            LoadStartingScene();
         }
 
-        private void OnLoadingCompleted()
+        private void LoadStartingScene()
         {
             string targetScene = "MainMenuScene";
             if (Data.DataManager.Instance != null && !Data.DataManager.Instance.IsTutorialCompleted)
@@ -57,20 +50,26 @@ namespace ArrowSwarm.Core
                 GameManager.Instance?.SetState(GameState.Menu);
             }
 
-            if (SceneTransitionManager.Instance != null)
+            var transition = SceneTransitionManager.Instance;
+            if (transition != null)
             {
-                SceneTransitionManager.Instance.LoadScene(targetScene);
+                transition.LoadStartupScene(targetScene, _loadingUI != null ? _loadingUI.SetProgress : null);
             }
             else
             {
-                SceneManager.LoadScene(targetScene);
+                StartCoroutine(LoadWithoutTransition(targetScene));
             }
         }
 
-        private IEnumerator FallbackLoadRoutine()
+        private IEnumerator LoadWithoutTransition(string sceneName)
         {
-            yield return new WaitForSeconds(1.0f);
-            OnLoadingCompleted();
+            Time.timeScale = 1f;
+            var load = SceneManager.LoadSceneAsync(sceneName);
+            while (!load.isDone)
+            {
+                if (_loadingUI != null) _loadingUI.SetProgress(load.progress);
+                yield return null;
+            }
         }
     }
 }

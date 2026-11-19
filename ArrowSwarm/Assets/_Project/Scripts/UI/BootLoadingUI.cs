@@ -1,6 +1,5 @@
 namespace ArrowSwarm.UI
 {
-    using System;
     using System.Collections;
     using ArrowSwarm.Localization;
     using TMPro;
@@ -37,7 +36,6 @@ namespace ArrowSwarm.UI
         [SerializeField] private bool _animateCenterHero = true;
         [SerializeField] private float _heroPulseSpeed = 2.5f;
         [SerializeField] private float _heroPulseAmount = 0.035f;
-        [SerializeField] private float _loadingDuration = 2.4f;
 
         private static readonly string[] StatusKeys = { "boot_status_0", "boot_status_1", "boot_status_2", "boot_status_3" };
         private static readonly string[] StatusFallbacks = { "Initializing systems...", "Preparing arrows...", "Calibrating swarm path...", "Almost ready!" };
@@ -50,7 +48,6 @@ namespace ArrowSwarm.UI
             "TIP: The final Rainbow Arrow clears the remaining wave in style!"
         };
 
-        private Coroutine _loadingCoroutine;
         private Coroutine _tipsCoroutine;
         private Vector3 _originalHeroScale = Vector3.one;
         private int _currentStatusIndex;
@@ -101,13 +98,6 @@ namespace ArrowSwarm.UI
             }
         }
 
-        /// <summary>Starts loading sequence progression from 0% to 100%.</summary>
-        public void StartLoading(Action onComplete)
-        {
-            if (_loadingCoroutine != null) StopCoroutine(_loadingCoroutine);
-            _loadingCoroutine = StartCoroutine(LoadingSequenceRoutine(onComplete));
-        }
-
         /// <summary>Updates progress bar fill and percentage text (0.0 to 1.0).</summary>
         public void SetProgress(float progress)
         {
@@ -144,25 +134,6 @@ namespace ArrowSwarm.UI
             if (_tipText != null) _tipText.text = GetLocalized(TipKeys[_currentTipIndex], TipFallbacks[_currentTipIndex]);
         }
 
-        private IEnumerator LoadingSequenceRoutine(Action onComplete)
-        {
-            float elapsed = 0f;
-            float duration = Mathf.Max(0.5f, _loadingDuration);
-
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsed / duration);
-                float smoothT = 1f - Mathf.Pow(1f - t, 3f);
-                SetProgress(smoothT);
-                yield return null;
-            }
-
-            SetProgress(1.0f);
-            yield return new WaitForSeconds(0.25f);
-            onComplete?.Invoke();
-        }
-
         private IEnumerator CycleTipsRoutine()
         {
             WaitForSeconds waitInterval = new WaitForSeconds(3.5f);
@@ -190,7 +161,6 @@ namespace ArrowSwarm.UI
 
         private void OnDestroy()
         {
-            if (_loadingCoroutine != null) StopCoroutine(_loadingCoroutine);
             if (_tipsCoroutine != null) StopCoroutine(_tipsCoroutine);
             LocalizationManager.OnLanguageChanged -= RefreshLocalizedTexts;
         }
