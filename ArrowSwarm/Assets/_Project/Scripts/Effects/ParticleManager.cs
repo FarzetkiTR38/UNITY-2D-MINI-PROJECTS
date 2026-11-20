@@ -21,7 +21,43 @@ namespace ArrowSwarm.Effects
         [SerializeField] private ParticleSystem _firework1Prefab;
         [SerializeField] private ParticleSystem _fireworkBasicPrefab;
 
+        [Header("Prewarm (instantiated during boot, never mid-level)")]
+        [Tooltip("A rainbow finish kills every live mob in one frame; keep enough death bursts ready.")]
+        [SerializeField, Min(0)] private int _mobDeathPrewarm = 18;
+        [SerializeField, Min(0)] private int _fireworkPrewarm = 4;
+        [SerializeField, Min(0)] private int _confettiPrewarm = 1;
+
         private readonly Dictionary<string, Queue<ParticleSystem>> _pools = new();
+        private readonly Dictionary<float, WaitForSeconds> _returnWaits = new();
+
+        /// <summary>Particle systems created since startup (prewarm included); diagnostics only.</summary>
+        public int CreatedCount { get; private set; }
+
+        protected override void OnSingletonAwake()
+        {
+            base.OnSingletonAwake();
+            Prewarm(_mobDeathPrefab, _mobDeathPrewarm);
+            Prewarm(_firework1Prefab, _fireworkPrewarm);
+            Prewarm(_confettiPrefab, _confettiPrewarm);
+        }
+
+        private void Prewarm(ParticleSystem prefab, int count)
+        {
+            if (prefab == null) return;
+            if (!_pools.TryGetValue(prefab.name, out var pool)) _pools[prefab.name] = pool = new Queue<ParticleSystem>();
+            while (pool.Count < count)
+            {
+                var ps = CreateInstance(prefab);
+                ps.gameObject.SetActive(false);
+                pool.Enqueue(ps);
+            }
+        }
+
+        private ParticleSystem CreateInstance(ParticleSystem prefab)
+        {
+            CreatedCount++;
+            return Instantiate(prefab, transform);
+        }
 
         /// <summary>
         /// Spawns a particle effect at the given position.
@@ -146,13 +182,16 @@ namespace ArrowSwarm.Effects
                 return ps;
             }
 
-            return Instantiate(prefab, transform);
+            return CreateInstance(prefab);
         }
 
         private System.Collections.IEnumerator ReturnToPoolAfterDuration(
             ParticleSystem ps, ParticleSystem prefab, float duration)
         {
-            yield return new WaitForSeconds(duration);
+            // Durations come from a handful of prefabs; cache the waits instead of allocating per burst.
+            float rounded = Mathf.Round(duration * 20f) / 20f;
+            if (!_returnWaits.TryGetValue(rounded, out var wait)) _returnWaits[rounded] = wait = new WaitForSeconds(rounded);
+            yield return wait;
 
             if (ps != null)
             {

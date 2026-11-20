@@ -430,8 +430,8 @@ namespace ArrowSwarm.Arrow
         {
             if (!IsMoving || _mode != MovementMode.NormalFlight) return;
 
-            var mob = other.GetComponent<ArrowSwarm.Mob.Mob>();
-            if (mob != null)
+            // Most trigger contacts are not mobs; TryGetComponent avoids the null-result overhead.
+            if (other.TryGetComponent(out ArrowSwarm.Mob.Mob mob))
             {
                 mob.TakeDamage(_arrow.GetDamage());
             }
