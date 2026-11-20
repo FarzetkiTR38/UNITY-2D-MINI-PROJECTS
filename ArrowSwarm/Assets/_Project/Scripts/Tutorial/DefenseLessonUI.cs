@@ -66,7 +66,10 @@ namespace ArrowSwarm.Tutorial
 
         private void OnBlockedImpact() => ShowFeedback("puzzle_arrow_blocked");
 
-        private void OnEnemyEscaped() => ShowFeedback("defense_enemy_escaped");
+        private void OnEnemyEscaped()
+        {
+            if (GameManager.Instance.EnemyCausedLastLifeLoss) ShowFeedback("defense_enemy_escaped");
+        }
 
         private void ShowFeedback(string key)
         {

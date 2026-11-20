@@ -1,5 +1,6 @@
 namespace ArrowSwarm.Puzzle
 {
+    using System.Collections;
     using ArrowSwarm.Modes;
     using ArrowSwarm.Core;
     using ArrowSwarm.Data;
@@ -24,6 +25,8 @@ namespace ArrowSwarm.Puzzle
         private Transform _filledHeadTransform;
         private Vector3 _filledHeadBaseScale, _filledHeadTipOffset;
         private float _filledHeadDepth, _headScale = 1f, _travel, _headForwardOffset, _headRearExtent;
+        private Coroutine _impact;
+        private float _impactWidth = 1f;
         public int Index { get; private set; }
         public float Length => _length;
         /// <summary>Forward tip offset from the logical head, used to keep blocked-shot contact unchanged.</summary>
@@ -35,7 +38,11 @@ namespace ArrowSwarm.Puzzle
             ApplyTheme(ThemeManager.CurrentTheme);
         }
 
-        private void OnDisable() => ThemeManager.OnThemeChanged -= ApplyTheme;
+        private void OnDisable()
+        {
+            ThemeManager.OnThemeChanged -= ApplyTheme;
+            ResetImpact();
+        }
 
         private void ApplyTheme(ThemeMode theme)
         {
@@ -59,8 +66,8 @@ namespace ArrowSwarm.Puzzle
             _length = data.Points.Count - 1;
             _path = new Vector3[data.Points.Count];
             for (int i = 0; i < _path.Length; i++) _path[i] = origin + (Vector3)(Vector2)data.Points[_path.Length - 1 - i];
-            _body.widthMultiplier = config.StrokeWidth;
             _headScale = 1f;
+            ResetImpact();
             transform.localScale = Vector3.one;
             BindHead(config.ThemeColor(data.Color, ThemeManager.CurrentTheme));
             PrepareStroke();
@@ -149,7 +156,7 @@ namespace ArrowSwarm.Puzzle
             float scale = value ? 1.8f : 1f;
             if (_headScale == scale) return;
             _headScale = scale;
-            _body.widthMultiplier = _config.StrokeWidth * _headScale;
+            ApplyStrokeWidth();
             if (_head != null) _head.widthMultiplier = _config.StrokeWidth * _headScale;
             if (_usingFilledHead)
             {
@@ -159,5 +166,37 @@ namespace ArrowSwarm.Puzzle
             PrepareStroke();
             RenderTravel(_travel);
         }
+
+        /// <summary>Briefly widens the contacted arrow while preserving its hint and touch geometry.</summary>
+        public void PulseImpact()
+        {
+            if (_impact != null) StopCoroutine(_impact);
+            _impact = StartCoroutine(AnimateImpact());
+        }
+
+        private IEnumerator AnimateImpact()
+        {
+            const float duration = .38f;
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                _impactWidth = Mathf.SmoothStep(1.9f, 1f, elapsed / duration);
+                ApplyStrokeWidth();
+                yield return null;
+                elapsed += Time.deltaTime;
+            }
+            _impact = null;
+            ResetImpact();
+        }
+
+        private void ResetImpact()
+        {
+            if (_impact != null) StopCoroutine(_impact);
+            _impact = null;
+            _impactWidth = 1f;
+            if (_config != null) ApplyStrokeWidth();
+        }
+
+        private void ApplyStrokeWidth() => _body.widthMultiplier = _config.StrokeWidth * Mathf.Max(_headScale, _impactWidth);
     }
 }

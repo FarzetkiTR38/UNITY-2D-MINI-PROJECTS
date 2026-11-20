@@ -26,6 +26,8 @@ namespace ArrowSwarm.Puzzle
         private int _generation, _orientation;
         private float _paintOffset, _cornerBlendLength;
         private readonly float[] _wallLengths = new float[4];
+        private Coroutine _impact;
+        private LineRenderer _impactedWall;
         public bool IsAnimating { get; private set; }
         public int VisualOrientation => _orientation;
         public float PaintPhase => _paintOffset;
@@ -40,6 +42,7 @@ namespace ArrowSwarm.Puzzle
         {
             ThemeManager.OnThemeChanged -= ApplyTheme;
             CancelFlow();
+            ResetImpact();
         }
 
         private void ApplyTheme(ThemeMode theme)
@@ -52,6 +55,7 @@ namespace ArrowSwarm.Puzzle
         /// <summary>Sets level-dependent wall geometry and palette, leaving arrow transforms alone.</summary>
         public void Setup(PuzzleLevel level, PuzzleConfig config)
         {
+            ResetImpact();
             _generation++; IsAnimating = false;
             _level = level; _config = config; _orientation = level.InitialOrientation & 1;
             _paintOffset = _orientation;
@@ -105,6 +109,38 @@ namespace ArrowSwarm.Puzzle
         {
             _generation++; IsAnimating = false; _paintOffset = _orientation;
             PaintWalls();
+        }
+
+        /// <summary>Emphasizes the actual exit edge at the instant a color-mismatched arrow touches it.</summary>
+        public void PulseImpact(Vector2Int direction)
+        {
+            int side = direction.y > 0 ? 0 : direction.x > 0 ? 1 : direction.y < 0 ? 2 : 3;
+            if (_walls == null || side >= _walls.Length || _walls[side] == null || !isActiveAndEnabled) return;
+            ResetImpact();
+            _impactedWall = _walls[side];
+            _impact = StartCoroutine(AnimateImpact());
+        }
+
+        private IEnumerator AnimateImpact()
+        {
+            const float duration = .38f;
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                _impactedWall.widthMultiplier = _config.WallWidth * Mathf.SmoothStep(1.6f, 1f, elapsed / duration);
+                yield return null;
+                elapsed += Time.deltaTime;
+            }
+            _impact = null;
+            ResetImpact();
+        }
+
+        private void ResetImpact()
+        {
+            if (_impact != null) StopCoroutine(_impact);
+            _impact = null;
+            if (_impactedWall != null) _impactedWall.widthMultiplier = _config.WallWidth;
+            _impactedWall = null;
         }
 
         private void PlaceMatchMarkers(float x, float y)

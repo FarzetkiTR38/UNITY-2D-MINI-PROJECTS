@@ -43,7 +43,7 @@ namespace ArrowSwarm.Puzzle
         {
             int version = _version;
             var arrow = Level.Arrows[index]; var view = _views[index];
-            float obstacle = PuzzleRules.ObstacleDistance(Level, _removed, index);
+            float obstacle = PuzzleRules.ObstacleDistance(Level, _removed, index, out int blockingArrow);
             bool match = PuzzleRules.MatchesWall(Level, index, Orientation);
             bool hitArrow = !float.IsPositiveInfinity(obstacle);
             bool blocked = hitArrow || !match;
@@ -56,6 +56,9 @@ namespace ArrowSwarm.Puzzle
             while (travel < distance) { travel = Mathf.Min(distance, travel + Time.deltaTime * speed); view.RenderTravel(travel); yield return null; }
             if (blocked)
             {
+                if (!hitArrow) _frame.PulseImpact(arrow.Direction);
+                else if (blockingArrow == index || (!_removed[blockingArrow] && !_inFlight[blockingArrow]))
+                    _views[blockingArrow].PulseImpact();
                 SetMessage(hitArrow ? "puzzle_arrow_blocked" : "puzzle_wall_mismatch");
                 Lives = Mathf.Max(0, Lives - 1); AudioManager.Instance?.PlayArrowWrong(); Notify();
                 if (version != _version) yield break;
