@@ -21,8 +21,6 @@ namespace ArrowSwarm.Puzzle
         private PuzzleArrowView[] _views;
         private bool[] _removed, _inFlight;
         private bool _busy, _awarded, _continued;
-        private bool _firstRotationTaught;
-        private int _firstRotationArrow = -1;
         private int _version, _activeShots;
         public static PuzzleSession Active { get; private set; }
         public static event Action OnChanged;
@@ -45,11 +43,6 @@ namespace ArrowSwarm.Puzzle
         public bool LastLevel => LevelNumber >= _catalog.Count;
         private string _messageKey, _messageFallback;
         public string Message => ArrowSwarm.Localization.LocalizationManager.Instance.GetText(_messageKey, _messageFallback);
-        /// <summary>Whether the current message explains a failed action or a blocked board.</summary>
-        public bool HasFailureMessage => _messageKey == "puzzle_arrow_blocked" ||
-            _messageKey == "puzzle_wall_mismatch" || _messageKey == "puzzle_stuck";
-        /// <summary>Whether the first ColorShift board currently offers a rotation cue.</summary>
-        public bool HasRotationLesson => _firstRotationArrow >= 0 || _messageKey == "puzzle_rotation_needed";
         public int AttemptVersion => _version;
         public bool HintPromptOpen { get; private set; }
         public bool CanContinue => Lost && !_continued && !Preview;
@@ -78,17 +71,10 @@ namespace ArrowSwarm.Puzzle
             Lives = _config.Lives; Turns = Level.TurnBudget; Orientation = Level.InitialOrientation;
             Remaining = Level.Arrows.Count; Won = Lost = Paused = _busy = _awarded = _continued = false;
             HintPromptOpen = false;
-            _firstRotationArrow = -1;
-            _firstRotationTaught = false;
             ResetRocket();
             _removed = new bool[Remaining]; _inFlight = new bool[Remaining]; _views = new PuzzleArrowView[Remaining];
             var origin = new Vector3(-(Level.Width - 1) * .5f, -(Level.Height - 1) * .5f, 0);
-            bool showMatchMarkers = _mode == GameModeId.ColorShift;
-            for (int i = 0; i < _views.Length; i++)
-            {
-                _views[i] = _pool.Get();
-                _views[i].Bind(Level.Arrows[i], i, origin, _config, showMatchMarkers);
-            }
+            for (int i = 0; i < _views.Length; i++) { _views[i] = _pool.Get(); _views[i].Bind(Level.Arrows[i], i, origin, _config); }
             _frame.Setup(Level, _config);
             _cameraController.FitToPuzzle(Level.Width,Level.Height);
             GameManager.Instance.SetState(GameState.Playing);
@@ -134,45 +120,6 @@ namespace ArrowSwarm.Puzzle
             if (LastLevel) { ArrowSwarm.UI.MainMenuUI.OpenLevelsOnLoad = true; Menu(); return; }
             if (!Preview) DataManager.Instance.SetCurrentLevel(_mode, LevelNumber + 1);
             LoadLevel(LevelNumber + 1);
-        }
-
-        private void TryTeachFirstRotation()
-        {
-            if (Preview || LevelNumber != 1 || !Ready || RocketNeeded) return;
-            if (_firstRotationTaught) { TrySuggestRotation(); return; }
-            for (int i = 0; i < _views.Length; i++)
-            {
-                if (PuzzleRules.MatchesWall(Level, i, Orientation ^ 1) ||
-                    !PuzzleRules.CanRemove(Level, _removed, i, Orientation)) continue;
-                _firstRotationArrow = i;
-                _firstRotationTaught = true;
-                _views[i].Highlight(true);
-                SetMessage("puzzle_rotation_opened");
-                return;
-            }
-            TrySuggestRotation();
-        }
-
-        private void TrySuggestRotation()
-        {
-            if (_mode != GameModeId.ColorShift || Preview || LevelNumber != 1 || Turns <= 0 || !Ready) return;
-            bool alternateExit = false;
-            for (int i = 0; i < _views.Length; i++)
-            {
-                if (PuzzleRules.CanRemove(Level, _removed, i, Orientation)) return;
-                alternateExit |= PuzzleRules.CanRemove(Level, _removed, i, Orientation ^ 1);
-            }
-            if (alternateExit) SetMessage("puzzle_rotation_needed");
-        }
-
-        private void ClearRotationLesson()
-        {
-            if (_firstRotationArrow >= 0)
-            {
-                _views[_firstRotationArrow].Highlight(false);
-                _firstRotationArrow = -1;
-            }
-            if (_messageKey == "puzzle_rotation_opened" || _messageKey == "puzzle_rotation_needed") SetMessage("");
         }
 
         private static void Notify() => OnChanged?.Invoke();

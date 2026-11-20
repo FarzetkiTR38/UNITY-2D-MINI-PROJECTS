@@ -28,8 +28,6 @@ namespace ArrowSwarm.Puzzle
         public void Fire(int index)
         {
             if (!Ready || index < 0 || index >= _removed.Length || _removed[index] || _inFlight[index]) return;
-            ClearRotationLesson();
-            if (HasFailureMessage) SetMessage("");
             RocketArmed = false;
             ConsumeHintArrow(index);
             for (int i = 0; i < _views.Length; i++) if (!_removed[i] && !_inFlight[i]) _views[i].Highlight(false);
@@ -43,10 +41,9 @@ namespace ArrowSwarm.Puzzle
         {
             int version = _version;
             var arrow = Level.Arrows[index]; var view = _views[index];
-            float obstacle = PuzzleRules.ObstacleDistance(Level, _removed, index, out int blockingArrow);
+            float obstacle = PuzzleRules.ObstacleDistance(Level, _removed, index);
             bool match = PuzzleRules.MatchesWall(Level, index, Orientation);
-            bool hitArrow = !float.IsPositiveInfinity(obstacle);
-            bool blocked = hitArrow || !match;
+            bool blocked = !float.IsPositiveInfinity(obstacle) || !match;
             float wallDistance = arrow.Direction.x > 0 ? Level.Width - 1 - arrow.Head.x : arrow.Direction.x < 0 ? arrow.Head.x : arrow.Direction.y > 0 ? Level.Height - 1 - arrow.Head.y : arrow.Head.y;
             float distance = blocked ? Mathf.Max(.1f, Mathf.Min(obstacle - _config.StrokeWidth, wallDistance + _config.WallOffset - _config.StrokeWidth) - view.HeadForwardOffset)
                 : wallDistance + view.Length + _config.WallOffset + _config.HeadSize;
@@ -56,10 +53,6 @@ namespace ArrowSwarm.Puzzle
             while (travel < distance) { travel = Mathf.Min(distance, travel + Time.deltaTime * speed); view.RenderTravel(travel); yield return null; }
             if (blocked)
             {
-                if (!hitArrow) _frame.PulseImpact(arrow.Direction);
-                else if (blockingArrow == index || (!_removed[blockingArrow] && !_inFlight[blockingArrow]))
-                    _views[blockingArrow].PulseImpact();
-                SetMessage(hitArrow ? "puzzle_arrow_blocked" : "puzzle_wall_mismatch");
                 Lives = Mathf.Max(0, Lives - 1); AudioManager.Instance?.PlayArrowWrong(); Notify();
                 if (version != _version) yield break;
                 while (travel > 0) { travel = Mathf.Max(0, travel - Time.deltaTime * _config.Speed); view.RenderTravel(travel); yield return null; }
@@ -71,11 +64,7 @@ namespace ArrowSwarm.Puzzle
             {
                 if (Lives <= 0) End(false);
                 else if (Remaining == 0) End(true);
-                else
-                {
-                    CheckStuck();
-                    if (!blocked) TrySuggestRotation();
-                }
+                else CheckStuck();
             }
             Notify();
         }
@@ -84,8 +73,6 @@ namespace ArrowSwarm.Puzzle
         public void Rotate(int direction)
         {
             if (!Ready || _mode != GameModeId.ColorShift || Turns <= 0) return;
-            ClearRotationLesson();
-            if (HasFailureMessage) SetMessage("");
             ConsumeHintRotation();
             RocketArmed = false;
             _busy = true; Turns--; Orientation ^= 1; Notify();
@@ -94,12 +81,8 @@ namespace ArrowSwarm.Puzzle
         private IEnumerator Turn(int direction)
         {
             yield return _frame.Rotate(direction, _config.RotationDuration);
-            _busy = false;
-            CheckStuck();
-            TryTeachFirstRotation();
-            Notify();
+            _busy = false; CheckStuck(); Notify();
         }
-
         private void CheckStuck()
         {
             RocketNeeded = false;
@@ -131,7 +114,6 @@ namespace ArrowSwarm.Puzzle
         public void Hint()
         {
             if (!Idle) return;
-            ClearRotationLesson();
             if (RepeatHintSuggestion()) return;
             RocketArmed = false;
             if (RocketNeeded)

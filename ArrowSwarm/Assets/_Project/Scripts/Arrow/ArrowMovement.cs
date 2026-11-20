@@ -54,12 +54,6 @@ namespace ArrowSwarm.Arrow
         /// <summary>Whether the arrow is currently in motion.</summary>
         public bool IsMoving => _isMoving;
 
-        /// <summary>Fires when a rejected Defense arrow reaches its point of contact.</summary>
-        public static event Action OnBlockedImpact;
-
-        /// <summary>Fires after a live enemy takes damage from an actual projectile.</summary>
-        public static event Action<bool> OnEnemyHit;
-
         private void Awake()
         {
             _arrow = GetComponent<Arrow>();
@@ -286,7 +280,6 @@ namespace ArrowSwarm.Arrow
                     _currentHeadDistance = _maxForwardDistance;
                     _blockedState = BlockedState.ImpactShake;
                     _shakeTimer = 0.08f;
-                    OnBlockedImpact?.Invoke();
 
                     // Trigger impact effects
                     _arrow.Visuals?.PlayBlockedEffect();
@@ -436,10 +429,9 @@ namespace ArrowSwarm.Arrow
             if (!IsMoving || _mode != MovementMode.NormalFlight) return;
 
             var mob = other.GetComponent<ArrowSwarm.Mob.Mob>();
-            if (mob != null && mob.IsAlive)
+            if (mob != null)
             {
                 mob.TakeDamage(_arrow.GetDamage());
-                OnEnemyHit?.Invoke(_arrow.IsRainbow);
             }
         }
 

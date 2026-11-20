@@ -17,10 +17,6 @@ namespace ArrowSwarm.Data
     public class UnityCloudService : ICloudService, ILeaderboardCloudService
     {
         public const string LEADERBOARD_ID = "arrow_swarm_leaderboard";
-        private const double LevelScoreWeight = 10000.0;
-
-        internal static double CalculateScore(int highestLevel, int totalStars) =>
-            highestLevel * LevelScoreWeight + totalStars;
 
         private bool _isInitialized;
         private bool _isInitializing;
@@ -138,7 +134,7 @@ namespace ArrowSwarm.Data
             try
             {
                 // Primary sorting: Level (multiplied by 10,000), Secondary sorting: Stars
-                double score = CalculateScore(highestLevel, totalStars);
+                double score = (double)highestLevel * 10000.0 + totalStars;
 
                 var metadata = new ScoreMetadata
                 {
@@ -205,14 +201,14 @@ namespace ArrowSwarm.Data
                         }
                         catch
                         {
-                            level = (int)(entry.Score / LevelScoreWeight);
-                            stars = (int)(entry.Score % LevelScoreWeight);
+                            level = (int)(entry.Score / 10000.0);
+                            stars = (int)(entry.Score % 10000.0);
                         }
                     }
                     else
                     {
-                        level = (int)(entry.Score / LevelScoreWeight);
-                        stars = (int)(entry.Score % LevelScoreWeight);
+                        level = (int)(entry.Score / 10000.0);
+                        stars = (int)(entry.Score % 10000.0);
                     }
 
                     if (string.IsNullOrEmpty(name))

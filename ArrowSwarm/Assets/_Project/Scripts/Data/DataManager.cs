@@ -396,6 +396,7 @@ namespace ArrowSwarm.Data
             if (_playerData == null || string.IsNullOrEmpty(language)) return;
             string normalizedLang = ArrowSwarm.Localization.LocalizationManager.NormalizeLanguageCode(language);
             _playerData.selectedLanguage = normalizedLang;
+            _playerData.playerCountry = ArrowSwarm.Localization.LocalizationManager.GetCountryCodeForLanguage(normalizedLang);
             NotifyAndSave(false);
         }
 
@@ -420,7 +421,7 @@ namespace ArrowSwarm.Data
         }
 
         /// <summary>
-        /// Saves the player display name and leaderboard country.
+        /// Sets the player profile (name and country), synchronizes language, and persists.
         /// </summary>
         public void SetPlayerProfile(string name, string country, bool markSetupCompleted = true)
         {
@@ -430,6 +431,7 @@ namespace ArrowSwarm.Data
             {
                 string normalizedLang = ArrowSwarm.Localization.LocalizationManager.GetLanguageCodeForCountry(country);
                 _playerData.playerCountry = ArrowSwarm.Localization.LocalizationManager.GetCountryCodeForLanguage(normalizedLang);
+                _playerData.selectedLanguage = normalizedLang;
             }
             if (markSetupCompleted) _playerData.isProfileSetupCompleted = true;
             NotifyAndSave();

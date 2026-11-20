@@ -10,13 +10,11 @@ namespace ArrowSwarm.Ads
         /// <summary>Preloads one rewarded ad when there is no cached or active playback.</summary>
         public void LoadRewardedAd()
         {
-            if (!CanUseAds || !_isInitialized || _isLoadingRewarded || _rewardPlayback != null || IsAdReady()) return;
+            if (!_isInitialized || _isLoadingRewarded || _rewardPlayback != null || IsAdReady()) return;
             _isLoadingRewarded = true;
-            int requestVersion = _adRequestVersion;
             CleanUpRewardedAd();
             RewardedAd.Load(ActiveRewardedId, new AdRequest(), (ad, error) => AdUnityThread.Run(this, () =>
             {
-                if (requestVersion != _adRequestVersion || !CanUseAds) { ad?.Destroy(); return; }
                 _isLoadingRewarded = false;
                 if (error != null || ad == null)
                 {
@@ -79,7 +77,7 @@ namespace ArrowSwarm.Ads
         }
 
         /// <inheritdoc/>
-        public bool IsAdReady() => CanUseAds && _rewardPlayback == null && _rewardedAd != null && _rewardedAd.CanShowAd();
+        public bool IsAdReady() => _rewardPlayback == null && _rewardedAd != null && _rewardedAd.CanShowAd();
 
         private void CleanUpRewardedAd()
         {

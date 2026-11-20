@@ -35,9 +35,10 @@ namespace ArrowSwarm.UI
                 TotalStars = player.GetTotalStars(), IsPlayer = true
             });
             rows.Sort((a, b) => {
-                int score = UnityCloudService.CalculateScore(b.HighestLevel, b.TotalStars)
-                    .CompareTo(UnityCloudService.CalculateScore(a.HighestLevel, a.TotalStars));
-                return score != 0 ? score : string.Compare(a.PlayerId, b.PlayerId, StringComparison.Ordinal);
+                int score = b.TotalStars.CompareTo(a.TotalStars);
+                if (score != 0) return score;
+                int level = b.HighestLevel.CompareTo(a.HighestLevel);
+                return level != 0 ? level : string.Compare(a.PlayerId, b.PlayerId, StringComparison.Ordinal);
             });
             return rows;
         }

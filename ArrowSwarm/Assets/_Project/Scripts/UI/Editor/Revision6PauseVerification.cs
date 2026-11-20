@@ -12,11 +12,10 @@ namespace ArrowSwarm.UI.Editor
     using UnityEngine;
     using UnityEngine.SceneManagement;
 
-    /// <summary>Verifies original Pause artwork and real pause/resume input across available gameplay scenes.</summary>
+    /// <summary>Verifies original Pause artwork and real pause/resume input across all four gameplay scenes.</summary>
     public static partial class Revision6PauseVerification
     {
-        private const string DefaultFolder = "Captures/Revision6/Checks/Pause";
-        private const string MapTestScenePath = "Assets/_Project/Scenes/MapTestScene.unity";
+        private const string Folder = "Captures/Revision6/Checks/Pause";
         private const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
         private static readonly List<string> Results = new List<string>();
         private static readonly Stack<IEnumerator> Steps = new Stack<IEnumerator>();
@@ -24,23 +23,17 @@ namespace ArrowSwarm.UI.Editor
         private static Scope _scope;
         private static double _deadline;
         private static bool _running;
-        private static string _folder;
 
         /// <summary>Current stage or final result for nonblocking Unity MCP inspection.</summary>
         public static string Status { get; private set; } = "Idle";
 
         /// <summary>Starts from a fresh Boot-loaded idle main menu, without a live leaderboard manager.</summary>
-        public static void Begin() => BeginAt(DefaultFolder);
-
-        /// <summary>Writes the same checks to a separate capture folder.</summary>
-        public static void BeginAt(string captureFolder)
+        public static void Begin()
         {
             if (_running || !Application.isPlaying || SceneManager.GetActiveScene().name != "MainMenuScene" ||
                 !DataManager.HasInstance || !GameManager.HasInstance || LeaderboardManager.HasInstance)
                 throw new InvalidOperationException("Use fresh MainMenu Play Mode before opening the leaderboard.");
-            Results.Clear(); Steps.Clear(); _wait = null;
-            Directory.CreateDirectory(captureFolder);
-            _folder = captureFolder;
+            Results.Clear(); Steps.Clear(); _wait = null; Directory.CreateDirectory(Folder);
             try
             {
                 _scope = new Scope(); _deadline = EditorApplication.timeSinceStartup + 240;
@@ -57,12 +50,8 @@ namespace ArrowSwarm.UI.Editor
         private static IEnumerator Run()
         {
             VerifyPixels();
-            foreach (string scene in new[] { "GameScene", "ShapesScene", "ColorShiftScene" })
+            foreach (string scene in new[] { "GameScene", "ShapesScene", "ColorShiftScene", "MapTestScene" })
                 yield return VerifyScene(scene);
-            if (SceneUtility.GetBuildIndexByScenePath(MapTestScenePath) >= 0)
-                yield return VerifyScene("MapTestScene");
-            else
-                Results.Add("SKIP: MapTestScene is outside the active scene list");
             Check(!LeaderboardManager.HasInstance && _scope.FactoryCalls == 0, "No cloud manager or provider operation was started");
             ReturnToMenu(); yield return Settled(.2f);
         }
@@ -82,7 +71,7 @@ namespace ArrowSwarm.UI.Editor
                     if (step.Current is IEnumerator nested) { Steps.Push(nested); continue; }
                     _wait = step.Current as Func<bool>; return;
                 }
-                Finish("PASS: original Pause artwork, native input and resume in all available gameplay scenes");
+                Finish("PASS: original Pause artwork, native input and resume in all four gameplay scenes");
             }
             catch (Exception error) { Results.Add(error.ToString()); Finish("FAIL: " + error.Message); }
         }
@@ -98,7 +87,7 @@ namespace ArrowSwarm.UI.Editor
             catch (Exception error) { outcome += " / CLEANUP FAILED: " + error.Message; }
             finally { try { _scope?.Dispose(); } catch (Exception error) { outcome += " / RESTORE FAILED: " + error.Message; } }
             _scope = null; _wait = null; Status = outcome;
-            File.WriteAllText(_folder + "/verification.txt", outcome + "\n" + string.Join("\n", Results) + "\n");
+            File.WriteAllText(Folder + "/verification.txt", outcome + "\n" + string.Join("\n", Results) + "\n");
             UnityEngine.Debug.Log("[ArrowSwarm] " + outcome);
         }
 
@@ -107,7 +96,7 @@ namespace ArrowSwarm.UI.Editor
 
         private static IEnumerator Capture(string name)
         {
-            string path = _folder + "/" + name + ".png"; int frame = Time.frameCount;
+            string path = Folder + "/" + name + ".png"; int frame = Time.frameCount;
             if (File.Exists(path)) File.Delete(path);
             Canvas.ForceUpdateCanvases(); ScreenCapture.CaptureScreenshot(path);
             yield return (Func<bool>)(() => Time.frameCount > frame + 2 && File.Exists(path) && new FileInfo(path).Length > 0);

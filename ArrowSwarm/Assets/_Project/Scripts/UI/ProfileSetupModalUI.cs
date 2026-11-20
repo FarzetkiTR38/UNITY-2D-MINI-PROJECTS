@@ -51,7 +51,6 @@ namespace ArrowSwarm.UI
         private Coroutine _animateRoutine;
         private int _currentCountryIndex = 0;
         private bool _showRequested;
-        private Action _onClosed;
 
         private static readonly string[] NAME_PREFIXES =
         {
@@ -196,16 +195,12 @@ namespace ArrowSwarm.UI
         /// Displays the Profile Setup modal with smooth scale &amp; fade punch.
         /// Pre-fills random name and detects user device country.
         /// </summary>
-        public void Show() => Show(null);
-
-        /// <summary>Opens the profile and invokes a continuation after the player leaves the form.</summary>
-        public void Show(Action onClosed)
+        public void Show()
         {
             bool opening = !_showRequested || !gameObject.activeInHierarchy;
             // An inactive scene modal runs Awake during this first activation.
             // Do not let its initial hide cancel the requested opening.
             _showRequested = true;
-            _onClosed = onClosed;
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
             AutoWireComponents();
@@ -296,6 +291,7 @@ namespace ArrowSwarm.UI
             Audio.AudioManager.Instance?.PlayToggle();
             _currentCountryIndex--;
             UpdateCountryDisplay();
+            ApplySelectedLanguage();
         }
 
         private void OnNextCountryClicked()
@@ -303,20 +299,11 @@ namespace ArrowSwarm.UI
             Audio.AudioManager.Instance?.PlayToggle();
             _currentCountryIndex++;
             UpdateCountryDisplay();
+            ApplySelectedLanguage();
         }
 
         private int GetInitialCountryIndex()
         {
-            var player = DataManager.Instance?.PlayerData;
-            if (player?.isProfileSetupCompleted == true)
-            {
-                for (int i = 0; i < COUNTRIES.Length; i++)
-                {
-                    if (COUNTRIES[i].Code.Equals(player.playerCountry, StringComparison.OrdinalIgnoreCase))
-                        return i;
-                }
-            }
-
             string targetLang = null;
             if (Localization.LocalizationManager.HasInstance)
             {
@@ -325,7 +312,11 @@ namespace ArrowSwarm.UI
 
             if (string.IsNullOrEmpty(targetLang))
             {
-                targetLang = player?.selectedLanguage;
+                var pd = DataManager.Instance?.PlayerData;
+                if (pd != null)
+                {
+                    targetLang = !string.IsNullOrEmpty(pd.selectedLanguage) ? pd.selectedLanguage : pd.playerCountry;
+                }
             }
 
             string normalizedLang = Localization.LocalizationManager.NormalizeLanguageCode(targetLang);
@@ -360,25 +351,59 @@ namespace ArrowSwarm.UI
 
         private void OnSaveClicked()
         {
-            FinishProfile(ensureLeaderboardManager: true);
+            AudioManager.Instance?.PlayButtonClick();
+            Debug.Log("[ArrowSwarm] ProfileSetupModalUI: Save profile button clicked!");
+
+            string finalName = _nameInput != null ? _nameInput.text.Trim() : "";
+            if (string.IsNullOrEmpty(finalName))
+            {
+                finalName = GenerateRandomNickname();
+            }
+
+            bool validIndex = _currentCountryIndex >= 0 && _currentCountryIndex < COUNTRIES.Length;
+            string selectedCode = validIndex ? COUNTRIES[_currentCountryIndex].Code : "US";
+            string selectedLang = validIndex ? COUNTRIES[_currentCountryIndex].LanguageCode : "en";
+
+            if (DataManager.Instance != null)
+            {
+                DataManager.Instance.SetPlayerProfile(finalName, selectedCode, true);
+            }
+
+            if (Localization.LocalizationManager.HasInstance)
+            {
+                Localization.LocalizationManager.Instance.SetLanguage(selectedLang, saveToPrefs: true);
+            }
+
+            // SetPlayerProfile owns the score update. A fresh manager retries its pending snapshot once.
+            if (!LeaderboardManager.HasInstance) _ = LeaderboardManager.Instance;
+
+            // Save and cleanly close modal (stay on MainMenu)
+            Hide();
         }
 
-        private void OnSkipClicked() => FinishProfile(ensureLeaderboardManager: false);
-
-        private void FinishProfile(bool ensureLeaderboardManager)
+        private void OnSkipClicked()
         {
-            if (!_showRequested) return;
             AudioManager.Instance?.PlayButtonClick();
+            Debug.Log("[ArrowSwarm] ProfileSetupModalUI: Skip button clicked!");
+
             string currentName = _nameInput != null ? _nameInput.text.Trim() : "";
             if (string.IsNullOrEmpty(currentName)) currentName = GenerateRandomNickname();
 
             bool validIndex = _currentCountryIndex >= 0 && _currentCountryIndex < COUNTRIES.Length;
             string selectedCode = validIndex ? COUNTRIES[_currentCountryIndex].Code : "US";
-            DataManager.Instance?.SetPlayerProfile(currentName, selectedCode);
-            if (ensureLeaderboardManager && !LeaderboardManager.HasInstance) _ = LeaderboardManager.Instance;
-            Action onClosed = _onClosed;
-            _onClosed = null;
-            Hide(onClosed);
+            string selectedLang = validIndex ? COUNTRIES[_currentCountryIndex].LanguageCode : "en";
+
+            if (DataManager.Instance != null)
+            {
+                DataManager.Instance.SetPlayerProfile(currentName, selectedCode, true);
+            }
+
+            if (Localization.LocalizationManager.HasInstance)
+            {
+                Localization.LocalizationManager.Instance.SetLanguage(selectedLang, saveToPrefs: true);
+            }
+
+            Hide();
         }
     }
 }

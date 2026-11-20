@@ -16,7 +16,6 @@ namespace ArrowSwarm.Puzzle
         public void ToggleRocket()
         {
             if (!Idle) return;
-            ClearRotationLesson();
             if (RocketCharges <= 0) { OpenRocketPrompt(); return; }
             RocketArmed = !RocketArmed;
             for (int i = 0; i < _views.Length; i++) if (!_removed[i]) _views[i].Highlight(false);
@@ -35,7 +34,6 @@ namespace ArrowSwarm.Puzzle
         public void FireRocket(int index)
         {
             if (!Idle || !RocketArmed || RocketCharges <= 0 || index < 0 || index >= _removed.Length || _removed[index]) return;
-            if (HasFailureMessage) SetMessage("");
             _busy = true; RocketArmed = RocketNeeded = false; RocketCharges--; _removed[index] = true; Remaining--;
             for (int i = 0; i < _views.Length; i++) if (_views[i] != null) _views[i].Highlight(false);
             ConsumeHintArrow(index); RestoreHintHighlight();

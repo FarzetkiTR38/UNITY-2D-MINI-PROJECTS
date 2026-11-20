@@ -7,13 +7,8 @@ namespace ArrowSwarm.Modes
     public static class PuzzleRules
     {
         /// <summary>Reports the first occupied point on a head ray, including self obstruction.</summary>
-        public static float ObstacleDistance(PuzzleLevel level, bool[] removed, int index) =>
-            ObstacleDistance(level, removed, index, out _);
-
-        /// <summary>Also identifies the arrow occupying that point for contact feedback.</summary>
-        public static float ObstacleDistance(PuzzleLevel level, bool[] removed, int index, out int blockingArrow)
+        public static float ObstacleDistance(PuzzleLevel level, bool[] removed, int index)
         {
-            blockingArrow = -1;
             var arrow = level.Arrows[index];
             var point = arrow.Head + arrow.Direction;
             int distance = 1;
@@ -24,7 +19,7 @@ namespace ArrowSwarm.Modes
                     if (removed[j]) continue;
                     var path = level.Arrows[j].Points;
                     for (int k = j == index ? 1 : 0; k < path.Count; k++)
-                        if (path[k] == point) { blockingArrow = j; return distance; }
+                        if (path[k] == point) return distance;
                 }
                 point += arrow.Direction; distance++;
             }

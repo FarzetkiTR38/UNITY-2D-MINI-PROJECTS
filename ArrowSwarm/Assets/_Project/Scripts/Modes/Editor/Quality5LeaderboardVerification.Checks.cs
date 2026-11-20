@@ -48,9 +48,7 @@ namespace ArrowSwarm.Modes.Editor
         private static void VerifyLiteralName(Scope scope)
         {
             var row = Field<LeaderboardEntryUI[]>(scope.Board, "_entryRows")[0];
-            var name = Field<TextMeshProUGUI>(row, "_playerNameText");
-            if (!Visible(name)) name = Field<TextMeshProUGUI>(row, "_highlightNameText");
-            name.ForceMeshUpdate();
+            var name = Field<TextMeshProUGUI>(row, "_playerNameText"); name.ForceMeshUpdate();
             bool literal = false;
             for (int i = 0; i < name.textInfo.characterCount; i++)
                 if (name.textInfo.characterInfo[i].character == '<' && name.textInfo.characterInfo[i].isVisible) literal = true;

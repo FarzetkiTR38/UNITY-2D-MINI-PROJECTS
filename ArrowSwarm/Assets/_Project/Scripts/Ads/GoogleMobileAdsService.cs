@@ -43,16 +43,13 @@ namespace ArrowSwarm.Ads
         private void Start()
         {
             AdUnityThread.Initialize();
-            BeginConsent();
+            InitializeSdk();
         }
 
         private void InitializeSdk()
         {
-            if (_isInitialized || _initializingSdk) return;
-            _initializingSdk = true;
-            MobileAds.Initialize(_ => AdUnityThread.Run(this, () =>
+            MobileAds.Initialize(initStatus => AdUnityThread.Run(this, () =>
             {
-                _initializingSdk = false;
                 _isInitialized = true;
                 Debug.Log("[ArrowSwarm] Google Mobile Ads initialized successfully.");
                 LoadRewardedAd();
@@ -67,16 +64,14 @@ namespace ArrowSwarm.Ads
         /// </summary>
         public void LoadInterstitialAd()
         {
-            if (!CanUseAds || !_isInitialized || _isLoadingInterstitial || _isShowingInterstitial || IsInterstitialAdReady()) return;
+            if (!_isInitialized || _isLoadingInterstitial || _isShowingInterstitial || IsInterstitialAdReady()) return;
 
             _isLoadingInterstitial = true;
-            int requestVersion = _adRequestVersion;
             CleanUpInterstitialAd();
 
             AdRequest request = new AdRequest();
             InterstitialAd.Load(ActiveInterstitialId, request, (InterstitialAd ad, LoadAdError error) => AdUnityThread.Run(this, () =>
             {
-                if (requestVersion != _adRequestVersion || !CanUseAds) { ad?.Destroy(); return; }
                 _isLoadingInterstitial = false;
                 if (error != null || ad == null)
                 {
@@ -122,7 +117,7 @@ namespace ArrowSwarm.Ads
         }
 
         /// <inheritdoc/>
-        public bool IsInterstitialAdReady() => CanUseAds && !_isShowingInterstitial && _interstitialAd != null && _interstitialAd.CanShowAd();
+        public bool IsInterstitialAdReady() => !_isShowingInterstitial && _interstitialAd != null && _interstitialAd.CanShowAd();
 
         private void FinishInterstitial(InterstitialAd ad)
         {

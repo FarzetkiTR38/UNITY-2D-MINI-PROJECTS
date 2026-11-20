@@ -12,18 +12,16 @@ namespace ArrowSwarm.UI.Editor
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;
 
-    /// <summary>Captures actual Boot at 65%, then lets the real loader take it into Home.</summary>
+    /// <summary>Captures actual Boot at 65%, then resumes its original completion callback into Home.</summary>
     public static partial class UiRollout01Verification
     {
         private static IEnumerator VerifyBoot()
         {
-            Status = "Boot / native scene at 65%";
-            SceneManager.sceneLoaded += HoldBootForCapture;
-            SceneManager.LoadScene("BootScene");
+            Status = "Boot / native scene at 65%"; Time.timeScale = 0; SceneManager.LoadScene("BootScene");
             yield return Settled();
             var boot = UnityEngine.Object.FindFirstObjectByType<BootLoadingUI>();
             var loader = UnityEngine.Object.FindFirstObjectByType<BootLoader>();
-            Check(boot != null && loader != null && !loader.enabled, "Original BootLoader is held for visual inspection before startup");
+            Check(boot != null && loader != null && loader.enabled, "Original BootLoader and BootLoadingUI still own startup");
             boot.StopAllCoroutines(); boot.SetProgress(.65f);
             var logo = Field<Image>(boot, "_titleLogoImage");
             Check(logo != null && logo.sprite == UiRollout01Kit.Sprite("boot_logo") && logo.preserveAspect && !logo.raycastTarget,
@@ -65,10 +63,9 @@ namespace ArrowSwarm.UI.Editor
                 Check(Mathf.Abs(Field<Slider>(boot, "_progressSlider").value - .65f) < .001f, "Live progress fill stays bound / " + theme);
                 yield return Capture("boot-" + theme.ToString().ToLowerInvariant());
             }
-            pulse.SetValue(boot, animate);
-            boot.SetProgress(0f);
-            loader.enabled = true;
-            float last = -1; int liveFrames = 0; bool liveValid = true, creditVisible = true;
+            pulse.SetValue(boot, animate); Time.timeScale = 1;
+            boot.StartLoading(() => typeof(BootLoader).GetMethod("OnLoadingCompleted", Private).Invoke(loader, null));
+            float last = -1; int liveFrames = 0; bool liveValid = true, sawPartial = false, creditVisible = true;
             var liveSlider = Field<Slider>(boot, "_progressSlider");
             var liveCredit = root.Find("BootDesign/StudioBrand").GetComponent<TextMeshProUGUI>();
             var liveGames = root.Find("BootDesign/StudioGames").GetComponent<TextMeshProUGUI>();
@@ -77,22 +74,15 @@ namespace ArrowSwarm.UI.Editor
                 float value = liveSlider.value;
                 var fill = liveSlider.fillRect; var area = (RectTransform)fill.parent;
                 liveValid &= value >= last && fill.rect.width >= 0 && Mathf.Abs(fill.rect.width - area.rect.width * value) < .1f;
-                creditVisible &= Visible(liveCredit) && Visible(liveGames);
+                creditVisible &= Visible(liveCredit) && Visible(liveGames); sawPartial |= value > 0 && value < 1;
                 last = value; liveFrames++; yield return null;
             }
-            Check(liveValid && last == 1f && liveFrames > 0, "Real loading reaches 100% monotonically with correct fill geometry");
-            Check(creditVisible, "Full studio credit stays active throughout actual Boot loading");
+            Check(liveValid && sawPartial && liveFrames > 3, "Real timed loading animation grows monotonically with correct inner fill geometry");
+            Check(creditVisible, "Full studio credit stays active throughout actual timed Boot loading");
             yield return (Func<bool>)(() => SceneManager.GetActiveScene().name == "MainMenuScene" &&
                 !SceneTransitionManager.Instance.IsTransitioning && GameManager.Instance.CurrentState == GameState.Menu);
             yield return Settled();
-            Check(true, "Real asynchronous Boot reaches actual MainMenu");
-        }
-
-        private static void HoldBootForCapture(Scene scene, LoadSceneMode mode)
-        {
-            if (scene.name != "BootScene") return;
-            SceneManager.sceneLoaded -= HoldBootForCapture;
-            UnityEngine.Object.FindFirstObjectByType<BootLoader>().enabled = false;
+            Check(true, "Authored Boot loading duration and real completion callback reach actual MainMenu");
         }
 
         private static IEnumerator VerifyHome()

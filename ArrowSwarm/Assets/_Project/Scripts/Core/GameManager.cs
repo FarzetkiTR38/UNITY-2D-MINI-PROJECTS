@@ -42,9 +42,6 @@ namespace ArrowSwarm.Core
         /// <summary>Current remaining lives.</summary>
         public int CurrentLives => _currentLives;
 
-        /// <summary>Whether a mob reaching the exit took the most recent Defense life.</summary>
-        public bool EnemyCausedLastLifeLoss { get; private set; }
-
         // --- Events ---
         /// <summary>Fired when the game state changes.</summary>
         public static event Action<GameState> OnGameStateChanged;
@@ -112,7 +109,6 @@ namespace ArrowSwarm.Core
         /// </summary>
         public void InitializeLives()
         {
-            EnemyCausedLastLifeLoss = false;
             _currentLives = _gameConfig != null ? _gameConfig.MaxLives : 3;
             OnLivesChanged?.Invoke(_currentLives);
         }
@@ -238,7 +234,6 @@ namespace ArrowSwarm.Core
         {
             if (_currentState != GameState.Playing) return false;
 
-            EnemyCausedLastLifeLoss = !waitForBounce;
             _currentLives = Mathf.Max(0, _currentLives - 1);
             bool finalLife = _currentLives == 0;
             if (finalLife && waitForBounce) SetState(GameState.ResolvingLoss);

@@ -1,6 +1,8 @@
 namespace ArrowSwarm.Tutorial
 {
+    using System;
     using System.Collections;
+    using ArrowSwarm.Core;
     using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
@@ -24,7 +26,9 @@ namespace ArrowSwarm.Tutorial
         [SerializeField] private CanvasGroup _completeGroup;
         [SerializeField] private CanvasGroup _completionBackdrop;
         [SerializeField] private Button _continueButton;
-        [SerializeField] private Button _mainMenuButton;
+        [SerializeField] private TextMeshProUGUI _continueButtonText;
+        [SerializeField] private TextMeshProUGUI _completeTitleText;
+        [SerializeField] private TextMeshProUGUI _completeSubtitleText;
 
         private Coroutine _bannerFadeRoutine;
         private Vector3 _originalCardScale = Vector3.one;
@@ -52,7 +56,6 @@ namespace ArrowSwarm.Tutorial
             {
                 _continueButton.onClick.AddListener(OnContinueClicked);
             }
-            if (_mainMenuButton != null) _mainMenuButton.onClick.AddListener(OnMainMenuClicked);
 
             if (_completeCard != null)
             {
@@ -81,7 +84,6 @@ namespace ArrowSwarm.Tutorial
         {
             if (_skipButton != null) _skipButton.onClick.RemoveListener(OnSkipClicked);
             if (_continueButton != null) _continueButton.onClick.RemoveListener(OnContinueClicked);
-            if (_mainMenuButton != null) _mainMenuButton.onClick.RemoveListener(OnMainMenuClicked);
         }
 
         /// <summary>
@@ -108,9 +110,6 @@ namespace ArrowSwarm.Tutorial
         {
             gameObject.SetActive(true);
             SetCompletionBackdrop(false);
-            var overlayGroup = GetComponent<CanvasGroup>();
-            if (overlayGroup != null) overlayGroup.blocksRaycasts = false;
-            if (_skipButton != null) _skipButton.gameObject.SetActive(true);
             if (_bannerGroup != null) _bannerGroup.alpha = 1f;
             if (_completeCard != null) _completeCard.SetActive(false);
         }
@@ -124,9 +123,9 @@ namespace ArrowSwarm.Tutorial
         }
 
         /// <summary>
-        /// Shows the localized completion card and its navigation choices.
+        /// Shows the completion celebration card with victory text and localized button.
         /// </summary>
-        public void ShowCompletionCard()
+        public void ShowCompletionCard(string title, string subtitle, string buttonText = "MAIN MENU")
         {
             SetCompletionBackdrop(true);
             var overlayCG = GetComponent<CanvasGroup>();
@@ -139,12 +138,38 @@ namespace ArrowSwarm.Tutorial
             if (_bannerGroup != null) _bannerGroup.alpha = 0f;
             if (_skipButton != null) _skipButton.gameObject.SetActive(false);
 
+            if (_completeTitleText != null) _completeTitleText.text = title;
+            if (_completeSubtitleText != null) _completeSubtitleText.text = subtitle;
+
             if (_completeCard != null)
             {
                 _completeCard.SetActive(true);
+
+                if (_continueButton == null)
+                {
+                    _continueButton = _completeCard.GetComponentInChildren<Button>(true);
+                }
+
+                if (_continueButtonText == null && _continueButton != null)
+                {
+                    _continueButtonText = _continueButton.GetComponentInChildren<TextMeshProUGUI>(true);
+                }
+
+                if (_continueButtonText != null && !string.IsNullOrEmpty(buttonText))
+                {
+                    _continueButtonText.text = buttonText;
+                }
+
+                if (_continueButton != null)
+                {
+                    _continueButton.onClick.RemoveAllListeners();
+                    _continueButton.onClick.AddListener(OnContinueClicked);
+                    _continueButton.interactable = true;
+                }
+
                 if (_completeGroup != null)
                 {
-                    _completeGroup.interactable = false;
+                    _completeGroup.interactable = true;
                     _completeGroup.blocksRaycasts = true;
                 }
 

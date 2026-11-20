@@ -145,11 +145,6 @@ namespace ArrowSwarm.UI.Editor
         {if(state==PlayModeStateChange.ExitingPlayMode)Cancel();}
         private static void ConfigurePreview(Scene scene,LoadSceneMode mode)
         {
-            if (scene.name == "BootScene")
-            {
-                UnityEngine.Object.FindFirstObjectByType<BootLoader>().enabled = false;
-                return;
-            }
             if(scene.name!="MapTestScene")return;
             var controller=UnityEngine.Object.FindFirstObjectByType<MapSceneController>();
             var data=new SerializedObject(controller);data.FindProperty("_previewMode").enumValueIndex=0;
