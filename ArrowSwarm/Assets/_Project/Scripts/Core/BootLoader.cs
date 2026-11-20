@@ -13,6 +13,7 @@ namespace ArrowSwarm.Core
     {
         [SerializeField] private GameObject _coreManagersPrefab;
         [SerializeField] private BootLoadingUI _loadingUI;
+        [SerializeField] private BootSplashOverlay _splashOverlay;
 
         private void Awake()
         {
@@ -34,6 +35,18 @@ namespace ArrowSwarm.Core
                 _loadingUI = Object.FindFirstObjectByType<BootLoadingUI>();
             }
 
+            if (_splashOverlay != null && _splashOverlay.isActiveAndEnabled)
+            {
+                _splashOverlay.Play(BeginLoading);
+            }
+            else
+            {
+                BeginLoading();
+            }
+        }
+
+        private void BeginLoading()
+        {
             if (_loadingUI != null)
             {
                 _loadingUI.StartLoading(OnLoadingCompleted);
