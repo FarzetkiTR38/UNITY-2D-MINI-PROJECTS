@@ -83,6 +83,7 @@ namespace ArrowSwarm.Core.Editor
             yield return Gesture("held 0.6s with small roll fires", Pick(), Mm(2.5f), 0.6f, 1);
             yield return Gesture("short press pulled 9mm (flick) fires", Pick(), Mm(9f), 0.12f, 1);
             yield return SameFrameTap();
+            yield return FingerTolerance();
 
             var cam = UnityEngine.Camera.main.transform;
             Vector3 before = cam.position;

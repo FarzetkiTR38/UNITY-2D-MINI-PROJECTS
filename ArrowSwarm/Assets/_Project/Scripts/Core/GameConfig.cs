@@ -49,6 +49,10 @@ namespace ArrowSwarm.Core
         [SerializeField, Min(0.5f)] private float _flickSlopMm = 12f;
         [Tooltip("Presses shorter than this count as a flick instead of a camera pan.")]
         [SerializeField, Min(0.05f)] private float _flickMaxSeconds = 0.28f;
+        [Tooltip("Extra finger tolerance around arrow paths when the touched cell is empty.")]
+        [SerializeField, Min(0f)] private float _arrowTouchToleranceMm = 2.5f;
+        [Tooltip("Upper bound of that tolerance in grid cells, so neighbors are never stolen.")]
+        [SerializeField, Range(0.5f, 1f)] private float _arrowTouchMaxCells = 0.72f;
 
         [Header("Timing")]
         [SerializeField] private float _mobSpawnDelay = 2.5f;
@@ -134,6 +138,10 @@ namespace ArrowSwarm.Core
         public float FlickSlopMm => _flickSlopMm;
         /// <summary>Longest press in seconds that still counts as a flick.</summary>
         public float FlickMaxSeconds => _flickMaxSeconds;
+        /// <summary>Finger tolerance in millimeters around arrow paths.</summary>
+        public float ArrowTouchToleranceMm => _arrowTouchToleranceMm;
+        /// <summary>Maximum touch tolerance in grid cells.</summary>
+        public float ArrowTouchMaxCells => _arrowTouchMaxCells;
 
         /// <summary>Array of map data assets (5 maps, cyclic).</summary>
         public MapData[] Maps => _maps;

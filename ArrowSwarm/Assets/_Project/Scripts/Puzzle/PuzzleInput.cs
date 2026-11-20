@@ -53,7 +53,10 @@ namespace ArrowSwarm.Puzzle
             bool valid = _valid && !IsPan(p); _valid = false;
             if (!valid || OverUI(_down)) return;
             if (ArrowSwarm.Camera.CameraController.Instance.IsDragging) return;
-            _session.Tap(_camera.ScreenToWorldPoint(new Vector3(_down.x,_down.y,-_camera.transform.position.z)));
+            var config = GameManager.Instance != null ? GameManager.Instance.Config : null;
+            float worldPerPixel = _camera.orthographicSize * 2f / Mathf.Max(1f, Screen.height);
+            float finger = config != null ? TapGesture.MillimetersToPixels(config.ArrowTouchToleranceMm) * worldPerPixel : 0f;
+            _session.Tap(_camera.ScreenToWorldPoint(new Vector3(_down.x,_down.y,-_camera.transform.position.z)), finger);
         }
         private bool OverUI(Vector2 p)
         {

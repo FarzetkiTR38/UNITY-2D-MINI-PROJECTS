@@ -17,6 +17,8 @@ namespace ArrowSwarm.Modes
         [SerializeField, Min(.1f)] private float _maximumFlightDuration = .7f;
         [SerializeField, Min(.01f)] private float _rotationDuration = .3f;
         [SerializeField, Min(.01f)] private float _hitRadius = .38f;
+        [Tooltip("Upper bound in grid cells for hit radius plus mobile finger tolerance.")]
+        [SerializeField, Min(.01f)] private float _maxTouchRadius = .6f;
         [SerializeField, Min(1)] private float _swipeThreshold = 60f;
         [SerializeField, Min(1)] private float _tapThreshold = 25f;
         [SerializeField, Min(.01f)] private float _wallOffset = .9f;
@@ -41,6 +43,8 @@ namespace ArrowSwarm.Modes
         public float MaximumFlightDuration => _maximumFlightDuration;
         public float RotationDuration => _rotationDuration;
         public float HitRadius => _hitRadius;
+        /// <summary>Upper bound for hit radius plus finger tolerance, in grid cells.</summary>
+        public float MaxTouchRadius => _maxTouchRadius;
         public float SwipeThreshold => _swipeThreshold;
         public float TapThreshold => _tapThreshold;
         public float WallOffset => _wallOffset;

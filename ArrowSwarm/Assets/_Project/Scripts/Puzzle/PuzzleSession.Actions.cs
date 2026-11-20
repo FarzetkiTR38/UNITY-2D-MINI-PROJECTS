@@ -10,11 +10,12 @@ namespace ArrowSwarm.Puzzle
     /// <summary>Per-arrow shots, exclusive frame rotation and scene-safe reward callbacks.</summary>
     public sealed partial class PuzzleSession
     {
-        /// <summary>Finds the nearest stationary path within the configured touch radius.</summary>
-        public void Tap(Vector2 world)
+        /// <summary>Finds the nearest stationary path within the configured radius plus finger tolerance.</summary>
+        public void Tap(Vector2 world, float fingerTolerance = 0f)
         {
             if (!Ready) return;
-            int best = -1; float distance = _config.HitRadius;
+            int best = -1;
+            float distance = Mathf.Max(_config.HitRadius, Mathf.Min(_config.HitRadius + fingerTolerance, _config.MaxTouchRadius));
             for (int i = 0; i < _views.Length; i++)
             {
                 if (_removed[i] || _inFlight[i]) continue;
