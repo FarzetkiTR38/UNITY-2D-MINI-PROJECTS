@@ -12,7 +12,7 @@ namespace ArrowSwarm.UI
     /// Controls the Settings panel with SFX, VFX, Vibration toggles, Language selector, and Theme selector.
     /// Matches the visual mockup layout and integrates directly with DataManager, AudioManager, and ParticleManager.
     /// </summary>
-    public class SettingsUI : MonoBehaviour
+    public partial class SettingsUI : MonoBehaviour
     {
         [Header("UI References")]
         [SerializeField] private CanvasGroup _canvasGroup;
@@ -80,6 +80,7 @@ namespace ArrowSwarm.UI
         {
             Localization.LocalizationManager.OnLanguageChanged += UpdateLanguageDisplay;
             ThemeManager.OnThemeChanged += UpdateThemeDisplay;
+            SubscribePrivacyOptions();
             UpdateLanguageDisplay();
         }
 
@@ -88,6 +89,7 @@ namespace ArrowSwarm.UI
             _transition.Reset(this);
             Localization.LocalizationManager.OnLanguageChanged -= UpdateLanguageDisplay;
             ThemeManager.OnThemeChanged -= UpdateThemeDisplay;
+            UnsubscribePrivacyOptions();
         }
 
         private void Start()
@@ -106,6 +108,7 @@ namespace ArrowSwarm.UI
             _listenersBound = true;
 
             _closeButton?.onClick.AddListener(Hide);
+            _privacyOptionsButton?.onClick.AddListener(OpenPrivacyOptions);
 
             if (_sfxToggle != null)
                 _sfxToggle.OnValueChanged += OnSFXChanged;
@@ -124,6 +127,7 @@ namespace ArrowSwarm.UI
             _lightThemeButton?.onClick.AddListener(OnSelectLightTheme);
             _darkThemeButton?.onClick.AddListener(OnSelectDarkTheme);
         }
+
 
         /// <summary>
         /// Automatically discovers and links child references.
@@ -396,6 +400,7 @@ namespace ArrowSwarm.UI
         private void OnDestroy()
         {
             _closeButton?.onClick.RemoveListener(Hide);
+            _privacyOptionsButton?.onClick.RemoveListener(OpenPrivacyOptions);
 
             if (_sfxToggle != null) _sfxToggle.OnValueChanged -= OnSFXChanged;
             if (_vfxToggle != null) _vfxToggle.OnValueChanged -= OnVFXChanged;
