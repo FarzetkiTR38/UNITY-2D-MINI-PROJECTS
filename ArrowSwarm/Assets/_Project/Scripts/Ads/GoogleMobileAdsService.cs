@@ -18,6 +18,9 @@ namespace ArrowSwarm.Ads
         [Tooltip("When enabled, uses official Google test ad units to prevent invalid traffic bans.")]
         [SerializeField] private bool _useTestAds = true;
 
+        [Tooltip("Hashed AdMob device IDs (printed in logcat on first ad request) that always receive test ads, so the developer's own phones never generate invalid traffic.")]
+        [SerializeField] private string[] _testDeviceIds = new string[0];
+
         [Header("Production Ad Unit IDs (Android)")]
         [SerializeField] private string _rewardedAdUnitId = "";
         [SerializeField] private string _interstitialAdUnitId = "";
@@ -48,6 +51,13 @@ namespace ArrowSwarm.Ads
 
         private void InitializeSdk()
         {
+            if (_testDeviceIds != null && _testDeviceIds.Length > 0)
+            {
+                MobileAds.SetRequestConfiguration(new RequestConfiguration
+                {
+                    TestDeviceIds = new System.Collections.Generic.List<string>(_testDeviceIds)
+                });
+            }
             MobileAds.Initialize(initStatus => AdUnityThread.Run(this, () =>
             {
                 _isInitialized = true;

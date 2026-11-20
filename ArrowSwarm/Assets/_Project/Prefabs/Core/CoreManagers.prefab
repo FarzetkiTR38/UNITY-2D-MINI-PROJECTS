@@ -278,6 +278,9 @@ MonoBehaviour:
   _fireworkRainbowPrefab: {fileID: 7750853977139984562, guid: 6a7b26737f4a19a40b5f385c66dc96a9, type: 3}
   _firework1Prefab: {fileID: 3425026211840218638, guid: 40a08865e12e93d4a8954444c54c525a, type: 3}
   _fireworkBasicPrefab: {fileID: 7291838540196593265, guid: eebd4198cae929f4883e70594350f6af, type: 3}
+  _mobDeathPrewarm: 18
+  _fireworkPrewarm: 4
+  _confettiPrewarm: 1
 --- !u!114 &8208843418394020252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,8 +332,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bf4327c9b9205d4495ea0e45fdba631, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Tips.TipHighlighter
-  _highlightDuration: 3
-  _pulseSpeed: 4
 --- !u!114 &8900555007096158829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -356,7 +357,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e13fb636f2b46d46afa24bde58202a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Ads.GoogleMobileAdsService
-  _useTestAds: 1
+  _useTestAds: 0
+  _testDeviceIds: []
   _rewardedAdUnitId: ca-app-pub-8886494112442790/6418619942
   _interstitialAdUnitId: ca-app-pub-8886494112442790/9421906431
 --- !u!114 &5067867423604473748
@@ -439,8 +441,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cbc4fcaba478bc4086012b8ed3e66e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSwarm.Audio.AudioManager
-  _sfxLibrary: {fileID: 11400000, guid: 6bce24da0f9e41e4abe7e51b7b21b327, type: 2}
   _bgmSource: {fileID: 0}
+  _sfxLibrary: {fileID: 11400000, guid: 6bce24da0f9e41e4abe7e51b7b21b327, type: 2}
   _sfxSources: []
 --- !u!114 &8891129683768234088
 MonoBehaviour:
