@@ -86,6 +86,15 @@ Her oyuncuya `P01` gibi bir kod ver ve aynı formu kullan. İlk oturumda yönerg
 
 ## Devam noktası
 
+### Unity Editör kontrolü · 20 Kasım 2026
+
+- [x] Kullanıcının isteğiyle bu turdaki bütün testler Unity MCP Play Mode’da çalıştı. Boot ana menüye ulaştı. Kayıt geçişi, en iyi yıldızın korunması, iptal edilen dokunuş ve çoklu dokunuş kontrolleri geçti.
+- [x] Şekiller ve Renk Değişimi’nde 100/100 bölüm gerçek sahne ve ok animasyonlarıyla tamamlandı. Bu kampanya koşusunda animasyonlar hızlandırıldı. Savunma’da normal hızda 1–5. bölümlerin tümü üç yıldızla tamamlandı. İlk dört bölümde **Sonraki Bölüm** düğmesi bir sonraki tahtayı açtı. Dördüncü bölümde Editör sağlayıcısının bekleyen geçiş reklamı iptal edilerek aynı geçiş callback’i doğrulandı.
+- [x] Üç modda açık ve koyu tema ile 720×1280 ve 1080×2400 Editör görünümlerinde gerçek Input System duraklatma ve devam etme kontrolleri geçti. Şekiller ve Renk Değişimi’nde aynı iki çözünürlükte komşu okların her iki tarafına verilen sekiz ekran girişi yalnızca hedef oku hareket ettirdi.
+- [x] Yalıtılmış reklam sağlayıcısıyla 22 istek kontrolü, iki bulmaca modunda yinelenen ve geciken ödül yanıtları ve kayıtların geri yüklenmesi geçti. Savunma’da son ok ile son can yarışının iki sonucu da doğrulandı. Test sahnesi MapTestScene yalnızca etkin sahne listesinde bulunduğunda Pause kontrolüne dahil ediliyor (`50c4fc89`).
+
+[Unity test kayıtları ve ekran görüntüleri](http://127.0.0.1:8200/#%2Fcaptures%2FPlayerExperience%2Findex.html)
+
 **Sıradaki ilk iş.** Fiziksel cihazda açılış, yakın ok seçimi, reklam izni ve ödül akışını kaydet. İmzalı kod 3 kullanıcı kararıyla yerelde duruyor. Play Console kabulü, portre bildirimi ve kapalı test kurulumu yükleme yetkisi verildiğinde doğrulanacak. Ardından 5–8 yeni oyuncunun ilk oturumunu ve ilk mağaza görselini aynı protokolle karşılaştır. D1/D7 ve mağaza dönüşümü, gerçek katılımcı verisi oluştuktan sonra ölçülecek.
 
 Her aşama için bulgu, önce/sonra kanıtı, doğrulama sonucu ve commit kaydını bu dosyaya ekle. Unity MCP ile gerçek kontrolleri ve önceki regresyonları dene. Cihaz ve insan gözlemlerini Editör ve çözücü sonuçlarından ayrı kaydet. Oyuncu kayıtlarını, tercihleri ve açık yerel değişiklikleri koru. Onaylı UI tasarım sırası kendi [UI yol haritasından](UI_REDESIGN_ROLLOUT.md) izlenir.
