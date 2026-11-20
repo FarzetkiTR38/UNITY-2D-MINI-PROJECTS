@@ -13,6 +13,22 @@
 
 **Kabul ölçütü.** Her gözlemde cihaz, dil, derleme, reklam ayarı ve katılımcı sayısı var. Küçük grup sonuçları sorun bulmak için kullanılıyor. D1 ve D7, erişilebilir ve izinli gerçek oyuncu verisi olduğunda olgunlaşmış gruplarda hesaplanıyor. [Ölçüm tanımları](../ArrowSwarm_Marketing/09_Analytics/MEASUREMENT_GUIDE.md)
 
+### Kapalı test gözlem formu
+
+Her oyuncuya `P01` gibi bir kod ver ve aynı formu kullan. İlk oturumda yönerge öğretme. Oyuncu iki oka yakın bir yere dokunup yanlış ok giderse, hamleden sonra hangi oku kastettiğini sor. Sonuç paneli açıldığında oyuncunun kendiliğinden seçtiği eylemi kaydet. Ulaşılamayan adımı boş bırak ve nerede durduğunu not et.
+
+| Kaydedilecek bilgi | Değer |
+| --- | --- |
+| Katılımcı kodu, cihaz modeli, Android, ekran, oyun dili | |
+| Sürüm kodu, kaynak commit, reklam koşulu | |
+| Soğuk açılıştan ilk oynanabilir dokunuşa ve ilk doğru oka kadar geçen süre | |
+| Öğretici sonucu ve zamanı · bitirdi, atladı, yarıda bıraktı | |
+| İlk zafer ve ikinci bölüme başlangıç zamanı | |
+| İlk hata · amaçlanan ok, seçilen ok ve oyuncunun sebep açıklaması | |
+| Son eylem · sonraki bölüm, yeniden dene, menü, oturumdan ayrılma | |
+
+İlk beş bölümü karşılaştırırken mod, bölüm ve her deneme için aktif oyun süresini ayrı yaz. Yükleme, duraklatma, reklam ve arka plan süresini aktif oyun süresinden çıkar. Reklam ritmini kıyaslayan başlangıç ve aday gruplarına aynı yönergeyi ver. 5–8 kişinin gözlemi ilk oturum sorunlarını bulmak için kullanılacak. D1/D7 ve mağaza dönüşümü, yeterli gerçek katılımcı oluştuğunda ayrı ölçülecek.
+
 ## 1 · Açılış, ilk galibiyet ve ikinci bölüm
 
 - [x] Boot göstergesini gerçek sahne yüklemesine bağla ve hazır sahneyi bekleten zamanlayıcıyı kaldır. `700cc1c7` ile Unity MCP Play Mode karşılaştırmasında ana menü 3,967 → 2,079 sn, öğretici 5,239 → 1,975 sn. İki rotada da tek sahne aktivasyonu, gerilemeden %100’e ulaşan gösterge ve sıfır konsol hatası kaydedildi. [Unity öncesi/sonrası](http://127.0.0.1:8200/#%2Fcaptures%2FPlayerExperience%2Findex.html)
