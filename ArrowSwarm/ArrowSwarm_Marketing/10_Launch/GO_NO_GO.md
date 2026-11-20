@@ -21,6 +21,8 @@
 
 Yerel ADB listesi boştu. Android cihaz koşusu yerine mevcut Unity Editor ve medya kanıtları değerlendirildi. Build Settings içinde Boot, Ana Menü ve üç oyun sahnesi etkin. MapTest devre dışı. Mağaza çekiminden sonra BootScene düzenleme moduna dönüldü, oyuncu tercihleri geri yüklendi ve Unity Console’da hata sayısı sıfırdı.
 
+20 Kasım güncellemesinde `832535e3` kaynaklı güncel `1.0.0 (3)` Android paketi üretildi. `Builds/arrowswarm-1.0.0-code3-unsigned.aab` güncel oyun ve UMP değişikliklerini içeriyor. Bundletool, isteğe bağlı portre donanımı, tek etkin başlatıcı ve 16 KB hizalaması geçti. Play yükleme anahtarıyla imza bekliyor. Yanındaki `*-local-qa.apk` yerel Android Debug imzalı deneme çıktısı. Güncel aşama [oyuncu deneyimi yol haritasında](../../Docs/PLAYER_EXPERIENCE_ROADMAP.md).
+
 ### Internal testte oynatılacak akışlar
 
 - [ ] Temiz kurulumda soğuk açılış, profil ve ilk öğretici. TR/EN, açık/koyu tema, dar ve uzun telefon ekranı. Aynı açılışı düşük kapasiteli bir cihazda ve 16 KB Android ortamında dene.
