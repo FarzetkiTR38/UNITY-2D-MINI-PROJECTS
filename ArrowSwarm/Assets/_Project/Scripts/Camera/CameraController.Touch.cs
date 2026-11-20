@@ -60,14 +60,14 @@ namespace ArrowSwarm.Camera
             {
                 _gestureVersion++; _panTouchId = id;
                 _isTouchDragValid = IsValidPanStartPosition(position, id);
-                _dragStartScreenPos = _lastPanPosition = position;
+                _dragStartScreenPos = _lastPanPosition = touch.startPosition.ReadValue();
+                _dragStartTime = Time.unscaledTime - (float)System.Math.Max(0.0,
+                    UnityEngine.InputSystem.LowLevel.InputState.currentTime - touch.startTime.ReadValue());
                 _isPanning = _isDragging = false;
                 return;
             }
             if (!_isTouchDragValid) return;
-            float distance = Vector2.Distance(position, _dragStartScreenPos);
-            if (!_isPanning && distance > DragThreshold)
-            { _isPanning = _isDragging = true; _lastPanPosition = position; }
+            TryBeginPan(position);
             if (_isPanning)
             {
                 Vector2 delta = position - _lastPanPosition;

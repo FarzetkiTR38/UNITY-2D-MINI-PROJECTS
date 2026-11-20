@@ -42,6 +42,14 @@ namespace ArrowSwarm.Core
         [SerializeField] private float _minZoom = 1f;
         [SerializeField] private float _maxZoom = 3f;
 
+        [Header("Touch (physical millimeters, DPI independent)")]
+        [Tooltip("Movement that always stays a tap, however long the finger is held.")]
+        [SerializeField, Min(0.5f)] private float _tapSlopMm = 4.5f;
+        [Tooltip("A short press that is pulled up to this far still fires the arrow.")]
+        [SerializeField, Min(0.5f)] private float _flickSlopMm = 12f;
+        [Tooltip("Presses shorter than this count as a flick instead of a camera pan.")]
+        [SerializeField, Min(0.05f)] private float _flickMaxSeconds = 0.28f;
+
         [Header("Timing")]
         [SerializeField] private float _mobSpawnDelay = 2.5f;
 
@@ -119,6 +127,13 @@ namespace ArrowSwarm.Core
 
         /// <summary>Damage dealt by the rainbow (last) arrow.</summary>
         public int RainbowArrowDamage => _rainbowArrowDamage;
+
+        /// <summary>Movement in millimeters that always remains a tap.</summary>
+        public float TapSlopMm => _tapSlopMm;
+        /// <summary>Distance in millimeters a short press may travel and still fire.</summary>
+        public float FlickSlopMm => _flickSlopMm;
+        /// <summary>Longest press in seconds that still counts as a flick.</summary>
+        public float FlickMaxSeconds => _flickMaxSeconds;
 
         /// <summary>Array of map data assets (5 maps, cyclic).</summary>
         public MapData[] Maps => _maps;

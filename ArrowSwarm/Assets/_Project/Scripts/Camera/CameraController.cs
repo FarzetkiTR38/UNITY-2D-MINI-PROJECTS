@@ -61,7 +61,7 @@ namespace ArrowSwarm.Camera
         private Vector2 _lastPanPosition;
         private float _lastPinchDistance;
         private bool _isPinching;
-        private const float DragThreshold = 10f; // Pixels required to initiate camera pan
+        private float _dragStartTime;
 
         // Smooth zoom
         private float _targetOrthoSize;
@@ -348,20 +348,14 @@ namespace ArrowSwarm.Camera
 
                 _dragStartScreenPos = mousePos;
                 _lastPanPosition = _dragStartScreenPos;
+                _dragStartTime = Time.unscaledTime;
                 _isPanning = false;
                 _isDragging = false;
             }
             else if (_isMouseDragValid && (mouse.leftButton.isPressed || mouse.rightButton.isPressed))
             {
                 Vector2 mousePos = mouse.position.ReadValue();
-                float dist = Vector2.Distance(mousePos, _dragStartScreenPos);
-
-                if (!_isPanning && dist > DragThreshold)
-                {
-                    _isPanning = true;
-                    _isDragging = true;
-                    _lastPanPosition = mousePos;
-                }
+                TryBeginPan(mousePos);
 
                 if (_isPanning)
                 {
@@ -381,6 +375,19 @@ namespace ArrowSwarm.Camera
                     StartCoroutine(ResetDraggingNextFrame());
                 }
             }
+        }
+
+        /// <summary>
+        /// Starts panning only once the shared tap rules say the press is no longer a tap or flick,
+        /// then catches up with the finger so the board stays under it.
+        /// </summary>
+        private void TryBeginPan(Vector2 screenPos)
+        {
+            if (_isPanning) return;
+            float travel = Vector2.Distance(screenPos, _dragStartScreenPos);
+            if (!TapGesture.IsPanIntent(travel, Time.unscaledTime - _dragStartTime)) return;
+            _isPanning = _isDragging = true;
+            _lastPanPosition = _dragStartScreenPos;
         }
 
         private System.Collections.IEnumerator ResetDraggingNextFrame()

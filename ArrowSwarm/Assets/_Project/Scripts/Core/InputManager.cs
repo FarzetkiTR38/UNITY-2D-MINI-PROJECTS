@@ -15,13 +15,13 @@ namespace ArrowSwarm.Core
     public partial class InputManager : Singleton<InputManager>
     {
         private const float DefaultBlockDuration = 0.35f;
-        private const float MaxTapDistance = 30f;
 
         private Camera _mainCamera;
         private float _inputBlockedUntilTime;
         private bool _isGameplayPressValid;
         private bool _isPointerDown;
         private Vector2 _pointerDownPosition;
+        private float _pointerDownTime;
 
         private readonly List<RaycastResult> _raycastResults = new List<RaycastResult>(8);
         private PointerEventData _cachedPointerData;
@@ -68,6 +68,7 @@ namespace ArrowSwarm.Core
 
         private void Update()
         {
+            AdvanceTouchScanWindow();
             if (ArrowSwarm.Puzzle.PuzzleSession.Active != null) { ResetPointerState(); return; }
             if (GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.Playing ||
                 Time.unscaledTime < _inputBlockedUntilTime || MainCamera == null ||
@@ -93,30 +94,35 @@ namespace ArrowSwarm.Core
             if (mouse.leftButton.wasReleasedThisFrame) OnPointerUp(pos, -1);
         }
 
-        private void OnPointerDown(Vector2 screenPos, int touchId)
+        /// <param name="heldSeconds">Time the press already lasted when it was first observed.</param>
+        private void OnPointerDown(Vector2 screenPos, int touchId, float heldSeconds = 0f)
         {
             _isPointerDown = true;
             _pointerDownPosition = screenPos;
+            _pointerDownTime = Time.unscaledTime - Mathf.Max(0f, heldSeconds);
             _isGameplayPressValid = !IsPointerOverUI(screenPos, touchId);
         }
 
         private void OnPointerMove(Vector2 screenPos)
         {
-            if (_isGameplayPressValid && Vector2.Distance(screenPos, _pointerDownPosition) > MaxTapDistance)
-            {
-                _isGameplayPressValid = false;
-            }
+            if (_isGameplayPressValid && IsPanGesture(screenPos)) _isGameplayPressValid = false;
         }
 
         private void OnPointerUp(Vector2 screenPos, int touchId)
         {
-            bool wasValid = _isGameplayPressValid;
+            bool wasValid = _isGameplayPressValid && !IsPanGesture(screenPos);
+            Vector2 pressPosition = _pointerDownPosition;
             ResetPointerState();
 
-            if (!wasValid || IsPointerOverUI(screenPos, touchId)) return;
-            if (Vector2.Distance(screenPos, _pointerDownPosition) > MaxTapDistance) return;
+            // Short holds and small pulls fire; the arrow under the original press is the target.
+            if (!wasValid || IsPointerOverUI(pressPosition, touchId)) return;
+            ProcessClick(pressPosition);
+        }
 
-            ProcessClick(screenPos);
+        private bool IsPanGesture(Vector2 screenPos)
+        {
+            return TapGesture.IsPanIntent(Vector2.Distance(screenPos, _pointerDownPosition),
+                Time.unscaledTime - _pointerDownTime);
         }
 
         private bool IsPointerOverUI(Vector2 screenPos, int touchId = -1)
@@ -131,44 +137,6 @@ namespace ArrowSwarm.Core
             _raycastResults.Clear();
             es.RaycastAll(_cachedPointerData, _raycastResults);
             return _raycastResults.Count > 0;
-        }
-
-        private void ProcessClick(Vector2 screenPosition)
-        {
-            if (MainCamera == null) return;
-            float camDist = Mathf.Abs(MainCamera.transform.position.z);
-            if (camDist < 0.1f) camDist = 10f;
-            Vector2 worldPos = MainCamera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, camDist));
-
-            // 1. Grid-based lookup: Find arrow occupying clicked cell
-            if (GridManager.Instance != null && ArrowSpawner.Instance != null)
-            {
-                var gPoint = GridManager.Instance.WorldToPoint(worldPos);
-                if (gPoint != null)
-                {
-                    var arrow = ArrowSpawner.Instance.GetArrowAt(gPoint.GridPosition);
-                    if (arrow != null && !arrow.IsFired && IsAllowedInTutorial(arrow))
-                    {
-                        arrow.OnPlayerClick();
-                        return;
-                    }
-                }
-            }
-
-            // 2. Physics Raycast fallback for off-grid touch
-            RaycastHit2D[] hits = Physics2D.RaycastAll(worldPos, Vector2.zero);
-            for (int i = 0; i < hits.Length; i++)
-            {
-                if (hits[i].collider != null)
-                {
-                    var arrow = hits[i].collider.GetComponentInParent<Arrow>();
-                    if (arrow != null && !arrow.IsFired && IsAllowedInTutorial(arrow))
-                    {
-                        arrow.OnPlayerClick();
-                        break;
-                    }
-                }
-            }
         }
 
         private bool IsAllowedInTutorial(Arrow arrow)
