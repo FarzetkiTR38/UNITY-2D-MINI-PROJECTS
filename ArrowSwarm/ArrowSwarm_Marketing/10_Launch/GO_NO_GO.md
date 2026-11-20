@@ -23,6 +23,8 @@ Yerel ADB listesi boştu. Android cihaz koşusu yerine mevcut Unity Editor ve me
 
 20 Kasım güncellemesinde `832535e3` kaynaklı güncel `1.0.0 (3)` Android paketi üretildi. `Builds/arrowswarm-1.0.0-code3-unsigned.aab` güncel oyun ve UMP değişikliklerini içeriyor. Bundletool, isteğe bağlı portre donanımı, tek etkin başlatıcı ve 16 KB hizalaması geçti. Play yükleme anahtarıyla imza bekliyor. Yanındaki `*-local-qa.apk` yerel Android Debug imzalı deneme çıktısı. Güncel aşama [oyuncu deneyimi yol haritasında](../../Docs/PLAYER_EXPERIENCE_ROADMAP.md).
 
+20 Kasım Play Console kontrolünde Alpha kapalı testinde `1.0.0 (1)` belirli testçilere açıktı. En az 12 kayıt adımı tamamlandı. Kesintisiz 14 gün ve üretim erişimi açık. Paket listesinde kod 1 vardı ve kod 3 için yükleme doğrulaması bekliyordu. [Console kontrol kaydı](http://127.0.0.1:8200/captures/PlayerExperience/AndroidCandidate/play-console.txt)
+
 ### Internal testte oynatılacak akışlar
 
 - [ ] Temiz kurulumda soğuk açılış, profil ve ilk öğretici. TR/EN, açık/koyu tema, dar ve uzun telefon ekranı. Aynı açılışı düşük kapasiteli bir cihazda ve 16 KB Android ortamında dene.
