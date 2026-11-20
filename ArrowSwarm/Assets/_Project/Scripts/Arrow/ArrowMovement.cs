@@ -79,6 +79,7 @@ namespace ArrowSwarm.Arrow
         public void StartMovement(Arrow arrow, Vector2 gridExitPoint)
         {
             _arrow = arrow;
+            arrow.Visuals?.StopFeedback();
             _mode = MovementMode.NormalFlight;
             _speed = GameManager.Instance?.Config?.ArrowMoveSpeed ?? 15f;
 
@@ -168,6 +169,7 @@ namespace ArrowSwarm.Arrow
         public void StartBlockedBounce(Arrow arrow, Vector2 collisionPoint, Arrow obstacleArrow, Action onComplete)
         {
             _arrow = arrow;
+            arrow.Visuals?.StopFeedback();
             _obstacleArrow = obstacleArrow;
             _onBounceComplete = onComplete;
             _mode = MovementMode.BlockedBounce;
