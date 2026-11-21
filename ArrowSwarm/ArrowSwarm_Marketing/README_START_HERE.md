@@ -1,5 +1,14 @@
 # ArrowSwarm — yayın ve büyüme çalışma paketi
 
+**18 Kasım · Videolarda güncel giriş noktası:** [Tüm videolar · tek arşiv](http://127.0.0.1:8200/#%2Fmarketing%2FFinal_Deliverables%2FVideoLibrary%2Findex.html).34güncel teslim ve5eski sürüm ayrı kategorilerde. [Son12konsept · izleme ve toplu indirme](http://127.0.0.1:8200/#%2Fmarketing%2F05_Reels%2FConceptBacklog_20261117%2Findex.html), [tikli uygulama/devam kaydı](05_Reels/ConceptBacklog_20261117/IMPLEMENTATION.md), [dosya/hash envanteri](Final_Deliverables/VideoLibrary/inventory.csv). Orijinal12render briefinin tamamı gerçek MP4'e bağlandı. Önceki Reels/Fragman/Rehber teslimleri korunur. Eski dal/erişim/ilk-pilot notları aşağıda tarihsel kayıttır; güncel dal ArrowSwarm. Yayın veya push yapılmadı.
+
+**17 Kasım · ASO (10 Dil), Canlı Web SEO/GEO, Android Optimizasyon & Color Shift Reels:**
+- **Play Console Kopyala-Yapıştır Merkezi (10 Dil):** [07_ASO_SEO_GEO/index.html](07_ASO_SEO_GEO/index.html) ve [PLAY_CONSOLE_SETUP_GUIDE.md](07_ASO_SEO_GEO/PLAY_CONSOLE_SETUP_GUIDE.md) ile tüm mağaza metinleri, Veri Güvenliği ve İçerik Beyanı cevapları hazırlandı.
+- **Canlı Stüdyo Sitesi & GEO (`https://farzetkigames.com.tr`):** `/arrowswarm`, `/arrowswarm/privacy-policy`, `/app-ads.txt`, `sitemap.xml`, `llms.txt`, `llms-full.txt` ve Schema.org JSON-LD yayına alındı.
+- **Color Shift Reels:** [ArrowSwarm_ColorShift_L03_TR.mp4](05_Reels/ColorShiftPilot01_20261117/ArrowSwarm_ColorShift_L03_TR.mp4) (`21s`) üretildi ve tüm bitmiş 15 Reels MP4'ü Masaüstü `reels videoları` klasörüne senkronize edildi.
+
+**15 Kasım · Yeni Win/Lose sesleri:** [Önizleme merkezinde altı sesi dinle](http://127.0.0.1:8200/#%2Fmarketing%2F01_Game_Audit%2FOutcomeSoftAudio_20261115%2Findex.html). Üç kazanma + üç kaybetme; ana çift oyunda, alt1/alt2 alternatifleri hazır. [Tamamlanan uygulama ve kanıtlar](01_Game_Audit/OutcomeSoftAudio_20261115/IMPLEMENTATION.md). Dal **ArrowSwarm**; eski faz ve erişim notları tarihsel kayıttır.
+
 **En yeni alternatif:** [16 saniyelik Ahtapot Reels](05_Reels/CreativeShort01_20261114/ArrowSwarm_Ahtapot_CreativeShort_TR.mp4), [önce/sonra oynatıcı](05_Reels/CreativeShort01_20261114/index.html), [devam listesi](05_Reels/CREATIVE_SHORT_01.md). Önceki sürümden%61,3 kısa; orijinal videolar değiştirilmedi. Teknik/native/browser kontrolleri tamam, kreatif değerlendirme kullanıcıda.
 
 **En güncel teslim ·14Kasım:** Onaylı pilotun ardından **12 →16 →21 →5 →29 →39** Shapes videoları tamamlandı. [Altı videolu galeri](05_Reels/ShapesSeries_20261114/index.html), [MP4 listesi ve kanıtlar](05_Reels/ShapesSeries_20261114/README.md), [tek devam listesi](05_Reels/SHAPES_SERIES.md), [toplu yerel ZIP](Final_Deliverables/ArrowSwarm_Shapes_Series_TR_20261114.zip). Gerçek iki HUD/tek A/bekleme/kalan çözüm ve düzeltilmiş ortak tanıtım kapanışı korunur. Aşağıdaki pilot-onay/Unity-erişim notları tarihseldir; bu altı seviyenin native Unity ve tarayıcı testleri artık tamamlandı. Mağaza hâlâ mock; yayın yapılmadı.

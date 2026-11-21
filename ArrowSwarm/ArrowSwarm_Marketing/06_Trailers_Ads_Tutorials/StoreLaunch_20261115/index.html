@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arrow Swarm · Mağaza Grafikleri, Üç Modlu Fragman ve Yanlış Hamle Reklamı</title>
+  <meta name="color-scheme" content="dark">
+  <style>
+    :root{--bg:#071225;--panel:#101f36;--line:#2b4565;--text:#f4f8ff;--muted:#acbfd7;--cyan:#66e5ff;--gold:#ffdc56;--pink:#ff81bf}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 12% 0,#173c60 0,transparent 54%),var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif;line-height:1.6}a{color:inherit}button,a.action{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:4px}img,video{max-width:100%;display:block}main{max-width:1140px;padding:46px 28px 38px;margin:auto}.eyebrow{font-size:12px;letter-spacing:.16em;font-weight:850;color:var(--cyan);margin:0 0 13px}h1{font-size:clamp(32px,5.2vw,58px);line-height:1.09;letter-spacing:-.04em;max-width:850px;margin:0 0 19px}header>p:not(.eyebrow){max-width:730px;color:var(--muted);margin:0 0 24px;font-size:16px}.tags,.actions,.switch,.sectiontop,.videohead{display:flex;flex-wrap:wrap;gap:9px;align-items:center}.tags{margin-bottom:25px}.tag{font-size:12px;padding:4px 11px;border:1px solid var(--line);border-radius:20px;background:#122742;color:#d7e7fc}.actions{gap:10px}a.action,button.action{display:inline-flex;align-items:center;justify-content:center;min-height:43px;padding:9px 16px;border-radius:12px;border:1px solid var(--line);background:#17304d;color:var(--text);text-decoration:none;font-size:13px;font-weight:650;max-width:100%;text-align:center}.action.primary{background:var(--cyan);color:#082338;border-color:var(--cyan)}.action:hover{filter:brightness(1.1)}nav{margin:28px 0 37px;padding-bottom:26px;border-bottom:1px solid var(--line)}nav a{font-size:13px;text-decoration:none;margin-right:22px;display:inline-block;padding:4px 0;color:#cee0f8}nav a:hover{color:var(--cyan)}section{scroll-margin-top:22px}.sectiontop{justify-content:space-between;margin:0 0 14px}.sectiontop h2,.videohead h2{font-size:24px;letter-spacing:-.025em;margin:0}.sectiontop p{margin:0;color:var(--muted);font-size:13px}.feature{padding:20px;border:1px solid var(--line);border-radius:21px;background:linear-gradient(145deg,#162d49,#0d1d32);box-shadow:0 18px 60px #0002}.switch{gap:6px}.switch button{padding:8px 16px;min-height:40px;border:1px solid var(--line);background:#0a1a2e;border-radius:10px;color:#c1d1e5;font-weight:700}.switch button[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#2d2b14}.featuretop{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px}.size{font:12px ui-monospace,Consolas,monospace;color:var(--muted)}.featureimage{padding:0;border:0;background:transparent;width:100%;display:block;cursor:zoom-in;border-radius:13px;overflow:hidden}.featureimage img{width:100%;height:auto;aspect-ratio:1024/500;object-fit:contain}.featurefoot{display:flex;justify-content:space-between;align-items:start;gap:16px;flex-wrap:wrap;margin-top:18px}.featurefoot p{margin:0;color:var(--muted);font-size:13px;max-width:490px}.featurefoot strong{color:#e9f4ff}.videogrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin-top:38px}.videocard{min-width:0;padding:21px;background:linear-gradient(155deg,#162b46,#0c1c31);border:1px solid var(--line);border-radius:21px}.videohead{justify-content:space-between;gap:8px;margin-bottom:10px}.videohead h2{font-size:22px}.duration{font:700 12px ui-monospace,Consolas,monospace;border-radius:8px;padding:4px 9px;background:#203f59;color:var(--cyan)}.videocard:nth-child(2) .duration{color:var(--pink);background:#412a49}.videodesc{color:var(--muted);font-size:13px;margin:0 0 16px;min-height:42px}.screen{background:#030b16;border:1px solid #294361;border-radius:14px;overflow:hidden;display:grid;place-items:center;padding:0;max-width:360px;margin:0 auto 18px}.screen video{width:100%;height:auto;aspect-ratio:9/16;object-fit:contain;background:#030b16;max-height:640px}.videocard .actions .action{flex:1}.timeline{display:flex;gap:7px;flex-wrap:wrap;margin:15px 0 0;padding:0;list-style:none}.timeline li{font-size:11px;padding:3px 8px;border-radius:7px;background:#0b1c31;color:#b9cce4}.notes{border:1px solid var(--line);border-radius:15px;padding:16px 19px;margin-top:26px;background:#0e1e33}summary{cursor:pointer;font-size:14px;font-weight:700}.notes p{font-size:13px;color:var(--muted);margin:13px 0 0}.notes .actions{margin-top:15px}.small{font-size:12px;color:#87a3c6;margin:24px 0 0}.status{min-height:22px;font-size:12px;color:var(--cyan);margin-top:13px}.status:empty{display:none}dialog{width:min(1160px,95vw);max-height:94vh;padding:0;border:1px solid #4a7193;border-radius:17px;background:#0a1930;color:var(--text);box-shadow:0 15px 80px #0008}dialog::backdrop{background:#020a16dc}.dialogbar{display:flex;justify-content:space-between;gap:15px;align-items:center;padding:13px 16px;border-bottom:1px solid var(--line)}.dialogbar strong{font-size:14px}.dialogimage{padding:16px}.dialogimage img{width:100%;height:auto;object-fit:contain}.dialogimage p{font-size:12px;margin:12px 0 0;color:var(--muted)}@media(max-width:690px){main{padding:28px 16px}.videogrid{grid-template-columns:1fr;gap:20px;margin-top:26px}.videocard{padding:17px}.videodesc{min-height:0}.feature{padding:13px;border-radius:16px}.featurefoot{gap:13px}.featurefoot .actions{width:100%}.featurefoot .action{flex:1}.sectiontop{align-items:start;gap:5px}.sectiontop h2{font-size:22px}.featuretop{gap:8px}.size{font-size:11px}nav{margin:23px 0 26px;padding-bottom:19px}nav a{margin-right:17px}header>p:not(.eyebrow){font-size:15px}.screen{max-width:330px}.dialogbar{padding:10px}.dialogimage{padding:8px}.dialogbar strong{font-size:12px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+    #trailer,#fail{grid-column:1/-1}#trailer .screen{max-width:none}#trailer .screen video{aspect-ratio:16/9;max-height:none}#fail .screen{max-width:360px}
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="eyebrow">ARROW SWARM · MAĞAZA PAKETİ</p>
+    <h1>Üç mod.<br>Tek büyük macera.</h1>
+    <p>Güncel marka diliyle Türkçe ve İngilizce özellik grafikleri; üç oyun modunu birleştiren mağaza fragmanı ve yanlış hamle üzerine kısa reklam.</p>
+    <div class="tags"><span class="tag">TR + EN · 1024 × 500</span><span class="tag">Mağaza fragmanı · 25 sn</span><span class="tag">Yanlış hamle · 15 sn</span><span class="tag">Yerel inceleme · Mağazaya yüklenmedi</span></div>
+    <div class="actions"><a class="action" href="http://127.0.0.1:8200/">← Önizleme merkezi</a><a class="action" href="IMPLEMENTATION.md">Uygulama ve devam kaydı</a></div>
+  </header>
+  <nav aria-label="Paket bölümleri"><a href="#feature">Özellik grafikleri</a><a href="#trailer">Mağaza fragmanı</a><a href="#fail">Yanlış hamle reklamı</a></nav>
+
+  <section id="feature" aria-labelledby="feature-title">
+    <div class="sectiontop"><h2 id="feature-title">Mağaza vitrini</h2><p>Görsele tıklayarak büyüt.</p></div>
+    <div class="feature">
+      <div class="featuretop"><div class="switch" role="group" aria-label="Özellik grafiği dili"><button id="language-en" type="button" aria-pressed="true">English</button><button id="language-tr" type="button" aria-pressed="false">Türkçe</button></div><span class="size">1024 × 500 px · PNG</span></div>
+      <button class="featureimage" id="enlarge-feature" type="button" aria-label="İngilizce özellik grafiğini büyüt"><img id="feature-image" src="../../03_GooglePlay/feature_graphic_final_EN_1024x500.png" alt="Arrow Swarm İngilizce Google Play özellik grafiği" width="1024" height="500"></button>
+      <div class="featurefoot"><p><strong id="feature-language">English sürümü</strong><br>İki dilde aynı kompozisyon. Ayrı indirme bağlantılarından tam çözünürlüklü dosyaları alabilirsin.</p><div class="actions"><a class="action primary" href="../../03_GooglePlay/feature_graphic_final_EN_1024x500.png" download>EN PNG indir</a><a class="action" href="../../03_GooglePlay/feature_graphic_final_TR_1024x500.png" download>TR PNG indir</a></div></div>
+    </div>
+  </section>
+
+  <div class="videogrid">
+    <section id="trailer" class="videocard" aria-labelledby="trailer-title">
+      <div class="videohead"><h2 id="trailer-title">Üç modlu fragman</h2><span class="duration">25 sn</span></div>
+      <p class="videodesc">FarzetkiGames splash ile açılır; Shapes, Color Shift ve Defense oynanışlarını birleştirir. Dış metinler İngilizce; arşiv Defense kaydının HUD dili Türkçedir.</p>
+      <div class="screen"><video id="trailer-video" controls playsinline preload="metadata" aria-label="25 saniyelik İngilizce üç modlu mağaza fragmanı" src="ArrowSwarm_StoreTrailer_EN_25s.mp4"></video></div>
+      <div class="actions"><a class="action primary" href="ArrowSwarm_StoreTrailer_EN_25s.mp4" download>Fragmanı indir · MP4</a><button class="action" type="button" data-fullscreen="trailer-video">Tam ekran</button></div>
+      <ul class="timeline" aria-label="Fragmanda yer alanlar"><li>Splash</li><li>Defense</li><li>Shapes</li><li>Color Shift</li></ul>
+    </section>
+    <section id="fail" class="videocard" aria-labelledby="fail-title">
+      <div class="videohead"><h2 id="fail-title">Yanlış hamle</h2><span class="duration">15 sn</span></div>
+      <p class="videodesc">Kısa bir oyun anı üzerinden yanlış hamleyi ve tekrar deneme fikrini anlatan reklam kurgusu.</p>
+      <div class="screen"><video id="fail-video" controls playsinline preload="metadata" aria-label="15 saniyelik İngilizce yanlış hamle reklamı" src="ArrowSwarm_FailAd_EN_15s.mp4"></video></div>
+      <div class="actions"><a class="action primary" href="ArrowSwarm_FailAd_EN_15s.mp4" download>Reklamı indir · MP4</a><button class="action" type="button" data-fullscreen="fail-video">Tam ekran</button></div>
+      <ul class="timeline" aria-label="Reklam türü"><li>Yanlış hamle</li><li>Tekrar dene</li><li>İngilizce kurgu</li></ul>
+    </section>
+  </div>
+  <p id="playback-status" class="status" role="status" aria-live="polite"></p>
+
+  <details class="notes"><summary>Kaynaklar ve dosya kontrolleri</summary><p>Videoların kaynakları, süreleri ve kurgu akışı manifestte; teknik doğrulamalar QA dosyasında kayıtlıdır. Bu paket yerel inceleme içindir, otomatik mağaza yüklemesi veya reklam yayını yapmaz.</p><div class="actions"><a class="action" href="manifest.json">Video manifesti</a><a class="action" href="VIDEO_QA.json">Video kontrolleri</a><a class="action" href="trailer_contact_sheet.jpg" target="_blank" rel="noopener">Fragman kareleri</a><a class="action" href="fail_contact_sheet.jpg" target="_blank" rel="noopener">Reklam kareleri</a><a class="action" href="trailer_captions_EN.srt" download>Fragman altyazısı</a><a class="action" href="fail_captions_EN.srt" download>Reklam altyazısı</a></div></details>
+  <p class="small">15 Kasım 2026 · Önceki pilot dosyaları korunur. Bu sayfa önizleme merkezindeki devam eden mağaza paketidir.</p>
+</main>
+<dialog id="feature-dialog" aria-labelledby="dialog-title"><div class="dialogbar"><strong id="dialog-title">English özellik grafiği · 1024 × 500</strong><button id="close-feature" class="action" type="button">Kapat ✕</button></div><div class="dialogimage"><img id="dialog-image" src="../../03_GooglePlay/feature_graphic_final_EN_1024x500.png" alt="İngilizce özellik grafiği, tam boy" width="1024" height="500"><p>Escape tuşuyla veya Kapat düğmesiyle çık.</p></div></dialog>
+<script>
+  const featurePaths={en:'../../03_GooglePlay/feature_graphic_final_EN_1024x500.png',tr:'../../03_GooglePlay/feature_graphic_final_TR_1024x500.png'};
+  const labels={en:'English',tr:'Türkçe'};
+  const image=document.getElementById('feature-image');
+  const dialog=document.getElementById('feature-dialog');
+  const previewImage=document.getElementById('dialog-image');
+  let language='en';
+  function setLanguage(next){
+    language=next;image.src=featurePaths[next];image.alt='Arrow Swarm '+labels[next]+' Google Play özellik grafiği';previewImage.src=featurePaths[next];previewImage.alt=image.alt+', tam boy';
+    for(const key of ['en','tr'])document.getElementById('language-'+key).setAttribute('aria-pressed',String(key===next));
+    document.getElementById('feature-language').textContent=labels[next]+' sürümü';
+    document.getElementById('enlarge-feature').setAttribute('aria-label',labels[next]+' özellik grafiğini büyüt');
+    document.getElementById('dialog-title').textContent=labels[next]+' özellik grafiği · 1024 × 500';
+  }
+  document.getElementById('language-en').addEventListener('click',()=>setLanguage('en'));
+  document.getElementById('language-tr').addEventListener('click',()=>setLanguage('tr'));
+  document.getElementById('enlarge-feature').addEventListener('click',()=>dialog.showModal());
+  document.getElementById('close-feature').addEventListener('click',()=>dialog.close());
+  dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
+  const videos=[...document.querySelectorAll('video')];
+  const status=document.getElementById('playback-status');
+  for(const video of videos){
+    video.addEventListener('play',()=>{for(const other of videos)if(other!==video)other.pause();status.textContent=video.id==='trailer-video'?'Mağaza fragmanı oynatılıyor.':'Yanlış hamle reklamı oynatılıyor.';});
+    video.addEventListener('error',()=>{status.textContent='Video yüklenemedi. İndirme bağlantısını deneyebilir veya sayfayı yenileyebilirsin.';});
+  }
+  for(const button of document.querySelectorAll('[data-fullscreen]'))button.addEventListener('click',async()=>{
+    const video=document.getElementById(button.dataset.fullscreen);
+    try{if(video.requestFullscreen)await video.requestFullscreen();else if(video.webkitEnterFullscreen)video.webkitEnterFullscreen();else status.textContent='Bu tarayıcıda video kontrollerindeki tam ekran düğmesini kullan.';}
+    catch{status.textContent='Video kontrollerindeki tam ekran düğmesini kullanabilirsin.';}
+  });
+</script>
+</body>
+</html>

@@ -1,5 +1,25 @@
 # Defense pilot01 · Zamanı çal
 
+**15November2026 · User approved R2.** Save/reuse `DEFENSE_REEL_TEMPLATE.md` for later requested level videos. Current active task is the eight English store screenshots (`../03_GooglePlay/STORE_SET_EN.md`); do not launch another video automatically. Earlier review-wait notes below are historical.
+
+## Active revision02 ·15November2026
+
+User requests a new native capture and edit: fewer enemies, real Freeze about2s earlier, readable sequential shots instead of a volley, **every spawned enemy killed by projectiles with zero victory-cleanup kills**, a lead-halfway opening with “Düşmanlar ilerliyor. Ama panik yok.”, and an isolated, clearly visible natural final rainbow arrow. Preserve the first pilot for comparison. Work on **ArrowSwarm**; do not create another branch or touch production gameplay/configuration to fabricate the result.
+
+- [x] Read rules, verify ArrowSwarm branch and clean EditBootScene; back up13preexisting dirty tracked files externally.
+- [x] Plan a legal timed shot sequence; add only isolated Editor recording controls/evidence and compile through UnityMCP.
+- [x] Record native earlier Freeze/sequential/rainbow play; inspect and retry until real zero-cleanup victory and all UI/motion read correctly.
+- [x] Restore private preferences/services/scene/debug/timing and verify preexisting working files.
+- [x] Re-edit around actual events, original revised TR narration, separate rainbow lead-in and unchanged corrected-P mockCTA.
+- [x] Decode/visual/audio/event checks and native browser playback/controls; preserve all previous deliverables.
+- [x] Commit tested phases and deliver one revised MP4/review. Wait for creative approval before more Defense or ColorShift.
+
+**Exact next action: await creative review of the completed21s R2.** Deliverable `DefensePilot02_20261115/ArrowSwarm_Defense_R2_Sirayla_TR.mp4`; comparison `http://127.0.0.1:8197/index.html` with new21s/previous17s/raw38s. If the server stopped, run `serve_reel_review.py --revision defense-r2 --port 8197`. Do not begin another Defense/ColorShift video without approval. For a requested revision, edit `render_defense_r2.py`, recheck actual encoded video and rebuild the preview.
+
+Fullsource `DefenseR2_L10_20261115_002652_928` proves24spawns=24projectiledeaths,0cleanup/finishes,15shots. Opening halfway13mobs vsold20; peak20vs23. Freeze at.77066 instead.90132 is3.2665s earlier in native traversal (approximately3s, not an exact2s claim). Native shot spacing10frames, promotionhold32, allnormalflights finish before finalRainbow, no stat/spawn edits. Intro2×, sequentialaction1×, separateRainbow0.75×; changed rates labelled. Final630frames/21s/7,219,938bytes fullydecode; voice/event alignment and independent17encoded-frame review pass. Actual browser1280×900/390×844 has no overflow,21s unmuted playback reaches ended, old/raw switching/seek/pause/mute/mockCTA pass with0errors. Original13dirtyfilehashes/fiveprivatepreferences andprevious10media verified unchanged; temp additive scene closed without saving/discarding the unsaved Boot.
+
+R2 commits: `2f32d002` plan; `fbf88de5` isolated clean-sweep capture/proof; `9f1c75a4` final reviewed video/voice/preview; this delivery-checkpoint update is the fourth phase. All on **ArrowSwarm**; no new branch, push or public publication. New output: `DefensePilot02_20261115/`; its README links all evidence. Previous pilot notes below are historical.
+
 15 November2026. User authorizes **one** new Defense Reels concept, distinct from the Shapes arrow-choice quiz. Produce actual gameplay, edit and deliver it for creative approval. Do not batch more Defense clips or begin ColorShift before that approval.
 
 ## Concept

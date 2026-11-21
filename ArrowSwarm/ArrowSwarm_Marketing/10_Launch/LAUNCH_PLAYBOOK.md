@@ -1,5 +1,7 @@
 # Yayın öncesi / yayın günü / 7 ve30gün
 
+18 Kasım güncel teknik karar ve gerçek [pazarlama paketi](ReleaseKit_20261118/index.html) [yayın raporunda](GO_NO_GO.md). D0 öncesi ve ilk hafta için hazır [TR/EN gönderiler](../08_Social_Media/LAUNCH_POST_PACK_TR_EN.md) gerçek medya dosyalarına bağlı.
+
 Bu takvim gerçek bir yayın tarihi belirlemez. Gün0 ancak GOkapıları kapatılıp sahibi yayına izin verdiğinde atanır. Önce ücretsiz/organiköğrenme; ücretli test otomatik başlamaz.
 
 ## Gün−14 ila−1: doğrulama

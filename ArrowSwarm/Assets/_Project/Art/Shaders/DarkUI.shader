@@ -20,6 +20,9 @@ Shader "ArrowSwarm/UI/DarkVariant"
         _ContentBounds ("Medal Content Bounds XYZW", Vector) = (0.187,0.08,0.984,0.714)
         _SolidFill ("Clean Interior Gradient", Range(0,1)) = 0
         _RepaintInterior ("Replace Interior Artwork", Range(0,1)) = 0
+        _RimGlint ("Keep Rim Glints", Range(0,1)) = 0
+        _RimInset ("Rim Inner Edge Inset XY", Vector) = (0.033,0.030,0,0)
+        _RimCorner ("Rim Inner Corner Radius XY", Vector) = (0.08,0.075,0,0)
         [Toggle(FOOTER_PLATE_MASK)] _UsePlateMask ("Illustrated Footer Plaque", Float) = 0
         _PlateMask ("Footer Plaque Mask", 2D) = "black" {}
         _StencilComp ("Stencil Comparison", Float) = 8
@@ -59,8 +62,8 @@ Shader "ArrowSwarm/UI/DarkVariant"
             float4 _MainTex_ST, _ClipRect;
             float _UIMaskSoftnessX, _UIMaskSoftnessY;
             half _AccentStrength, _SurfaceStrength, _Background, _LiftInk;
-            half4 _SurfaceInset, _Corner, _ContentBounds, _BevelShade, _InteriorAlphaRange;
-            half _Artwork, _EdgeFill, _OpaqueInterior, _SolidFill, _BevelStrength, _RepaintInterior;
+            half4 _SurfaceInset, _Corner, _ContentBounds, _BevelShade, _InteriorAlphaRange, _RimInset, _RimCorner;
+            half _Artwork, _EdgeFill, _OpaqueInterior, _SolidFill, _BevelStrength, _RepaintInterior, _RimGlint;
             v2f vert(appdata v)
             {
                 v2f o;
@@ -149,6 +152,9 @@ Shader "ArrowSwarm/UI/DarkVariant"
                         roundedBox(i.themeUV,half2(0.605,0.515),half2(0.07,0.21),half2(0.025,0.025)));
                     dark = lerp(dark,half3(0.82,0.92,1),ink*bars);
                 }
+                // Specular glints on the saturated outer rim are pale too; keep them instead of carving navy notches.
+                half rimBand = 1-roundedBox(i.themeUV,half2(0.5,0.5),0.5-_RimInset.xy,_RimCorner.xy);
+                dark = lerp(dark, c.rgb, rimBand*pale*_RimGlint);
                 dark = lerp(dark, _SurfaceColor.rgb * lerp(0.65,1.2,luminance), _Background);
                 c.rgb = dark;
                 c.a = lerp(c.a,i.color.a,region*(1-protectedArtwork)*_OpaqueInterior*neutralFill*smoothstep(_InteriorAlphaRange.x,_InteriorAlphaRange.y,texel.a));

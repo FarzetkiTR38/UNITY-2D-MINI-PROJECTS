@@ -50,6 +50,8 @@ namespace ArrowSwarm.UI
             "TIP: The final Rainbow Arrow clears the remaining wave in style!"
         };
 
+        private const float MaxProgressStep = 1f / 30f;
+
         private Coroutine _loadingCoroutine;
         private Coroutine _tipsCoroutine;
         private Vector3 _originalHeroScale = Vector3.one;
@@ -146,15 +148,22 @@ namespace ArrowSwarm.UI
 
         private IEnumerator LoadingSequenceRoutine(Action onComplete)
         {
+            SetProgress(0f);
+
+            // The first scene runs behind Unity's splash; never advance progress the player cannot see.
+            while (!UnityEngine.Rendering.SplashScreen.isFinished) yield return null;
+
+            // Skip the frame that absorbs scene activation so a load hitch cannot jump the bar.
+            yield return null;
+
             float elapsed = 0f;
             float duration = Mathf.Max(0.5f, _loadingDuration);
 
             while (elapsed < duration)
             {
-                elapsed += Time.deltaTime;
+                elapsed += Mathf.Min(Time.unscaledDeltaTime, MaxProgressStep);
                 float t = Mathf.Clamp01(elapsed / duration);
-                float smoothT = 1f - Mathf.Pow(1f - t, 3f);
-                SetProgress(smoothT);
+                SetProgress(t * t * (3f - 2f * t));
                 yield return null;
             }
 

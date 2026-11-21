@@ -1,0 +1,38 @@
+# DE Play Store listing (de-DE)
+
+Generated and validated for ArrowSwarm (`com.farzetkigames.arrowswarm`).
+
+## App name / Uygulama adı
+
+```text
+ArrowSwarm: Pfeil-Puzzle
+```
+
+## Short description / Kısa açıklama
+
+```text
+Löse Pfeil-Formen, drehe den Rahmen und verteidige in 3 Puzzle-Modi.
+```
+
+## Full description / Uzun açıklama
+
+```text
+Jeder Pfeil hat eine Richtung. Der nächste Zug gehört dir.
+
+ArrowSwarm verbindet logische Pfeil-Rätsel mit drei unterschiedlichen Spielmodi, in denen du Wege liest, Reihenfolgen planst und Ausgänge freimachst.
+
+FORMEN
+Finde die richtige Reihenfolge in einer Figur aus gebogenen Pfeilpfaden. Sieh dir Pinguin, Herz und viele weitere Silhouetten an, wähle einen freien Pfeil und löse die Form Schritt für Schritt. Die aktuelle Formen-Kampagne enthält 50 handgefertigte Level.
+
+FARBWECHSEL
+Ein freier Weg allein reicht nicht aus. Jeder Pfeil muss auch zur Farbe der Ausgangswand passen. Während die Pfeile feststehen, drehst du den bunten Außenrahmen in 90-Grad-Schritten und planst dein begrenztes Drehbudget. Die Farbwechsel-Kampagne bietet 50 Level.
+
+VERTEIDIGUNG
+Bringe deine Puzzle-Entscheidungen auf ein aktives Verteidigungsbrett. Öffne Wege für deine Pfeile und schieße sie auf Gegner ab, die rund um das Feld vorrücken.
+
+LIES DEN WEG
+In den Puzzle-Modi prallt ein blockierter Schuss ab und kostet ein Leben. Schütze deine drei Leben, nutze Hinweise bei Bedarf und finde den nächsten freien Ausgang.
+
+DEIN FORTSCHRITT
+Formen und Farbwechsel speichern ihren Fortschritt getrennt. Verdiene bis zu drei Sterne pro Level, wechsle zwischen hellem und dunklem Design und tritt in der weltweiten Bestenliste an.
+```

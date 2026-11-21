@@ -1,20 +1,20 @@
-﻿id,priority,gate,status,required_evidence,current_limit
-TECH01,P0,Signed AndroidAppBundle,NOT_TESTED,ReleaseAAB +SHA256/buildlog/version,No build created/inspected in this continuation
-TECH02,P0,Actual targetSdk >=36 for standardphoneapp,UNKNOWN,Builtmanifest/APIlevel +Playvalidation,Project automatic setting is not actual binary target
-TECH03,P0,ARM64 native library/page-size compatibility,UNKNOWN,AAB/APKAnalyzer +16KBdevice/emulatorrun,Rawarchitecture setting2 is not binary proof
-TECH04,P0,Release scene inclusion,REVIEW_REQUIRED,VerifyreleaseBoot/MainMenu/Game/Shapes/ColorShift route +MapTestdecision,MapTestScene currentlyenabled; do not remove without source references/runtime checks
-TECH05,P0,Playerdata persistence and cloud reconcile,NOT_TESTED_ON_DEVICE,Upgrade/restart/offline/reconnect devicecapture,PriorEditorstate-restoration proof not equivalent to release persistence
-TECH06,P0,Gameplay regression all modes,NOT_TESTED_CURRENT_DEVICE,First10levels +representativeadvancedcases; wrongfinalshot/rotationbudget/winlose,Existinghistoricalcaptures only
-TECH07,P1,Coldstart/performance/crash/ANR,NOT_MEASURED,DeviceCPU/RAM/framepacing/loadtime +Playvitalswhenavailable,No inventedperformancefigures
-TECH08,P1,Responsive/native localization,PARTIAL_ARCHIVE,Physical720x1280/1080x1920/tall/tablet/safearea +TR/ENfullHUD,WebsitebrowserQA is not game/deviceQA
-POL01,P0,Privacy/DataSafety/SDKinventory,PENDING_OWNER_CONFIRMATION,"Matchingpublicpolicy,retention/deletion/contact,SDKdata declarations",UGS+AdMob must be considered; no final form submitted
-POL02,P0,Ads/consent/age/audience/contentrating,PENDING_CONSOLE_DEVICE,AppContent declarations +applicableconsent/ads test,Nolegalcomplianceorconsenttestcertified
-POL03,P0,Account productionaccess/testtrack,UNKNOWN,"Consoleaccounttype/date,productionaccess andapplicableclosedtestevidence",12testers14days appliesqualifyingnewpersonalaccounts; notassumedeveryaccount
-POL04,P1,Permissions and nativeSDKreleaseversions,UNKNOWN,MergedmanifestandPlaySDKIndexreview,Sourcepackagelist is not finalmergedmanifest
-CRE01,P0,Finalicon andbranding,REVISION_DEFERRED,Newselectedicon+adaptive/maskchecks,Previousconcepts rejected
-CRE02,P0,Finalstore screenshots,DRAFT_ONLY,Currentfullylocalizednative8screens+dimension/contentQA,16TR/ENdraftsusemixedhistoricalsources
-CRE03,P1,Distinctgameplayvideos andsound approval,INCOMPLETE,Mode/tutorial/Rainbowclips andfinaleditedMP4s,Oneoldpilot rejected; no12newvideosclaimed
-WEB01,P1,Publicsite/domain/Play/supportlinks,LOCAL_ONLY,VerifiedrealURLs/contact +publishapproval +indexingchecks,Localbilingualsite works; publicdeploy not performed
-GROW01,P1,Analytics/experiment readiness,PROPOSAL_ONLY,Approvedschema/consent plusliveeventQA andactualcohorts,NoSDK/eventcollectionadded
-GROW02,P1,Organiccalendar/creatorreachout,PREPARED_NOT_SENT,Finalassetsandplatformaccounts/rulesverified,Calendarready; microcreatorqualificationpending; nooutreach
-GO01,P0,Explicit release approval,NOT_REQUESTED,Concreteverifiedbuild/listing +ownerreleaseapproval,Do not publish to production automatically
+id,priority,gate,status,required_evidence,current_limit
+TECH01,P0,İmzalı Android App Bundle,LOCAL_PASS,Play yükleme anahtarı ve final build izi,Optimize 80.2 MB AAB yerelde imzalı ve valid
+TECH02,P0,Hedef Android API,LOCAL_PASS,Final AAB manifesti ve Console doğrulaması,Mevcut AAB min25 target36 compile36
+TECH03,P0,ARM64 ve 16 KB,STATIC_PASS_DEVICE_PENDING,16 KB cihaz veya emülatör çalıştırması,ARM64 ve 7 ELF yük segmenti ile 16 KB bundle yapılandırması doğrulandı
+TECH04,P0,Üretim sahneleri,SOURCE_PASS,Final AAB cihaz sahne akışı,Boot menü ve 3 mod etkin. MapTest devre dışı.
+TECH05,P0,İlerleme ve online sıralama,DEVICE_PENDING,Yeniden açılış çevrimdışı ve yeniden bağlanma testi,UGS üretim ve cihaz kanıtı açık
+TECH06,P0,Üç mod cihaz regresyonu,DEVICE_PENDING,Internal test ve Play pre-launch raporu,ADB bağlı cihaz yok. Editor kanıtı ayrı.
+TECH07,P1,Soğuk açılış ve performans,DEVICE_PENDING,Düşük sınıf Android ölçümleri ve Play Vitals,Canlı cihaz performansı ölçülmedi
+TECH08,P1,Temalar ve ekran oranları,DEVICE_PENDING,TR EN ve iki ekran oranı smoke testi,Native Editor ve mağaza çekimi var
+POL01,P0,Gizlilik ve Veri Güvenliği,CONSOLE_PENDING,UGS ve AdMob beyanı ile uygulanan silme testleri,Anonim profil ve veri gönderimi var. Silme yolu doğrulanmalı.
+POL02,P0,Reklam izni reklam modu hedef kitle ve IARC,BLOCKING,UMP rıza seçenekleri ve test reklamı doğrulaması,Test reklamı açık. Runtime izin akışı bulunamadı.
+POL03,P0,Üretim erişimi ve kapalı test,CONSOLE_PENDING,Dashboard ve gerekiyorsa kapalı test,12 testçi 14 gün koşulu ilgili yeni kişisel hesaplar için
+POL04,P1,SDK ve izinler,INSPECTED_CONSOLE_PENDING,Play SDK ve izin bildirimleri,Optimize AAB GMA25.4.0 ve UMP4.0.0
+CRE01,P0,Mağaza ikonu ve özellik grafikleri,PACKAGED,Console varlık yüklemesi,Seçilen 512 PNG ve TR EN özellik grafikleri var
+CRE02,P0,Gerçek mağaza ekran görüntüleri,PACKAGED,Console TR ve EN eşleştirme,Her dilde 8 görsel ve alt metin. Sıralamalar örnek etiketli.
+CRE03,P1,Fragman video ve kreatif izinleri,MEDIA_READY,Varsa YouTube URL ve ticari hak doğrulaması,Fragman ve reklam dahil. Fragman isteğe bağlı.
+WEB01,P1,Aktif web sayfası ve gerçek mağaza linki,PLAY_URL_PENDING,Hedef ülkede kurulum ve site deploy,Web HTTP200. Paket adı yerelde düzeltildi. Play adayı HTTP404.
+GROW01,P1,Ölçüm ve deneyler,PREPARED,Canlı mağaza ve izinli kohort verisi,KPI planı var. Canlı sonuç yok.
+GROW02,P1,Yayın haftası organik içerik,PACKAGED,Doğrulanmış mağaza URL ve düzenli yayın,Altı TR EN gönderi ve yerel video dosyaları
+GO01,P0,Üretime hazır olma,NO_GO,P0 engelleri kapat ve sahibin yayın kararı,Önce final AAB cihaz ve Console kanıtı

@@ -79,6 +79,7 @@ namespace ArrowSwarm.Arrow
         public void StartMovement(Arrow arrow, Vector2 gridExitPoint)
         {
             _arrow = arrow;
+            arrow.Visuals?.StopFeedback();
             _mode = MovementMode.NormalFlight;
             _speed = GameManager.Instance?.Config?.ArrowMoveSpeed ?? 15f;
 
@@ -168,6 +169,7 @@ namespace ArrowSwarm.Arrow
         public void StartBlockedBounce(Arrow arrow, Vector2 collisionPoint, Arrow obstacleArrow, Action onComplete)
         {
             _arrow = arrow;
+            arrow.Visuals?.StopFeedback();
             _obstacleArrow = obstacleArrow;
             _onBounceComplete = onComplete;
             _mode = MovementMode.BlockedBounce;
@@ -428,8 +430,8 @@ namespace ArrowSwarm.Arrow
         {
             if (!IsMoving || _mode != MovementMode.NormalFlight) return;
 
-            var mob = other.GetComponent<ArrowSwarm.Mob.Mob>();
-            if (mob != null)
+            // Most trigger contacts are not mobs; TryGetComponent avoids the null-result overhead.
+            if (other.TryGetComponent(out ArrowSwarm.Mob.Mob mob))
             {
                 mob.TakeDamage(_arrow.GetDamage());
             }

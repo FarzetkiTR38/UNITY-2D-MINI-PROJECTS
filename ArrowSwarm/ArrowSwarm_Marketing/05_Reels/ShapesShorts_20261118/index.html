@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>ArrowSwarm · Shapes Kısa Sürümleri</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #081429;
+      --panel: #10213b;
+      --surface: #142944;
+      --edge: #2d4665;
+      --text: #edf6ff;
+      --secondary: #adc3db;
+      --accent: #85e4ff;
+      --focus: #ffdc68;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: radial-gradient(ellipse at top right, #163453, transparent 42rem), var(--background);
+      font: 16px/1.5 system-ui, sans-serif;
+    }
+    main { max-width: 1100px; margin: auto; padding: 28px 28px 48px; }
+    a { color: var(--accent); text-underline-offset: .22em; }
+    a:focus-visible, button:focus-visible, video:focus-visible {
+      outline: 3px solid var(--focus); outline-offset: 3px;
+    }
+    header {
+      display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between;
+      gap: 18px; margin: 16px 0 24px;
+    }
+    h1 { font-size: clamp(30px, 5vw, 50px); line-height: 1.1; letter-spacing: -.035em; margin: 0; }
+    p { color: var(--secondary); margin: 8px 0 0; }
+    .download, button {
+      min-height: 44px; padding: 9px 14px; display: inline-flex; align-items: center;
+      justify-content: center; gap: 8px; border: 1px solid var(--edge); border-radius: 10px;
+      background: var(--surface); color: var(--text); font: inherit; text-decoration: none; cursor: pointer;
+    }
+    .download.primary { background: var(--accent); color: #082440; font-weight: 750; border-color: transparent; }
+    .download[hidden] { display: none; }
+    .download:hover, button:hover { border-color: var(--accent); }
+    .download.primary:hover { background: #b2eeff; }
+    button:disabled { opacity: .55; cursor: default; }
+    button[aria-pressed="true"] { border-color: var(--accent); background: #1a4766; }
+    .layout {
+      display: grid; grid-template: "player levels" auto / minmax(270px, 1.45fr) minmax(0, 1fr);
+      align-items: start; gap: 18px;
+    }
+    .panel { min-width: 0; background: var(--panel); border: 1px solid var(--edge); border-radius: 16px; padding: 16px; }
+    .player-panel { grid-area: player; }
+    .levels-panel { grid-area: levels; }
+    .player-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    h2 { font-size: 18px; line-height: 1.3; margin: 0; }
+    .versions {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 12px 0;
+    }
+    .versions button { flex-wrap: wrap; gap: 5px; padding-inline: 8px; }
+    .duration { color: var(--secondary); font-variant-numeric: tabular-nums; }
+    video {
+      display: block; aspect-ratio: 9 / 16; width: min(100%, 34vh, 350px); height: auto;
+      margin: 0 auto; background: #020913; border-radius: 12px; color: white;
+    }
+    .levels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+    .episode {
+      display: grid; grid-template-columns: 30px minmax(0, 1fr); justify-content: start;
+      text-align: left; padding: 7px 8px; gap: 8px;
+    }
+    .episode img { display: block; width: 30px; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 4px; }
+    .episode-labels { display: grid; gap: 2px; min-width: 0; }
+    .episode strong { font-size: .9rem; overflow-wrap: anywhere; }
+    .episode span { font-size: .75rem; color: var(--secondary); }
+    [role="status"]:empty { display: none; }
+    [role="status"] { color: var(--focus); }
+    @media (max-width: 720px) {
+      main { padding: 20px 14px 32px; }
+      .layout { grid-template: "levels" auto "player" auto / minmax(0, 1fr); }
+      .panel { padding: 12px; }
+      video { width: min(100%, 52vh, 350px); }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a href="http://127.0.0.1:8200/">← Önizleme merkezi</a>
+    <header>
+      <div>
+        <h1>Shapes kısa sürümleri</h1>
+        <p>Bir bölüm seç ve kısa kurguyu uzun sürümle karşılaştır.</p>
+      </div>
+      <a class="download primary" href="ArrowSwarm_Shapes_Kisa_Surumler_TR.zip" download>Altı kısa videoyu indir · ZIP</a>
+    </header>
+    <div class="layout">
+      <section class="panel levels-panel" aria-labelledby="levels-heading">
+        <h2 id="levels-heading">Bölümler</h2>
+        <div id="levels" class="levels" role="group" aria-labelledby="levels-heading"></div>
+        <p id="levels-status" role="status"></p>
+        <noscript>Videoları buradan seçmek için JavaScript’i aç. ZIP bağlantısını kullanarak MP4’leri de izleyebilirsin.</noscript>
+      </section>
+      <section class="panel player-panel" aria-labelledby="episode-title">
+        <div class="player-head">
+          <h2 id="episode-title" aria-live="polite">Video oynatıcı</h2>
+          <a id="download" class="download" download hidden>MP4 indir</a>
+        </div>
+        <div class="versions" role="group" aria-label="Video sürümü">
+          <button type="button" data-version="short" aria-pressed="true" disabled>Kısa kurgu <span class="duration" id="short-duration"></span></button>
+          <button type="button" data-version="original" aria-pressed="false" disabled>Uzun sürüm <span class="duration" id="original-duration"></span></button>
+        </div>
+        <video id="player" controls playsinline preload="metadata"></video>
+        <p id="player-status" role="status"></p>
+      </section>
+    </div>
+  </main>
+  <script src="manifest.js"></script>
+  <script>
+    'use strict';
+    const levels = document.getElementById('levels');
+    const player = document.getElementById('player');
+    const download = document.getElementById('download');
+    const title = document.getElementById('episode-title');
+    const levelStatus = document.getElementById('levels-status');
+    const playerStatus = document.getElementById('player-status');
+    const versionButtons = [...document.querySelectorAll('[data-version]')];
+    const seconds = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 1 });
+    let episode;
+    let version = 'short';
+
+    function select(nextEpisode, nextVersion) {
+      if (episode === nextEpisode && version === nextVersion) return;
+      episode = nextEpisode;
+      version = nextVersion;
+      const isShort = version === 'short';
+      const file = isShort ? episode.file : episode.original;
+      const name = `Bölüm ${episode.level} · ${episode.title}`;
+      title.textContent = name;
+      document.getElementById('short-duration').textContent = seconds.format(episode.durationSeconds) + ' sn';
+      document.getElementById('original-duration').textContent = seconds.format(episode.originalSeconds) + ' sn';
+      for (const button of levels.children) {
+        button.setAttribute('aria-pressed', String(button.dataset.level === String(episode.level)));
+      }
+      for (const button of versionButtons) {
+        button.setAttribute('aria-pressed', String(button.dataset.version === version));
+      }
+      player.pause();
+      playerStatus.textContent = '';
+      player.setAttribute('aria-label', name + (isShort ? ', kısa kurgu' : ', uzun sürüm'));
+      if (isShort && episode.poster) player.poster = episode.poster;
+      else player.removeAttribute('poster');
+      player.src = file;
+      download.href = file;
+      download.textContent = isShort ? 'Kısa MP4 indir' : 'Uzun MP4 indir';
+      download.hidden = false;
+    }
+
+    if (typeof SHAPES_SHORTS === 'undefined' || SHAPES_SHORTS.length === 0) {
+      levelStatus.textContent = 'Video listesi yüklenemedi. Sayfayı yenile veya ZIP bağlantısını kullan.';
+    } else {
+      for (const row of SHAPES_SHORTS) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'episode';
+        button.dataset.level = row.level;
+        const poster = document.createElement('img');
+        poster.src = row.poster;
+        poster.alt = '';
+        poster.loading = 'lazy';
+        const labels = document.createElement('span');
+        labels.className = 'episode-labels';
+        const name = document.createElement('strong');
+        name.textContent = row.title;
+        const label = document.createElement('span');
+        label.textContent = 'Bölüm ' + row.level;
+        labels.append(name, label);
+        button.append(poster, labels);
+        button.addEventListener('click', () => select(row, version));
+        levels.append(button);
+      }
+      for (const button of versionButtons) {
+        button.disabled = false;
+        button.addEventListener('click', () => select(episode, button.dataset.version));
+      }
+      player.addEventListener('error', () => {
+        playerStatus.textContent = 'Video oynatılamadı. MP4 dosyasını indirip açmayı dene.';
+      });
+      select(SHAPES_SHORTS[0], 'short');
+    }
+  </script>
+</body>
+</html>

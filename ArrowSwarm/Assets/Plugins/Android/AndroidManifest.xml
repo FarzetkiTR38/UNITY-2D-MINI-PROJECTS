@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
+    <!-- Keep the game portrait-first while allowing Play-compatible devices that
+         do not advertise the optional portrait feature to install the app. -->
+    <uses-feature android:name="android.hardware.screen.portrait"
+                  android:required="false"
+                  tools:replace="android:required" />
+</manifest>

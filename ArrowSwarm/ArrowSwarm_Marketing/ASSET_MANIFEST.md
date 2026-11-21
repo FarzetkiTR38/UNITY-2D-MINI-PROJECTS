@@ -1,5 +1,14 @@
 # Güncel yayın çalışma dosyaları
 
+## 18 Kasım · Yayın paketi
+
+- [Yayın raporu ve kalan işler](10_Launch/GO_NO_GO.md), [sıralı kontrol listesi](10_Launch/LAUNCH_CHECKLIST.csv) ve [AAB bulguları](10_Launch/RELEASE_SOURCE_FACTS.json).
+- [63 dosyalık TR/EN yayın ZIP’i](10_Launch/ReleaseKit_20261118/ArrowSwarm_Yayin_Marketing_TR_EN.zip) ve [paket hashleri](10_Launch/ReleaseKit_20261118/package_checks.json).
+- [TR mağaza görselleri](03_GooglePlay/StoreSet_TR_20261118/overview_TR.jpg), [Unity çekim manifesti](03_GooglePlay/StoreSet_TR_20261118/Native/capture_manifest.json) ve [grafik manifesti](03_GooglePlay/StoreSet_TR_20261118/store_set_manifest.json).
+- [İlk hafta gönderileri ve videoları](08_Social_Media/LAUNCH_POST_PACK_TR_EN.md), [Play Console rehberi](07_ASO_SEO_GEO/PLAY_CONSOLE_SETUP_GUIDE.md) ve [50 videolu envanter](Final_Deliverables/VideoLibrary/inventory.json).
+
+## Önceki teslimler
+
 **Güncel R2 envanteri:** [tam-sahne R2 dosya/hash manifest'i](05_Reels/ReferencePilot02_R2_20261114/file_manifest.json), [yeni840kare ham kayıt manifest'i](04_Raw_Gameplay/Shapes_L2_20261114_105432_122/frame_manifest.json). Oyun build'ine yeni sprite veya video eklenmedi; bunlar proje dışındaki pazarlama dosyalarıdır.
 
 **14 Kasım ek paketi:** Yeni [Shapes2 pilot manifest'i](05_Reels/ReferencePilot02_20261114/file_manifest.json) ve [ham Türkçe kayıt manifest'i](04_Raw_Gameplay/Shapes_L2_20261114_101115_693/frame_manifest.json) ayrı tutulur. İki Instagram referansı `References/Videos/` içindedir. Aşağıdaki tablo ve `launch_file_manifest.json` 13 Kasım çalışma paketinin tarihsel envanteridir; yeni pilotu içerdiği varsayılmamalı.

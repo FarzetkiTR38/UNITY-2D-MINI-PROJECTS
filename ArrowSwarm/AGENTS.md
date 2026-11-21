@@ -14,6 +14,10 @@ Read `.agents/AGENTS.md`, the architecture skill and `Docs/UI_REDESIGN_ROLLOUT.m
 - The user grants autonomy within the active board and does not want routine clarification/permission questions.
 - Preserve pre-existing dirty files and private preferences/player state; never blanket-stage or reset unrelated work.
 
+## Shared preview hub
+
+Use `http://127.0.0.1:8200/` as the continuing entry point for all HTML previews. Start it with `py -3.13 ReviewHub/serve.py --port 8200`. Save future preview HTML/media under `Captures/` or `ArrowSwarm_Marketing/` with descriptive HTML titles; the hub discovers them automatically. Deliver a hub link to the selected preview, preserve existing pages/media, and verify relative audio/video assets. See `ReviewHub/README.md`.
+
 ## Current approved scope
 
 Boards01–03 are approved. **Board04 · Savunma ve Şekiller Bölümleri is implemented and verified.** Delivery: `Captures/UIRollout/Phase04/index.html`; checked implementation: `Docs/UI_ROLLOUT_04.md`. Await user approval of board04 before starting **05 · ColorShift levels/transition**. The 2026-11-02 requested follow-up now shares the revised level selection across all three modes, compacts Boot credit/classic tiles and provides Editor-only mixed mock/live leaderboard display. Follow `Docs/UI_ROLLOUT_04_REVISIONS.md`; current preview: `Captures/UIRollout/Phase04Revisions/index.html`. Board05 transition work remains unstarted. Continue all standing instructions for later boards.

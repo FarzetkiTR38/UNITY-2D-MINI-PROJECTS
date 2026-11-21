@@ -1,14 +1,15 @@
-﻿capture_id,mode,scene,level,scenario,expected_duration_s,status,source,dependency
-S02-full,Shapes,ShapesScene,2,complete legal solution,20,RECORDED_VERIFIED_2026_11_13,Shapes_L2_20261113_081526_913,none
-D-clutch10,Defense,GameScene,10,natural approach then charged Freeze legal counterattack rainbow and three-star win,38,RECORDED_VERIFIED_2026_11_15,Defense_L10_20261114_214156_530,none
-D-tutorial,Defense,GameScene,1,fresh player tutorial and first correct shot,25,NOT_RECORDED,,Unity controls + isolated fresh player
-D-collision,Defense,GameScene,3,wrong shot collision return and lost life,15,NOT_RECORDED,,Unity controls + Defense capture scenario
-D-rainbow,Defense,GameScene,101,natural last arrow promotion and actual hit,20,NOT_RECORDED,,Unity controls + natural Rainbow witness
-D-winlose,Defense,GameScene,3,two separate real outcome captures,30,NOT_RECORDED,,Unity controls + success/failure scripts
-S-heart,Shapes,ShapesScene,1,readable full silhouette and first correct shot,18,NOT_RECORDED,,Unity controls
-S-hard,Shapes,ShapesScene,50,zoom and dependency sequence at advanced level,25,NOT_RECORDED,,Unity controls + actual solver witness
-S-error,Shapes,ShapesScene,2,incorrect arrow bounce with life feedback,15,NOT_RECORDED,,Unity controls + rejected-shot driver
-C-match,ColorShift,ColorShiftScene,1,matching exit and nonmatching wall return,20,NOT_RECORDED,,Unity controls + matching/mismatching witness
-C-rotate,ColorShift,ColorShiftScene,3,90degree frame rotation then valid shot,20,NOT_RECORDED,,Unity controls + tested rotate capture
-C-budget,ColorShift,ColorShiftScene,5,rotation budget decision and real outcome,25,NOT_RECORDED,,Unity controls + actual rule state
-Menu-modes,Menu,MainMenuScene,0,native mode selection and setting language/theme,20,NOT_RECORDED,,Unity controls + menu capture driver
+capture_id,mode,scene,level,scenario,expected_duration_s,status,source,dependency,sourceDuration_s,evidence
+S02-full,Shapes,ShapesScene,2,complete legal solution,20,RECORDED_VERIFIED_2026_11_13,Shapes_L2_20261113_081526_913,none,,
+D-clutch10,Defense,GameScene,10,natural approach then charged Freeze legal counterattack rainbow and three-star win,38,RECORDED_VERIFIED_2026_11_15,Defense_L10_20261114_214156_530,none,,
+D-clutch10-R2,Defense,GameScene,10,earlier Freeze sequential shots isolated Rainbow all24projectilekills zero cleanup three stars,38,RECORDED_VERIFIED_2026_11_15,DefenseR2_L10_20261115_002652_928,none,,
+D-tutorial,Defense,GameScene,1,fresh player tutorial and first correct shot,25,RECORDED_VERIFIED_2026_11_18,Backlog_Tutorial_20261117_184240_842,none; native sources verified,25,ArrowSwarm_Marketing/05_Reels/ConceptBacklog_20261117/ENCODED_QA.json
+D-collision,Defense,GameScene,3,wrong shot collision return and lost life,15,RECORDED_VERIFIED_2026_11_18,Backlog_Wrong_20261117_184417_580,none; native sources verified,15,ArrowSwarm_Marketing/05_Reels/ConceptBacklog_20261117/ENCODED_QA.json
+D-rainbow,Defense,GameScene,10,Original planned101 explicitly substituted by genuine verified Defense10 final Rainbow hit and natural win,20,RECORDED_VERIFIED_2026_11_18,DefenseR2_L10_20261115_002652_928,none; native sources verified,38,ArrowSwarm_Marketing/05_Reels/ConceptBacklog_20261117/ENCODED_QA.json
+D-winlose,Defense,GameScene,3,Two explicitly separate genuine Defense3 outcomes; win and wrong-shot loss; not a single retry recording,30,RECORDED_VERIFIED_2026_11_18,DefenseSeries_L3_20261115_120226_359 | Backlog_Wrong_20261117_184417_580,none; native sources verified,22.7333 + 15,ArrowSwarm_Marketing/05_Reels/ConceptBacklog_20261117/ENCODED_QA.json
+S-heart,Shapes,ShapesScene,1,readable full silhouette and first correct shot,18,RECORDED_VERIFIED_2026_11_18,Shapes_L1_20261117_182913_686,none; native sources verified,18,ArrowSwarm_Marketing/05_Reels/ConceptBacklog_20261117/ENCODED_QA.json
+S-hard,Shapes,ShapesScene,50,zoom and dependency sequence at advanced level,25,RECORDED_VERIFIED_2026_11_18,Shapes_L50_20261117_183114_908,none; native sources verified,25,ArrowSwarm_Marketing/05_Reels/ConceptBacklog_20261117/ENCODED_QA.json
+S-error,Shapes,ShapesScene,2,incorrect arrow bounce with life feedback,15,RECORDED_VERIFIED_2026_11_18,ShapesFail_L2_20261115_184919_828,none; native sources verified,15,ArrowSwarm_Marketing/05_Reels/ConceptBacklog_20261117/ENCODED_QA.json
+C-match,ColorShift,ColorShiftScene,1,matching exit and nonmatching wall return,20,RECORDED_VERIFIED_2026_11_18,Backlog_Match_20261117_184127_033,none; native sources verified,20,ArrowSwarm_Marketing/05_Reels/ConceptBacklog_20261117/ENCODED_QA.json
+C-rotate,ColorShift,ColorShiftScene,3,90degree frame rotation then valid shot,20,RECORDED_VERIFIED_2026_11_18,ColorShift_L3_20261115_184112_468,none; native sources verified,12,ArrowSwarm_Marketing/05_Reels/ConceptBacklog_20261117/ENCODED_QA.json
+C-budget,ColorShift,ColorShiftScene,5,rotation budget decision and real outcome,25,RECORDED_VERIFIED_2026_11_18,ColorShift_L5_20261117_183440_159,none; native sources verified,25,ArrowSwarm_Marketing/05_Reels/ConceptBacklog_20261117/ENCODED_QA.json
+Menu-modes,Menu,MainMenuScene,0,native mode selection and setting language/theme,20,RECORDED_VERIFIED_2026_11_18,Backlog_Menu_20261117_184510_012,none; native sources verified,20,ArrowSwarm_Marketing/05_Reels/ConceptBacklog_20261117/ENCODED_QA.json

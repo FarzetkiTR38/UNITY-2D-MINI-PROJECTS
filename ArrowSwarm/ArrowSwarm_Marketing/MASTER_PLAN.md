@@ -1,5 +1,9 @@
 # ArrowSwarm yayın ve büyüme — ana yol haritası
 
+**19 Kasım 2026 · Oyuncu deneyimi.** Kapalı test başlangıç ölçümü, ilk oturum, üç modun oynanışı, reklam ritmi, sıralama ve mağaza görseli deneyleri [oyuncu deneyimi yol haritasına](../Docs/PLAYER_EXPERIENCE_ROADMAP.md) eklendi. Üretim yayını için güncel kanıtlar [yayın kontrolünde](10_Launch/GO_NO_GO.md) tutulur.
+
+**18 Kasım 2026 · Video kuyruğu tamam:** Önceki R01–R12 planının her biri için ayrı18s Türkçe anlatımlı MP4 üretildi. [12 yeni video](http://127.0.0.1:8200/#%2Fmarketing%2F05_Reels%2FConceptBacklog_20261117%2Findex.html), [bütün videoların tek arşivi](http://127.0.0.1:8200/#%2Fmarketing%2FFinal_Deliverables%2FVideoLibrary%2Findex.html), [tikli uygulama](05_Reels/ConceptBacklog_20261117/IMPLEMENTATION.md). CAPTURE_QUEUE ve RENDER_QUEUE artık gerçek kaynak/çıktı/QA yollarını içerir; plandaki eksik video0. Faz4–5'in bu kayıt ve video üretimi kapsamı tamam; yaratıcı onay ve yayın ayrı kalır. Eski ilk-pilot/erişim/onay kapıları aşağıda tarihsel nottur. Çalışma dalı ArrowSwarm; push yok.
+
 **14 Kasım güncel yönlendirme:** İki Instagram referansına göre tek Shapes2Reels ve sonrasında R2 revizyonu üretildi. Şimdi [R2 kontrol listesi](05_Reels/REFERENCE_REEL_R2.md) geçerli; kullanıcı değerlendirmesi gelmeden12/16/21/5/29/39'a geçilmeyecek. Aşağıdaki13Kasım kararı tarihsel/genel faz kapsamıdır.
 
 Son kullanıcı kararı: mevcut ikon/Reels beğenilmedi; fazlar sürsün, görsel revizyonlar en son yapılsın. Önceki ilkörnek onayı bekleme kapısı kaldırıldı.

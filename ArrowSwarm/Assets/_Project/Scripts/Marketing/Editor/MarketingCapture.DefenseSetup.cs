@@ -46,6 +46,7 @@ namespace ArrowSwarm.Marketing.Editor
             Arrow result = null; float longest = -1;
             foreach (var arrow in ArrowSwarm.Arrow.ArrowSpawner.Instance.ActiveArrows)
             {
+                if (ArrowSwarm.Arrow.ArrowSpawner.Instance.RemainingArrows > 1 && DefenseArrowIndex(arrow) == _defenseReservedArrow) continue;
                 if (arrow == null || arrow.IsFired || arrow.IsBlockedAnimating ||
                     !GridManager.Instance.IsPathClear(arrow.HeadPoint, arrow.HeadDirection)) continue;
                 var route = PathManager.Instance.GetArrowPathWaypoints(GridManager.Instance.GetGridExitPoint(arrow.HeadPoint, arrow.HeadDirection));
@@ -68,6 +69,7 @@ namespace ArrowSwarm.Marketing.Editor
             public int index, weight;
             public string direction;
             public List<Vector2Int> points;
+            public Vector2 screenHead;
         }
         private static void ExportDefenseGeometry(int level)
         {
@@ -80,7 +82,8 @@ namespace ArrowSwarm.Marketing.Editor
                 freezeButton = new Vector2(screen.x, Screen.height - screen.y) };
             var arrows = ArrowSwarm.Arrow.ArrowSpawner.Instance.ActiveArrows;
             for (int i = 0; i < arrows.Count; i++) result.arrows.Add(new DefenseArrowGeometry { index = i, weight = arrows[i].Weight,
-                direction = arrows[i].HeadDirection.ToString(), points = new List<Vector2Int>(arrows[i].PathPoints) });
+                direction = arrows[i].HeadDirection.ToString(), points = new List<Vector2Int>(arrows[i].PathPoints),
+                screenHead = DefenseScreenHead(arrows[i]) });
             File.WriteAllText(_folder + "/geometry.json", JsonUtility.ToJson(result, true));
         }
     }

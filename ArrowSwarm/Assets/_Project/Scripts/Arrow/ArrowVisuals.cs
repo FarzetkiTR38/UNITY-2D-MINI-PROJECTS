@@ -31,6 +31,7 @@ namespace ArrowSwarm.Arrow
         private bool _isRainbow;
         private bool _isSpawning;
         private Coroutine _spawnCoroutine;
+        private Coroutine _feedbackCoroutine;
         private readonly List<Vector3> _spawnPointsBuffer = new List<Vector3>();
         private float _baseLineWidth;
         private Vector3 _baseHeadScale;
@@ -593,6 +594,7 @@ namespace ArrowSwarm.Arrow
         public void RestoreRestingVisuals()
         {
             if (_arrow == null) return;
+            StopFeedback();
 
             GridManager grid = GridManager.Instance;
             IReadOnlyList<Vector2Int> pathPoints = _arrow.PathPoints;
@@ -653,25 +655,26 @@ namespace ArrowSwarm.Arrow
         /// </summary>
         public void PlayBumpedReactionEffect(Vector2 impactDir)
         {
-            StartCoroutine(BumpReactionRoutine(impactDir));
+            StartFeedback(BumpReactionRoutine(impactDir));
         }
 
         private System.Collections.IEnumerator BumpReactionRoutine(Vector2 impactDir)
         {
-            Vector3 originalPos = transform.position;
+            Vector3 restPos = RestingRootPosition();
             float elapsed = 0f;
             float dur = 0.12f;
             Vector2 normDir = impactDir.normalized;
-            
+
             while (elapsed < dur)
             {
                 elapsed += Time.deltaTime;
                 float t = elapsed / dur;
                 float offset = Mathf.Sin(t * Mathf.PI) * 0.08f;
-                transform.position = originalPos + (Vector3)(normDir * offset);
+                transform.position = restPos + (Vector3)(normDir * offset);
                 yield return null;
             }
-            transform.position = originalPos;
+            transform.position = restPos;
+            _feedbackCoroutine = null;
         }
 
         /// <summary>
@@ -679,22 +682,51 @@ namespace ArrowSwarm.Arrow
         /// </summary>
         public void PlayMissclickFeedback()
         {
-            StartCoroutine(MissclickWiggleRoutine());
+            StartFeedback(MissclickWiggleRoutine());
         }
 
         private System.Collections.IEnumerator MissclickWiggleRoutine()
         {
-            Vector3 originalPos = transform.position;
+            Vector3 restPos = RestingRootPosition();
             float elapsed = 0f;
             float duration = 0.14f;
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
                 float offset = Mathf.Sin(elapsed * 50f) * 0.05f;
-                transform.position = originalPos + new Vector3(offset, 0f, 0f);
+                transform.position = restPos + new Vector3(offset, 0f, 0f);
                 yield return null;
             }
-            transform.position = originalPos;
+            transform.position = restPos;
+            _feedbackCoroutine = null;
+        }
+
+        /// <summary>
+        /// Stops a bump or miss-click shake and snaps the root back to its grid rest position.
+        /// Called before any flight, bounce or rest restore so a shake can never leave an offset.
+        /// </summary>
+        public void StopFeedback()
+        {
+            if (_feedbackCoroutine == null) return;
+            StopCoroutine(_feedbackCoroutine);
+            _feedbackCoroutine = null;
+            if (_arrow != null) transform.position = RestingRootPosition();
+        }
+
+        private void StartFeedback(System.Collections.IEnumerator routine)
+        {
+            // Shakes only make sense at rest; a moving or bouncing arrow owns its transform.
+            if (_arrow == null || _arrow.IsFired || _arrow.IsBlockedAnimating || !isActiveAndEnabled) return;
+            StopFeedback();
+            _feedbackCoroutine = StartCoroutine(routine);
+        }
+
+        // The rest anchor is always derived from the grid, never from a possibly shaken transform.
+        private Vector3 RestingRootPosition()
+        {
+            GridManager grid = GridManager.Instance;
+            Vector2 head = _arrow.HeadPoint.PointToWorld(grid.PointSpacing, grid.Origin);
+            return new Vector3(head.x, head.y, 0f);
         }
 
         /// <summary>
@@ -702,6 +734,7 @@ namespace ArrowSwarm.Arrow
         /// </summary>
         public void ResetVisuals()
         {
+            if (_feedbackCoroutine != null) { StopCoroutine(_feedbackCoroutine); _feedbackCoroutine = null; }
             if (_spawnCoroutine != null)
             {
                 StopCoroutine(_spawnCoroutine);

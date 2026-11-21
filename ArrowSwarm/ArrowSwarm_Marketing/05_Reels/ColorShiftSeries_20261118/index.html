@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>ArrowSwarm · ColorShift Kısa Video Serisi</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #081429;
+      --panel: #10213b;
+      --surface: #142944;
+      --edge: #2d4665;
+      --text: #edf6ff;
+      --secondary: #adc3db;
+      --accent: #85e4ff;
+      --focus: #ffdc68;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; color: var(--text);
+      background: radial-gradient(ellipse at top right, #22395b, transparent 42rem), var(--background);
+      font: 16px/1.5 system-ui, sans-serif;
+    }
+    main { max-width: 1100px; margin: auto; padding: 28px 28px 48px; }
+    a { color: var(--accent); text-underline-offset: .22em; }
+    a:focus-visible, button:focus-visible, video:focus-visible {
+      outline: 3px solid var(--focus); outline-offset: 3px;
+    }
+    header {
+      display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between;
+      gap: 18px; margin: 16px 0 24px;
+    }
+    h1 { font-size: clamp(28px, 5vw, 50px); line-height: 1.1; letter-spacing: -.035em; margin: 0; }
+    h2 { font-size: 18px; line-height: 1.3; margin: 0; }
+    p { color: var(--secondary); margin: 8px 0 0; }
+    .download, button {
+      min-height: 44px; padding: 9px 14px; display: inline-flex; align-items: center;
+      justify-content: center; gap: 8px; border: 1px solid var(--edge); border-radius: 10px;
+      background: var(--surface); color: var(--text); font: inherit; text-decoration: none; cursor: pointer;
+    }
+    .download.primary { background: var(--accent); color: #082440; font-weight: 750; border-color: transparent; }
+    .download[hidden] { display: none; }
+    .download:hover, button:hover { border-color: var(--accent); }
+    .download.primary:hover { background: #b2eeff; }
+    button[aria-pressed="true"] { border-color: var(--accent); background: #1a4766; }
+    .layout {
+      display: grid; grid-template: "player levels" auto / minmax(270px, 1.36fr) minmax(0, 1fr);
+      align-items: start; gap: 18px;
+    }
+    .panel { min-width: 0; background: var(--panel); border: 1px solid var(--edge); border-radius: 16px; padding: 16px; }
+    .player-panel { grid-area: player; }
+    .levels-panel { grid-area: levels; }
+    .player-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    video {
+      display: block; aspect-ratio: 9 / 16; width: min(100%, 38vh, 350px); height: auto;
+      margin: 14px auto 0; background: #020913; border-radius: 12px; color: white;
+    }
+    .levels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+    .episode {
+      display: grid; grid-template-columns: 30px minmax(0, 1fr); justify-content: start;
+      text-align: left; padding: 7px 8px; gap: 8px;
+    }
+    .episode img { display: block; width: 30px; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 4px; }
+    .episode-labels { display: grid; gap: 2px; min-width: 0; }
+    .episode strong { font-size: .9rem; overflow-wrap: anywhere; }
+    .episode small { color: var(--secondary); font-size: .75rem; font-variant-numeric: tabular-nums; }
+    [role="status"]:empty { display: none; }
+    [role="status"] { color: var(--focus); }
+    @media (max-width: 720px) {
+      main { padding: 20px 14px 32px; }
+      .layout { grid-template: "levels" auto "player" auto / minmax(0, 1fr); }
+      .panel { padding: 12px; }
+      video { width: min(100%, 52vh, 350px); }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a href="http://127.0.0.1:8200/">← Önizleme merkezi</a>
+    <header>
+      <h1>ColorShift kısa video serisi</h1>
+      <a class="download primary" id="zip" href="ArrowSwarm_ColorShift_Serisi_TR.zip" download>Beş yeni videoyu indir · ZIP</a>
+    </header>
+    <div class="layout">
+      <section class="panel levels-panel" aria-labelledby="levels-heading">
+        <h2 id="levels-heading">Videolar</h2>
+        <div id="levels" class="levels" role="group" aria-labelledby="levels-heading"></div>
+        <p id="levels-status" role="status"></p>
+        <noscript>Video seçmek için JavaScript’i aç veya ZIP dosyasını indir.</noscript>
+      </section>
+      <section class="panel player-panel" aria-labelledby="episode-title">
+        <div class="player-head">
+          <h2 id="episode-title" aria-live="polite">Video oynatıcı</h2>
+          <a id="download" class="download" download hidden>MP4 indir</a>
+        </div>
+        <p id="episode-note"></p>
+        <video id="player" controls playsinline preload="metadata" aria-describedby="episode-note"></video>
+        <p id="player-status" role="status"></p>
+      </section>
+    </div>
+  </main>
+  <script src="manifest.js"></script>
+  <script>
+    'use strict';
+    const levels = document.getElementById('levels');
+    const player = document.getElementById('player');
+    const download = document.getElementById('download');
+    const title = document.getElementById('episode-title');
+    const note = document.getElementById('episode-note');
+    const levelStatus = document.getElementById('levels-status');
+    const playerStatus = document.getElementById('player-status');
+    const seconds = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 1 });
+    let selected;
+
+    function select(episode) {
+      if (selected === episode) return;
+      selected = episode;
+      const label = `Bölüm ${episode.level} · ${episode.title}`;
+      for (const button of levels.children) {
+        button.setAttribute('aria-pressed', String(button.dataset.level === String(episode.level)));
+      }
+      title.textContent = label;
+      note.textContent = episode.note;
+      player.pause();
+      playerStatus.textContent = '';
+      player.setAttribute('aria-label', label);
+      if (episode.poster) player.poster = episode.poster;
+      else player.removeAttribute('poster');
+      player.src = episode.file;
+      download.href = episode.file;
+      download.hidden = false;
+    }
+
+    function createCard(episode) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'episode';
+      button.dataset.level = String(episode.level);
+      button.dataset.existing = String(Boolean(episode.existing));
+      const poster = document.createElement('img');
+      if (episode.poster) poster.src = episode.poster;
+      poster.alt = '';
+      poster.loading = 'lazy';
+      const labels = document.createElement('span');
+      labels.className = 'episode-labels';
+      const name = document.createElement('strong');
+      name.textContent = episode.title;
+      const detail = document.createElement('small');
+      const pilot = episode.existing ? ' · Pilot' : '';
+      detail.textContent = `Bölüm ${episode.level} · ${seconds.format(episode.durationSeconds)} sn${pilot}`;
+      labels.append(name, detail);
+      button.append(poster, labels);
+      button.addEventListener('click', () => select(episode));
+      return button;
+    }
+
+    if (typeof COLORSHIFT_SERIES === 'undefined' || COLORSHIFT_SERIES.length === 0) {
+      levelStatus.textContent = 'Video listesi yüklenemedi. Sayfayı yenile veya ZIP dosyasını indir.';
+    } else {
+      levels.replaceChildren(...COLORSHIFT_SERIES.map(createCard));
+      player.addEventListener('error', () => {
+        playerStatus.textContent = 'Video oynatılamadı. MP4 dosyasını indirip açabilirsin.';
+      });
+      select(COLORSHIFT_SERIES.find(episode => !episode.existing) ?? COLORSHIFT_SERIES[0]);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{
+  "items": [
+    {
+      "title": "İki ayrı deneme, iki gerçek sonuç",
+      "file": "ArrowSwarm_R12_TR_18s.mp4",
+      "durationSeconds": 18,
+      "portrait": true,
+      "narration": true,
+      "editorialLanguage": "tr",
+      "nativeHUDsPreserved": true,
+      "timeline": [
+        {
+          "key": "defense",
+          "start": 15.2,
+          "seconds": 7.5,
+          "title": "İLK DENEME: KAZANÇ",
+          "lines": [],
+          "voice": "Bu denemede savunma tamamlandı. Sonuç, gerçek oyun kaydı.",
+          "speed": 1,
+          "at": 0,
+          "chapter": 0
+        },
+        {
+          "key": "wrong",
+          "start": 0,
+          "seconds": 7.5,
+          "title": "AYRI DENEME: KAYIP",
+          "lines": [],
+          "voice": "Bu ayrı denemede ise yanlış hamlelerle canlar bitti. İki ayrı oyun, iki gerçek sonuç.",
+          "speed": 0.8,
+          "at": 7.5,
+          "chapter": 1
+        }
+      ],
+      "qa": {
+        "passed": true,
+        "file": "ArrowSwarm_R12_TR_18s.mp4",
+        "frames": 540,
+        "fps": 30.0,
+        "dimensions": [
+          1080,
+          1920
+        ],
+        "durationSeconds": 18.0,
+        "bytes": 4312178,
+        "sha256": "8269a9ab83e11f347deb151dc9713b525963063bf2ea0869bcc6e982498fc73f",
+        "fullDecode": true
+      }
+    }
+  ],
+  "sources": {
+    "wrong": {
+      "path": "ArrowSwarm_Marketing\\04_Raw_Gameplay\\Backlog_Wrong_20261117_184417_580",
+      "provenanceSha256": "365cb5527d2a10f8f18677a939a7ccabadd86bb3265a36ecd4b2673b6bcf0908",
+      "eventsSha256": "c9923b2c2ce6f78aa36e84466a7f7178470dcaaea623c26187585f16a79d2aac"
+    },
+    "defense": {
+      "path": "ArrowSwarm_Marketing\\04_Raw_Gameplay\\DefenseSeries_L3_20261115_120226_359",
+      "provenanceSha256": "622d976f94cca5c0e08bd020fea8d5888d2d6c60bcd00518bd5636d922ef1de4",
+      "eventsSha256": "e91c8328608f5a7298395b98bf98632b6321f58d2ab0e7365a2e0b9a799b4a29"
+    }
+  }
+}
